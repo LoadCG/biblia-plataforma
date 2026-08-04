@@ -33,9 +33,13 @@ mesmas rotas e componentes.
 - **Monorepo (Turborepo etc.):** descartado por enquanto — só voltaria a
   fazer sentido se surgir um segundo app/serviço de verdade. Um projeto
   Expo com pastas organizadas (`app/`, `core/`, `components/`) resolve.
-- **Hospedagem:** EAS Hosting como principal candidato (integrado ao
-  fluxo do Expo), Vercel como alternativa viável (a saída web é HTML/JS
-  padrão).
+- **Hospedagem:** EAS Hosting era o candidato inicial (integrado ao fluxo
+  do Expo), mas a implementação real (Decisão 12) usou **Vercel** — mais
+  imediato pra colocar no ar com o que já se sabia configurar, sem
+  esperar avaliar o EAS Hosting a fundo. Não é uma decisão definitiva
+  contra o EAS Hosting, só a que foi tomada na prática; reavaliar se
+  algum recurso específico do EAS (ex.: rotas de servidor nativas do
+  Expo Router) virar necessidade.
 
 ## Decisão 2 — Modelo de dados
 
@@ -75,7 +79,11 @@ interface GrifosRepository {
 Hoje: implementação local (AsyncStorage). Depois: implementação com banco
 de dados (Supabase ou Firebase — decisão adiada até virar necessidade
 real), mesma assinatura. As telas nunca sabem qual está por trás.
-Repositórios equivalentes para `ProgressoRepository` e `NotasRepository`.
+Repositórios equivalentes para `ProgressoRepository` (capítulo lido) e
+`NotasRepository`. Um quarto, `LivrosLidosRepository`, foi adicionado
+depois — mesmo padrão, mas separado de propósito de `ProgressoRepository`:
+é sobre ter lido o *resumo histórico* de um livro, não um capítulo da
+leitura bíblica (dois progressos diferentes, não confundir).
 
 ## Decisão 4 — Proxy/cache para o texto bíblico
 
@@ -236,6 +244,19 @@ string-fixa → string-fixa (`Histórico` → `"bg-genero-historico-bg"`),
 não uma função que monta a classe dinamicamente. Qualquer cor nova
 condicional por dado (não por variante `dark:`, que o NativeWind entende
 nativamente) precisa seguir esse mesmo padrão.
+
+**Consequência que essa decisão por si só não evitou** (achado numa
+revisão posterior, confirmado gerando o build de produção e checando o
+CSS final): ter as classes como texto literal só resolve metade do
+problema — o Tailwind também só enxerga esse texto se o arquivo onde ele
+mora estiver incluído em `content` no `tailwind.config.js`. O glob
+original só cobria `app/**` e `components/**`, sem `core/**` — exatamente
+onde `genero.ts` vive. Resultado: nenhuma cor de gênero literário
+aparecia no CSS gerado, silenciosamente, apesar do padrão estar
+tecnicamente correto. Corrigido adicionando `./core/**/*.{js,jsx,ts,tsx}`
+ao `content`. Lição: ao criar uma pasta nova sob `core/` que gera classes
+do Tailwind (não só lógica), conferir se ela está coberta pelo glob —
+não assume automaticamente.
 
 ### Decisão 11 — Leitura bíblica: busca, cache e rolagem até o versículo
 

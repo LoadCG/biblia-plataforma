@@ -29,25 +29,38 @@ v3`) de um jeito que não aparece no `npm install`, só ao rodar/exportar.
 
 ```
 app/                  Rotas (Expo Router — cada arquivo é uma tela)
-  _layout.tsx          Layout raiz, importa global.css
-  index.tsx             Home: lista os 66 livros
+  _layout.tsx          Layout raiz, importa global.css, restaura o tema salvo
+  index.tsx             Home: lista os 66 livros, busca, progresso geral
   resumos/[livro].tsx   Resumo histórico completo de um livro
+  biblia/index.tsx      Leitura bíblica: escolher livro
+  biblia/[livro]/index.tsx        Escolher capítulo (grade de números)
+  biblia/[livro]/[capitulo].tsx   Leitura (grifar, marcar capítulo como lido,
+                                   foco em ?versiculo=N)
 
 core/                 Lógica e dados, sem depender de nenhuma tela
   types/leitura.ts      Tipos dos dados do usuário (Grifo, CapituloLido, Nota)
   owner.ts               Identidade anônima por dispositivo (vira conta depois)
+  useOwnerId.ts           Hook fino sobre owner.ts, usado pelas telas
+  theme.ts                Tema claro/escuro (NativeWind colorScheme + persistência)
   repositories/          Um arquivo de interface por entidade + implementações
-    GrifosRepository.ts        (interface)
-    ProgressoRepository.ts     (interface)
-    NotasRepository.ts         (interface)
-    local/                     implementações atuais (AsyncStorage), com fila
-                                por chave (core/repositories/local/fila.ts)
-                                pra evitar condição de corrida
-    index.ts                   único ponto que decide qual implementação usar
+    GrifosRepository.ts          (interface)
+    ProgressoRepository.ts       (interface — capítulo lido, leitura bíblica)
+    NotasRepository.ts           (interface)
+    LivrosLidosRepository.ts     (interface — livro lido, resumo histórico;
+                                   propósito diferente de ProgressoRepository)
+    local/                       implementações atuais (AsyncStorage), com fila
+                                  por chave (core/repositories/local/fila.ts)
+                                  pra evitar condição de corrida
+    index.ts                     único ponto que decide qual implementação usar
   content/                Conteúdo fixo (os 66 livros e resumos)
     tipos.ts                Tipos (Livro, ResumoCompleto, Secao, FichaItem)
     livros.ts                API pública: `livros`, `obterLivro`, `obterResumo`
+    genero.ts                Mapa fixo de cor por gênero literário (ver por quê
+                              em PLANO-PLATAFORMA.md, Decisão 10)
     dados/livros.json        Gerado — não editar à mão (ver abaixo)
+  biblia/                 Texto bíblico (bible-api.com)
+    BibliaAPI.ts             Busca com cache local por referência
+    tipos.ts                  Tipos (CapituloTexto, VersiculoTexto)
 
 resumos-biblicos/     Os 66 resumos em Markdown (fonte real do conteúdo)
 
@@ -55,7 +68,8 @@ scripts/
   gerar-conteudo.js    Lê resumos-biblicos/**/*.md e gera
                         core/content/dados/livros.json
 
-components/            Componentes de UI reutilizáveis (ainda vazio)
+components/
+  BotaoTema.tsx         Alternador de tema, reusado em toda tela
 ```
 
 ### Atualizando o conteúdo

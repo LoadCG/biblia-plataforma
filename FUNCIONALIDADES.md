@@ -67,35 +67,62 @@ claro) — nunca prender a pessoa numa tela sem rota de escape visível.
 
 ## 2. Leitura bíblica
 
-### 2.1 Escolher livro → capítulo → versículo `✅`
-**Funcionalidade:** os três passos de seleção, com contagem de capítulos
-correta por livro (tabela fixa) e contagem de versículos correta por
-capítulo (vem da própria API na hora).
+### 2.1 Escolher livro → capítulo `✅`
+**Funcionalidade:** dois passos reais de seleção (`app/biblia/index.tsx`
+→ `app/biblia/[livro]/index.tsx`), com contagem de capítulos correta por
+livro (tabela fixa). Não existe uma terceira tela de "escolher
+versículo" — o foco num versículo específico só acontece via parâmetro
+de URL (`?versiculo=N`) direto na tela de leitura (ver 2.2), nunca por
+uma grade navegável de versículos.
 **UX/UI:** grade de números clara, tocável com o polegar (alvo de toque
-adequado), estado visual de "já lido"/"já grifado" visível antes de
-entrar no capítulo.
+adequado), estado visual de "já lido" visível na grade de capítulos
+antes de entrar num deles.
 
 ### 2.2 Ler o capítulo com foco no versículo escolhido `✅`
 **Funcionalidade:** abre o capítulo inteiro, rola automaticamente até o
-versículo pedido.
+versículo pedido via `?versiculo=N` na URL.
 **UX/UI:** o versículo em foco precisa se destacar visualmente (não só
 estar na posição de rolagem) — hoje usa uma borda lateral colorida; vale
 reavaliar se isso é notado rápido o suficiente num primeiro olhar.
 
+### 2.2b Tela dedicada de escolher versículo `⬜`
+**Funcionalidade:** hoje não existe — cogitada durante o planejamento
+original mas nunca construída; o app só chega num versículo específico
+recebendo `?versiculo=N` por link direto. Se fizer sentido ter uma grade
+de versículos navegável (como a de capítulos), é uma tela nova
+(`app/biblia/[livro]/[capitulo]/index.tsx` reorganizando a rota atual,
+por exemplo), não uma extensão da tela de leitura.
+**UX/UI:** mesma grade de números da seleção de capítulo (2.1), com
+indicador de "já grifado" por versículo, já que ali sim faz sentido
+granularidade de versículo.
+
 ### 2.3 Grifar versículo `✅`
 **Funcionalidade:** alterna e persiste por referência exata
-(livro:capítulo:versículo), visível também na tela de escolher
-versículo antes de entrar na leitura.
+(livro:capítulo:versículo), na tela de leitura.
 **UX/UI:** cor de grifo com bom contraste nos dois temas; o botão de
 grifar (ícone de lápis) é pequeno — validar se é fácil de acertar o toque
-num celular de verdade, não só no simulador/navegador.
+num celular de verdade, não só no simulador/navegador. A grade de
+capítulos (2.1) não mostra hoje se um capítulo tem versículos grifados
+dentro dele — só mostra "lido"/"não lido"; ver 2.2b para onde esse
+indicador faria mais sentido.
 
 ### 2.4 Marcar capítulo como lido `✅`
 **Funcionalidade:** separado de propósito de "livro lido" (que é sobre o
-resumo). Progresso visível na grade de capítulos e no card do livro
-("X de Y capítulos lidos").
+resumo). Progresso visível dentro da grade de capítulos daquele livro
+("X de Y lidos" no topo de `app/biblia/[livro]/index.tsx`). A lista de
+livros da leitura bíblica (`app/biblia/index.tsx`) **não** mostra essa
+contagem hoje — só mostra o total de capítulos do livro, sem quantos já
+foram lidos (ver 2.4b).
 **UX/UI:** feedback imediato ao marcar (o botão já muda no mesmo toque,
 sem esperar round-trip perceptível).
+
+### 2.4b Progresso por livro na lista de leitura bíblica `⬜`
+**Funcionalidade:** mostrar "X de Y capítulos lidos" em cada card da
+lista de livros (`app/biblia/index.tsx`), do mesmo jeito que a lista de
+resumos mostra o selo de "livro lido" — hoje essa lista só mostra o
+total de capítulos, sem nenhum sinal de progresso.
+**UX/UI:** mesmo padrão visual do selo de progresso já usado em outras
+listas do app, pra manter consistência.
 
 ### 2.5 Navegar entre capítulos `✅`
 **Funcionalidade:** anterior/próximo, cruzando de um livro pro outro nas

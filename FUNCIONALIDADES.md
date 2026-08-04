@@ -185,13 +185,16 @@ acompanhando o versículo sendo lido em voz alta.
 **UX/UI:** hoje é só texto — considerar uma barra de progresso visual
 (o site antigo tinha isso), mais fácil de captar num relance.
 
-### 3.2 Versículo do dia `⬜`
-**Funcionalidade:** lista curada de versículos conhecidos, escolha
-determinística pelo dia do ano (mesmo versículo pra todo mundo no mesmo
-dia, sem precisar de servidor) — já existia no site antigo, reaproveitar
-a lista e a lógica.
-**UX/UI:** card de destaque na home, com botão pra sortear outro (já
-existia no site antigo).
+### 3.2 Versículo do dia `✅`
+**Funcionalidade:** lista curada de 40 versículos (`core/biblia/versiculoDoDia.ts`),
+escolha determinística pelo dia do ano, busca o texto real via
+`BibliaAPI` (reaproveitando o cache já existente). Se a API estiver fora
+do ar, o card simplesmente não aparece, sem quebrar a home.
+**UX/UI:** card de destaque no topo da home, com botão de dado pra
+sortear outro (nunca repete o mesmo que já estava na tela). Achado
+durante o teste manual: o clique só falhou na primeira tentativa por
+causa de coordenadas desatualizadas da própria ferramenta de teste, não
+do app — confirmado clicando na posição visual real, funciona.
 
 ### 3.3 Conquistas de progresso `⬜`
 **Funcionalidade:** marcos ligados à estrutura do cânon (Pentateuco

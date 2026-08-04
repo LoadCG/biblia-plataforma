@@ -7,6 +7,7 @@ import type { Livro } from "../core/content/tipos";
 import { livrosLidosRepository } from "../core/repositories";
 import { useOwnerId } from "../core/useOwnerId";
 import { BotaoTema } from "../components/BotaoTema";
+import { CardVersiculoDia } from "../components/CardVersiculoDia";
 
 function CardLivro({ livro, lido }: { livro: Livro; lido: boolean }) {
   const cores = coresDoGenero(livro.genero);
@@ -67,6 +68,7 @@ export default function Home() {
             <Text className="text-sm text-cor-texto-suave dark:text-cor-texto-suave-dark mb-3">
               {lidos.length} de {livros.length} livros lidos
             </Text>
+            <CardVersiculoDia />
             <Link
               href="/biblia"
               className="self-start px-4 py-2.5 rounded-full border border-cor-borda dark:border-cor-borda-dark bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark text-cor-texto dark:text-cor-texto-dark font-semibold mb-3"

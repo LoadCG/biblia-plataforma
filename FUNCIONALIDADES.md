@@ -196,13 +196,17 @@ durante o teste manual: o clique só falhou na primeira tentativa por
 causa de coordenadas desatualizadas da própria ferramenta de teste, não
 do app — confirmado clicando na posição visual real, funciona.
 
-### 3.3 Conquistas de progresso `⬜`
-**Funcionalidade:** marcos ligados à estrutura do cânon (Pentateuco
-completo, os 4 Evangelhos, Antigo/Novo Testamento completo, Bíblia
-inteira) — o site antigo já validou essa abordagem em vez de metas de
-contagem arbitrárias.
-**UX/UI:** selos discretos, sem virar competição — reconhecimento
-silencioso, não gamificação barulhenta.
+### 3.3 Conquistas de progresso `✅`
+**Funcionalidade:** 6 marcos ligados à estrutura do cânon
+(`core/content/conquistas.ts`): primeiro livro, Pentateuco completo, os
+4 Evangelhos, Antigo Testamento completo, Novo Testamento completo, os
+66 livros — calculados em cima de `livrosLidosRepository`, sem tabela
+própria de progresso. Testado marcando o Pentateuco como lido: os selos
+"Primeiro livro" e "Pentateuco completo" acendem, os outros 4 continuam
+apagados.
+**UX/UI:** selos discretos (círculos pequenos, opacos quando bloqueados,
+cheios quando conquistados) na home, sem número nem pontuação — só
+reconhecimento silencioso.
 
 ### 3.4 Sequência de dias lendo ("streak") `⬜`
 **Funcionalidade:** calculado a partir do histórico de capítulos/livros

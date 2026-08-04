@@ -28,7 +28,8 @@ v3`) de um jeito que não aparece no `npm install`, só ao rodar/exportar.
 ```
 app/                  Rotas (Expo Router — cada arquivo é uma tela)
   _layout.tsx          Layout raiz, importa global.css
-  index.tsx             Home (placeholder)
+  index.tsx             Home: lista os 66 livros
+  resumos/[livro].tsx   Resumo histórico completo de um livro
 
 core/                 Lógica e dados, sem depender de nenhuma tela
   types/leitura.ts      Tipos dos dados do usuário (Grifo, CapituloLido, Nota)
@@ -37,14 +38,36 @@ core/                 Lógica e dados, sem depender de nenhuma tela
     GrifosRepository.ts        (interface)
     ProgressoRepository.ts     (interface)
     NotasRepository.ts         (interface)
-    local/                     implementações atuais (AsyncStorage)
+    local/                     implementações atuais (AsyncStorage), com fila
+                                por chave (core/repositories/local/fila.ts)
+                                pra evitar condição de corrida
     index.ts                   único ponto que decide qual implementação usar
-  content/                Conteúdo fixo (livros, capítulos) — dados ainda
-                           não portados do projeto atual, ver TODO em
-                           core/content/livros.ts
+  content/                Conteúdo fixo (os 66 livros e resumos)
+    tipos.ts                Tipos (Livro, ResumoCompleto, Secao, FichaItem)
+    livros.ts                API pública: `livros`, `obterLivro`, `obterResumo`
+    dados/livros.json        Gerado — não editar à mão (ver abaixo)
+
+resumos-biblicos/     Os 66 resumos em Markdown (fonte real do conteúdo)
+
+scripts/
+  gerar-conteudo.js    Lê resumos-biblicos/**/*.md e gera
+                        core/content/dados/livros.json
 
 components/            Componentes de UI reutilizáveis (ainda vazio)
 ```
+
+### Atualizando o conteúdo
+
+O conteúdo dos livros mora em `resumos-biblicos/**/*.md`. Depois de editar
+qualquer resumo, rode:
+
+```bash
+npm run gerar-conteudo
+```
+
+Isso regenera `core/content/dados/livros.json`, que é o que o app de
+fato lê (`core/content/livros.ts`). Nunca editar esse `.json` na mão —
+ele é sobrescrito toda vez que o script roda.
 
 ## Por que essa estrutura
 
@@ -69,12 +92,9 @@ Uso: `className="bg-cor-fundo dark:bg-cor-fundo-dark"`.
 
 ## Próximos passos (nesta ordem)
 
-1. Portar os dados dos 66 livros (`core/content/livros.ts`) e os resumos
-   em Markdown, reaproveitando a lógica de parsing de
-   `Resumo-dos-66-Livros-da-Biblia/scripts/gerar-site.js`.
-2. Telas de conteúdo: `app/resumos/[livro].tsx`,
-   `app/biblia/[livro]/[capitulo].tsx`.
+1. ~~Portar os dados dos 66 livros e a tela de resumo.~~ Feito.
+2. Tela de leitura bíblica: `app/biblia/[livro]/[capitulo].tsx`.
 3. Rota de API (`app/api/versiculo/[ref]+api.ts`) como proxy/cache da
    bible-api.com.
-4. Portar as funcionalidades de usuário (grifar, marcar como lido) para
-   as telas, usando os repositórios já prontos em `core/repositories`.
+4. Ligar as telas às funcionalidades de usuário (grifar, marcar como
+   lido) usando os repositórios já prontos em `core/repositories`.

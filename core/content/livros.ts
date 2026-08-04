@@ -1,14 +1,22 @@
-// TODO (próximo passo, fora do escopo da estrutura inicial): portar os
-// dados reais dos 66 livros. A fonte da verdade hoje é o projeto antigo:
-//   - Resumo-dos-66-Livros-da-Biblia/scripts/gerar-site.js
-//     (ALIASES_LIVRO, CAPITULOS_POR_LIVRO, generoDoLivro)
-//   - Resumo-dos-66-Livros-da-Biblia/resumos-biblicos/**/*.md
-//     (os 66 resumos históricos em si)
-//
-// O plano é gerar `livros.json` (dados estruturados) a partir desses
-// arquivos .md num script de build, do mesmo jeito que o projeto atual já
-// faz — só troca "gerar HTML" por "gerar dados tipados" que os
-// componentes desta pasta app/ consomem.
-import type { Livro } from "./tipos";
+import dados from "./dados/livros.json";
+import type { Livro, ResumoCompleto } from "./tipos";
 
-export const livros: Livro[] = [];
+const resumosCompletos = dados as ResumoCompleto[];
+
+// Lista leve (sem o texto dos resumos) para telas de listagem/navegação.
+export const livros: Livro[] = resumosCompletos.map(({ slug, nome, numero, testamento, capitulos, genero }) => ({
+  slug,
+  nome,
+  numero,
+  testamento,
+  capitulos,
+  genero,
+}));
+
+export function obterLivro(slug: string): Livro | undefined {
+  return livros.find((l) => l.slug === slug);
+}
+
+export function obterResumo(slug: string): ResumoCompleto | undefined {
+  return resumosCompletos.find((r) => r.slug === slug);
+}

@@ -149,14 +149,18 @@ próprio, mesmo padrão dos outros (`ownerId` + referência de versículo).
 **UX/UI:** ícone visualmente distinto do grifo (evitar confundir as duas
 ações), tela "Meus favoritos" agrupada por livro.
 
-### 2.8 Notas pessoais por versículo `⬜`
-**Funcionalidade:** o repositório já existe (`NotasRepository`), falta
-ligar a uma tela — campo de texto livre por versículo, editável,
-removível.
-**UX/UI:** indicador visual no versículo que já tem nota (diferente do
-indicador de grifo); editor de texto que não atrapalha a leitura do
-capítulo (modal ou painel deslizante, não um formulário que empurra o
-texto bíblico pra fora da tela).
+### 2.8 Notas pessoais por versículo `✅`
+**Funcionalidade:** campo de texto livre por versículo, editável e
+removível (`components/ModalNota.tsx` + `NotasRepository`, com o método
+`listarPorCapitulo` adicionado pra carregar todas as notas do capítulo
+de uma vez, mesmo padrão de `GrifosRepository`). Testado: criar nota,
+persistência confirmada no armazenamento, reabrir pra editar (mostra o
+texto salvo e o botão "Remover"), remover.
+**UX/UI:** ícone de nota diferente do ícone de grifo, preenchido só
+quando há texto salvo; nota editada em modal (não atrapalha a leitura do
+capítulo em volta); prévia do texto da nota aparece embaixo do
+versículo, então não precisa abrir o modal só pra lembrar o que
+escreveu.
 
 ### 2.9 Trocar tradução do texto bíblico `⬜`
 **Funcionalidade:** bible-api.com tem outras traduções além da Almeida —

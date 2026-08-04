@@ -2,10 +2,11 @@ import { Link, useLocalSearchParams } from "expo-router";
 import { useEffect, useRef, useState } from "react";
 import { ActivityIndicator, Pressable, ScrollView, Text, View } from "react-native";
 import { BotaoTema } from "../../../components/BotaoTema";
-import { apenasCapitulo, buscarReferencia } from "../../../core/biblia/BibliaAPI";
+import { ModalNota } from "../../../components/ModalNota";
+import { buscarReferencia } from "../../../core/biblia/BibliaAPI";
 import type { CapituloTexto } from "../../../core/biblia/tipos";
 import { livros, obterLivro } from "../../../core/content/livros";
-import { grifosRepository, progressoRepository } from "../../../core/repositories";
+import { grifosRepository, notasRepository, progressoRepository } from "../../../core/repositories";
 import { useOwnerId } from "../../../core/useOwnerId";
 
 export default function Leitura() {
@@ -19,6 +20,8 @@ export default function Leitura() {
   const [erro, setErro] = useState(false);
   const [grifos, setGrifos] = useState<Set<number>>(new Set());
   const [capituloLido, setCapituloLido] = useState(false);
+  const [notas, setNotas] = useState<Map<number, string>>(new Map());
+  const [versiculoEditandoNota, setVersiculoEditandoNota] = useState<number | null>(null);
 
   const scrollRef = useRef<ScrollView>(null);
   const posicoes = useRef<Record<number, number>>({});
@@ -41,6 +44,9 @@ export default function Leitura() {
       setGrifos(new Set(itens.map((g) => g.versiculo)));
     });
     progressoRepository.estaLido(ownerId, { livroSlug: livro.slug, capitulo }).then(setCapituloLido);
+    notasRepository.listarPorCapitulo(ownerId, livro.slug, capitulo).then((itens) => {
+      setNotas(new Map(itens.map((n) => [n.versiculo, n.texto])));
+    });
   }, [ownerId, livro, capitulo]);
 
   const jaRolou = useRef(false);
@@ -83,6 +89,34 @@ export default function Leitura() {
     if (!ownerId || !livro) return;
     const ativo = await progressoRepository.alternar(ownerId, { livroSlug: livro.slug, capitulo });
     setCapituloLido(ativo);
+  }
+
+  async function salvarNota(texto: string) {
+    if (!ownerId || !livro || versiculoEditandoNota === null) return;
+    const ref = { livroSlug: livro.slug, capitulo, versiculo: versiculoEditandoNota };
+    if (texto) {
+      await notasRepository.salvar(ownerId, ref, texto);
+      setNotas((atual) => new Map(atual).set(versiculoEditandoNota, texto));
+    } else {
+      await notasRepository.remover(ownerId, ref);
+      setNotas((atual) => {
+        const novo = new Map(atual);
+        novo.delete(versiculoEditandoNota);
+        return novo;
+      });
+    }
+    setVersiculoEditandoNota(null);
+  }
+
+  async function removerNota() {
+    if (!ownerId || !livro || versiculoEditandoNota === null) return;
+    await notasRepository.remover(ownerId, { livroSlug: livro.slug, capitulo, versiculo: versiculoEditandoNota });
+    setNotas((atual) => {
+      const novo = new Map(atual);
+      novo.delete(versiculoEditandoNota);
+      return novo;
+    });
+    setVersiculoEditandoNota(null);
   }
 
   // Capítulo anterior/próximo, cruzando para o livro vizinho nas
@@ -137,6 +171,7 @@ export default function Leitura() {
         ) : dados.versiculos ? (
           dados.versiculos.map((v) => {
             const grifado = grifos.has(v.numero);
+            const temNota = notas.has(v.numero);
             return (
               <View
                 key={v.numero}
@@ -145,14 +180,24 @@ export default function Leitura() {
                   grifado ? "bg-yellow-200 dark:bg-yellow-900" : ""
                 } ${v.numero === versiculoAlvo ? "border-l-4 border-cor-destaque dark:border-cor-destaque-dark" : ""}`}
               >
-                <Pressable onPress={() => alternarGrifo(v.numero)} className="mr-2 mt-0.5">
+                <Pressable onPress={() => alternarGrifo(v.numero)} className="mr-1.5 mt-0.5">
                   <Text className={grifado ? "text-yellow-700 dark:text-yellow-300" : "text-cor-texto-suave dark:text-cor-texto-suave-dark"}>
                     ✎
+                  </Text>
+                </Pressable>
+                <Pressable onPress={() => setVersiculoEditandoNota(v.numero)} className="mr-2 mt-0.5">
+                  <Text className={temNota ? "text-cor-destaque dark:text-cor-destaque-dark" : "text-cor-texto-suave dark:text-cor-texto-suave-dark"}>
+                    {temNota ? "🗒" : "🗒︎"}
                   </Text>
                 </Pressable>
                 <Text className="flex-1 text-cor-texto dark:text-cor-texto-dark leading-6">
                   <Text className="text-xs font-bold text-cor-destaque dark:text-cor-destaque-dark">{v.numero} </Text>
                   {v.texto}
+                  {temNota ? (
+                    <Text className="text-xs text-cor-texto-suave dark:text-cor-texto-suave-dark">
+                      {"\n"}📝 {notas.get(v.numero)}
+                    </Text>
+                  ) : null}
                 </Text>
               </View>
             );
@@ -188,6 +233,18 @@ export default function Leitura() {
           </View>
         </View>
       </View>
+
+      {versiculoEditandoNota !== null ? (
+        <ModalNota
+          key={versiculoEditandoNota}
+          visivel
+          versiculo={versiculoEditandoNota}
+          textoInicial={notas.get(versiculoEditandoNota) ?? ""}
+          onFechar={() => setVersiculoEditandoNota(null)}
+          onSalvar={salvarNota}
+          onRemover={removerNota}
+        />
+      ) : null}
     </ScrollView>
   );
 }

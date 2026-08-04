@@ -29,6 +29,11 @@ export const localNotasRepository: NotasRepository = {
     return todas.find((n) => n.ownerId === ownerId && mesmaReferencia(n, ref)) ?? null;
   },
 
+  async listarPorCapitulo(ownerId, livroSlug, capitulo) {
+    const todas = await lerTudo();
+    return todas.filter((n) => n.ownerId === ownerId && n.livroSlug === livroSlug && n.capitulo === capitulo);
+  },
+
   salvar(ownerId, ref, texto) {
     return comFila(CHAVE, async () => {
       const todas = await lerTudo();

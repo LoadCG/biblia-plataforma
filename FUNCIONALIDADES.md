@@ -208,12 +208,20 @@ apagados.
 cheios quando conquistados) na home, sem número nem pontuação — só
 reconhecimento silencioso.
 
-### 3.4 Sequência de dias lendo ("streak") `⬜`
-**Funcionalidade:** calculado a partir do histórico de capítulos/livros
-marcados como lidos por data.
-**UX/UI:** se implementado, cuidado explícito pra não criar ansiedade de
-"quebrar a sequência" — está alinhado com o tom pastoral do projeto ou
-não? Vale decidir antes de construir, não depois.
+### 3.4 Sequência de dias lendo ("streak") `✅`
+**Funcionalidade:** calculado a partir das datas em que algum capítulo da
+leitura bíblica foi marcado como lido (`core/estatisticas/streak.ts`),
+não do "livro lido" dos resumos. Adicionado `listarTodos` ao
+`ProgressoRepository` (antes só listava por livro) pra dar a base de
+dados de todos os capítulos lidos, de qualquer livro, necessária pro
+cálculo. Testado: 3 dias seguidos mostra a mensagem; um histórico com
+intervalo (sem leitura há 5 dias) não mostra nada, sem aviso de sequência
+quebrada.
+**UX/UI:** decisão de tom tomada — nada de emoji de fogo, número em
+destaque ou aviso de "não quebre". Só aparece a partir de 2 dias
+seguidos (não pressiona ninguém no primeiro dia) e simplesmente some,
+sem alarde, quando a sequência para. Texto simples, mesma cor de
+destaque usada em outros lugares do app, não uma cor de alerta.
 
 ### 3.5 Estatísticas pessoais de leitura `⬜`
 **Funcionalidade:** capítulos lidos, versículos grifados, tempo estimado

@@ -29,6 +29,11 @@ export const localProgressoRepository: ProgressoRepository = {
     return todos.filter((c) => c.ownerId === ownerId && c.livroSlug === livroSlug);
   },
 
+  async listarTodos(ownerId) {
+    const todos = await lerTudo();
+    return todos.filter((c) => c.ownerId === ownerId);
+  },
+
   async estaLido(ownerId, ref) {
     const todos = await lerTudo();
     return todos.some((c) => c.ownerId === ownerId && mesmaReferencia(c, ref));

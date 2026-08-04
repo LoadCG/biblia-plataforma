@@ -5,7 +5,8 @@ import { calcularConquistas } from "../core/content/conquistas";
 import { coresDoGenero } from "../core/content/genero";
 import { livros } from "../core/content/livros";
 import type { Livro } from "../core/content/tipos";
-import { livrosLidosRepository } from "../core/repositories";
+import { calcularSequenciaAtual } from "../core/estatisticas/streak";
+import { livrosLidosRepository, progressoRepository } from "../core/repositories";
 import { useOwnerId } from "../core/useOwnerId";
 import { BotaoTema } from "../components/BotaoTema";
 import { CardVersiculoDia } from "../components/CardVersiculoDia";
@@ -37,10 +38,14 @@ export default function Home() {
   const ownerId = useOwnerId();
   const [termo, setTermo] = useState("");
   const [lidos, setLidos] = useState<string[]>([]);
+  const [sequencia, setSequencia] = useState(0);
 
   useEffect(() => {
     if (!ownerId) return;
     livrosLidosRepository.listar(ownerId).then(setLidos);
+    progressoRepository.listarTodos(ownerId).then((itens) => {
+      setSequencia(calcularSequenciaAtual(itens.map((i) => i.lidoEm)));
+    });
   }, [ownerId]);
 
   const lidosSet = useMemo(() => new Set(lidos), [lidos]);
@@ -68,9 +73,16 @@ export default function Home() {
               </Text>
               <BotaoTema />
             </View>
-            <Text className="text-sm text-cor-texto-suave dark:text-cor-texto-suave-dark mb-3">
+            <Text className="text-sm text-cor-texto-suave dark:text-cor-texto-suave-dark mb-1">
               {lidos.length} de {livros.length} livros lidos
             </Text>
+            {sequencia >= 2 ? (
+              <Text className="text-sm text-cor-destaque dark:text-cor-destaque-dark mb-3">
+                Você já leu em {sequencia} dias seguidos
+              </Text>
+            ) : (
+              <View className="mb-3" />
+            )}
             <FaixaConquistas conquistas={conquistas} />
             <CardVersiculoDia />
             <Link

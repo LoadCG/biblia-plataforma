@@ -3,9 +3,10 @@
 Reescrita da plataforma (site + app) como um código único, usando Expo
 Router (React Native + Web). O plano completo de arquitetura — decisões,
 motivos e o que ficou em aberto de propósito — está em
-[`PLANO-PLATAFORMA.md`](./PLANO-PLATAFORMA.md) no repositório do projeto
-atual (`Resumo-dos-66-Livros-da-Biblia`); copie esse arquivo para cá
-quando for a fonte de verdade única.
+[`PLANO-PLATAFORMA.md`](./PLANO-PLATAFORMA.md), já copiado pra cá; é a
+fonte de verdade única a partir de agora, o projeto antigo
+(`Resumo-dos-66-Livros-da-Biblia`) continua com a cópia original só como
+histórico.
 
 ## Rodando localmente
 
@@ -15,6 +16,12 @@ npm run web      # navegador
 npm run android  # emulador/dispositivo Android
 npm run ios      # simulador iOS (precisa de macOS)
 ```
+
+**Atenção ao atualizar dependências:** `tailwindcss` está fixado em
+`^3.4` (não v4) de propósito — o NativeWind 4.2.6 instalado aqui só
+suporta Tailwind v3. Atualizar `tailwindcss` sem também atualizar o
+NativeWind quebra o build (`Error: NativeWind only supports Tailwind CSS
+v3`) de um jeito que não aparece no `npm install`, só ao rodar/exportar.
 
 ## Estrutura
 

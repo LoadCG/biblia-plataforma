@@ -66,7 +66,8 @@ type Grifo = {
 
 ```ts
 interface GrifosRepository {
-  listar(ownerId: string, livroSlug: string, capitulo: number): Promise<Grifo[]>;
+  listarPorCapitulo(ownerId: string, livroSlug: string, capitulo: number): Promise<Grifo[]>;
+  estaGrifado(ownerId: string, ref: { livroSlug: string; capitulo: number; versiculo: number }): Promise<boolean>;
   alternar(ownerId: string, ref: { livroSlug: string; capitulo: number; versiculo: number }): Promise<boolean>;
 }
 ```

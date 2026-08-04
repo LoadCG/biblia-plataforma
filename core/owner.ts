@@ -9,18 +9,21 @@ import { randomUUID } from "expo-crypto";
 const CHAVE_OWNER_ID = "owner-id-anonimo";
 
 let cache: string | null = null;
+let emAndamento: Promise<string> | null = null;
 
-export async function obterOwnerId(): Promise<string> {
-  if (cache) return cache;
+export function obterOwnerId(): Promise<string> {
+  if (cache) return Promise.resolve(cache);
+  // Deduplica chamadas concorrentes (ex.: duas telas montando ao mesmo
+  // tempo no primeiro load) — sem isso, ambas gerariam UUIDs diferentes
+  // e a segunda escrita apagaria o ID que a primeira já tinha em uso.
+  if (!emAndamento) emAndamento = resolverOwnerId();
+  return emAndamento;
+}
 
+async function resolverOwnerId(): Promise<string> {
   const existente = await AsyncStorage.getItem(CHAVE_OWNER_ID);
-  if (existente) {
-    cache = existente;
-    return existente;
-  }
-
-  const novo = randomUUID();
-  await AsyncStorage.setItem(CHAVE_OWNER_ID, novo);
-  cache = novo;
-  return novo;
+  const id = existente ?? randomUUID();
+  if (!existente) await AsyncStorage.setItem(CHAVE_OWNER_ID, id);
+  cache = id;
+  return id;
 }

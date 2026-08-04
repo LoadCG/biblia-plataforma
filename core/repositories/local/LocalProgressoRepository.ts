@@ -1,6 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import type { ProgressoRepository } from "../ProgressoRepository";
 import type { CapituloLido, ReferenciaCapitulo } from "../../types/leitura";
+import { comFila } from "./fila";
 
 const CHAVE = "capitulos-lidos";
 
@@ -10,7 +11,12 @@ function mesmaReferencia(a: ReferenciaCapitulo, b: ReferenciaCapitulo) {
 
 async function lerTudo(): Promise<CapituloLido[]> {
   const bruto = await AsyncStorage.getItem(CHAVE);
-  return bruto ? (JSON.parse(bruto) as CapituloLido[]) : [];
+  if (!bruto) return [];
+  try {
+    return JSON.parse(bruto) as CapituloLido[];
+  } catch {
+    return [];
+  }
 }
 
 async function salvarTudo(itens: CapituloLido[]): Promise<void> {
@@ -28,18 +34,20 @@ export const localProgressoRepository: ProgressoRepository = {
     return todos.some((c) => c.ownerId === ownerId && mesmaReferencia(c, ref));
   },
 
-  async alternar(ownerId, ref) {
-    const todos = await lerTudo();
-    const indice = todos.findIndex((c) => c.ownerId === ownerId && mesmaReferencia(c, ref));
+  alternar(ownerId, ref) {
+    return comFila(CHAVE, async () => {
+      const todos = await lerTudo();
+      const indice = todos.findIndex((c) => c.ownerId === ownerId && mesmaReferencia(c, ref));
 
-    if (indice !== -1) {
-      todos.splice(indice, 1);
+      if (indice !== -1) {
+        todos.splice(indice, 1);
+        await salvarTudo(todos);
+        return false;
+      }
+
+      todos.push({ ...ref, ownerId, lidoEm: new Date().toISOString() });
       await salvarTudo(todos);
-      return false;
-    }
-
-    todos.push({ ...ref, ownerId, lidoEm: new Date().toISOString() });
-    await salvarTudo(todos);
-    return true;
+      return true;
+    });
   },
 };

@@ -179,8 +179,107 @@ entendimento registrado caso o projeto cresça e outras pessoas passem a
 contribuir com conteúdo (definir, se isso acontecer, como a autoria e a
 licença desse conteúdo funcionam).
 
+## Decisões tomadas durante a implementação
+
+As decisões abaixo não estavam fechadas no plano original — foram
+resolvidas na prática, ao construir cada parte, e ficam registradas aqui
+pelo mesmo motivo das outras: para não precisar redescobrir o raciocínio
+depois.
+
+### Decisão 7 — Concorrência de escrita no armazenamento local
+
+Toda escrita nos repositórios locais (grifar, marcar como lido, salvar
+nota) segue o padrão ler-tudo → alterar em memória → salvar-tudo. Sem
+proteção, duas chamadas concorrentes (ex.: usuário tocando rápido em dois
+versículos) podem ler o mesmo estado antes de qualquer uma escrever, e a
+segunda escrita apaga a primeira. Resolvido com uma fila por chave de
+armazenamento (`core/repositories/local/fila.ts`, função `comFila`), que
+serializa as operações na mesma chave. O mesmo problema existia na
+geração do `ownerId` anônimo (duas telas montando ao mesmo tempo geravam
+dois UUIDs) — resolvido com deduplicação de chamada em andamento em
+`core/owner.ts`.
+
+Lição: qualquer repositório novo que leia-altere-salve precisa passar
+pela fila. Esquecer isso é o tipo de bug que só aparece sob uso real
+(cliques rápidos), não em teste manual cuidadoso.
+
+### Decisão 8 — Tema claro/escuro
+
+Implementado com a API nativa do NativeWind (`colorScheme` de
+`"nativewind"`, que aplica/remove a classe `dark` na raiz do documento),
+com persistência própria por cima (`core/theme.ts`, guardada no
+AsyncStorage) — sem isso a escolha se perderia a cada abertura do app.
+`tailwind.config.js` usa `darkMode: "class"` e cada cor tem um par
+`cor-x` / `cor-x-dark` explícito (não uma variável CSS trocada em tempo
+de execução), portado 1:1 dos valores que já existiam no site antigo.
+
+### Decisão 9 — Pipeline de conteúdo (Markdown → dados tipados)
+
+`scripts/gerar-conteudo.js` (Node puro, sem dependência) lê
+`resumos-biblicos/**/*.md`, faz o parsing (mesma lógica de
+`Resumo-dos-66-Livros-da-Biblia/scripts/gerar-site.js`, adaptada pra
+gerar dados em vez de HTML) e escreve `core/content/dados/livros.json`.
+`core/content/livros.ts` importa esse `.json` (o TypeScript já suporta
+`resolveJsonModule` por padrão no template do Expo) e expõe uma API
+tipada (`livros`, `obterLivro`, `obterResumo`). Regra fixa: o `.json`
+nunca é editado à mão, é sempre gerado — quem edita conteúdo edita o
+Markdown e roda `npm run gerar-conteudo`.
+
+### Decisão 10 — Cores por gênero literário exigem um mapa estático
+
+O NativeWind (como o Tailwind) só inclui no CSS final as classes que
+consegue enxergar como texto literal no código-fonte — uma classe
+interpolada dinamicamente (`` `bg-genero-${slug}` ``) não é detectada e
+simplesmente não funciona (não dá erro, só não aplica estilo nenhum).
+Por isso `core/content/genero.ts` é um objeto de mapeamento
+string-fixa → string-fixa (`Histórico` → `"bg-genero-historico-bg"`),
+não uma função que monta a classe dinamicamente. Qualquer cor nova
+condicional por dado (não por variante `dark:`, que o NativeWind entende
+nativamente) precisa seguir esse mesmo padrão.
+
+### Decisão 11 — Leitura bíblica: busca, cache e rolagem até o versículo
+
+`core/biblia/BibliaAPI.ts` busca o texto na bible-api.com (tradução
+Almeida) e cacheia localmente por referência (capado em 200 entradas,
+mesma lógica do site antigo) — ainda fala direto com a API pelo cliente;
+o proxy de servidor (Decisão 4) continua planejado, não é bloqueante
+enquanto o uso for baixo.
+
+Bug real encontrado e corrigido durante o teste manual: a rolagem
+automática até o versículo pedido (`?versiculo=N`) não funcionava,
+porque o efeito que disparava o scroll rodava antes da posição do
+versículo ser medida na tela (a medição de layout do React Native é
+assíncrona, via `onLayout`). Corrigido disparando a rolagem de dentro do
+próprio callback de `onLayout`, não de um `useEffect` separado — garante
+que a posição já existe no momento em que a rolagem é solicitada.
+
+### Decisão 12 — Deploy: Vercel com exportação estática (SPA)
+
+`npx expo export --platform web` gera um único `index.html` (não uma
+página por rota, diferente do site antigo) — Vercel configurada via
+`vercel.json` com rewrite de qualquer caminho para `index.html`, senão
+acessar `/resumos/19-salmos` direto (ou dar F5) resultaria em 404.
+
+**Lacuna conhecida e aceita por enquanto:** como não há HTML por rota,
+não há conteúdo pré-renderizado por livro — pior para SEO que o site
+antigo (que gerava uma página estática de verdade por livro). O Expo
+Router tem suporte a pré-renderização estática por rota, mas precisa ser
+configurado explicitamente; fica como item pendente para quando o SEO da
+parte de resumos importar de verdade (ver checklist de funcionalidades).
+
+### Decisão 13 — Repositório GitHub
+
+Repositório próprio (`LoadCG/biblia-plataforma`), privado, autoria de
+todos os commits como `LoadCG <cauangabrielresende@gmail.com>` (autor e
+committer), sem nenhum outro colaborador. Arquivos de configuração de
+ferramenta que vieram do template do Expo (`.claude/`, `CLAUDE.md`) foram
+removidos antes do primeiro push.
+
 ## Em aberto (decidir durante a implementação, não antes)
 
 Banco de dados (Supabase vs. Firebase — só quando virar necessidade
 real), nome definitivo e domínio, publicação em lojas de app vs. PWA
-instalável no início, momento de introduzir login.
+instalável no início, momento de introduzir login, pré-renderização
+estática por rota (Decisão 12) quando o SEO da parte de resumos
+importar, proxy de servidor para o texto bíblico (Decisão 4/11) quando o
+uso justificar.

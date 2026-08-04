@@ -6,7 +6,9 @@ motivos e o que ficou em aberto de propósito — está em
 [`PLANO-PLATAFORMA.md`](./PLANO-PLATAFORMA.md), já copiado pra cá; é a
 fonte de verdade única a partir de agora, o projeto antigo
 (`Resumo-dos-66-Livros-da-Biblia`) continua com a cópia original só como
-histórico.
+histórico. O checklist completo de funcionalidades e melhorias — o que já
+existe e o que falta, com funcionalidade e UX/UI documentados separado
+pra cada item — está em [`FUNCIONALIDADES.md`](./FUNCIONALIDADES.md).
 
 ## Rodando localmente
 

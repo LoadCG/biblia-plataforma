@@ -1,46 +1,32 @@
 import { Link } from "expo-router";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { FlatList, Pressable, Text, TextInput, View } from "react-native";
-import { coresDoGenero } from "../core/content/genero";
-import { livros } from "../core/content/livros";
-import type { Livro } from "../core/content/tipos";
-import { livrosLidosRepository } from "../core/repositories";
-import { useOwnerId } from "../core/useOwnerId";
-import { BotaoTema } from "../components/BotaoTema";
+import { BotaoTema } from "../../components/BotaoTema";
+import { coresDoGenero } from "../../core/content/genero";
+import { livros } from "../../core/content/livros";
+import type { Livro } from "../../core/content/tipos";
 
-function CardLivro({ livro, lido }: { livro: Livro; lido: boolean }) {
+function CardLivro({ livro }: { livro: Livro }) {
   const cores = coresDoGenero(livro.genero);
   return (
-    <Link href={`/resumos/${livro.slug}`} asChild>
-      <Pressable
-        className={`flex-row items-center gap-3 px-4 py-3 border rounded-xl bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark mb-2 ${
-          lido ? "border-green-600" : "border-cor-borda dark:border-cor-borda-dark"
-        }`}
-      >
+    <Link href={`/biblia/${livro.slug}`} asChild>
+      <Pressable className="flex-row items-center gap-3 px-4 py-3 border border-cor-borda dark:border-cor-borda-dark rounded-xl bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark mb-2">
         <View className={`w-8 h-8 rounded-full items-center justify-center ${cores.bg}`}>
           <Text className={`text-xs font-bold ${cores.texto}`}>{livro.numero}</Text>
         </View>
         <View className="flex-1">
           <Text className="text-cor-texto dark:text-cor-texto-dark font-semibold">{livro.nome}</Text>
-          <Text className="text-xs text-cor-texto-suave dark:text-cor-texto-suave-dark">{livro.genero}</Text>
+          <Text className="text-xs text-cor-texto-suave dark:text-cor-texto-suave-dark">
+            {livro.capitulos} {livro.capitulos > 1 ? "capítulos" : "capítulo"}
+          </Text>
         </View>
-        {lido ? <Text className="text-green-600 font-bold">✓</Text> : null}
       </Pressable>
     </Link>
   );
 }
 
-export default function Home() {
-  const ownerId = useOwnerId();
+export default function EscolherLivro() {
   const [termo, setTermo] = useState("");
-  const [lidos, setLidos] = useState<string[]>([]);
-
-  useEffect(() => {
-    if (!ownerId) return;
-    livrosLidosRepository.listar(ownerId).then(setLidos);
-  }, [ownerId]);
-
-  const lidosSet = useMemo(() => new Set(lidos), [lidos]);
 
   const listaFiltrada = useMemo(() => {
     const termoNormalizado = termo.trim().toLowerCase();
@@ -53,26 +39,23 @@ export default function Home() {
       <FlatList
         data={listaFiltrada}
         keyExtractor={(item) => item.slug}
-        renderItem={({ item }) => <CardLivro livro={item} lido={lidosSet.has(item.slug)} />}
+        renderItem={({ item }) => <CardLivro livro={item} />}
         contentContainerClassName="px-4 pt-6 pb-10 max-w-2xl w-full mx-auto"
         keyboardShouldPersistTaps="handled"
         ListHeaderComponent={
           <View className="mb-4">
             <View className="flex-row items-start justify-between mb-2">
-              <Text className="text-2xl font-bold text-cor-texto dark:text-cor-texto-dark flex-1 mr-3">
-                Resumo dos 66 Livros da Bíblia
-              </Text>
+              <View className="flex-1 mr-3">
+                <Link href="/" className="text-cor-destaque dark:text-cor-destaque-dark text-sm mb-1">
+                  ← Todos os livros
+                </Link>
+                <Text className="text-2xl font-bold text-cor-texto dark:text-cor-texto-dark">Ler a Bíblia</Text>
+              </View>
               <BotaoTema />
             </View>
             <Text className="text-sm text-cor-texto-suave dark:text-cor-texto-suave-dark mb-3">
-              {lidos.length} de {livros.length} livros lidos
+              Escolha um livro para começar.
             </Text>
-            <Link
-              href="/biblia"
-              className="self-start px-4 py-2.5 rounded-full border border-cor-borda dark:border-cor-borda-dark bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark text-cor-texto dark:text-cor-texto-dark font-semibold mb-3"
-            >
-              📖 Ler a Bíblia
-            </Link>
             <TextInput
               value={termo}
               onChangeText={setTermo}

@@ -105,15 +105,27 @@ NativeWind (`colorScheme` de `nativewind`) com persistência própria em
 - Navegação anterior/próximo entre livros
 - Contador "X de 66 livros lidos" na home
 
+## Leitura bíblica (concluída)
+
+Fluxo `/biblia` → `/biblia/[livro]` → `/biblia/[livro]/[capitulo]`
+(opcionalmente `?versiculo=N` pra abrir já com foco/rolagem nesse
+versículo). Texto real buscado na bible-api.com
+(`core/biblia/BibliaAPI.ts`, com cache local), grifar versículo e marcar
+capítulo como lido usando os repositórios já existentes, navegação
+anterior/próximo entre capítulos cruzando de um livro pro outro nas
+fronteiras.
+
 ## Próximos passos (nesta ordem)
 
 1. ~~Portar os dados dos 66 livros e a tela de resumo, com tema, busca,
    marcar como lido e navegação entre livros.~~ Feito.
-2. Tela de leitura bíblica: `app/biblia/[livro]/[capitulo].tsx`.
-3. Rota de API (`app/api/versiculo/[ref]+api.ts`) como proxy/cache da
-   bible-api.com.
-4. Ligar as telas de leitura às funcionalidades de usuário (grifar,
-   marcar capítulo como lido) usando os repositórios já prontos em
-   `core/repositories`.
-5. Polimento adiado de propósito (não bloqueia a leitura bíblica):
-   tamanho de fonte ajustável e fonte serifada na leitura, modo foco.
+2. ~~Tela de leitura bíblica, grifar, marcar capítulo como lido.~~ Feito.
+3. Rota de API (`app/api/versiculo/[ref]+api.ts`) como proxy/cache no
+   servidor da bible-api.com — hoje `core/biblia/BibliaAPI.ts` ainda fala
+   direto com ela pelo cliente (cache local já reduz bastante o número de
+   chamadas repetidas, mas o proxy é o que reduz risco de rate limit de
+   verdade).
+4. Polimento adiado de propósito (não bloqueia nada do que já existe):
+   tamanho de fonte ajustável e fonte serifada na leitura, modo foco,
+   busca por palavra-chave no texto bíblico, notas pessoais por
+   versículo.

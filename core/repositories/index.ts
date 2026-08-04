@@ -6,9 +6,11 @@
 import { localGrifosRepository } from "./local/LocalGrifosRepository";
 import { localProgressoRepository } from "./local/LocalProgressoRepository";
 import { localNotasRepository } from "./local/LocalNotasRepository";
+import { localLivrosLidosRepository } from "./local/LocalLivrosLidosRepository";
 
 export const grifosRepository = localGrifosRepository;
 export const progressoRepository = localProgressoRepository;
 export const notasRepository = localNotasRepository;
+export const livrosLidosRepository = localLivrosLidosRepository;
 
 export { obterOwnerId } from "../owner";

@@ -90,11 +90,30 @@ portadas 1:1 das variáveis CSS do site atual
 (`docs/assets/style.css`, blocos `:root` e `:root[data-tema="escuro"]`).
 Uso: `className="bg-cor-fundo dark:bg-cor-fundo-dark"`.
 
+O alternador de tema (`components/BotaoTema.tsx`) usa a API nativa do
+NativeWind (`colorScheme` de `nativewind`) com persistência própria em
+`core/theme.ts` — sem isso a escolha se perderia a cada abertura do app.
+
+## Funcionalidades da parte de resumos (concluída)
+
+- Lista dos 66 livros na home, com busca por nome e selo de gênero
+  literário colorido
+- Resumo histórico completo (ficha rápida + 6 seções) por livro
+- Tema claro/escuro, persistido por dispositivo
+- Marcar livro como lido (`core/repositories/LivrosLidosRepository.ts`),
+  refletido tanto na tela do livro quanto na lista da home
+- Navegação anterior/próximo entre livros
+- Contador "X de 66 livros lidos" na home
+
 ## Próximos passos (nesta ordem)
 
-1. ~~Portar os dados dos 66 livros e a tela de resumo.~~ Feito.
+1. ~~Portar os dados dos 66 livros e a tela de resumo, com tema, busca,
+   marcar como lido e navegação entre livros.~~ Feito.
 2. Tela de leitura bíblica: `app/biblia/[livro]/[capitulo].tsx`.
 3. Rota de API (`app/api/versiculo/[ref]+api.ts`) como proxy/cache da
    bible-api.com.
-4. Ligar as telas às funcionalidades de usuário (grifar, marcar como
-   lido) usando os repositórios já prontos em `core/repositories`.
+4. Ligar as telas de leitura às funcionalidades de usuário (grifar,
+   marcar capítulo como lido) usando os repositórios já prontos em
+   `core/repositories`.
+5. Polimento adiado de propósito (não bloqueia a leitura bíblica):
+   tamanho de fonte ajustável e fonte serifada na leitura, modo foco.

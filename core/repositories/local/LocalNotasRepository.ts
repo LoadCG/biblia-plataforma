@@ -34,6 +34,11 @@ export const localNotasRepository: NotasRepository = {
     return todas.filter((n) => n.ownerId === ownerId && n.livroSlug === livroSlug && n.capitulo === capitulo);
   },
 
+  async listarTodas(ownerId) {
+    const todas = await lerTudo();
+    return todas.filter((n) => n.ownerId === ownerId);
+  },
+
   salvar(ownerId, ref, texto) {
     return comFila(CHAVE, async () => {
       const todas = await lerTudo();

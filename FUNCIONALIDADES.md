@@ -223,11 +223,18 @@ seguidos (não pressiona ninguém no primeiro dia) e simplesmente some,
 sem alarde, quando a sequência para. Texto simples, mesma cor de
 destaque usada em outros lugares do app, não uma cor de alerta.
 
-### 3.5 Estatísticas pessoais de leitura `⬜`
-**Funcionalidade:** capítulos lidos, versículos grifados, tempo estimado
-acumulado.
-**UX/UI:** tela própria ("Minhas estatísticas"), não poluir a home com
-números demais.
+### 3.5 Estatísticas pessoais de leitura `✅`
+**Funcionalidade:** tela própria (`app/estatisticas.tsx`) com livros
+lidos, capítulos lidos, versículos grifados, notas escritas, sequência
+atual (só se ≥ 2) e tempo estimado de leitura (estimativa por contagem
+de capítulos, ~3,5 min cada, não cronometrado — deixado explícito na
+tela). Precisou adicionar `listarTodos`/`listarTodas` a
+`GrifosRepository` e `NotasRepository` (antes só listavam por capítulo),
+mesmo padrão já usado em `ProgressoRepository`. Testado com dados
+variados nas quatro fontes — todos os números bateram.
+**UX/UI:** link discreto "Minhas estatísticas" na home (não polui a tela
+principal com números), cartões simples numa grade, sem gráfico nem
+comparação com outras pessoas.
 
 ---
 

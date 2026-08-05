@@ -6,6 +6,7 @@ import type { Grifo, ReferenciaVersiculo } from "../types/leitura";
 // banco de dados depois).
 export interface GrifosRepository {
   listarPorCapitulo(ownerId: string, livroSlug: string, capitulo: number): Promise<Grifo[]>;
+  listarTodos(ownerId: string): Promise<Grifo[]>;
   estaGrifado(ownerId: string, ref: ReferenciaVersiculo): Promise<boolean>;
   alternar(ownerId: string, ref: ReferenciaVersiculo): Promise<boolean>;
 }

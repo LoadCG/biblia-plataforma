@@ -73,9 +73,14 @@ export default function Home() {
               </Text>
               <BotaoTema />
             </View>
-            <Text className="text-sm text-cor-texto-suave dark:text-cor-texto-suave-dark mb-1">
-              {lidos.length} de {livros.length} livros lidos
-            </Text>
+            <View className="flex-row items-center justify-between mb-1">
+              <Text className="text-sm text-cor-texto-suave dark:text-cor-texto-suave-dark">
+                {lidos.length} de {livros.length} livros lidos
+              </Text>
+              <Link href="/estatisticas" className="text-xs text-cor-destaque dark:text-cor-destaque-dark">
+                Minhas estatísticas
+              </Link>
+            </View>
             {sequencia >= 2 ? (
               <Text className="text-sm text-cor-destaque dark:text-cor-destaque-dark mb-3">
                 Você já leu em {sequencia} dias seguidos

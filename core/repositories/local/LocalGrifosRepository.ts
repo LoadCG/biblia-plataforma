@@ -29,6 +29,11 @@ export const localGrifosRepository: GrifosRepository = {
     return todos.filter((g) => g.ownerId === ownerId && g.livroSlug === livroSlug && g.capitulo === capitulo);
   },
 
+  async listarTodos(ownerId) {
+    const todos = await lerTudo();
+    return todos.filter((g) => g.ownerId === ownerId);
+  },
+
   async estaGrifado(ownerId, ref) {
     const todos = await lerTudo();
     return todos.some((g) => g.ownerId === ownerId && mesmaReferencia(g, ref));

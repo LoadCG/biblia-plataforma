@@ -458,61 +458,116 @@ visões alternativas quando relevante).
 ## 9. Navegação e organização do app
 
 Planejado em detalhe em [PLANO-NAVEGACAO.md](PLANO-NAVEGACAO.md) — só
-planejamento por enquanto, nada implementado ainda.
+planejamento por enquanto, nada implementado ainda. Estrutura definida
+(v2, substitui uma primeira versão mais genérica do plano): 4 abas —
+**Início, Bíblia, Pesquisa, Você** — inspiradas na estrutura do app de
+Bíblia mais baixado da Play Store. Configurações não é aba própria, é
+uma tela alcançada por um card no fim de "Você".
 
-### 9.1 Barra de navegação por abas (4 telas do MVP) `⬜`
-**Funcionalidade:** Início, Leitura Bíblica, Grifos e Notas,
-Configurações como as 4 seções de primeiro nível do app, via route
-group `app/(tabs)/` do Expo Router. URLs de telas de detalhe (resumo de
-um livro, leitura de um capítulo) não mudam.
-**UX/UI:** barra de abas fixa embaixo no mobile; barra lateral no
-desktop/web largo — mesmo conjunto de rotas, dois layouts.
+### 9.1 Casca de navegação: 4 abas + passe visual Material `⬜`
+**Funcionalidade:** Início, Bíblia, Pesquisa, Você via route group
+`app/(tabs)/` do Expo Router, com o conteúdo que já existe hoje (sem
+funcionalidade nova ainda). URLs de telas de detalhe não mudam.
+**UX/UI:** bordas arredondadas consistentes (`rounded-2xl` em cards),
+sombra sutil em vez de só borda, ícones `@expo/vector-icons`
+(já incluso no Expo, sem instalar nada novo) no lugar de emoji-ícone
+solto — ver diretrizes de design completas no plano.
 
-### 9.2 Tela "Grifos e Notas" `⬜`
-**Funcionalidade:** lista agrupada por livro de tudo que já foi grifado
-e anotado, cruzando os 66 livros (dados já existem via
-`grifosRepository.listarTodos`/`notasRepository.listarTodas`, criados
-pra Estatísticas). Filtro Todos/Grifos/Notas, busca por texto nas
-notas, tocar num item leva direto pro versículo.
-**UX/UI:** estado vazio orienta o que fazer (não só "nada aqui");
-agrupamento por livro evita lista longa sem estrutura.
+### 9.2 Início redesenhado `⬜`
+**Funcionalidade:** card "Estude por resumos" (66 Livros bíblicos, leva
+pra tela de resumos — a lista de livros sai da home e migra pra trás
+desse card); card de sequência (streak) com SVG de fogo animado
+(cinza/parado em 0, colorido/animado acima de 0, mensagem motivacional);
+card de conquistas expansível, cada uma com nome, descrição e barra de
+progresso (exige estender `Conquista` com `descricao`/`progressoAtual`/
+`progressoTotal`, hoje só tem `conquistada` booleano).
+**UX/UI:** botão "Envie-me diariamente" no card do versículo do dia
+aparece como aviso "em breve" nesta fase — a ação real (notificação
+diária) fica em backlog explícito, depende de conta + backend com
+agendamento (ver seção de Notificações do plano).
 
-### 9.3 Tela "Configurações" `⬜`
+### 9.3 Bíblia: última leitura + navegação fixa `⬜`
+**Funcionalidade:** abre direto no último capítulo lido (dado novo,
+`core/leitura/ultimaLeitura.ts`, não existe hoje); barra fixa no rodapé
+`← Nome do Livro →` substitui os cards "Anterior/Próximo" do fim da
+página atual — tocar no nome do livro abre o fluxo de
+escolher-livro→capítulo→versículo por cima da leitura.
+**UX/UI:** barra sempre visível, sem precisar rolar até o fim pra
+trocar de capítulo.
+
+### 9.4 Pesquisa: temas pré-definidos `⬜`
+**Funcionalidade:** barra de busca em destaque + cards coloridos por
+tema (Amor, Cura, Ansiedade, Raiva, Alegria...), cada um dispara uma
+busca pré-definida (`core/biblia/temasBusca.ts`, novo — lista curada de
+referências por tema, no espírito de `versiculoDoDia.ts`, combinada com
+`core/content/busca.ts` já existente).
+**UX/UI:** cards com cor própria por tema, resultado mostra sugestões
+de versículos que citam o termo.
+
+### 9.5 Pesquisa: busca por palavra na Bíblia inteira `⬜`
+**Funcionalidade:** a peça mais pesada do plano — exige um índice de
+texto completo gerado por script (buscar os 1.189 capítulos via
+bible-api.com uma vez, montar índice invertido, versionar como JSON),
+porque a API não oferece busca por palavra. Tratado como sub-entrega
+própria com planejamento técnico dedicado quando for a vez — ver seção
+3a do PLANO-NAVEGACAO.md pros detalhes de tamanho/rate-limit.
+**UX/UI:** resultado mostra o versículo de verdade, não só a
+referência, igual ao padrão já usado no popover de referências (1.9).
+
+### 9.6 Você: perfil, Salvo e Atividade `⬜`
+**Funcionalidade:** cabeçalho de perfil (estado "Visitante" até existir
+login); card "Salvo" com prévia dos grifos/notas recentes (data
+relativa curta — novo helper `core/util/tempoRelativo.ts` — e menu de
+3 pontinhos com Ler/Compartilhar/Resumo do livro/Copiar/Editar/Excluir,
+funcionando também com botão direito no web); tela "Salvo" completa com
+filtro Anotações/Grifados/**Pesquisas favoritas** (repositório novo,
+`PesquisasFavoritasRepository`); "Perseverança" (mesmo streak da
+Início, layout compacto); "Compartilhamentos" (contador novo,
+`core/estatisticas/compartilhamentos.ts`, nasce junto com a
+funcionalidade de compartilhar de verdade — seção 5); conquistas
+(mesmo dado de 9.2, layout diferente); "Atividade" com as 5 ações mais
+recentes + botão "ver mais" pra tela de Salvo; card de Configurações no
+fim.
+**UX/UI:** menu de 3 pontinhos reaproveitado em Salvo e Atividade (uma
+implementação só); estado vazio orienta o que fazer.
+
+### 9.7 Tela "Configurações" `⬜`
 **Funcionalidade:** tamanho de fonte, fonte serifada (já existem como
 estado persistido em `core/leitura/preferenciaFonte.ts` — a tela lê/
 escreve o mesmo módulo, não duplica lógica) e tema, centralizados numa
 tela só, além dos controles rápidos que já existem inline nas telas de
-leitura.
+leitura. Alcançada por um card no fim da aba Você, não é aba própria.
 **UX/UI:** agrupado em seções com título (Leitura, Aparência, Dados),
 não uma lista solta de toggles; espaço já previsto pras preferências
 futuras abaixo.
 
-### 9.4 Grifar em várias cores `⬜`
+### 9.8 Grifar em várias cores `⬜`
 **Funcionalidade:** hoje `Grifo` é binário — vira um campo `cor` no
 tipo (com default pra não quebrar grifos já salvos), paleta pequena e
 fixa (4-6 cores com significado, não um color picker livre), seletor no
 lugar do botão único "✎ Grifar" na barra de seleção do versículo (ver
-2.3). Complementa 9.2 (a tela de Grifos e Notas ganharia filtro por
-cor) e 9.3 (legenda da paleta em Configurações).
+2.3). Complementa 9.6 (filtro por cor em Salvo) e 9.7 (legenda da
+paleta em Configurações).
 **UX/UI:** cores com significado claro e documentado (ex. amarelo =
 importante, verde = promessa, azul = estudo), não só decorativas.
 
-### 9.5 Modo escuro mais contrastado `⬜`
+### 9.9 Modo escuro mais contrastado `⬜`
 **Funcionalidade:** segunda variante de tema escuro (preto mais puro,
 texto com contraste mais alto que o `cor-fundo-dark` atual, pensado pra
-baixa visão/uso em sol forte), selecionável em Configurações (9.3) —
+baixa visão/uso em sol forte), selecionável em Configurações (9.7) —
 não substitui o escuro atual, some como opção adicional.
 **UX/UI:** troca de tema continua um toggle simples, só com uma terceira
 opção em vez de duas.
 
-### 9.6 Melhorias no sistema de conquistas e badges `⬜`
-**Funcionalidade:** mais marcos intermediários além dos 6 atuais
-(`core/content/conquistas.ts`), que hoje pulam direto pra "todo o
-AT"/"toda a Bíblia" (demoram demais pra desbloquear); indicador de
-progresso dentro de cada badge, não só bloqueada/desbloqueada.
-**UX/UI:** conquistas continuam na aba Início (são celebração de
-progresso, não uma preferência), com mais frequência de "vitórias"
-pequenas ao longo da leitura.
+### 9.10 Notificação diária do versículo do dia `⬜`
+**Funcionalidade:** backlog explícito, mencionado pelo usuário mas
+deliberadamente adiado. Precisa de: Web Push + Service Worker (site) ou
+`expo-notifications` (app), nos dois casos com um agendador do lado do
+servidor — depende de conta de usuário + backend, ainda "em aberto" no
+PLANO-PLATAFORMA.md.
+**UX/UI:** botão "Envie-me diariamente" já aparece na Início (9.2) como
+aviso de "em breve", pra comunicar que a intenção existe sem prometer o
+que ainda não funciona.
 
 ---
 

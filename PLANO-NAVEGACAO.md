@@ -304,6 +304,159 @@ futuras — cores de grifo, contraste do modo escuro).
 
 ---
 
+## Revisão estratégica: pontos de UX avançada e riscos técnicos
+
+Passagem crítica sobre o plano acima, antes de começar a implementar —
+o que um app "profissional" de verdade precisa acertar e que ainda não
+estava explícito nas seções anteriores.
+
+### 1. Comportamento de navegação (pilha, modais, botão voltar)
+
+O plano usa "abre por cima" em dois lugares (livro→capítulo→versículo
+a partir da Bíblia, e Salvo/Configurações a partir de Você) sem
+especificar **como**. Isso importa porque muda o comportamento do
+botão voltar (físico no Android, gesto no iOS, botão do navegador no
+web) — três casos distintos:
+- **Push normal** (`router.push`): entra na pilha, voltar volta pra
+  tela anterior, empilha infinitamente se a pessoa for e voltar várias
+  vezes.
+- **Modal** (`presentation: "modal"` no Expo Router): desliza de baixo
+  pra cima, tem affordance visual de "isto é temporário", geralmente
+  com um jeito óbvio de fechar (X ou puxar pra baixo).
+- **Replace** (`router.replace`): não empilha, útil quando trocar de
+  capítulo não deveria acumular histórico.
+
+**Decisão a registrar antes de implementar:** o seletor de
+livro→capítulo→versículo (Bíblia) deveria ser **modal** — é uma
+ferramenta de navegação temporária, não uma tela de conteúdo, e um
+usuário trocando de capítulo 5 vezes seguidas não deveria conseguir
+apertar voltar 5 vezes pra sair. A tela de leitura de capítulo em si
+(trocar de capítulo pelas setas `←/→`) deveria ser **replace**, pelo
+mesmo motivo (ler 20 capítulos seguidos não pode virar uma pilha de 20
+telas). Configurações e Salvo, alcançadas a partir de "Você", são
+**push normal** (são destinos, não ferramentas temporárias).
+
+### 2. Estados vazios, de carregamento e de erro — sistematicamente, não caso a caso
+
+O plano menciona estado vazio pontualmente (Salvo, Atividade). Isso
+precisa virar um **padrão único reaproveitado**, não um texto
+diferente inventado em cada tela nova:
+- Um componente `EstadoVazio` (título curto + descrição de uma linha +
+  ação sugerida, ex. "Nada grifado ainda" → "Toque em ✎ durante a
+  leitura"), usado em Salvo, Atividade, resultado de Pesquisa sem
+  match, e no futuro Pesquisas Favoritas.
+- Loading: hoje cada tela nova (`estatisticas.tsx`, `[capitulo].tsx`)
+  trata o "ainda carregando" com um `ActivityIndicator` solto ou
+  `null`. Com 4 abas carregando dado assíncrono (streak, conquistas,
+  salvos, última leitura) ao mesmo tempo na Início, um `ActivityIndicator`
+  por card é melhor que a tela inteira "pipocar" conforme cada
+  `useEffect` resolve — usar **skeleton simples** (retângulo com
+  opacidade pulsante do tamanho do card final) evita o layout pulando
+  de tamanho quando o dado chega.
+- Erro: a leitura de capítulo já trata falha da bible-api.com com
+  mensagem amigável (padrão bom, replicar). Isso precisa se estender
+  pro índice de busca (3a) e pras novas chamadas de rede — nenhuma
+  tela nova deveria quebrar a UI inteira por uma falha de rede pontual.
+
+### 3. Migração de dados já salvos no dispositivo (schema evolution)
+
+Duas mudanças de schema estão implícitas no plano e **quebram dados já
+salvos** se não forem tratadas com cuidado:
+- `Grifo` ganha campo `cor` (9.8) — grifos já salvos no
+  `AsyncStorage` de quem já usa o app não têm esse campo. O código que
+  lê precisa tratar `cor` ausente como um valor padrão (ex.
+  `"amarelo"`), nunca assumir que existe.
+- `Conquista` muda de `{conquistada: boolean}` pra incluir
+  `progressoAtual`/`progressoTotal` — como `Conquista` é **calculada em
+  tempo real** (não persistida — `calcularConquistas` roda toda vez a
+  partir dos livros lidos), isso na verdade não tem risco de migração:
+  não há um "`Conquista` antigo" salvo em disco pra ficar incompatível.
+  Vale confirmar essa distinção durante a implementação (dado
+  persistido vs. dado derivado) porque o tratamento é bem diferente.
+
+**Regra geral a adotar:** todo campo novo em um tipo que é persistido
+(`Grifo`, `Nota`, e futuros `PesquisaFavorita`) precisa ser opcional na
+leitura, com fallback explícito — nunca assumir presença.
+
+### 4. Acessibilidade além do contraste
+
+O plano já cobre contraste de cor. Falta:
+- **Alvo de toque mínimo** de 44×44px (padrão iOS/Material) em todo
+  ícone tocável novo — o menu de 3 pontinhos, os botões A-/A+/Aa
+  atuais já seguem isso (`w-7 h-7` = 28px é **menor** que o
+  recomendado, na verdade — vale corrigir pra `w-10 h-10` quando essas
+  telas forem revisitadas).
+- **`accessibilityLabel`** em todo ícone sem texto ao lado (o menu de 3
+  pontinhos, o SVG de fogo) — hoje só `BotaoTema` tem isso, o padrão
+  precisa se replicar pros componentes novos.
+- **Ordem de foco / leitor de tela** na barra de navegação fixa da
+  Bíblia — setas + nome do livro precisam ter uma ordem de leitura
+  sensata (2.7 do FUNCIONALIDADES já lista "navegação só por
+  teclado/leitor de tela" como pendente; este plano não resolve
+  sozinho, mas não pode piorar).
+
+### 5. Menu de contexto no web: não sequestrar o botão direito sem alternativa
+
+O plano pede que o menu de 3 pontinhos "funcione também com botão
+direito no desktop". Cuidado de UX real aqui: **substituir o menu de
+contexto nativo do navegador remove funções que o usuário espera**
+(ex. "Inspecionar elemento" pra quem depura, ou simplesmente abrir o
+menu do sistema por engano). Recomendação: `onContextMenu` só deveria
+interceptar o clique direito **quando o alvo é especificamente o card
+de um item salvo/atividade** (não a página inteira), e mesmo assim
+coisas como copiar texto selecionado continuam funcionando por cima —
+testar explicitamente que isso não incomoda ao usar o app em desktop
+de verdade, não só simular o clique.
+
+### 6. Orçamento de performance (o app está crescendo rápido)
+
+O bundle web já passa de 1MB (item 7.4 do FUNCIONALIDADES.md, ainda
+não auditado). Este plano adiciona: `@expo/vector-icons` (ícones —
+peso pequeno se importar só os ícones usados, não o pacote inteiro),
+SVG animado (leve), e principalmente o **índice de busca de texto
+completo** (3a), que pode ser a maior adição de peso do projeto até
+agora. Antes de 3a entrar em implementação, rodar a auditoria de
+performance (7.4) já vira **pré-requisito**, não só um item solto do
+checklist — sem isso não dá pra saber se o índice deveria carregar sob
+demanda ou não (o plano já levanta essa dúvida, aqui só formaliza que
+7.4 precisa acontecer antes, não depois).
+
+### 7. Consistência entre "streak" em dois lugares (Início e Você)
+
+O plano pede dois componentes visuais diferentes pro mesmo dado
+(streak) e pra conquistas. Risco real: divergir com o tempo (alguém
+ajusta a mensagem motivacional num lugar e esquece do outro). Mitigar
+extraindo a **lógica de mensagem/faixa** (não só o cálculo numérico)
+pra uma função pura compartilhada (`core/estatisticas/mensagemStreak.ts`,
+por exemplo) que os dois componentes chamam — os componentes diferem
+só em layout, nunca em "qual mensagem mostrar pra qual faixa de dias".
+
+### 8. Onboarding da primeira visita
+
+Nenhuma tela nova do plano considera **a primeira vez que alguém abre
+o app**: Início mostra streak zerado, conquistas todas bloqueadas,
+Salvo vazio, Bíblia caindo em Gênesis 1 por padrão. Isso é aceitável
+como comportamento de dado (nada quebra), mas do ponto de vista de
+UX avançada, a primeira visita é o momento de maior risco de abandono.
+Recomendação pra quando chegar a hora: **não é preciso um onboarding
+com telas de apresentação** (custo alto, taxa de abandono alta em
+apps de referência) — mas os estados vazios do item 2 acima já cobrem
+90% disso se forem bem escritos (o "Nada grifado ainda → toque em ✎"
+já é, na prática, o onboarding).
+
+### 9. Testabilidade e rollout de um escopo grande
+
+Esse plano é o maior de uma vez até agora no projeto. Ao implementar,
+manter a disciplina já estabelecida (tsc limpo, export limpo, teste
+manual real no navegador antes de marcar `✅`) **por fase**, não no
+fim de tudo — cada fase da lista de implementação já sugerida deveria
+fechar com commit próprio e checklist atualizado, exatamente como
+todo o histórico recente do projeto já fez. Registrado aqui só pra
+deixar explícito que um plano grande não muda essa disciplina, reforça
+a necessidade dela.
+
+---
+
 ## Fases de implementação sugeridas
 
 1. **Casca de navegação**: 4 abas (Início/Bíblia/Pesquisa/Você) via

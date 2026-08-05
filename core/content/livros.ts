@@ -1,7 +1,7 @@
 import dados from "./dados/livros.json";
 import type { Livro, ResumoCompleto } from "./tipos";
 
-const resumosCompletos = dados as ResumoCompleto[];
+export const resumosCompletos: ResumoCompleto[] = dados as ResumoCompleto[];
 
 // Lista leve (sem o texto dos resumos) para telas de listagem/navegação.
 export const livros: Livro[] = resumosCompletos.map(({ slug, nome, numero, testamento, capitulos, genero }) => ({

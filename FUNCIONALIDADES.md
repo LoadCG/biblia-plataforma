@@ -37,13 +37,19 @@ livro pra saber se já foi lido.
 **UX/UI:** campo de busca com placeholder claro, mensagem de "nenhum
 resultado" quando a busca não bate com nada.
 
-### 1.5 Buscar por conteúdo do resumo (não só nome do livro) `⬜`
-**Funcionalidade:** encontrar "cordeiro" e achar Êxodo/Apocalipse mesmo
-sem a palavra estar no nome do livro (o site antigo tinha isso, via
-índice de texto gerado em build — reaproveitar a mesma ideia aqui).
-**UX/UI:** resultado indica *por que* apareceu (ex.: trecho onde o termo
-foi encontrado), não só o nome do livro, senão a pessoa não entende a
-relevância do resultado.
+### 1.5 Buscar por conteúdo do resumo (não só nome do livro) `✅`
+**Funcionalidade:** busca (`core/content/busca.ts`) primeiro tenta nome
+do livro; se não achar, varre ficha rápida + todas as seções do resumo
+e retorna os livros cujo conteúdo contém o termo. Sem acento/case
+sensível (normaliza via NFD). Diferente do site antigo, não usa índice
+gerado em build — os 66 resumos completos já vivem inteiros em memória
+nesta arquitetura, então a varredura direta é instantânea e não precisa
+de um passo de build separado. Testado: buscar "cordeiro" retorna Êxodo
+e Apocalipse mesmo a palavra não estando no nome de nenhum dos dois.
+**UX/UI:** resultado por conteúdo mostra o trecho onde o termo apareceu
+(recorte de ~80 caracteres ao redor, com reticências), então a pessoa
+entende *por que* aquele livro apareceu — resultados por nome do livro
+não mostram trecho (seria redundante).
 
 ### 1.6 Tamanho de fonte ajustável na leitura `✅`
 **Funcionalidade:** controle A-/A+ no cabeçalho do resumo, 3 passos

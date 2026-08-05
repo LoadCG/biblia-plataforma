@@ -1,6 +1,7 @@
 import { Link } from "expo-router";
 import { useEffect, useMemo, useState } from "react";
 import { FlatList, Pressable, Text, TextInput, View } from "react-native";
+import { buscarLivros } from "../core/content/busca";
 import { calcularConquistas } from "../core/content/conquistas";
 import { coresDoGenero } from "../core/content/genero";
 import { livros } from "../core/content/livros";
@@ -12,7 +13,7 @@ import { BotaoTema } from "../components/BotaoTema";
 import { CardVersiculoDia } from "../components/CardVersiculoDia";
 import { FaixaConquistas } from "../components/FaixaConquistas";
 
-function CardLivro({ livro, lido }: { livro: Livro; lido: boolean }) {
+function CardLivro({ livro, lido, trecho }: { livro: Livro; lido: boolean; trecho: string | null }) {
   const cores = coresDoGenero(livro.genero);
   return (
     <Link href={`/resumos/${livro.slug}`} asChild>
@@ -27,6 +28,11 @@ function CardLivro({ livro, lido }: { livro: Livro; lido: boolean }) {
         <View className="flex-1">
           <Text className="text-cor-texto dark:text-cor-texto-dark font-semibold">{livro.nome}</Text>
           <Text className="text-xs text-cor-texto-suave dark:text-cor-texto-suave-dark">{livro.genero}</Text>
+          {trecho ? (
+            <Text className="text-xs text-cor-texto-suave dark:text-cor-texto-suave-dark mt-0.5 italic" numberOfLines={2}>
+              "{trecho}"
+            </Text>
+          ) : null}
         </View>
         {lido ? <Text className="text-green-600 font-bold">✓</Text> : null}
       </Pressable>
@@ -51,18 +57,14 @@ export default function Home() {
   const lidosSet = useMemo(() => new Set(lidos), [lidos]);
   const conquistas = useMemo(() => calcularConquistas(lidosSet), [lidosSet]);
 
-  const listaFiltrada = useMemo(() => {
-    const termoNormalizado = termo.trim().toLowerCase();
-    if (!termoNormalizado) return livros;
-    return livros.filter((l) => l.nome.toLowerCase().includes(termoNormalizado));
-  }, [termo]);
+  const listaFiltrada = useMemo(() => buscarLivros(termo), [termo]);
 
   return (
     <View className="flex-1 bg-cor-fundo dark:bg-cor-fundo-dark">
       <FlatList
         data={listaFiltrada}
-        keyExtractor={(item) => item.slug}
-        renderItem={({ item }) => <CardLivro livro={item} lido={lidosSet.has(item.slug)} />}
+        keyExtractor={(item) => item.livro.slug}
+        renderItem={({ item }) => <CardLivro livro={item.livro} lido={lidosSet.has(item.livro.slug)} trecho={item.trecho} />}
         contentContainerClassName="px-4 pt-6 pb-10 max-w-2xl w-full mx-auto"
         keyboardShouldPersistTaps="handled"
         ListHeaderComponent={
@@ -99,7 +101,7 @@ export default function Home() {
             <TextInput
               value={termo}
               onChangeText={setTermo}
-              placeholder="Buscar por nome do livro..."
+              placeholder="Buscar por livro ou palavra no resumo..."
               placeholderTextColor="#9ca3af"
               className="px-4 py-3 rounded-full border border-cor-borda dark:border-cor-borda-dark bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark text-cor-texto dark:text-cor-texto-dark"
             />

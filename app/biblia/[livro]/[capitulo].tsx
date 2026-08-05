@@ -1,6 +1,6 @@
 import { Link, useLocalSearchParams } from "expo-router";
 import { useEffect, useRef, useState } from "react";
-import { ActivityIndicator, Pressable, ScrollView, Text, View } from "react-native";
+import { ActivityIndicator, NativeSyntheticEvent, NativeScrollEvent, Pressable, ScrollView, Text, View } from "react-native";
 import { BotaoTema } from "../../../components/BotaoTema";
 import { ModalNota } from "../../../components/ModalNota";
 import { buscarReferencia } from "../../../core/biblia/BibliaAPI";
@@ -8,6 +8,8 @@ import type { CapituloTexto } from "../../../core/biblia/tipos";
 import { livros, obterLivro } from "../../../core/content/livros";
 import { grifosRepository, notasRepository, progressoRepository } from "../../../core/repositories";
 import { useOwnerId } from "../../../core/useOwnerId";
+
+const TAMANHOS_FONTE = [15, 17, 19] as const;
 
 export default function Leitura() {
   const params = useLocalSearchParams<{ livro: string; capitulo: string; versiculo?: string }>();
@@ -22,6 +24,9 @@ export default function Leitura() {
   const [capituloLido, setCapituloLido] = useState(false);
   const [notas, setNotas] = useState<Map<number, string>>(new Map());
   const [versiculoEditandoNota, setVersiculoEditandoNota] = useState<number | null>(null);
+  const [versiculoSelecionado, setVersiculoSelecionado] = useState<number | null>(null);
+  const [indiceFonte, setIndiceFonte] = useState(1);
+  const [progresso, setProgresso] = useState(0);
 
   const scrollRef = useRef<ScrollView>(null);
   const posicoes = useRef<Record<number, number>>({});
@@ -52,6 +57,8 @@ export default function Leitura() {
   const jaRolou = useRef(false);
   useEffect(() => {
     jaRolou.current = false;
+    setVersiculoSelecionado(null);
+    setProgresso(0);
   }, [versiculoAlvo, dados]);
 
   function aoMedirVersiculo(numero: number, y: number) {
@@ -64,6 +71,12 @@ export default function Leitura() {
       jaRolou.current = true;
       requestAnimationFrame(() => scrollRef.current?.scrollTo({ y: Math.max(0, y - 24), animated: true }));
     }
+  }
+
+  function aoRolar(e: NativeSyntheticEvent<NativeScrollEvent>) {
+    const { contentOffset, contentSize, layoutMeasurement } = e.nativeEvent;
+    const alturaRolavel = contentSize.height - layoutMeasurement.height;
+    setProgresso(alturaRolavel > 0 ? Math.min(1, Math.max(0, contentOffset.y / alturaRolavel)) : 0);
   }
 
   if (!livro || !valido) {
@@ -119,6 +132,10 @@ export default function Leitura() {
     setVersiculoEditandoNota(null);
   }
 
+  function selecionarVersiculo(numero: number) {
+    setVersiculoSelecionado((atual) => (atual === numero ? null : numero));
+  }
+
   // Capítulo anterior/próximo, cruzando para o livro vizinho nas
   // fronteiras (ex.: Gênesis 1 não tem anterior; Malaquias 4 → Mateus 1).
   const anterior =
@@ -135,104 +152,169 @@ export default function Leitura() {
         ? { slug: livros[indiceLivro + 1].slug, nome: livros[indiceLivro + 1].nome, capitulo: 1 }
         : null;
 
+  const tamanhoFonte = TAMANHOS_FONTE[indiceFonte];
+
   return (
-    <ScrollView ref={scrollRef} className="flex-1 bg-cor-fundo dark:bg-cor-fundo-dark">
-      <View className="px-5 pt-6 pb-10 max-w-2xl w-full mx-auto">
-        <View className="flex-row items-center justify-between mb-2">
+    <View className="flex-1 bg-cor-fundo dark:bg-cor-fundo-dark">
+      <View className="h-0.5 bg-cor-borda dark:bg-cor-borda-dark">
+        <View className="h-0.5 bg-cor-destaque dark:bg-cor-destaque-dark" style={{ width: `${progresso * 100}%` }} />
+      </View>
+
+      <View className="border-b border-cor-borda dark:border-cor-borda-dark bg-cor-fundo dark:bg-cor-fundo-dark">
+        <View className="px-5 py-3 max-w-2xl w-full mx-auto flex-row items-center justify-between">
           <Link href={`/biblia/${livro.slug}`} className="text-cor-destaque dark:text-cor-destaque-dark text-sm">
-            ← Trocar de capítulo
+            ← {livro.nome} {capitulo}
           </Link>
-          <BotaoTema />
-        </View>
-
-        <Text className="text-2xl font-bold text-cor-texto dark:text-cor-texto-dark mb-4">
-          {livro.nome} {capitulo}
-        </Text>
-
-        <Pressable
-          onPress={alternarCapituloLido}
-          className={`self-start px-4 py-2.5 rounded-full mb-6 ${
-            capituloLido
-              ? "bg-green-600"
-              : "border border-cor-borda dark:border-cor-borda-dark bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark"
-          }`}
-        >
-          <Text className={`text-sm font-semibold ${capituloLido ? "text-white" : "text-cor-texto dark:text-cor-texto-dark"}`}>
-            {capituloLido ? "✓ Capítulo lido" : "Marcar capítulo como lido"}
-          </Text>
-        </Pressable>
-
-        {erro ? (
-          <Text className="text-cor-texto-suave dark:text-cor-texto-suave-dark">
-            Não foi possível carregar este capítulo agora. Tente de novo em instantes.
-          </Text>
-        ) : !dados ? (
-          <ActivityIndicator />
-        ) : dados.versiculos ? (
-          dados.versiculos.map((v) => {
-            const grifado = grifos.has(v.numero);
-            const temNota = notas.has(v.numero);
-            return (
-              <View
-                key={v.numero}
-                onLayout={(e) => aoMedirVersiculo(v.numero, e.nativeEvent.layout.y)}
-                className={`flex-row mb-3 rounded-lg px-2 py-1 -mx-2 ${
-                  grifado ? "bg-yellow-200 dark:bg-yellow-900" : ""
-                } ${v.numero === versiculoAlvo ? "border-l-4 border-cor-destaque dark:border-cor-destaque-dark" : ""}`}
+          <View className="flex-row items-center gap-3">
+            <View className="flex-row items-center gap-1">
+              <Pressable
+                onPress={() => setIndiceFonte((i) => Math.max(0, i - 1))}
+                disabled={indiceFonte === 0}
+                className="w-7 h-7 items-center justify-center rounded-full border border-cor-borda dark:border-cor-borda-dark"
               >
-                <Pressable onPress={() => alternarGrifo(v.numero)} className="mr-1.5 mt-0.5">
-                  <Text className={grifado ? "text-yellow-700 dark:text-yellow-300" : "text-cor-texto-suave dark:text-cor-texto-suave-dark"}>
-                    ✎
-                  </Text>
-                </Pressable>
-                <Pressable onPress={() => setVersiculoEditandoNota(v.numero)} className="mr-2 mt-0.5">
-                  <Text className={temNota ? "text-cor-destaque dark:text-cor-destaque-dark" : "text-cor-texto-suave dark:text-cor-texto-suave-dark"}>
-                    {temNota ? "🗒" : "🗒︎"}
-                  </Text>
-                </Pressable>
-                <Text className="flex-1 text-cor-texto dark:text-cor-texto-dark leading-6">
-                  <Text className="text-xs font-bold text-cor-destaque dark:text-cor-destaque-dark">{v.numero} </Text>
-                  {v.texto}
-                  {temNota ? (
-                    <Text className="text-xs text-cor-texto-suave dark:text-cor-texto-suave-dark">
-                      {"\n"}📝 {notas.get(v.numero)}
-                    </Text>
-                  ) : null}
+                <Text className={`text-xs font-bold ${indiceFonte === 0 ? "text-cor-texto-suave dark:text-cor-texto-suave-dark opacity-40" : "text-cor-texto dark:text-cor-texto-dark"}`}>
+                  A-
                 </Text>
-              </View>
-            );
-          })
-        ) : (
-          <Text className="text-cor-texto dark:text-cor-texto-dark leading-6">{dados.texto}</Text>
-        )}
-
-        <View className="flex-row gap-3 mt-6 border-t border-cor-borda dark:border-cor-borda-dark pt-5">
-          <View className="flex-1">
-            {anterior ? (
-              <Link href={`/biblia/${anterior.slug}/${anterior.capitulo}`} asChild>
-                <Pressable className="border border-cor-borda dark:border-cor-borda-dark rounded-xl p-3">
-                  <Text className="text-xs text-cor-texto-suave dark:text-cor-texto-suave-dark">← Anterior</Text>
-                  <Text className="text-cor-texto dark:text-cor-texto-dark font-semibold">
-                    {anterior.nome} {anterior.capitulo}
-                  </Text>
-                </Pressable>
-              </Link>
-            ) : null}
-          </View>
-          <View className="flex-1">
-            {proximo ? (
-              <Link href={`/biblia/${proximo.slug}/${proximo.capitulo}`} asChild>
-                <Pressable className="border border-cor-borda dark:border-cor-borda-dark rounded-xl p-3 items-end">
-                  <Text className="text-xs text-cor-texto-suave dark:text-cor-texto-suave-dark">Próximo →</Text>
-                  <Text className="text-cor-texto dark:text-cor-texto-dark font-semibold">
-                    {proximo.nome} {proximo.capitulo}
-                  </Text>
-                </Pressable>
-              </Link>
-            ) : null}
+              </Pressable>
+              <Pressable
+                onPress={() => setIndiceFonte((i) => Math.min(TAMANHOS_FONTE.length - 1, i + 1))}
+                disabled={indiceFonte === TAMANHOS_FONTE.length - 1}
+                className="w-7 h-7 items-center justify-center rounded-full border border-cor-borda dark:border-cor-borda-dark"
+              >
+                <Text
+                  className={`text-xs font-bold ${
+                    indiceFonte === TAMANHOS_FONTE.length - 1
+                      ? "text-cor-texto-suave dark:text-cor-texto-suave-dark opacity-40"
+                      : "text-cor-texto dark:text-cor-texto-dark"
+                  }`}
+                >
+                  A+
+                </Text>
+              </Pressable>
+            </View>
+            <BotaoTema />
           </View>
         </View>
       </View>
+
+      <ScrollView ref={scrollRef} onScroll={aoRolar} scrollEventThrottle={32} className="flex-1">
+        <View className="px-5 pt-6 pb-10 max-w-2xl w-full mx-auto">
+          <Pressable
+            onPress={alternarCapituloLido}
+            className={`self-start px-4 py-2.5 rounded-full mb-6 ${
+              capituloLido
+                ? "bg-green-600"
+                : "border border-cor-borda dark:border-cor-borda-dark bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark"
+            }`}
+          >
+            <Text className={`text-sm font-semibold ${capituloLido ? "text-white" : "text-cor-texto dark:text-cor-texto-dark"}`}>
+              {capituloLido ? "✓ Capítulo lido" : "Marcar capítulo como lido"}
+            </Text>
+          </Pressable>
+
+          {erro ? (
+            <Text className="text-cor-texto-suave dark:text-cor-texto-suave-dark">
+              Não foi possível carregar este capítulo agora. Tente de novo em instantes.
+            </Text>
+          ) : !dados ? (
+            <ActivityIndicator />
+          ) : dados.versiculos ? (
+            dados.versiculos.map((v) => {
+              const grifado = grifos.has(v.numero);
+              const temNota = notas.has(v.numero);
+              const selecionado = v.numero === versiculoSelecionado;
+              return (
+                <View key={v.numero} onLayout={(e) => aoMedirVersiculo(v.numero, e.nativeEvent.layout.y)} className="mb-0.5 -mx-2">
+                  <Pressable
+                    onPress={() => selecionarVersiculo(v.numero)}
+                    className={`rounded-lg px-2 py-1.5 ${grifado ? "bg-cor-grifo dark:bg-cor-grifo-dark" : ""} ${
+                      selecionado ? "bg-cor-destaque-fundo dark:bg-cor-destaque-fundo-dark" : ""
+                    } ${v.numero === versiculoAlvo ? "border-l-4 border-cor-destaque dark:border-cor-destaque-dark" : ""}`}
+                  >
+                    <Text className="text-cor-texto dark:text-cor-texto-dark" style={{ fontSize: tamanhoFonte, lineHeight: tamanhoFonte * 1.65 }}>
+                      <Text
+                        className="text-cor-texto-suave dark:text-cor-texto-suave-dark font-semibold"
+                        style={{ fontSize: tamanhoFonte * 0.62 }}
+                      >
+                        {"  "}
+                        {v.numero}{" "}
+                      </Text>
+                      {v.texto}
+                      {temNota && !selecionado ? (
+                        <Text className="text-cor-destaque dark:text-cor-destaque-dark"> 🗒</Text>
+                      ) : null}
+                    </Text>
+                    {temNota ? (
+                      <Text
+                        className="text-cor-texto-suave dark:text-cor-texto-suave-dark mt-0.5"
+                        style={{ fontSize: tamanhoFonte * 0.78 }}
+                      >
+                        📝 {notas.get(v.numero)}
+                      </Text>
+                    ) : null}
+                  </Pressable>
+
+                  {selecionado ? (
+                    <View className="flex-row gap-2 px-2 py-2">
+                      <Pressable
+                        onPress={() => alternarGrifo(v.numero)}
+                        className={`flex-row items-center gap-1.5 px-3 py-1.5 rounded-full border ${
+                          grifado
+                            ? "bg-cor-grifo dark:bg-cor-grifo-dark border-cor-grifo-fg dark:border-cor-grifo-fg-dark"
+                            : "border-cor-borda dark:border-cor-borda-dark"
+                        }`}
+                      >
+                        <Text className="text-xs font-semibold text-cor-texto dark:text-cor-texto-dark">
+                          {grifado ? "✓ Grifado" : "✎ Grifar"}
+                        </Text>
+                      </Pressable>
+                      <Pressable
+                        onPress={() => setVersiculoEditandoNota(v.numero)}
+                        className="flex-row items-center gap-1.5 px-3 py-1.5 rounded-full border border-cor-borda dark:border-cor-borda-dark"
+                      >
+                        <Text className="text-xs font-semibold text-cor-texto dark:text-cor-texto-dark">
+                          {temNota ? "🗒 Editar nota" : "🗒 Anotar"}
+                        </Text>
+                      </Pressable>
+                    </View>
+                  ) : null}
+                </View>
+              );
+            })
+          ) : (
+            <Text className="text-cor-texto dark:text-cor-texto-dark" style={{ fontSize: tamanhoFonte, lineHeight: tamanhoFonte * 1.65 }}>
+              {dados.texto}
+            </Text>
+          )}
+
+          <View className="flex-row gap-3 mt-6 border-t border-cor-borda dark:border-cor-borda-dark pt-5">
+            <View className="flex-1">
+              {anterior ? (
+                <Link href={`/biblia/${anterior.slug}/${anterior.capitulo}`} asChild>
+                  <Pressable className="border border-cor-borda dark:border-cor-borda-dark rounded-xl p-3">
+                    <Text className="text-xs text-cor-texto-suave dark:text-cor-texto-suave-dark">← Anterior</Text>
+                    <Text className="text-cor-texto dark:text-cor-texto-dark font-semibold">
+                      {anterior.nome} {anterior.capitulo}
+                    </Text>
+                  </Pressable>
+                </Link>
+              ) : null}
+            </View>
+            <View className="flex-1">
+              {proximo ? (
+                <Link href={`/biblia/${proximo.slug}/${proximo.capitulo}`} asChild>
+                  <Pressable className="border border-cor-borda dark:border-cor-borda-dark rounded-xl p-3 items-end">
+                    <Text className="text-xs text-cor-texto-suave dark:text-cor-texto-suave-dark">Próximo →</Text>
+                    <Text className="text-cor-texto dark:text-cor-texto-dark font-semibold">
+                      {proximo.nome} {proximo.capitulo}
+                    </Text>
+                  </Pressable>
+                </Link>
+              ) : null}
+            </View>
+          </View>
+        </View>
+      </ScrollView>
 
       {versiculoEditandoNota !== null ? (
         <ModalNota
@@ -245,6 +327,6 @@ export default function Leitura() {
           onRemover={removerNota}
         />
       ) : null}
-    </ScrollView>
+    </View>
   );
 }

@@ -1,6 +1,6 @@
 import { Link, Stack, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
-import { Pressable, ScrollView, Text, View } from "react-native";
+import { NativeScrollEvent, NativeSyntheticEvent, Pressable, ScrollView, Text, View } from "react-native";
 import { coresDoGenero } from "../../core/content/genero";
 import { livros, obterResumo } from "../../core/content/livros";
 import { livrosLidosRepository } from "../../core/repositories";
@@ -12,6 +12,13 @@ export default function ResumoLivro() {
   const resumo = obterResumo(slug ?? "");
   const ownerId = useOwnerId();
   const [lido, setLido] = useState(false);
+  const [progresso, setProgresso] = useState(0);
+
+  function aoRolar(e: NativeSyntheticEvent<NativeScrollEvent>) {
+    const { contentOffset, contentSize, layoutMeasurement } = e.nativeEvent;
+    const alturaRolavel = contentSize.height - layoutMeasurement.height;
+    setProgresso(alturaRolavel > 0 ? Math.min(1, Math.max(0, contentOffset.y / alturaRolavel)) : 0);
+  }
 
   useEffect(() => {
     if (!ownerId || !slug) return;
@@ -41,21 +48,27 @@ export default function ResumoLivro() {
   }
 
   return (
-    <ScrollView className="flex-1 bg-cor-fundo dark:bg-cor-fundo-dark">
+    <View className="flex-1 bg-cor-fundo dark:bg-cor-fundo-dark">
       <Stack.Screen options={{ title: resumo.nome }} />
+      <View className="h-0.5 bg-cor-borda dark:bg-cor-borda-dark">
+        <View className="h-0.5 bg-cor-destaque dark:bg-cor-destaque-dark" style={{ width: `${progresso * 100}%` }} />
+      </View>
+      <ScrollView onScroll={aoRolar} scrollEventThrottle={32} className="flex-1">
       <View className="px-5 pt-6 pb-10 max-w-2xl w-full mx-auto">
-        <View className="flex-row items-center justify-between mb-4">
+        <View className="flex-row items-center justify-between mb-5">
           <Link href="/" className="text-cor-destaque dark:text-cor-destaque-dark">
             ← Todos os livros
           </Link>
           <BotaoTema />
         </View>
 
-        <View className={`self-start px-3 py-1 rounded-full mb-2 ${cores.bg}`}>
-          <Text className={`text-xs font-semibold ${cores.texto}`}>{resumo.genero}</Text>
+        <View className={`self-start px-3 py-1 rounded-full mb-3 ${cores.bg}`}>
+          <Text className={`text-xs font-semibold uppercase tracking-wide ${cores.texto}`}>{resumo.genero}</Text>
         </View>
-        <Text className="text-3xl font-bold text-cor-texto dark:text-cor-texto-dark mb-1">{resumo.nome}</Text>
-        <Text className="text-sm text-cor-texto-suave dark:text-cor-texto-suave-dark mb-4">
+        <Text className="text-4xl font-extrabold text-cor-texto dark:text-cor-texto-dark mb-2 leading-tight">
+          {resumo.nome}
+        </Text>
+        <Text className="text-sm text-cor-texto-suave dark:text-cor-texto-suave-dark mb-5">
           Livro {resumo.numero} de 66 · {resumo.testamento} · {resumo.capitulos} capítulos ·{" "}
           {resumo.tempoLeituraMin} min de leitura
         </Text>
@@ -88,16 +101,24 @@ export default function ResumoLivro() {
         </View>
 
         {resumo.secoes.map((secao) => (
-          <View key={secao.id} className="mb-7">
-            <Text className="text-lg font-bold text-cor-texto dark:text-cor-texto-dark mb-2">{secao.titulo}</Text>
+          <View key={secao.id} className="mb-8">
+            <Text className="text-xl font-bold text-cor-texto dark:text-cor-texto-dark mb-3">{secao.titulo}</Text>
             {secao.lista
               ? secao.itens.map((item, i) => (
-                  <Text key={i} className="text-cor-texto dark:text-cor-texto-dark leading-6 mb-1.5">
-                    • {item}
+                  <Text
+                    key={i}
+                    className="text-cor-texto dark:text-cor-texto-dark mb-2"
+                    style={{ fontSize: 16, lineHeight: 26 }}
+                  >
+                    •  {item}
                   </Text>
                 ))
               : secao.paragrafos.map((paragrafo, i) => (
-                  <Text key={i} className="text-cor-texto dark:text-cor-texto-dark leading-6 mb-3">
+                  <Text
+                    key={i}
+                    className="text-cor-texto dark:text-cor-texto-dark mb-3.5"
+                    style={{ fontSize: 16, lineHeight: 26 }}
+                  >
                     {paragrafo}
                   </Text>
                 ))}
@@ -127,6 +148,7 @@ export default function ResumoLivro() {
           </View>
         </View>
       </View>
-    </ScrollView>
+      </ScrollView>
+    </View>
   );
 }

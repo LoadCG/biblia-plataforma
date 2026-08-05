@@ -81,9 +81,21 @@ antes de entrar num deles.
 ### 2.2 Ler o capítulo com foco no versículo escolhido `✅`
 **Funcionalidade:** abre o capítulo inteiro, rola automaticamente até o
 versículo pedido via `?versiculo=N` na URL.
-**UX/UI:** o versículo em foco precisa se destacar visualmente (não só
-estar na posição de rolagem) — hoje usa uma borda lateral colorida; vale
-reavaliar se isso é notado rápido o suficiente num primeiro olhar.
+**UX/UI:** borda lateral colorida no versículo em foco. Estudo de UX
+([ESTUDO-UX-LEITURA.md](../ESTUDO-UX-LEITURA.md)) trouxe além disso:
+cabeçalho fixo (sticky) com livro/capítulo sempre visível durante a
+rolagem, barra fina de progresso de leitura no topo, e tipografia
+revista (número de versículo pequeno/discreto, `lineHeight` maior) —
+inspirado no padrão do YouVersion/Bible Gateway.
+
+### 2.2c Tamanho de fonte na leitura do capítulo `✅`
+**Funcionalidade:** controle A-/A+ no cabeçalho da leitura, 3 passos
+(15/17/19px), aplicado ao texto do capítulo inteiro.
+**UX/UI:** botões pequenos e discretos ao lado do botão de tema, sem
+competir com o texto; desabilita visualmente ao chegar no limite
+mínimo/máximo. Ainda não persiste entre sessões (fica só no estado da
+tela) — ver 1.6, que cobre a persistência, hoje pensada para o resumo
+mas reaproveitável aqui.
 
 ### 2.2b Tela dedicada de escolher versículo `⬜`
 **Funcionalidade:** hoje não existe — cogitada durante o planejamento
@@ -99,12 +111,14 @@ granularidade de versículo.
 ### 2.3 Grifar versículo `✅`
 **Funcionalidade:** alterna e persiste por referência exata
 (livro:capítulo:versículo), na tela de leitura.
-**UX/UI:** cor de grifo com bom contraste nos dois temas; o botão de
-grifar (ícone de lápis) é pequeno — validar se é fácil de acertar o toque
-num celular de verdade, não só no simulador/navegador. A grade de
-capítulos (2.1) não mostra hoje se um capítulo tem versículos grifados
-dentro dele — só mostra "lido"/"não lido"; ver 2.2b para onde esse
-indicador faria mais sentido.
+**UX/UI:** revisado no estudo de UX — em vez de ícones fixos por
+versículo (pequenos, difíceis de acertar, poluindo a leitura), o padrão
+agora é **tocar no versículo pra selecionar** (área de toque é a linha
+inteira) e uma barrinha de ações (Grifar / Anotar) aparece só para o
+versículo selecionado, como no YouVersion. Cor de grifo com bom
+contraste nos dois temas. A grade de capítulos (2.1) não mostra hoje se
+um capítulo tem versículos grifados dentro dele — só mostra
+"lido"/"não lido"; ver 2.2b para onde esse indicador faria mais sentido.
 
 ### 2.4 Marcar capítulo como lido `✅`
 **Funcionalidade:** separado de propósito de "livro lido" (que é sobre o
@@ -156,11 +170,11 @@ removível (`components/ModalNota.tsx` + `NotasRepository`, com o método
 de uma vez, mesmo padrão de `GrifosRepository`). Testado: criar nota,
 persistência confirmada no armazenamento, reabrir pra editar (mostra o
 texto salvo e o botão "Remover"), remover.
-**UX/UI:** ícone de nota diferente do ícone de grifo, preenchido só
-quando há texto salvo; nota editada em modal (não atrapalha a leitura do
-capítulo em volta); prévia do texto da nota aparece embaixo do
-versículo, então não precisa abrir o modal só pra lembrar o que
-escreveu.
+**UX/UI:** ação de anotar acessada pela barra de seleção do versículo
+(ver 2.3), não por um ícone fixo; nota editada em modal (não atrapalha a
+leitura do capítulo em volta); prévia do texto da nota aparece embaixo
+do versículo com um 📝, então não precisa abrir o modal só pra lembrar o
+que escreveu.
 
 ### 2.9 Trocar tradução do texto bíblico `⬜`
 **Funcionalidade:** bible-api.com tem outras traduções além da Almeida —

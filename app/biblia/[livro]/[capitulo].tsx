@@ -6,7 +6,15 @@ import { ModalNota } from "../../../components/ModalNota";
 import { buscarReferencia } from "../../../core/biblia/BibliaAPI";
 import type { CapituloTexto } from "../../../core/biblia/tipos";
 import { livros, obterLivro } from "../../../core/content/livros";
-import { carregarIndiceFonte, INDICE_PADRAO, salvarIndiceFonte, TAMANHOS_FONTE } from "../../../core/leitura/preferenciaFonte";
+import {
+  carregarFonteSerifada,
+  carregarIndiceFonte,
+  FAMILIA_SERIFADA,
+  INDICE_PADRAO,
+  salvarFonteSerifada,
+  salvarIndiceFonte,
+  TAMANHOS_FONTE,
+} from "../../../core/leitura/preferenciaFonte";
 import { grifosRepository, notasRepository, progressoRepository } from "../../../core/repositories";
 import { useOwnerId } from "../../../core/useOwnerId";
 
@@ -25,6 +33,7 @@ export default function Leitura() {
   const [versiculoEditandoNota, setVersiculoEditandoNota] = useState<number | null>(null);
   const [versiculoSelecionado, setVersiculoSelecionado] = useState<number | null>(null);
   const [indiceFonte, setIndiceFonte] = useState(INDICE_PADRAO);
+  const [fonteSerifada, setFonteSerifada] = useState(false);
   const [progresso, setProgresso] = useState(0);
   const [versiculoRealcado, setVersiculoRealcado] = useState<number | null>(null);
 
@@ -33,12 +42,21 @@ export default function Leitura() {
 
   useEffect(() => {
     carregarIndiceFonte().then(setIndiceFonte);
+    carregarFonteSerifada().then(setFonteSerifada);
   }, []);
 
   function ajustarFonte(delta: number) {
     setIndiceFonte((atual) => {
       const novo = Math.min(TAMANHOS_FONTE.length - 1, Math.max(0, atual + delta));
       salvarIndiceFonte(novo);
+      return novo;
+    });
+  }
+
+  function alternarFonteSerifada() {
+    setFonteSerifada((atual) => {
+      const novo = !atual;
+      salvarFonteSerifada(novo);
       return novo;
     });
   }
@@ -205,6 +223,18 @@ export default function Leitura() {
                   A+
                 </Text>
               </Pressable>
+              <Pressable
+                onPress={alternarFonteSerifada}
+                className={`w-7 h-7 items-center justify-center rounded-full border ${
+                  fonteSerifada
+                    ? "bg-cor-destaque-fundo dark:bg-cor-destaque-fundo-dark border-cor-destaque dark:border-cor-destaque-dark"
+                    : "border-cor-borda dark:border-cor-borda-dark"
+                }`}
+              >
+                <Text style={{ fontFamily: FAMILIA_SERIFADA }} className="text-xs font-bold text-cor-texto dark:text-cor-texto-dark">
+                  Aa
+                </Text>
+              </Pressable>
             </View>
             <BotaoTema />
           </View>
@@ -247,7 +277,10 @@ export default function Leitura() {
                       v.numero === versiculoAlvo ? "border-l-4 border-cor-destaque dark:border-cor-destaque-dark" : ""
                     }`}
                   >
-                    <Text className="text-cor-texto dark:text-cor-texto-dark" style={{ fontSize: tamanhoFonte, lineHeight: tamanhoFonte * 1.65 }}>
+                    <Text
+                      className="text-cor-texto dark:text-cor-texto-dark"
+                      style={{ fontSize: tamanhoFonte, lineHeight: tamanhoFonte * 1.65, fontFamily: fonteSerifada ? FAMILIA_SERIFADA : undefined }}
+                    >
                       <Text
                         className="text-cor-texto-suave dark:text-cor-texto-suave-dark font-semibold"
                         style={{ fontSize: tamanhoFonte * 0.62 }}
@@ -298,7 +331,10 @@ export default function Leitura() {
               );
             })
           ) : (
-            <Text className="text-cor-texto dark:text-cor-texto-dark" style={{ fontSize: tamanhoFonte, lineHeight: tamanhoFonte * 1.65 }}>
+            <Text
+              className="text-cor-texto dark:text-cor-texto-dark"
+              style={{ fontSize: tamanhoFonte, lineHeight: tamanhoFonte * 1.65, fontFamily: fonteSerifada ? FAMILIA_SERIFADA : undefined }}
+            >
               {dados.texto}
             </Text>
           )}

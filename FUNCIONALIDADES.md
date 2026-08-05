@@ -58,11 +58,19 @@ dispositivo e compartilhado com a leitura de capítulo — ver 2.2c.
 **UX/UI:** controle discreto, não competindo visualmente com o conteúdo;
 desabilita visualmente ao chegar no limite mínimo/máximo.
 
-### 1.7 Fonte serifada opcional `⬜`
-**Funcionalidade:** alternar entre a fonte padrão e uma serifada para
-leitura longa, persistido.
-**UX/UI:** aplicado só ao texto corrido (não a títulos/botões), pra não
-perder hierarquia visual.
+### 1.7 Fonte serifada opcional `✅`
+**Funcionalidade:** botão "Aa" ao lado do controle de tamanho, nas duas
+telas de leitura (resumo e capítulo). Usa fontes de sistema (Georgia no
+web/iOS, "serif" genérica no Android) em vez de baixar uma fonte
+customizada via expo-font — evita a complexidade de carregamento
+assíncrono e de rebuild nativo por ora, já que só o web está publicado
+hoje; documentado como extensão futura natural se um dia isso não
+bastar. Persistido junto com o tamanho de fonte
+(`core/leitura/preferenciaFonte.ts`).
+**UX/UI:** aplicado só ao texto corrido (parágrafos, ficha rápida,
+versículos) — títulos, botões e labels continuam na fonte padrão, pra
+não perder hierarquia visual. Botão fica destacado (fundo/borda de
+cor-destaque) quando ativo.
 
 ### 1.9 Referências bíblicas clicáveis no texto do resumo `✅`
 **Funcionalidade:** referências citadas soltas no texto ("Sl 22", "Rm

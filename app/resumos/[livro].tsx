@@ -3,7 +3,15 @@ import { useEffect, useState } from "react";
 import { NativeScrollEvent, NativeSyntheticEvent, Pressable, ScrollView, Text, View } from "react-native";
 import { coresDoGenero } from "../../core/content/genero";
 import { livros, obterResumo } from "../../core/content/livros";
-import { carregarIndiceFonte, INDICE_PADRAO, salvarIndiceFonte, TAMANHOS_FONTE } from "../../core/leitura/preferenciaFonte";
+import {
+  carregarFonteSerifada,
+  carregarIndiceFonte,
+  FAMILIA_SERIFADA,
+  INDICE_PADRAO,
+  salvarFonteSerifada,
+  salvarIndiceFonte,
+  TAMANHOS_FONTE,
+} from "../../core/leitura/preferenciaFonte";
 import { livrosLidosRepository } from "../../core/repositories";
 import { useOwnerId } from "../../core/useOwnerId";
 import { BotaoTema } from "../../components/BotaoTema";
@@ -16,6 +24,7 @@ export default function ResumoLivro() {
   const [lido, setLido] = useState(false);
   const [progresso, setProgresso] = useState(0);
   const [indiceFonte, setIndiceFonte] = useState(INDICE_PADRAO);
+  const [fonteSerifada, setFonteSerifada] = useState(false);
 
   function aoRolar(e: NativeSyntheticEvent<NativeScrollEvent>) {
     const { contentOffset, contentSize, layoutMeasurement } = e.nativeEvent;
@@ -38,7 +47,16 @@ export default function ResumoLivro() {
 
   useEffect(() => {
     carregarIndiceFonte().then(setIndiceFonte);
+    carregarFonteSerifada().then(setFonteSerifada);
   }, []);
+
+  function alternarFonteSerifada() {
+    setFonteSerifada((atual) => {
+      const novo = !atual;
+      salvarFonteSerifada(novo);
+      return novo;
+    });
+  }
 
   if (!resumo) {
     return (
@@ -101,6 +119,18 @@ export default function ResumoLivro() {
                   A+
                 </Text>
               </Pressable>
+              <Pressable
+                onPress={alternarFonteSerifada}
+                className={`w-7 h-7 items-center justify-center rounded-full border ${
+                  fonteSerifada
+                    ? "bg-cor-destaque-fundo dark:bg-cor-destaque-fundo-dark border-cor-destaque dark:border-cor-destaque-dark"
+                    : "border-cor-borda dark:border-cor-borda-dark"
+                }`}
+              >
+                <Text style={{ fontFamily: FAMILIA_SERIFADA }} className="text-xs font-bold text-cor-texto dark:text-cor-texto-dark">
+                  Aa
+                </Text>
+              </Pressable>
             </View>
             <BotaoTema />
           </View>
@@ -139,7 +169,11 @@ export default function ResumoLivro() {
               <Text className="text-xs font-semibold uppercase text-cor-texto-suave dark:text-cor-texto-suave-dark">
                 {item.rotulo}
               </Text>
-              <TextoComReferencias texto={item.valor} className="text-cor-texto dark:text-cor-texto-dark mt-0.5" />
+              <TextoComReferencias
+                texto={item.valor}
+                className="text-cor-texto dark:text-cor-texto-dark mt-0.5"
+                style={fonteSerifada ? { fontFamily: FAMILIA_SERIFADA } : undefined}
+              />
             </View>
           ))}
         </View>
@@ -153,7 +187,11 @@ export default function ResumoLivro() {
                     key={i}
                     texto={`•  ${item}`}
                     className="text-cor-texto dark:text-cor-texto-dark mb-2"
-                    style={{ fontSize: tamanhoFonte, lineHeight: tamanhoFonte * 1.6 }}
+                    style={{
+                      fontSize: tamanhoFonte,
+                      lineHeight: tamanhoFonte * 1.6,
+                      fontFamily: fonteSerifada ? FAMILIA_SERIFADA : undefined,
+                    }}
                   />
                 ))
               : secao.paragrafos.map((paragrafo, i) => (
@@ -161,7 +199,11 @@ export default function ResumoLivro() {
                     key={i}
                     texto={paragrafo}
                     className="text-cor-texto dark:text-cor-texto-dark mb-3.5"
-                    style={{ fontSize: tamanhoFonte, lineHeight: tamanhoFonte * 1.6 }}
+                    style={{
+                      fontSize: tamanhoFonte,
+                      lineHeight: tamanhoFonte * 1.6,
+                      fontFamily: fonteSerifada ? FAMILIA_SERIFADA : undefined,
+                    }}
                   />
                 ))}
           </View>

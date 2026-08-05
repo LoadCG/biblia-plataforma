@@ -455,6 +455,67 @@ visões alternativas quando relevante).
 
 ---
 
+## 9. Navegação e organização do app
+
+Planejado em detalhe em [PLANO-NAVEGACAO.md](PLANO-NAVEGACAO.md) — só
+planejamento por enquanto, nada implementado ainda.
+
+### 9.1 Barra de navegação por abas (4 telas do MVP) `⬜`
+**Funcionalidade:** Início, Leitura Bíblica, Grifos e Notas,
+Configurações como as 4 seções de primeiro nível do app, via route
+group `app/(tabs)/` do Expo Router. URLs de telas de detalhe (resumo de
+um livro, leitura de um capítulo) não mudam.
+**UX/UI:** barra de abas fixa embaixo no mobile; barra lateral no
+desktop/web largo — mesmo conjunto de rotas, dois layouts.
+
+### 9.2 Tela "Grifos e Notas" `⬜`
+**Funcionalidade:** lista agrupada por livro de tudo que já foi grifado
+e anotado, cruzando os 66 livros (dados já existem via
+`grifosRepository.listarTodos`/`notasRepository.listarTodas`, criados
+pra Estatísticas). Filtro Todos/Grifos/Notas, busca por texto nas
+notas, tocar num item leva direto pro versículo.
+**UX/UI:** estado vazio orienta o que fazer (não só "nada aqui");
+agrupamento por livro evita lista longa sem estrutura.
+
+### 9.3 Tela "Configurações" `⬜`
+**Funcionalidade:** tamanho de fonte, fonte serifada (já existem como
+estado persistido em `core/leitura/preferenciaFonte.ts` — a tela lê/
+escreve o mesmo módulo, não duplica lógica) e tema, centralizados numa
+tela só, além dos controles rápidos que já existem inline nas telas de
+leitura.
+**UX/UI:** agrupado em seções com título (Leitura, Aparência, Dados),
+não uma lista solta de toggles; espaço já previsto pras preferências
+futuras abaixo.
+
+### 9.4 Grifar em várias cores `⬜`
+**Funcionalidade:** hoje `Grifo` é binário — vira um campo `cor` no
+tipo (com default pra não quebrar grifos já salvos), paleta pequena e
+fixa (4-6 cores com significado, não um color picker livre), seletor no
+lugar do botão único "✎ Grifar" na barra de seleção do versículo (ver
+2.3). Complementa 9.2 (a tela de Grifos e Notas ganharia filtro por
+cor) e 9.3 (legenda da paleta em Configurações).
+**UX/UI:** cores com significado claro e documentado (ex. amarelo =
+importante, verde = promessa, azul = estudo), não só decorativas.
+
+### 9.5 Modo escuro mais contrastado `⬜`
+**Funcionalidade:** segunda variante de tema escuro (preto mais puro,
+texto com contraste mais alto que o `cor-fundo-dark` atual, pensado pra
+baixa visão/uso em sol forte), selecionável em Configurações (9.3) —
+não substitui o escuro atual, some como opção adicional.
+**UX/UI:** troca de tema continua um toggle simples, só com uma terceira
+opção em vez de duas.
+
+### 9.6 Melhorias no sistema de conquistas e badges `⬜`
+**Funcionalidade:** mais marcos intermediários além dos 6 atuais
+(`core/content/conquistas.ts`), que hoje pulam direto pra "todo o
+AT"/"toda a Bíblia" (demoram demais pra desbloquear); indicador de
+progresso dentro de cada badge, não só bloqueada/desbloqueada.
+**UX/UI:** conquistas continuam na aba Início (são celebração de
+progresso, não uma preferência), com mais frequência de "vitórias"
+pequenas ao longo da leitura.
+
+---
+
 ## Como usar este documento
 
 Ao começar qualquer item: mover de `⬜` para `🔶` (em andamento). Ao

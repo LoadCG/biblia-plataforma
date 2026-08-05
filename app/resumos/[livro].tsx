@@ -7,6 +7,7 @@ import { carregarIndiceFonte, INDICE_PADRAO, salvarIndiceFonte, TAMANHOS_FONTE }
 import { livrosLidosRepository } from "../../core/repositories";
 import { useOwnerId } from "../../core/useOwnerId";
 import { BotaoTema } from "../../components/BotaoTema";
+import { TextoComReferencias } from "../../components/TextoComReferencias";
 
 export default function ResumoLivro() {
   const { livro: slug } = useLocalSearchParams<{ livro: string }>();
@@ -138,7 +139,7 @@ export default function ResumoLivro() {
               <Text className="text-xs font-semibold uppercase text-cor-texto-suave dark:text-cor-texto-suave-dark">
                 {item.rotulo}
               </Text>
-              <Text className="text-cor-texto dark:text-cor-texto-dark mt-0.5">{item.valor}</Text>
+              <TextoComReferencias texto={item.valor} className="text-cor-texto dark:text-cor-texto-dark mt-0.5" />
             </View>
           ))}
         </View>
@@ -148,22 +149,20 @@ export default function ResumoLivro() {
             <Text className="text-xl font-bold text-cor-texto dark:text-cor-texto-dark mb-3">{secao.titulo}</Text>
             {secao.lista
               ? secao.itens.map((item, i) => (
-                  <Text
+                  <TextoComReferencias
                     key={i}
+                    texto={`•  ${item}`}
                     className="text-cor-texto dark:text-cor-texto-dark mb-2"
                     style={{ fontSize: tamanhoFonte, lineHeight: tamanhoFonte * 1.6 }}
-                  >
-                    •  {item}
-                  </Text>
+                  />
                 ))
               : secao.paragrafos.map((paragrafo, i) => (
-                  <Text
+                  <TextoComReferencias
                     key={i}
+                    texto={paragrafo}
                     className="text-cor-texto dark:text-cor-texto-dark mb-3.5"
                     style={{ fontSize: tamanhoFonte, lineHeight: tamanhoFonte * 1.6 }}
-                  >
-                    {paragrafo}
-                  </Text>
+                  />
                 ))}
           </View>
         ))}

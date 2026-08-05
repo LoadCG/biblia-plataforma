@@ -1,3 +1,19 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Sem isso, html/body ficam com fundo transparente e o padrão branco do
+   navegador aparece durante o "bounce" de rolagem no mobile (Safari/Chrome
+   iOS e Android) sempre que a página é mais alta que a tela — fica visível
+   sobretudo no tema escuro, como uma faixa branca no topo/rodapé ao rolar
+   além do conteúdo. Cores repetem cor-fundo/cor-fundo-dark do
+   tailwind.config.js (não dá pra referenciar a variável Tailwind aqui). */
+html,
+body {
+  background-color: #faf8f4;
+}
+
+html.dark,
+html.dark body {
+  background-color: #1b1712;
+}

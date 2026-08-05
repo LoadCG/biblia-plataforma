@@ -58,6 +58,27 @@ leitura longa, persistido.
 **UX/UI:** aplicado só ao texto corrido (não a títulos/botões), pra não
 perder hierarquia visual.
 
+### 1.9 Referências bíblicas clicáveis no texto do resumo `✅`
+**Funcionalidade:** referências citadas soltas no texto ("Sl 22", "Rm
+1:16-17", "1 Coríntios 15:3-8") viram trechos tocáveis que buscam o
+versículo de verdade na bible-api.com e mostram num popover — sem sair
+da tela do resumo. Detecção via tabela própria de apelidos
+(`core/biblia/aliasesLivro.ts`) + regex (`core/biblia/detectarReferencias.ts`),
+não depende do parser fuzzy da API (testado antes com chamadas reais:
+a API não reconhece abreviações como "Sl"/"Rm"/"Gn"). Duas abreviações
+comuns (`Os` = Oséias, `Na` = Naum) foram deixadas de fora de propósito
+por colidirem com palavras comuns do português ("os 150 salmos", "na
+tribo de...") — confirmado rodando a detecção contra o conteúdo real
+dos 66 livros antes de decidir. Aplicado tanto nos parágrafos/listas
+das seções quanto nos valores da Ficha Rápida.
+**UX/UI:** referência sublinhada pontilhada, cor de destaque (mesmo
+padrão visual de link do resto do app); popover mostra o texto do
+versículo pedido e, quando a referência era só um trecho, um botão "Ver
+capítulo inteiro" busca o capítulo completo sem fechar o popover; erro
+de rede mostra mensagem amigável sem quebrar a leitura do resumo em
+volta (é um extra, não uma dependência crítica da tela); popover fecha
+tocando fora ou no ✕.
+
 ### 1.8 Modo foco `⬜`
 **Funcionalidade:** esconder navegação/controles, deixando só o texto
 visível durante a leitura.
@@ -375,6 +396,18 @@ medir antes de crescer mais (tempo de carregamento inicial é o que mais
 afeta quem chega pela primeira vez via link/busca).
 **UX/UI:** tela de carregamento/skeleton em vez de tela branca enquanto
 o app inicializa, se o tempo de carga não puder cair o suficiente.
+
+### 7.6 Fundo consistente no "bounce" de rolagem mobile `✅`
+**Funcionalidade:** `html`/`body` não tinham `background-color` definido
+(ficavam transparentes), então no tema escuro, ao rolar além do fim do
+conteúdo em Safari/Chrome mobile (o "bounce" de rolagem do iOS/Android),
+aparecia uma faixa branca do fundo padrão do navegador — reportado pelo
+usuário testando no celular. Corrigido em `global.css` com regra direta
+pra `html`/`html.dark` (não dá pra usar a variável Tailwind ali, os
+valores hex repetem `cor-fundo`/`cor-fundo-dark` do `tailwind.config.js`).
+**UX/UI:** sem isso, qualquer tela mais alta que o viewport quebrava a
+imersão do tema escuro no primeiro/último scroll — agora o fundo é
+contínuo em qualquer ponto da rolagem, nos dois temas.
 
 ### 7.5 Atalhos de teclado (versão web) `⬜`
 **Funcionalidade:** navegação entre capítulos/livros por seta, alternar

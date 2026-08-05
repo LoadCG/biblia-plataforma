@@ -296,6 +296,45 @@ committer), sem nenhum outro colaborador. Arquivos de configuração de
 ferramenta que vieram do template do Expo (`.claude/`, `CLAUDE.md`) foram
 removidos antes do primeiro push.
 
+### Decisão 14 — Referências bíblicas clicáveis no resumo (retomando plano do repositório antigo)
+
+O repositório antigo (antes da migração de arquitetura) tinha um plano
+registrado (`soft-crunching-dove.md`, criado em modo de planejamento)
+para linkar referências bíblicas citadas nos resumos ("Sl 22", "Rm
+1:16-17") a um popover com o texto de verdade, buscado na
+bible-api.com. O plano original pensava em termos de HTML estático
+gerado em build (`scripts/gerar-site.js` + `docs/assets/referencias.js`)
+porque aquele era o modelo do site antigo. Nesta arquitetura (Expo
+Router, conteúdo renderizado como componentes React, não HTML
+estático), a mesma ideia foi portada assim:
+
+- **Detecção continua fora do componente de tela**, mas agora acontece
+  na hora de renderizar (`core/biblia/detectarReferencias.ts`), não em
+  build — porque aqui o texto já chega como string JS pro React, um
+  split de string resolve sem precisar gerar HTML à parte nem rodar
+  parser de DOM.
+- **Tabela de apelidos própria** (`core/biblia/aliasesLivro.ts`),
+  reaproveitando a mesma lição do plano original: a bible-api.com não
+  reconhece abreviações ("Sl", "Rm", "Gn" davam erro em testes reais),
+  então a resolução do nome do livro é feita aqui e só o nome canônico
+  completo (confirmado por chamadas reais que funciona, inclusive
+  acentuado — "Gênesis", "Provérbios", "Isaías", "Jó") é mandado pra
+  API.
+- **Busca e cache reaproveitados**: `core/biblia/BibliaAPI.ts` já
+  existia (criado pra leitura de capítulo) e já resolve exatamente o
+  formato de referência precisado aqui (`Livro N`, `Livro N:V`, `Livro
+  N:V-V`) — não foi necessário nenhum código novo de fetch/cache, só
+  reusar `buscarReferencia`.
+- **Achado durante a implementação, não previsto no plano original**:
+  rodar a detecção contra o conteúdo real dos 66 livros (não só contra
+  exemplos) revelou que duas abreviações abertamente usadas em
+  português — "Os" (Oséias) e "Na" (Naum) — colidem com palavras comuns
+  ("os 150 salmos", "na tribo de..."). Removidas da tabela de
+  abreviações; os nomes por extenso continuam funcionando.
+- Popover como `Modal` nativo (não HTML/CSS customizado como seria no
+  site antigo), com botão "Ver capítulo inteiro" que troca a referência
+  buscada sem fechar o popover — mesma ideia do plano original.
+
 ## Em aberto (decidir durante a implementação, não antes)
 
 Banco de dados (Supabase vs. Firebase — só quando virar necessidade

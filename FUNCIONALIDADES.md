@@ -45,11 +45,12 @@ sem a palavra estar no nome do livro (o site antigo tinha isso, via
 foi encontrado), não só o nome do livro, senão a pessoa não entende a
 relevância do resultado.
 
-### 1.6 Tamanho de fonte ajustável na leitura `⬜`
-**Funcionalidade:** aumentar/diminuir o tamanho do texto do resumo,
-persistido por dispositivo.
+### 1.6 Tamanho de fonte ajustável na leitura `✅`
+**Funcionalidade:** controle A-/A+ no cabeçalho do resumo, 3 passos
+(15/17/19px), aplicado às seções de texto corrido. Persistido por
+dispositivo e compartilhado com a leitura de capítulo — ver 2.2c.
 **UX/UI:** controle discreto, não competindo visualmente com o conteúdo;
-limite mínimo/máximo razoável (não deixar ilegível nem gigante demais).
+desabilita visualmente ao chegar no limite mínimo/máximo.
 
 ### 1.7 Fonte serifada opcional `⬜`
 **Funcionalidade:** alternar entre a fonte padrão e uma serifada para
@@ -90,12 +91,23 @@ inspirado no padrão do YouVersion/Bible Gateway.
 
 ### 2.2c Tamanho de fonte na leitura do capítulo `✅`
 **Funcionalidade:** controle A-/A+ no cabeçalho da leitura, 3 passos
-(15/17/19px), aplicado ao texto do capítulo inteiro.
+(15/17/19px), aplicado ao texto do capítulo inteiro. Persistido por
+dispositivo (`core/leitura/preferenciaFonte.ts`) e **compartilhado com
+a leitura de resumo** (1.6) — é a mesma preferência de conforto de
+leitura nas duas telas, não faz sentido configurar duas vezes. Testado:
+ajustar em uma tela, recarregar, abrir a outra tela e confirmar que o
+tamanho e o estado dos botões (desabilitado no limite) persistiram.
 **UX/UI:** botões pequenos e discretos ao lado do botão de tema, sem
 competir com o texto; desabilita visualmente ao chegar no limite
-mínimo/máximo. Ainda não persiste entre sessões (fica só no estado da
-tela) — ver 1.6, que cobre a persistência, hoje pensada para o resumo
-mas reaproveitável aqui.
+mínimo/máximo.
+
+### 2.2d Realce temporário do versículo em foco `✅`
+**Funcionalidade:** ao chegar num versículo via `?versiculo=N`, além da
+borda lateral (que fica permanente como referência), um fundo de
+destaque aparece por 2,5s e desaparece sozinho — chama atenção no
+primeiro instante sem virar poluição visual permanente na tela.
+**UX/UI:** o fade acontece só uma vez por navegação (não repete se o
+usuário rolar de volta até o versículo depois).
 
 ### 2.2b Tela dedicada de escolher versículo `⬜`
 **Funcionalidade:** hoje não existe — cogitada durante o planejamento

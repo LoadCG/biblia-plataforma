@@ -6,10 +6,9 @@ import { ModalNota } from "../../../components/ModalNota";
 import { buscarReferencia } from "../../../core/biblia/BibliaAPI";
 import type { CapituloTexto } from "../../../core/biblia/tipos";
 import { livros, obterLivro } from "../../../core/content/livros";
+import { carregarIndiceFonte, INDICE_PADRAO, salvarIndiceFonte, TAMANHOS_FONTE } from "../../../core/leitura/preferenciaFonte";
 import { grifosRepository, notasRepository, progressoRepository } from "../../../core/repositories";
 import { useOwnerId } from "../../../core/useOwnerId";
-
-const TAMANHOS_FONTE = [15, 17, 19] as const;
 
 export default function Leitura() {
   const params = useLocalSearchParams<{ livro: string; capitulo: string; versiculo?: string }>();
@@ -25,11 +24,24 @@ export default function Leitura() {
   const [notas, setNotas] = useState<Map<number, string>>(new Map());
   const [versiculoEditandoNota, setVersiculoEditandoNota] = useState<number | null>(null);
   const [versiculoSelecionado, setVersiculoSelecionado] = useState<number | null>(null);
-  const [indiceFonte, setIndiceFonte] = useState(1);
+  const [indiceFonte, setIndiceFonte] = useState(INDICE_PADRAO);
   const [progresso, setProgresso] = useState(0);
+  const [versiculoRealcado, setVersiculoRealcado] = useState<number | null>(null);
 
   const scrollRef = useRef<ScrollView>(null);
   const posicoes = useRef<Record<number, number>>({});
+
+  useEffect(() => {
+    carregarIndiceFonte().then(setIndiceFonte);
+  }, []);
+
+  function ajustarFonte(delta: number) {
+    setIndiceFonte((atual) => {
+      const novo = Math.min(TAMANHOS_FONTE.length - 1, Math.max(0, atual + delta));
+      salvarIndiceFonte(novo);
+      return novo;
+    });
+  }
 
   const indiceLivro = livro ? livros.indexOf(livro) : -1;
   const valido = !!livro && !!capitulo && capitulo >= 1 && capitulo <= livro.capitulos;
@@ -70,6 +82,8 @@ export default function Leitura() {
     if (!jaRolou.current && numero === versiculoAlvo) {
       jaRolou.current = true;
       requestAnimationFrame(() => scrollRef.current?.scrollTo({ y: Math.max(0, y - 24), animated: true }));
+      setVersiculoRealcado(numero);
+      setTimeout(() => setVersiculoRealcado((atual) => (atual === numero ? null : atual)), 2500);
     }
   }
 
@@ -168,7 +182,7 @@ export default function Leitura() {
           <View className="flex-row items-center gap-3">
             <View className="flex-row items-center gap-1">
               <Pressable
-                onPress={() => setIndiceFonte((i) => Math.max(0, i - 1))}
+                onPress={() => ajustarFonte(-1)}
                 disabled={indiceFonte === 0}
                 className="w-7 h-7 items-center justify-center rounded-full border border-cor-borda dark:border-cor-borda-dark"
               >
@@ -177,7 +191,7 @@ export default function Leitura() {
                 </Text>
               </Pressable>
               <Pressable
-                onPress={() => setIndiceFonte((i) => Math.min(TAMANHOS_FONTE.length - 1, i + 1))}
+                onPress={() => ajustarFonte(1)}
                 disabled={indiceFonte === TAMANHOS_FONTE.length - 1}
                 className="w-7 h-7 items-center justify-center rounded-full border border-cor-borda dark:border-cor-borda-dark"
               >
@@ -227,9 +241,11 @@ export default function Leitura() {
                 <View key={v.numero} onLayout={(e) => aoMedirVersiculo(v.numero, e.nativeEvent.layout.y)} className="mb-0.5 -mx-2">
                   <Pressable
                     onPress={() => selecionarVersiculo(v.numero)}
-                    className={`rounded-lg px-2 py-1.5 ${grifado ? "bg-cor-grifo dark:bg-cor-grifo-dark" : ""} ${
-                      selecionado ? "bg-cor-destaque-fundo dark:bg-cor-destaque-fundo-dark" : ""
-                    } ${v.numero === versiculoAlvo ? "border-l-4 border-cor-destaque dark:border-cor-destaque-dark" : ""}`}
+                    className={`rounded-lg px-2 py-1.5 ${
+                      grifado ? "bg-cor-grifo dark:bg-cor-grifo-dark" : v.numero === versiculoRealcado ? "bg-cor-destaque-fundo dark:bg-cor-destaque-fundo-dark" : ""
+                    } ${selecionado ? "bg-cor-destaque-fundo dark:bg-cor-destaque-fundo-dark" : ""} ${
+                      v.numero === versiculoAlvo ? "border-l-4 border-cor-destaque dark:border-cor-destaque-dark" : ""
+                    }`}
                   >
                     <Text className="text-cor-texto dark:text-cor-texto-dark" style={{ fontSize: tamanhoFonte, lineHeight: tamanhoFonte * 1.65 }}>
                       <Text

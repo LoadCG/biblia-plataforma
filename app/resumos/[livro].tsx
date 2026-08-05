@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { NativeScrollEvent, NativeSyntheticEvent, Pressable, ScrollView, Text, View } from "react-native";
 import { coresDoGenero } from "../../core/content/genero";
 import { livros, obterResumo } from "../../core/content/livros";
+import { carregarIndiceFonte, INDICE_PADRAO, salvarIndiceFonte, TAMANHOS_FONTE } from "../../core/leitura/preferenciaFonte";
 import { livrosLidosRepository } from "../../core/repositories";
 import { useOwnerId } from "../../core/useOwnerId";
 import { BotaoTema } from "../../components/BotaoTema";
@@ -13,6 +14,7 @@ export default function ResumoLivro() {
   const ownerId = useOwnerId();
   const [lido, setLido] = useState(false);
   const [progresso, setProgresso] = useState(0);
+  const [indiceFonte, setIndiceFonte] = useState(INDICE_PADRAO);
 
   function aoRolar(e: NativeSyntheticEvent<NativeScrollEvent>) {
     const { contentOffset, contentSize, layoutMeasurement } = e.nativeEvent;
@@ -20,10 +22,22 @@ export default function ResumoLivro() {
     setProgresso(alturaRolavel > 0 ? Math.min(1, Math.max(0, contentOffset.y / alturaRolavel)) : 0);
   }
 
+  function ajustarFonte(delta: number) {
+    setIndiceFonte((atual) => {
+      const novo = Math.min(TAMANHOS_FONTE.length - 1, Math.max(0, atual + delta));
+      salvarIndiceFonte(novo);
+      return novo;
+    });
+  }
+
   useEffect(() => {
     if (!ownerId || !slug) return;
     livrosLidosRepository.estaLido(ownerId, slug).then(setLido);
   }, [ownerId, slug]);
+
+  useEffect(() => {
+    carregarIndiceFonte().then(setIndiceFonte);
+  }, []);
 
   if (!resumo) {
     return (
@@ -40,6 +54,7 @@ export default function ResumoLivro() {
   const anterior = indice > 0 ? livros[indice - 1] : null;
   const proximo = indice < livros.length - 1 ? livros[indice + 1] : null;
   const cores = coresDoGenero(resumo.genero);
+  const tamanhoFonte = TAMANHOS_FONTE[indiceFonte];
 
   async function alternarLido() {
     if (!ownerId) return;
@@ -59,7 +74,35 @@ export default function ResumoLivro() {
           <Link href="/" className="text-cor-destaque dark:text-cor-destaque-dark">
             ← Todos os livros
           </Link>
-          <BotaoTema />
+          <View className="flex-row items-center gap-3">
+            <View className="flex-row items-center gap-1">
+              <Pressable
+                onPress={() => ajustarFonte(-1)}
+                disabled={indiceFonte === 0}
+                className="w-7 h-7 items-center justify-center rounded-full border border-cor-borda dark:border-cor-borda-dark"
+              >
+                <Text className={`text-xs font-bold ${indiceFonte === 0 ? "text-cor-texto-suave dark:text-cor-texto-suave-dark opacity-40" : "text-cor-texto dark:text-cor-texto-dark"}`}>
+                  A-
+                </Text>
+              </Pressable>
+              <Pressable
+                onPress={() => ajustarFonte(1)}
+                disabled={indiceFonte === TAMANHOS_FONTE.length - 1}
+                className="w-7 h-7 items-center justify-center rounded-full border border-cor-borda dark:border-cor-borda-dark"
+              >
+                <Text
+                  className={`text-xs font-bold ${
+                    indiceFonte === TAMANHOS_FONTE.length - 1
+                      ? "text-cor-texto-suave dark:text-cor-texto-suave-dark opacity-40"
+                      : "text-cor-texto dark:text-cor-texto-dark"
+                  }`}
+                >
+                  A+
+                </Text>
+              </Pressable>
+            </View>
+            <BotaoTema />
+          </View>
         </View>
 
         <View className={`self-start px-3 py-1 rounded-full mb-3 ${cores.bg}`}>
@@ -108,7 +151,7 @@ export default function ResumoLivro() {
                   <Text
                     key={i}
                     className="text-cor-texto dark:text-cor-texto-dark mb-2"
-                    style={{ fontSize: 16, lineHeight: 26 }}
+                    style={{ fontSize: tamanhoFonte, lineHeight: tamanhoFonte * 1.6 }}
                   >
                     •  {item}
                   </Text>
@@ -117,7 +160,7 @@ export default function ResumoLivro() {
                   <Text
                     key={i}
                     className="text-cor-texto dark:text-cor-texto-dark mb-3.5"
-                    style={{ fontSize: 16, lineHeight: 26 }}
+                    style={{ fontSize: tamanhoFonte, lineHeight: tamanhoFonte * 1.6 }}
                   >
                     {paragrafo}
                   </Text>

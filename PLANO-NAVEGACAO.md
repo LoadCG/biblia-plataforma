@@ -457,26 +457,171 @@ a necessidade dela.
 
 ---
 
-## Fases de implementação sugeridas
+## Checklist de implementação
 
-1. **Casca de navegação**: 4 abas (Início/Bíblia/Pesquisa/Você) via
-   `app/(tabs)/`, passe visual Material (bordas, elevação, ícones
-   `@expo/vector-icons`) aplicado nos componentes que já existem, sem
-   nenhuma funcionalidade nova ainda. Risco baixo, dá pra validar a
-   navegação antes de construir conteúdo novo em cima.
-2. **Início**: card de resumos, card de streak com SVG de fogo,
-   conquistas com descrição/progresso. Botão "Envie-me diariamente"
-   aparece desabilitado/como aviso de "em breve" (UI existe, ação não
-   faz nada ainda — não implementar notificação de verdade nesta fase).
-3. **Bíblia**: última leitura + barra fixa de navegação.
-4. **Pesquisa (parte 3b)**: cards de tema com buscas pré-definidas.
-   Parte 3a (índice de texto completo) fica pra depois, com
-   planejamento técnico dedicado quando for a vez.
-5. **Você**: perfil (com estado visitante), card Salvo + tela Salvo
-   completa com filtros, menu de 3 pontinhos, Perseverança,
-   Compartilhamentos (nasce junto com compartilhar de verdade),
-   Atividade, card de Configurações.
-6. **Configurações**: como já estava planejado antes.
-7. **Backlog explícito** (fora de escopo até serem retomados): busca
-   de texto completo (3a), notificações diárias, conta/login de
-   verdade, cores de grifo, modo escuro mais contrastado.
+**Como usar:** este é o rastreador oficial de progresso deste plano —
+para uso por mim ou por qualquer outro agente que continue o trabalho.
+
+- No início de qualquer sessão de trabalho neste plano, **leia primeiro
+  o bloco "Status atual" abaixo**, não a lista inteira, pra saber
+  exatamente onde parar de ler e onde continuar.
+- Ao concluir um item, marque `[x]` e, se relevante, adicione uma nota
+  curta entre parênteses (ex. commit, decisão tomada, desvio do
+  plano original).
+- **Depois de cada item concluído, atualize o bloco "Status atual"**
+  (fase em andamento + próximo passo concreto) — não deixe pra
+  atualizar só no fim da fase.
+- Testar de ponta a ponta antes de marcar `[x]` (mesmo padrão do
+  FUNCIONALIDADES.md: funcionalidade primeiro, depois UX/UI, nunca
+  marcar por só compilar).
+- Se um item revelar que o plano precisa mudar, **edite a seção
+  correspondente acima primeiro**, depois ajuste o checklist — o
+  checklist reflete o plano, não o contrário.
+
+### Status atual
+
+- **Fase em andamento:** nenhuma — plano aprovado, implementação ainda
+  não começou.
+- **Próximo passo:** iniciar Fase 1, item 1.1.
+
+---
+
+### Fase 1 — Casca de navegação (risco baixo, sem funcionalidade nova)
+
+- [ ] 1.1 Criar `app/(tabs)/_layout.tsx` com as 4 abas (Início, Bíblia,
+      Pesquisa, Você), sem mover conteúdo ainda — abas podem apontar
+      pra telas placeholder nesta primeira sub-etapa se ajudar a
+      validar a barra isoladamente.
+- [ ] 1.2 Mover `app/index.tsx` pra dentro do group, confirmar que `/`
+      continua funcionando (URL não muda).
+- [ ] 1.3 Mover `app/biblia/index.tsx` e `app/biblia/[livro]/index.tsx`
+      pra dentro do group, confirmar URLs inalteradas.
+- [ ] 1.4 Registrar a decisão de pilha de navegação (seção "Revisão
+      estratégica" item 1): configurar o seletor livro→capítulo→versículo
+      como modal, a troca de capítulo por seta como replace.
+- [ ] 1.5 Instalar/confirmar `@expo/vector-icons` disponível (já vem no
+      Expo — só confirmar import funcionando), trocar os emoji-ícone
+      de botão (não os que são conteúdo) nas telas existentes por
+      `MaterialIcons`.
+- [ ] 1.6 Padronizar bordas (`rounded-2xl` em cards) e trocar `border`
+      por sombra sutil nos cards principais já existentes.
+- [ ] 1.7 Criar componente `EstadoVazio` reaproveitável (seção
+      "Revisão estratégica" item 2), mesmo sem telas que o usem ainda —
+      preparar pra Fase 5.
+- [ ] 1.8 Corrigir alvo de toque dos botões A-/A+/Aa existentes pra
+      44×44px mínimo (seção "Revisão estratégica" item 4) e adicionar
+      `accessibilityLabel`.
+- [ ] 1.9 Adaptação desktop: barra lateral em vez de bottom tabs acima
+      do breakpoint (~768px), mesmo group de rotas.
+- [ ] 1.10 `tsc --noEmit` + `expo export --platform web` limpos, teste
+      manual navegando pelas 4 abas no navegador (mobile e desktop),
+      commit + push, marcar 9.1 como `✅` no FUNCIONALIDADES.md.
+
+### Fase 2 — Início
+
+- [ ] 2.1 Card "Estude por resumos" — migrar a lista de livros com
+      busca de `app/index.tsx` pra trás desse card (nova rota, ex.
+      `app/(tabs)/resumos-lista.tsx` ou reaproveitar `/resumos` como
+      lista — decidir na implementação).
+- [ ] 2.2 Extrair `core/estatisticas/mensagemStreak.ts` (lógica pura de
+      faixa → mensagem, seção "Revisão estratégica" item 7) antes de
+      construir qualquer componente visual de streak.
+- [ ] 2.3 Componente SVG de fogo animado (`react-native-svg`), estado
+      cinza/parado vs. colorido/animado.
+- [ ] 2.4 Card de streak completo (número + SVG + mensagem), usando
+      `calcularSequenciaAtual` (já existe) + `mensagemStreak` (2.2).
+- [ ] 2.5 Estender `Conquista` com `descricao`/`progressoAtual`/
+      `progressoTotal` em `core/content/conquistas.ts`.
+- [ ] 2.6 Card de conquistas com botão de expandir (mostra as 6
+      conquistas com descrição e barra de progresso).
+- [ ] 2.7 Botão "Envie-me diariamente" no card de versículo do dia,
+      **como aviso "em breve"** — sem ação real (backlog, item 9.10).
+- [ ] 2.8 `tsc`/`export` limpos, teste manual (streak em 0 e >0,
+      conquista parcial e completa, estados de loading/skeleton),
+      commit + push, marcar 9.2 como `✅`.
+
+### Fase 3 — Bíblia
+
+- [ ] 3.1 Criar `core/leitura/ultimaLeitura.ts` (carregar/salvar
+      livroSlug+capítulo, mesmo padrão de `preferenciaFonte.ts`).
+- [ ] 3.2 Gravar última leitura no mount da tela de capítulo.
+- [ ] 3.3 Aba Bíblia abre direto no último capítulo salvo (ou Gênesis 1
+      na primeira vez).
+- [ ] 3.4 Barra fixa `← Nome do Livro →` no rodapé da leitura,
+      substituindo os cards atuais de Anterior/Próximo.
+- [ ] 3.5 Tocar no nome do livro abre o seletor como modal (decisão da
+      Fase 1.4).
+- [ ] 3.6 `tsc`/`export` limpos, teste manual (abrir app e cair no
+      capítulo certo, trocar de capítulo pela barra, abrir seletor),
+      commit + push, marcar 9.3 como `✅`.
+
+### Fase 4 — Pesquisa (parte 3b: temas)
+
+- [ ] 4.1 Criar `core/biblia/temasBusca.ts` com a lista curada de temas
+      e referências.
+- [ ] 4.2 Barra de busca em destaque no topo (reaproveita
+      `core/content/busca.ts` pro resumo, e `buscarReferencia` pro
+      texto de temas).
+- [ ] 4.3 Cards coloridos de tema, grid ou lista horizontal.
+- [ ] 4.4 Resultado da busca por tema mostra o texto de verdade dos
+      versículos sugeridos (não só a referência).
+- [ ] 4.5 `tsc`/`export` limpos, teste manual (buscar por palavra,
+      tocar em card de tema, estado vazio sem resultado), commit +
+      push, marcar 9.4 como `✅`.
+- [ ] 4.6 **(Backlog, sub-plano próprio — não bloqueia o resto)**
+      Planejar e gerar o índice de busca de texto completo (9.5) —
+      só depois da auditoria de performance (7.4) ter rodado.
+
+### Fase 5 — Você
+
+- [ ] 5.1 Cabeçalho de perfil com estado "Visitante".
+- [ ] 5.2 Criar `core/util/tempoRelativo.ts`.
+- [ ] 5.3 Criar componente de menu de 3 pontinhos (ações: Ler,
+      Compartilhar, Resumo do livro, Copiar, Editar, Excluir) com
+      suporte a clique direito escopado ao card (seção "Revisão
+      estratégica" item 5, não a página inteira).
+- [ ] 5.4 Card "Salvo" (prévia) na aba Você, usando `EstadoVazio` (1.7)
+      quando não houver nada.
+- [ ] 5.5 Tela "Salvo" completa com filtro Anotações/Grifados/Pesquisas
+      favoritas.
+- [ ] 5.6 Criar `PesquisasFavoritasRepository` (interface + implementação
+      local, mesmo padrão dos outros repositórios) — depende da
+      funcionalidade de pesquisa (Fase 4) já existir pra fazer sentido
+      favoritar uma busca.
+- [ ] 5.7 Seção "Perseverança" (reaproveita streak + `mensagemStreak`
+      de 2.2, layout compacto).
+- [ ] 5.8 Criar `core/estatisticas/compartilhamentos.ts` (contador
+      simples) — **depende de compartilhar de verdade existir**
+      (seção 5 do FUNCIONALIDADES.md, ainda não planejada em detalhe;
+      avaliar se entra nesta fase ou fica registrada como
+      pré-requisito bloqueante antes de 5.8/5.9).
+- [ ] 5.9 Card de conquistas variante 2 (mesmo dado de 2.5/2.6, layout
+      diferente).
+- [ ] 5.10 Seção "Atividade" (5 últimas ações + botão "ver mais" pra
+      Salvo).
+- [ ] 5.11 Card de Configurações (link pra Fase 6).
+- [ ] 5.12 `tsc`/`export` limpos, teste manual completo (menu de 3
+      pontinhos em todas as ações, filtros de Salvo, botão direito no
+      desktop testado de verdade), commit + push, marcar 9.6 como `✅`.
+
+### Fase 6 — Configurações
+
+- [ ] 6.1 Tela de Configurações agrupada em seções (Leitura, Aparência,
+      Dados), lendo/escrevendo `core/leitura/preferenciaFonte.ts` e o
+      tema já existente (`core/theme.ts`) — sem duplicar lógica.
+- [ ] 6.2 Placeholder "em breve" pras preferências futuras (cores de
+      grifo, contraste).
+- [ ] 6.3 `tsc`/`export` limpos, teste manual, commit + push, marcar
+      9.7 como `✅`.
+
+### Fase 7 — Backlog explícito (fora de escopo até serem retomados)
+
+- [ ] 7.1 Busca de texto completo na Bíblia inteira (9.5) — sub-plano
+      técnico próprio.
+- [ ] 7.2 Notificação diária do versículo do dia (9.10) — depende de
+      conta + backend com agendamento.
+- [ ] 7.3 Grifar em várias cores (9.8).
+- [ ] 7.4 Modo escuro mais contrastado (9.9).
+- [ ] 7.5 Conta/login de verdade (seção 6 do FUNCIONALIDADES.md) —
+      desbloqueia perfil real (5.1), compartilhamentos multi-dispositivo
+      e notificações (7.2).

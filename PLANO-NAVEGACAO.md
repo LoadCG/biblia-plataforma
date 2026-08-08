@@ -551,29 +551,35 @@ para uso por mim ou por qualquer outro agente que continue o trabalho.
       aumentados de 28px (`w-7 h-7`) pra 40px (`w-10 h-10`) — perto do
       mínimo recomendado de 44px, mantendo o cabeçalho compacto; e
       `accessibilityLabel` adicionado nos três.
-- [ ] 1.9 Adaptação desktop: barra lateral em vez de bottom tabs acima
-      do breakpoint (~768px). **Adiado nesta sessão** — durante a
-      implementação, ficou claro que o Expo Router/React Navigation
-      instalado neste projeto não expõe um `@react-navigation/bottom-tabs`
-      isolado (não encontrado em `node_modules`), então a rota mais
-      segura pra um layout de barra lateral de verdade é um componente
-      de navegação **customizado** (não uma opção pronta tipo
-      `tabBarPosition`), trocado condicionalmente por `useWindowDimensions`
-      no lugar do `<Tabs>` do Expo Router acima do breakpoint. Isso é
-      trabalho arquitetural genuíno (não um ajuste de estilo), então foi
-      separado como item próprio a retomar com atenção dedicada, em vez
-      de arriscar uma implementação apressada e não testada de verdade
-      em telas largas.
+- [x] 1.9 Adaptação desktop: barra lateral em vez de bottom tabs acima
+      do breakpoint (768px), implementada em `app/(tabs)/_layout.tsx`.
+      **Retomado nesta sessão** com o componente de navegação
+      customizado que já tinha sido previsto: trocado o `<Tabs>` de
+      arquivo único do Expo Router pelos primitivos headless
+      `Tabs`/`TabList`/`TabTrigger`/`TabSlot` de `expo-router/ui`
+      (nativos do Expo Router SDK 57, não precisam de
+      `@react-navigation/bottom-tabs`), com `useWindowDimensions` pra
+      decidir barra lateral (`flex-row`, `TabList` como coluna de
+      224px à esquerda) vs. barra inferior (`flex-col`, `TabList` como
+      linha embaixo). Duas pegadinhas descobertas na implementação,
+      documentadas em comentário no arquivo: (1) `TabList`/`TabSlot`
+      precisam ser filhos diretos de `Tabs` — a descoberta de telas só
+      percorre filhos diretos e Fragments, não `View`s aninhadas; (2)
+      `className` do NativeWind só funciona em componentes host
+      (`View`/`Text`/`Pressable`) usados diretamente no nosso JSX —
+      em `TabList`/`TabSlot`/`Tabs` (componentes do expo-router) o
+      Tailwind não tem efeito nenhum, por isso esses três usam `style`
+      inline com cores lidas de `core/theme.ts`.
 - [x] 1.10 `tsc --noEmit` limpo, `expo export --platform web` limpo
-      (1.6MB), teste manual navegando pelas 4 abas no navegador em
-      viewport mobile (confirmado: 4 abas exatas, sem a 5ª aba fantasma
-      de antes de 1.3; tab bar aparece nas 4 telas principais e some
-      corretamente nas telas de detalhe — leitura de capítulo e
-      resumo; zero erros de console). **Teste em desktop não feito**
-      (consequência direta de 1.9 estar adiado — nada pra testar de
-      diferente ainda nesse viewport). Marcar 9.1 como `🔶` (não `✅`)
-      no FUNCIONALIDADES.md — a descrição de 9.1 inclui a adaptação
-      desktop, que ainda não existe.
+      (1.7MB), teste manual navegando pelas 4 abas no navegador em
+      viewport mobile (4 abas exatas, tab bar aparece nas 4 telas
+      principais e some corretamente nas telas de detalhe — leitura de
+      capítulo e resumo; zero erros de console) **e agora também em
+      viewport desktop (1280px)**: barra lateral de 224px à esquerda
+      com título "Resumo Bíblico" e os 4 itens empilhados
+      verticalmente, confirmado via inspeção de posição dos elementos
+      (coordenadas y crescentes, x dentro da coluna). Marcar 9.1 como
+      `✅` no FUNCIONALIDADES.md.
 
 ### Fase 2 — Início
 
@@ -761,3 +767,76 @@ para uso por mim ou por qualquer outro agente que continue o trabalho.
 - [ ] 7.5 Conta/login de verdade (seção 6 do FUNCIONALIDADES.md) —
       desbloqueia perfil real (5.1), compartilhamentos multi-dispositivo
       e notificações (7.2).
+
+---
+
+## Fase 8 — Referência de design: app de Bíblia mais baixado (grifo multi-cor + navegação persistente)
+
+Motivada por um print do usuário mostrando o app de Bíblia mais baixado
+da Play Store, lendo Gênesis 1 com o versículo 1 selecionado. Dois
+pontos de design adotados como referência direta:
+
+1. **Painel de ação do versículo selecionado**: ao tocar num versículo,
+   abre um painel fixo embaixo mostrando a referência (ex. "Gênesis
+   1:1"), as 3 últimas cores de grifo usadas + botão pra expandir e
+   escolher entre mais cores, e botões de ação ao lado (no app de
+   referência: Salvar, Anotação, e mais — Copiar, Compartilhar, Comparar
+   Versões, Orar — ao rolar pro lado).
+2. **Navegação persistente na leitura**: a barra de abas principal não
+   deve sumir ao entrar na leitura da Bíblia; a barrinha de
+   livro/capítulo (com as setas de navegação) fica **acima** da barra
+   de abas, dentro de uma pill com cantos arredondados agrupando seta
+   esquerda + nome do livro + seta direita.
+
+**Escopo desta fase, decidido com o usuário:** implementar grifo
+multi-cor e reorganizar as ações já existentes (Grifar, Anotar) somando
+Copiar e Compartilhar (que já existem em `core/estatisticas/compartilhador.ts`,
+criados na Fase 5) num painel único. "Salvar" (bookmark de verso, sem
+ser grifo nem nota) é uma funcionalidade nova que este app ainda não
+tem — **não entra nesta fase**, fica registrada como 8.5 no backlog.
+"Comparar Versões" (múltiplas traduções da Bíblia) e "Orar" (anotação
+privada que pode virar pública, com componente de rede social) também
+dependem de infraestrutura que não existe (múltiplas traduções vindas
+da API, conta de usuário) — registradas como 8.6 e 8.7, fora de escopo.
+
+- [ ] 8.1 Mover a leitura de capítulo pra dentro do group `(tabs)`:
+      `app/biblia/[livro]/[capitulo].tsx` (hoje fora da navegação de
+      abas, por isso a tab bar some) vira
+      `app/(tabs)/biblia/[livro]/[capitulo].tsx`, registrado como
+      `Stack.Screen` (push normal, não modal) em
+      `app/(tabs)/biblia/_layout.tsx`. Como `(tabs)` é um route group,
+      a URL continua `/biblia/[livro]/[capitulo]` — nenhum link
+      existente (`CardAtividade`, `salvo.tsx`, `escolher/[livro]`,
+      `biblia/index.tsx`) precisa mudar. Apagar o `app/biblia/` antigo
+      depois de mover, pra não colidir rota.
+- [ ] 8.2 Redesenhar a barra fixa de livro/capítulo (hoje uma faixa de
+      borda a borda) como uma pill: `rounded-full`, sombra, largura
+      abraçando o conteúdo (não full-width), margem inferior pra ficar
+      visualmente acima da tab bar (que agora continua visível, já que
+      8.1 resolveu isso) — seta esquerda + nome do livro + seta direita
+      dentro da mesma pill, sem separação.
+- [ ] 8.3 Grifo multi-cor: estender `Grifo` (`core/types/leitura.ts`)
+      com `cor: string`; trocar `GrifosRepository.alternar`/`estaGrifado`
+      por `obter`/`definir(ownerId, ref, cor)`/`remover` (recolorir sem
+      duplicar registro); criar `core/leitura/coresGrifo.ts` com a
+      paleta fixa + as 3 cores mais usadas recentemente (persistidas,
+      MRU). Cor do destaque do versículo lido dinamicamente do grifo
+      (não mais uma cor Tailwind fixa `bg-cor-grifo`).
+- [ ] 8.4 Painel de ação do versículo (substitui a linha "✎ Grifar / 🗒
+      Anotar" atual): referência do versículo, 3 pontos de cor recentes
+      + botão "mais cores" que expande a paleta completa, botão Anotar,
+      Copiar e Compartilhar (reaproveita `compartilhar()` da Fase 5).
+- [ ] 8.5 **(Backlog, fora de escopo agora)** "Salvar" — bookmark de
+      versículo sem grifo/nota, com aba própria em Salvo.
+- [ ] 8.6 **(Backlog, fora de escopo agora)** "Comparar Versões" —
+      depende de múltiplas traduções da Bíblia disponíveis na API hoje
+      usada (`bible-api.com`), não confirmado se cobre isso.
+- [ ] 8.7 **(Backlog, fora de escopo agora)** "Orar" — anotação privada
+      com opção de tornar pública, com componente de rede social entre
+      usuários; depende de conta real (7.5) e de um backend de
+      comunidade que não existe.
+- [ ] 8.8 `tsc --noEmit` limpo, `expo export --platform web` limpo,
+      teste manual: grifar em 3+ cores diferentes, recolorir um
+      versículo já grifado, remover grifo tocando na mesma cor, abrir
+      "mais cores", copiar e compartilhar um versículo, navegar entre
+      capítulos com a tab bar sempre visível. Commit + push.

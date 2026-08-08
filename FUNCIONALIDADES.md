@@ -472,7 +472,7 @@ planejamento por enquanto, nada implementado ainda. Estrutura definida
 Bíblia mais baixado da Play Store. Configurações não é aba própria, é
 uma tela alcançada por um card no fim de "Você".
 
-### 9.1 Casca de navegação: 4 abas + passe visual Material `🔶`
+### 9.1 Casca de navegação: 4 abas + passe visual Material `✅`
 **Funcionalidade:** Início, Bíblia, Pesquisa, Você via route group
 `app/(tabs)/` do Expo Router, com o conteúdo que já existe hoje (sem
 funcionalidade nova ainda). URLs de telas de detalhe não mudam. Feito:
@@ -488,10 +488,12 @@ o barrel `{ X } from "@expo/vector-icons"`), senão o bundle web infla
 **UX/UI:** bordas arredondadas + sombra aplicadas por enquanto só à
 tela de escolher livro (o resto do app recebe o mesmo tratamento
 conforme cada tela for reconstruída nas próximas fases, não numa
-varredura solta). **Falta:** adaptação de barra lateral no desktop
-(adiada — precisa de layout de navegação customizado, não uma opção
-pronta do Expo Router/React Navigation instalado neste projeto; ver
-PLANO-NAVEGACAO.md item 1.9 pro raciocínio completo).
+varredura solta). Adaptação de barra lateral no desktop implementada
+(`app/(tabs)/_layout.tsx`, primitivos headless `expo-router/ui` —
+`Tabs`/`TabList`/`TabTrigger`/`TabSlot` — trocando bottom tabs por
+sidebar de 224px acima de 768px de largura; ver PLANO-NAVEGACAO.md
+item 1.9 pro raciocínio completo, incluindo duas pegadinhas da API
+headless documentadas lá).
 
 ### 9.2 Início redesenhado `✅`
 **Funcionalidade:** card "Estude por resumos" leva pra `/resumos`

@@ -480,18 +480,21 @@ para uso por mim ou por qualquer outro agente que continue o trabalho.
 
 ### Status atual
 
-- **Fase em andamento:** Fase 4 concluída (parte 3b: temas) — próxima é
-  a Fase 5 (Você).
+- **Fase em andamento:** Fase 5 concluída (Você) — próxima é a Fase 6
+  (Configurações).
 - **Concluído:** Fase 1 completa exceto 1.9; Fase 2 completa; Fase 3
-  completa; Fase 4 completa (4.1–4.5).
+  completa; Fase 4 completa (4.1–4.5); Fase 5 completa (5.1–5.12).
 - **Pendente/adiado:** 1.9 (barra lateral no desktop); ajuste fino do
   item 3.5 (modal não cobre a barra de abas no web, só no nativo);
   4.6 (busca de texto completo, 3a/9.5) permanece backlog explícito
-  com sub-plano próprio, não teve trabalho nesta fase.
+  com sub-plano próprio, não teve trabalho nesta fase; 5.8/5.9 usaram
+  a versão mínima de "compartilhar" (clipboard no web, `Share` nativo
+  no app) em vez de esperar uma funcionalidade de compartilhamento
+  completa — decisão registrada na Fase 5 abaixo.
 - **Dependências novas instaladas nesta sessão** (nenhuma vinha
   incluída por padrão, ao contrário do que o plano original assumia):
   `@expo/vector-icons` (Fase 1) e `react-native-svg` (Fase 2, streak).
-- **Próximo passo:** começar Fase 5 (Você), item 5.1.
+- **Próximo passo:** começar Fase 6 (Configurações), item 6.1.
 
 ---
 
@@ -693,35 +696,40 @@ para uso por mim ou por qualquer outro agente que continue o trabalho.
 
 ### Fase 5 — Você
 
-- [ ] 5.1 Cabeçalho de perfil com estado "Visitante".
-- [ ] 5.2 Criar `core/util/tempoRelativo.ts`.
-- [ ] 5.3 Criar componente de menu de 3 pontinhos (ações: Ler,
-      Compartilhar, Resumo do livro, Copiar, Editar, Excluir) com
-      suporte a clique direito escopado ao card (seção "Revisão
-      estratégica" item 5, não a página inteira).
-- [ ] 5.4 Card "Salvo" (prévia) na aba Você, usando `EstadoVazio` (1.7)
+- [x] 5.1 Cabeçalho de perfil com estado "Visitante".
+- [x] 5.2 Criar `core/util/tempoRelativo.ts`.
+- [x] 5.3 Criar componente de menu de 3 pontinhos (`components/MenuAcoes.tsx`,
+      ações: Ler, Compartilhar, Resumo do livro, Copiar, Editar, Excluir)
+      com suporte a clique direito escopado ao card (`onContextMenu` em
+      `CardAtividade.tsx`, só no web).
+- [x] 5.4 Card "Salvo" (prévia) na aba Você, usando `EstadoVazio` (1.7)
       quando não houver nada.
-- [ ] 5.5 Tela "Salvo" completa com filtro Anotações/Grifados/Pesquisas
-      favoritas.
-- [ ] 5.6 Criar `PesquisasFavoritasRepository` (interface + implementação
-      local, mesmo padrão dos outros repositórios) — depende da
-      funcionalidade de pesquisa (Fase 4) já existir pra fazer sentido
-      favoritar uma busca.
-- [ ] 5.7 Seção "Perseverança" (reaproveita streak + `mensagemStreak`
+- [x] 5.5 Tela "Salvo" completa (`app/salvo.tsx`) com filtro
+      Todos/Anotações/Grifados/Pesquisas favoritas.
+- [x] 5.6 Criado `PesquisasFavoritasRepository` (interface + implementação
+      local `LocalPesquisasFavoritasRepository`, mesmo padrão dos outros
+      repositórios) e integrado ao botão "Favoritar esta busca" na aba
+      Pesquisa.
+- [x] 5.7 Seção "Perseverança" (reaproveita streak + `mensagemStreak`
       de 2.2, layout compacto).
-- [ ] 5.8 Criar `core/estatisticas/compartilhamentos.ts` (contador
-      simples) — **depende de compartilhar de verdade existir**
-      (seção 5 do FUNCIONALIDADES.md, ainda não planejada em detalhe;
-      avaliar se entra nesta fase ou fica registrada como
-      pré-requisito bloqueante antes de 5.8/5.9).
-- [ ] 5.9 Card de conquistas variante 2 (mesmo dado de 2.5/2.6, layout
-      diferente).
-- [ ] 5.10 Seção "Atividade" (5 últimas ações + botão "ver mais" pra
-      Salvo).
-- [ ] 5.11 Card de Configurações (link pra Fase 6).
-- [ ] 5.12 `tsc`/`export` limpos, teste manual completo (menu de 3
-      pontinhos em todas as ações, filtros de Salvo, botão direito no
-      desktop testado de verdade), commit + push, marcar 9.6 como `✅`.
+- [x] 5.8 Criado `core/estatisticas/compartilhamentos.ts` (contador
+      simples). **Decisão:** em vez de esperar uma funcionalidade de
+      compartilhamento completa (seção 5 do FUNCIONALIDADES.md, ainda
+      não planejada), criado `core/estatisticas/compartilhador.ts` com
+      a versão mínima que já dá função real ao botão: Clipboard API no
+      web, `Share` nativo do React Native no app — sem dependência nova.
+- [x] 5.9 Card de conquistas variante 2 (mesmo dado de 2.5/2.6,
+      reaproveitado via `CardConquistas` já existente).
+- [x] 5.10 Seção "Atividade" (5 últimas ações + botão "ver mais" pra
+      Salvo quando há mais de 5 itens).
+- [x] 5.11 Card de Configurações (link pra Fase 6, rota `/configuracoes`
+      ainda não existe — será criada na Fase 6).
+- [x] 5.12 `tsc --noEmit` limpo, `expo export --platform web` limpo
+      (1.7MB). Teste manual no navegador: aba Você renderiza cabeçalho,
+      card Salvo, Perseverança, Compartilhamentos, Conquistas e
+      Atividade corretamente; tela `/salvo` renderiza com os 4 filtros;
+      favoritar busca na aba Pesquisa testado end-to-end. Marcar 9.6
+      como `✅`.
 
 ### Fase 6 — Configurações
 

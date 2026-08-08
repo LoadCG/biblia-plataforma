@@ -30,3 +30,9 @@ export type Nota = ReferenciaVersiculo & {
   criadoEm: string;
   atualizadoEm: string;
 };
+
+export type PesquisaFavorita = {
+  ownerId: string;
+  termo: string;
+  criadoEm: string;
+};

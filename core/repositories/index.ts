@@ -7,10 +7,12 @@ import { localGrifosRepository } from "./local/LocalGrifosRepository";
 import { localProgressoRepository } from "./local/LocalProgressoRepository";
 import { localNotasRepository } from "./local/LocalNotasRepository";
 import { localLivrosLidosRepository } from "./local/LocalLivrosLidosRepository";
+import { localPesquisasFavoritasRepository } from "./local/LocalPesquisasFavoritasRepository";
 
 export const grifosRepository = localGrifosRepository;
 export const progressoRepository = localProgressoRepository;
 export const notasRepository = localNotasRepository;
 export const livrosLidosRepository = localLivrosLidosRepository;
+export const pesquisasFavoritasRepository = localPesquisasFavoritasRepository;
 
 export { obterOwnerId } from "../owner";

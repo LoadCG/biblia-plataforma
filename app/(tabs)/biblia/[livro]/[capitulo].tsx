@@ -197,15 +197,9 @@ export default function Leitura() {
     
     // Auto-focus on scroll down (like reading more)
     if (y > ultimoY.current + 15 && y > 100) {
-      setFocoAtivo((prev) => {
-        if (!prev) LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-        return true;
-      });
+      setFocoAtivo(true);
     } else if (y < ultimoY.current - 15 || y <= 50) {
-      setFocoAtivo((prev) => {
-        if (prev) LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-        return false;
-      });
+      setFocoAtivo(false);
     }
     ultimoY.current = y;
 

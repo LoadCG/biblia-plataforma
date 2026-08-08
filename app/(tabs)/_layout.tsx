@@ -63,12 +63,12 @@ const BotaoAba = forwardRef<View, BotaoAbaProps>(({ rotulo, icone, sidebar, isFo
           ? `flex-row items-center gap-3 rounded-xl px-3.5 py-2.5 mb-1 ${
               isFocused ? "bg-cor-destaque-fundo dark:bg-cor-destaque-fundo-dark" : ""
             }`
-          : "flex-1 items-center justify-center py-2"
+          : "flex-1 flex-col items-center justify-center py-1.5"
       }
     >
-      <MaterialIcons name={icone} size={sidebar ? 22 : 24} color={isFocused ? cores.ativo : cores.inativo} />
+      <MaterialIcons name={icone} size={sidebar ? 22 : 26} color={isFocused ? cores.ativo : cores.inativo} />
       <Text
-        className={`${sidebar ? "text-sm" : "text-[10px] mt-0.5"} font-semibold ${
+        className={`${sidebar ? "text-sm" : "text-[10px] mt-1 tracking-wide"} font-semibold ${
           isFocused ? "text-cor-destaque dark:text-cor-destaque-dark" : "text-cor-texto-suave dark:text-cor-texto-suave-dark"
         }`}
       >
@@ -128,7 +128,13 @@ export default function TabsLayout() {
         <TabSlot style={{ flex: 1 }} />
 
         {!sidebar && !oculta ? (
-          <TabList style={{ backgroundColor: cores.elevado, paddingTop: 6, paddingBottom: 6 }}>
+          <TabList style={{ 
+            backgroundColor: cores.elevado, 
+            paddingTop: 8, 
+            paddingBottom: 8,
+            borderTopWidth: 1,
+            borderTopColor: cores.borda,
+          }}>
             {ABAS.map((aba) => (
               <TabTrigger key={aba.nome} name={aba.nome} href={aba.href} asChild>
                 <BotaoAba rotulo={aba.rotulo} icone={aba.icone} sidebar={false} />

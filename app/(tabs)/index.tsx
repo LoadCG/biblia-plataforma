@@ -1,6 +1,7 @@
 import { Link } from "expo-router";
 import { useEffect, useMemo, useState } from "react";
 import { Pressable, ScrollView, Text, View } from "react-native";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { CardConquistas } from "../../components/CardConquistas";
 import { CardStreak } from "../../components/CardStreak";
 import { CardVersiculoDia } from "../../components/CardVersiculoDia";
@@ -10,6 +11,13 @@ import { livros } from "../../core/content/livros";
 import { calcularSequenciaAtual } from "../../core/estatisticas/streak";
 import { livrosLidosRepository, progressoRepository } from "../../core/repositories";
 import { useOwnerId } from "../../core/useOwnerId";
+
+function obterSaudacao() {
+  const hora = new Date().getHours();
+  if (hora >= 5 && hora < 12) return "Bom dia";
+  if (hora >= 12 && hora < 18) return "Boa tarde";
+  return "Boa noite";
+}
 
 export default function Inicio() {
   const ownerId = useOwnerId();
@@ -26,28 +34,41 @@ export default function Inicio() {
 
   const lidosSet = useMemo(() => new Set(lidos), [lidos]);
   const conquistas = useMemo(() => calcularConquistas(lidosSet), [lidosSet]);
+  
+  const saudacao = obterSaudacao();
 
   return (
     <ScrollView className="flex-1 bg-cor-fundo dark:bg-cor-fundo-dark">
-      <View className="px-4 pt-6 pb-10 max-w-2xl w-full mx-auto">
-        <View className="flex-row items-start justify-between mb-4">
-          <Text className="text-2xl font-bold text-cor-texto dark:text-cor-texto-dark flex-1 mr-3">
-            Resumo dos 66 Livros da Bíblia
+      <View className="px-4 pt-4 pb-10 max-w-2xl w-full mx-auto">
+        {/* Top Header & Saudação */}
+        <View className="flex-row items-center justify-between mb-6">
+          <Text className="text-xl font-bold tracking-tight text-cor-texto dark:text-cor-texto-dark">
+            {saudacao}
           </Text>
-          <BotaoTema />
+          <View className="flex-row items-center gap-3">
+            <BotaoTema />
+            <Pressable className="w-8 h-8 items-center justify-center">
+              <MaterialIcons name="notifications-none" size={24} className="text-cor-texto dark:text-cor-texto-dark" />
+            </Pressable>
+          </View>
         </View>
 
         <CardVersiculoDia />
 
+        {/* Resumos Div */}
         <Link href="/resumos" asChild>
           <Pressable
-            className="rounded-2xl bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark px-4 py-4 mb-4 shadow-sm"
-            style={{ shadowColor: "#000", shadowOpacity: 0.06, shadowRadius: 4, shadowOffset: { width: 0, height: 1 } }}
+            className="flex-row items-center justify-between rounded-3xl bg-cor-destaque dark:bg-cor-destaque-dark px-6 py-5 mb-4 shadow-sm"
           >
-            <Text className="text-lg font-bold text-cor-texto dark:text-cor-texto-dark">📚 Estude por resumos</Text>
-            <Text className="text-sm text-cor-texto-suave dark:text-cor-texto-suave-dark mt-0.5">
-              66 Livros bíblicos · {lidos.length} de {livros.length} lidos
-            </Text>
+            <View>
+              <Text className="text-xl font-bold text-white mb-1">Estudo por Resumos</Text>
+              <Text className="text-sm text-white/80">
+                {lidos.length} de {livros.length} livros lidos
+              </Text>
+            </View>
+            <View className="w-12 h-12 rounded-full bg-white/20 items-center justify-center">
+              <MaterialIcons name="menu-book" size={24} color="white" />
+            </View>
           </Pressable>
         </Link>
 
@@ -55,8 +76,8 @@ export default function Inicio() {
 
         <CardConquistas conquistas={conquistas} />
 
-        <Link href="/estatisticas" className="text-xs text-cor-destaque dark:text-cor-destaque-dark self-start">
-          Minhas estatísticas
+        <Link href="/estatisticas" className="mt-4 text-sm font-semibold text-cor-destaque dark:text-cor-destaque-dark self-center py-2">
+          Ver todas as estatísticas
         </Link>
       </View>
     </ScrollView>

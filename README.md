@@ -1,147 +1,72 @@
-# biblia-plataforma
+# Bíblia Plataforma
 
-Reescrita da plataforma (site + app) como um código único, usando Expo
-Router (React Native + Web). O plano completo de arquitetura — decisões,
-motivos e o que ficou em aberto de propósito — está em
-[`PLANO-PLATAFORMA.md`](./PLANO-PLATAFORMA.md), já copiado pra cá; é a
-fonte de verdade única a partir de agora, o projeto antigo
-(`Resumo-dos-66-Livros-da-Biblia`) continua com a cópia original só como
-histórico. O checklist completo de funcionalidades e melhorias — o que já
-existe e o que falta, com funcionalidade e UX/UI documentados separado
-pra cada item — está em [`FUNCIONALIDADES.md`](./FUNCIONALIDADES.md).
+Uma plataforma bíblica completa, rápida e imersiva (Web + App), construída com Expo Router (React Native + Web) e NativeWind. 
+
+Este projeto unifica a experiência de leitura bíblica, resumos teológicos, acompanhamento de progresso diário e medalhas num único código-fonte escalável, substituindo projetos fragmentados anteriores. O plano arquitetural original que guiou essa unificação está em [`PLANO-PLATAFORMA.md`](./PLANO-PLATAFORMA.md). 
+
+Para visualizar o que já implementamos e o roadmap técnico (próximos passos estruturais), consulte o [`TODO.md`](./TODO.md) e o nosso [`CHANGELOG.md`](./CHANGELOG.md).
 
 ## Rodando localmente
 
+Certifique-se de ter o Node.js e as ferramentas do Expo instaladas.
+
 ```bash
 npm install
-npm run web      # navegador
-npm run android  # emulador/dispositivo Android
-npm run ios      # simulador iOS (precisa de macOS)
+npm run web      # Roda no navegador
+npm run android  # Roda no emulador/dispositivo Android
+npm run ios      # Roda no simulador iOS (exclusivo para macOS)
 ```
 
-**Atenção ao atualizar dependências:** `tailwindcss` está fixado em
-`^3.4` (não v4) de propósito — o NativeWind 4.2.6 instalado aqui só
-suporta Tailwind v3. Atualizar `tailwindcss` sem também atualizar o
-NativeWind quebra o build (`Error: NativeWind only supports Tailwind CSS
-v3`) de um jeito que não aparece no `npm install`, só ao rodar/exportar.
+> **Atenção (Dependências):** O `tailwindcss` está fixado na versão `^3.4` de propósito. A versão atual do NativeWind no projeto suporta apenas o Tailwind v3. Não atualize para Tailwind v4 para evitar quebras no build cross-platform.
 
-## Estrutura
+## Estrutura de Diretórios Atual
 
-```
-app/                  Rotas (Expo Router — cada arquivo é uma tela)
-  _layout.tsx          Layout raiz, importa global.css, restaura o tema salvo
-  index.tsx             Home: lista os 66 livros, busca, progresso geral
-  resumos/[livro].tsx   Resumo histórico completo de um livro
-  biblia/index.tsx      Leitura bíblica: escolher livro
-  biblia/[livro]/index.tsx        Escolher capítulo (grade de números)
-  biblia/[livro]/[capitulo].tsx   Leitura (grifar, marcar capítulo como lido,
-                                   foco em ?versiculo=N)
+```text
+app/                  Rotas (Expo Router — cada arquivo é uma tela baseada em arquivos)
+  _layout.tsx          Layout raiz (Contextos globais como NavbarContext, temas, css)
+  (tabs)/              Navegação principal (Tabs na base)
+    index.tsx            Home imersiva: Versículo do dia, Resumos, Streak e Medalhas
+    resumos/             Sessão de estudos teológicos
+    biblia/              Leitura bíblica
+      escolher/          Fluxo estilo YouVersion (Lista de Livros + Acordeão de capítulos)
+      [livro]/[capitulo] Tela de leitura avançada (Auto-scroll, foco, grifos)
 
-core/                 Lógica e dados, sem depender de nenhuma tela
-  types/leitura.ts      Tipos dos dados do usuário (Grifo, CapituloLido, Nota)
-  owner.ts               Identidade anônima por dispositivo (vira conta depois)
-  useOwnerId.ts           Hook fino sobre owner.ts, usado pelas telas
-  theme.ts                Tema claro/escuro (NativeWind colorScheme + persistência)
-  repositories/          Um arquivo de interface por entidade + implementações
-    GrifosRepository.ts          (interface)
-    ProgressoRepository.ts       (interface — capítulo lido, leitura bíblica)
-    NotasRepository.ts           (interface)
-    LivrosLidosRepository.ts     (interface — livro lido, resumo histórico;
-                                   propósito diferente de ProgressoRepository)
-    local/                       implementações atuais (AsyncStorage), com fila
-                                  por chave (core/repositories/local/fila.ts)
-                                  pra evitar condição de corrida
-    index.ts                     único ponto que decide qual implementação usar
-  content/                Conteúdo fixo (os 66 livros e resumos)
-    tipos.ts                Tipos (Livro, ResumoCompleto, Secao, FichaItem)
-    livros.ts                API pública: `livros`, `obterLivro`, `obterResumo`
-    genero.ts                Mapa fixo de cor por gênero literário (ver por quê
-                              em PLANO-PLATAFORMA.md, Decisão 10)
-    dados/livros.json        Gerado — não editar à mão (ver abaixo)
-  biblia/                 Texto bíblico (bible-api.com)
-    BibliaAPI.ts             Busca com cache local por referência
-    tipos.ts                  Tipos (CapituloTexto, VersiculoTexto)
+core/                 Lógica de Negócios e Dados (Desacoplada da UI)
+  types/                Interfaces globais de domínio (Grifos, Salvos, Notas)
+  repositories/         Camada de Repositórios (Abstração do DB local via AsyncStorage)
+  content/              Motor de resumos e livros estáticos (JSON parseado)
+  biblia/               Motor de fetch e cache da Bible API
+  leitura/              Hooks e lógicas de preferência (Fonte A+/A-, Serifada, Tema)
 
-resumos-biblicos/     Os 66 resumos em Markdown (fonte real do conteúdo)
+components/           Componentes de UI Reutilizáveis (Cards, Botões, Modais)
+
+resumos-biblicos/     (Arquivos Markdown fonte com o texto teológico original)
 
 scripts/
-  gerar-conteudo.js    Lê resumos-biblicos/**/*.md e gera
-                        core/content/dados/livros.json
-
-components/
-  BotaoTema.tsx         Alternador de tema, reusado em toda tela
+  gerar-conteudo.js    Gera o JSON consolidado lendo a pasta resumos-biblicos/
 ```
 
-### Atualizando o conteúdo
+## Atualizando o conteúdo estático
 
-O conteúdo dos livros mora em `resumos-biblicos/**/*.md`. Depois de editar
-qualquer resumo, rode:
+O conteúdo original dos resumos teológicos mora em `resumos-biblicos/**/*.md`. Se você alterar algum arquivo lá, execute o construtor:
 
 ```bash
 npm run gerar-conteudo
 ```
 
-Isso regenera `core/content/dados/livros.json`, que é o que o app de
-fato lê (`core/content/livros.ts`). Nunca editar esse `.json` na mão —
-ele é sobrescrito toda vez que o script roda.
+Isso compilará os arquivos para `core/content/dados/livros.json`. O app carrega instantaneamente esse arquivo. Nunca edite esse `.json` manualmente.
 
-## Por que essa estrutura
+## Decisões Arquiteturais e de UX
 
-- **Repositórios com interface fixa**: nenhuma tela fala diretamente com
-  `AsyncStorage`. Toda leitura/escrita de dado do usuário passa por
-  `core/repositories/index.ts`. Quando um banco de dados entrar, troca-se
-  a implementação ali — nenhuma tela muda.
-- **`ownerId` desde o início**: todo grifo/progresso/nota já nasce
-  associado a um dono (hoje um UUID anônimo por dispositivo). Isso evita
-  uma migração de schema dolorosa quando o login existir.
-- **Sem monorepo por enquanto**: é um único app (site, iOS e Android a
-  partir do mesmo código via Expo Router), então não há um segundo
-  pacote pra separar — só reconsiderar se surgir um segundo app/serviço
-  de verdade.
+- **Padrão de Repositório**: Nenhuma tela se comunica direto com o banco de dados (AsyncStorage). Tudo passa por `core/repositories`. Isso garante que uma eventual migração para SQLite, Zustand persistido, ou Cloud Sync seja invisível para o frontend.
+- **Identidade Inicial (OwnerID)**: Toda interação no app (progresso, grifos) já é vinculada a um UUID de dispositivo. Isso evita dor de cabeça em migrações futuras para usuários logados.
+- **Experiência Imersiva**: O app oculta ativamente distrações durante a rolagem do texto bíblico, trocando cabeçalhos grandes por rodapés minimalistas. Suporta auto-scroll inteligente (pulando direto para um versículo escolhido) avaliando a árvore do DOM via `onLayout` do React Native.
+- **Performance e Cache**: Requisições à `bible-api.com` são cacheadas agressivamente localmente para reduzir latência a quase zero em leituras subsequentes.
 
-## Cores e tema
+## Funcionalidades Atuais
 
-As cores em `tailwind.config.js` (prefixo `cor-*` e `genero-*`) foram
-portadas 1:1 das variáveis CSS do site atual
-(`docs/assets/style.css`, blocos `:root` e `:root[data-tema="escuro"]`).
-Uso: `className="bg-cor-fundo dark:bg-cor-fundo-dark"`.
-
-O alternador de tema (`components/BotaoTema.tsx`) usa a API nativa do
-NativeWind (`colorScheme` de `nativewind`) com persistência própria em
-`core/theme.ts` — sem isso a escolha se perderia a cada abertura do app.
-
-## Funcionalidades da parte de resumos (concluída)
-
-- Lista dos 66 livros na home, com busca por nome e selo de gênero
-  literário colorido
-- Resumo histórico completo (ficha rápida + 6 seções) por livro
-- Tema claro/escuro, persistido por dispositivo
-- Marcar livro como lido (`core/repositories/LivrosLidosRepository.ts`),
-  refletido tanto na tela do livro quanto na lista da home
-- Navegação anterior/próximo entre livros
-- Contador "X de 66 livros lidos" na home
-
-## Leitura bíblica (concluída)
-
-Fluxo `/biblia` → `/biblia/[livro]` → `/biblia/[livro]/[capitulo]`
-(opcionalmente `?versiculo=N` pra abrir já com foco/rolagem nesse
-versículo). Texto real buscado na bible-api.com
-(`core/biblia/BibliaAPI.ts`, com cache local), grifar versículo e marcar
-capítulo como lido usando os repositórios já existentes, navegação
-anterior/próximo entre capítulos cruzando de um livro pro outro nas
-fronteiras.
-
-## Próximos passos (nesta ordem)
-
-1. ~~Portar os dados dos 66 livros e a tela de resumo, com tema, busca,
-   marcar como lido e navegação entre livros.~~ Feito.
-2. ~~Tela de leitura bíblica, grifar, marcar capítulo como lido.~~ Feito.
-3. Rota de API (`app/api/versiculo/[ref]+api.ts`) como proxy/cache no
-   servidor da bible-api.com — hoje `core/biblia/BibliaAPI.ts` ainda fala
-   direto com ela pelo cliente (cache local já reduz bastante o número de
-   chamadas repetidas, mas o proxy é o que reduz risco de rate limit de
-   verdade).
-4. Polimento adiado de propósito (não bloqueia nada do que já existe):
-   tamanho de fonte ajustável e fonte serifada na leitura, modo foco,
-   busca por palavra-chave no texto bíblico, notas pessoais por
-   versículo.
+- **Acessibilidade A+**: Modal dinâmico para controle de tamanho da fonte (5 níveis), toggle de fonte serifada e tema dark/light fluído.
+- **Modo Foco e Wayfinding**: Barras de navegação inteligentes que somem no scroll e breadcrumbs visuais guiando o usuário.
+- **Grifos e Marcações**: Marque os textos de cor sólida no menu sem perder a fluidez translúcida sobre o texto bíblico na leitura. Sistema completo com persistência.
+- **Skeletons & Tolerância a Erros**: Buscas avançadas que ignoram acentos. Loading skeletons elegantes que substituem os "spinners" pesados na navegação de capítulos.
+- **Navegação em Acordeão**: Escolha livros, abra os capítulos sem mudar de tela e escolha o versículo em grade.

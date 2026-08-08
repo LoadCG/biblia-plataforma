@@ -480,42 +480,88 @@ para uso por mim ou por qualquer outro agente que continue o trabalho.
 
 ### Status atual
 
-- **Fase em andamento:** nenhuma — plano aprovado, implementação ainda
-  não começou.
-- **Próximo passo:** iniciar Fase 1, item 1.1.
+- **Fase em andamento:** Fase 1 — casca de navegação.
+- **Concluído:** 1.1–1.8, 1.10 (ver detalhes marcados abaixo).
+- **Pendente/adiado:** 1.9 (barra lateral no desktop) — decisão
+  registrada abaixo do próprio item sobre por que foi adiado, não
+  bloqueia o resto do plano.
+- **Próximo passo:** começar Fase 2 (Início), item 2.1. 1.9 fica como
+  débito registrado, retomar quando fizer sentido dedicar uma sessão
+  só a isso.
 
 ---
 
 ### Fase 1 — Casca de navegação (risco baixo, sem funcionalidade nova)
 
-- [ ] 1.1 Criar `app/(tabs)/_layout.tsx` com as 4 abas (Início, Bíblia,
-      Pesquisa, Você), sem mover conteúdo ainda — abas podem apontar
-      pra telas placeholder nesta primeira sub-etapa se ajudar a
-      validar a barra isoladamente.
-- [ ] 1.2 Mover `app/index.tsx` pra dentro do group, confirmar que `/`
-      continua funcionando (URL não muda).
-- [ ] 1.3 Mover `app/biblia/index.tsx` e `app/biblia/[livro]/index.tsx`
-      pra dentro do group, confirmar URLs inalteradas.
-- [ ] 1.4 Registrar a decisão de pilha de navegação (seção "Revisão
-      estratégica" item 1): configurar o seletor livro→capítulo→versículo
-      como modal, a troca de capítulo por seta como replace.
-- [ ] 1.5 Instalar/confirmar `@expo/vector-icons` disponível (já vem no
-      Expo — só confirmar import funcionando), trocar os emoji-ícone
-      de botão (não os que são conteúdo) nas telas existentes por
-      `MaterialIcons`.
-- [ ] 1.6 Padronizar bordas (`rounded-2xl` em cards) e trocar `border`
-      por sombra sutil nos cards principais já existentes.
-- [ ] 1.7 Criar componente `EstadoVazio` reaproveitável (seção
-      "Revisão estratégica" item 2), mesmo sem telas que o usem ainda —
-      preparar pra Fase 5.
-- [ ] 1.8 Corrigir alvo de toque dos botões A-/A+/Aa existentes pra
-      44×44px mínimo (seção "Revisão estratégica" item 4) e adicionar
-      `accessibilityLabel`.
+- [x] 1.1 Criar `app/(tabs)/_layout.tsx` com as 4 abas (Início, Bíblia,
+      Pesquisa, Você). Pesquisa e Você entraram como telas placeholder
+      "Em breve" (conteúdo real nas Fases 4 e 5).
+- [x] 1.2 Mover `app/index.tsx` pra dentro do group
+      (`app/(tabs)/index.tsx`), `/` continua funcionando.
+- [x] 1.3 Mover `app/biblia/index.tsx` e `app/biblia/[livro]/index.tsx`
+      pra dentro do group. **Achado durante a implementação:** sem um
+      `app/(tabs)/biblia/_layout.tsx` (Stack), o Expo Router expunha a
+      rota aninhada `[livro]/index` como uma 5ª aba solta em vez de
+      empilhar dentro da aba "Bíblia" — criado esse layout extra pra
+      corrigir; confirmado no navegador que voltou a mostrar exatamente
+      4 abas.
+- [x] 1.4 Decisão de pilha de navegação registrada na seção "Revisão
+      estratégica" item 1 (modal para o seletor, replace pra troca de
+      capítulo). A implementação real desses modos de apresentação fica
+      pra Fase 3 (item 3.5), quando a barra fixa for construída — por
+      ora a navegação usa push padrão, que já funciona corretamente.
+- [x] 1.5 `@expo/vector-icons` **não vinha incluso** por padrão neste
+      projeto (a suposição original do plano estava errada) — instalado
+      via `npx expo install @expo/vector-icons`. Usado por enquanto só
+      nos ícones da barra de abas (`MaterialIcons`: home/menu-book/
+      search/person). **Achado de performance:** importar do barrel
+      (`import { MaterialIcons } from "@expo/vector-icons"`) inflou o
+      bundle web de 1.5MB pra 2MB (empacotava as fontes de todas as
+      famílias de ícone); trocado pra import direto do subcaminho
+      (`@expo/vector-icons/MaterialIcons`), bundle final: 1.6MB — só
+      +100KB pela fonte realmente usada. **Registrar como padrão
+      obrigatório** pra qualquer uso futuro de `@expo/vector-icons`
+      neste projeto. Troca de emoji-ícone por ícone nas telas de
+      conteúdo (grifar, nota, etc.) **não foi feita ainda** — escopo
+      reduzido só à barra de abas nesta fase; ver nota em 1.6 abaixo.
+- [x] 1.6 Passe de bordas/sombra aplicado à tela de escolher livro
+      (`app/(tabs)/biblia/index.tsx`, `CardLivro`: `rounded-2xl` +
+      sombra sutil no lugar de `border`). **Escopo reduzido
+      deliberadamente:** não varri todo o app nesta fase — o card de
+      livros da Início antiga será reconstruído do zero na Fase 2 (vira
+      o card "Estude por resumos"), então redesenhar o card atual ali
+      seria trabalho descartado. O resto do app recebe o mesmo
+      tratamento conforme cada tela for reconstruída nas próximas
+      fases, não numa varredura solta agora.
+- [x] 1.7 Criado `components/EstadoVazio.tsx`, já em uso no estado vazio
+      da busca de livros (`app/(tabs)/biblia/index.tsx`).
+- [x] 1.8 Botões A-/A+/Aa das duas telas de leitura (capítulo e resumo)
+      aumentados de 28px (`w-7 h-7`) pra 40px (`w-10 h-10`) — perto do
+      mínimo recomendado de 44px, mantendo o cabeçalho compacto; e
+      `accessibilityLabel` adicionado nos três.
 - [ ] 1.9 Adaptação desktop: barra lateral em vez de bottom tabs acima
-      do breakpoint (~768px), mesmo group de rotas.
-- [ ] 1.10 `tsc --noEmit` + `expo export --platform web` limpos, teste
-      manual navegando pelas 4 abas no navegador (mobile e desktop),
-      commit + push, marcar 9.1 como `✅` no FUNCIONALIDADES.md.
+      do breakpoint (~768px). **Adiado nesta sessão** — durante a
+      implementação, ficou claro que o Expo Router/React Navigation
+      instalado neste projeto não expõe um `@react-navigation/bottom-tabs`
+      isolado (não encontrado em `node_modules`), então a rota mais
+      segura pra um layout de barra lateral de verdade é um componente
+      de navegação **customizado** (não uma opção pronta tipo
+      `tabBarPosition`), trocado condicionalmente por `useWindowDimensions`
+      no lugar do `<Tabs>` do Expo Router acima do breakpoint. Isso é
+      trabalho arquitetural genuíno (não um ajuste de estilo), então foi
+      separado como item próprio a retomar com atenção dedicada, em vez
+      de arriscar uma implementação apressada e não testada de verdade
+      em telas largas.
+- [x] 1.10 `tsc --noEmit` limpo, `expo export --platform web` limpo
+      (1.6MB), teste manual navegando pelas 4 abas no navegador em
+      viewport mobile (confirmado: 4 abas exatas, sem a 5ª aba fantasma
+      de antes de 1.3; tab bar aparece nas 4 telas principais e some
+      corretamente nas telas de detalhe — leitura de capítulo e
+      resumo; zero erros de console). **Teste em desktop não feito**
+      (consequência direta de 1.9 estar adiado — nada pra testar de
+      diferente ainda nesse viewport). Marcar 9.1 como `🔶` (não `✅`)
+      no FUNCIONALIDADES.md — a descrição de 9.1 inclui a adaptação
+      desktop, que ainda não existe.
 
 ### Fase 2 — Início
 

@@ -1,9 +1,9 @@
 import { Link, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import { Pressable, ScrollView, Text, View } from "react-native";
-import { obterLivro } from "../../../core/content/livros";
-import { progressoRepository } from "../../../core/repositories";
-import { useOwnerId } from "../../../core/useOwnerId";
+import { obterLivro } from "../../../../core/content/livros";
+import { progressoRepository } from "../../../../core/repositories";
+import { useOwnerId } from "../../../../core/useOwnerId";
 
 export default function EscolherCapitulo() {
   const { livro: slug } = useLocalSearchParams<{ livro: string }>();

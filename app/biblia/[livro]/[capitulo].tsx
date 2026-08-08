@@ -202,7 +202,8 @@ export default function Leitura() {
               <Pressable
                 onPress={() => ajustarFonte(-1)}
                 disabled={indiceFonte === 0}
-                className="w-7 h-7 items-center justify-center rounded-full border border-cor-borda dark:border-cor-borda-dark"
+                accessibilityLabel="Diminuir tamanho da fonte"
+                className="w-10 h-10 items-center justify-center rounded-full border border-cor-borda dark:border-cor-borda-dark"
               >
                 <Text className={`text-xs font-bold ${indiceFonte === 0 ? "text-cor-texto-suave dark:text-cor-texto-suave-dark opacity-40" : "text-cor-texto dark:text-cor-texto-dark"}`}>
                   A-
@@ -211,7 +212,8 @@ export default function Leitura() {
               <Pressable
                 onPress={() => ajustarFonte(1)}
                 disabled={indiceFonte === TAMANHOS_FONTE.length - 1}
-                className="w-7 h-7 items-center justify-center rounded-full border border-cor-borda dark:border-cor-borda-dark"
+                accessibilityLabel="Aumentar tamanho da fonte"
+                className="w-10 h-10 items-center justify-center rounded-full border border-cor-borda dark:border-cor-borda-dark"
               >
                 <Text
                   className={`text-xs font-bold ${
@@ -225,7 +227,8 @@ export default function Leitura() {
               </Pressable>
               <Pressable
                 onPress={alternarFonteSerifada}
-                className={`w-7 h-7 items-center justify-center rounded-full border ${
+                accessibilityLabel={fonteSerifada ? "Desativar fonte serifada" : "Ativar fonte serifada"}
+                className={`w-10 h-10 items-center justify-center rounded-full border ${
                   fonteSerifada
                     ? "bg-cor-destaque-fundo dark:bg-cor-destaque-fundo-dark border-cor-destaque dark:border-cor-destaque-dark"
                     : "border-cor-borda dark:border-cor-borda-dark"

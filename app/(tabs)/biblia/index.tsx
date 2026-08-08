@@ -1,16 +1,20 @@
 import { Link } from "expo-router";
 import { useMemo, useState } from "react";
 import { FlatList, Pressable, Text, TextInput, View } from "react-native";
-import { BotaoTema } from "../../components/BotaoTema";
-import { coresDoGenero } from "../../core/content/genero";
-import { livros } from "../../core/content/livros";
-import type { Livro } from "../../core/content/tipos";
+import { BotaoTema } from "../../../components/BotaoTema";
+import { EstadoVazio } from "../../../components/EstadoVazio";
+import { coresDoGenero } from "../../../core/content/genero";
+import { livros } from "../../../core/content/livros";
+import type { Livro } from "../../../core/content/tipos";
 
 function CardLivro({ livro }: { livro: Livro }) {
   const cores = coresDoGenero(livro.genero);
   return (
     <Link href={`/biblia/${livro.slug}`} asChild>
-      <Pressable className="flex-row items-center gap-3 px-4 py-3 border border-cor-borda dark:border-cor-borda-dark rounded-xl bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark mb-2">
+      <Pressable
+        className="flex-row items-center gap-3 px-4 py-3 rounded-2xl bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark mb-2 shadow-sm"
+        style={{ shadowColor: "#000", shadowOpacity: 0.06, shadowRadius: 4, shadowOffset: { width: 0, height: 1 } }}
+      >
         <View className={`w-8 h-8 rounded-full items-center justify-center ${cores.bg}`}>
           <Text className={`text-xs font-bold ${cores.texto}`}>{livro.numero}</Text>
         </View>
@@ -66,9 +70,7 @@ export default function EscolherLivro() {
           </View>
         }
         ListEmptyComponent={
-          <Text className="text-center text-cor-texto-suave dark:text-cor-texto-suave-dark mt-6">
-            Nenhum livro encontrado.
-          </Text>
+          <EstadoVazio titulo="Nenhum livro encontrado" descricao="Tente buscar por outro nome." />
         }
       />
     </View>

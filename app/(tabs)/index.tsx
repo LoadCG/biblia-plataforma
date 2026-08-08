@@ -1,17 +1,17 @@
 import { Link } from "expo-router";
 import { useEffect, useMemo, useState } from "react";
 import { FlatList, Pressable, Text, TextInput, View } from "react-native";
-import { buscarLivros } from "../core/content/busca";
-import { calcularConquistas } from "../core/content/conquistas";
-import { coresDoGenero } from "../core/content/genero";
-import { livros } from "../core/content/livros";
-import type { Livro } from "../core/content/tipos";
-import { calcularSequenciaAtual } from "../core/estatisticas/streak";
-import { livrosLidosRepository, progressoRepository } from "../core/repositories";
-import { useOwnerId } from "../core/useOwnerId";
-import { BotaoTema } from "../components/BotaoTema";
-import { CardVersiculoDia } from "../components/CardVersiculoDia";
-import { FaixaConquistas } from "../components/FaixaConquistas";
+import { buscarLivros } from "../../core/content/busca";
+import { calcularConquistas } from "../../core/content/conquistas";
+import { coresDoGenero } from "../../core/content/genero";
+import { livros } from "../../core/content/livros";
+import type { Livro } from "../../core/content/tipos";
+import { calcularSequenciaAtual } from "../../core/estatisticas/streak";
+import { livrosLidosRepository, progressoRepository } from "../../core/repositories";
+import { useOwnerId } from "../../core/useOwnerId";
+import { BotaoTema } from "../../components/BotaoTema";
+import { CardVersiculoDia } from "../../components/CardVersiculoDia";
+import { FaixaConquistas } from "../../components/FaixaConquistas";
 
 function CardLivro({ livro, lido, trecho }: { livro: Livro; lido: boolean; trecho: string | null }) {
   const cores = coresDoGenero(livro.genero);

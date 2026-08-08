@@ -57,3 +57,34 @@ Abaixo, um detalhamento técnico e arquitetural de como implementaremos as próx
   - Instalar `jest`, `@testing-library/react-native`.
   - Escrever unit testes para as core business rules (`BibliaAPI`, `calcularSequenciaAtual`).
   - Escrever testes E2E com Maestro ou Detox testando a jornada principal: `Abrir App -> Escolher Livro -> Escolher Versículo -> Grifar Texto`.
+
+### 6. [ ] **Busca Global na Bíblia Completa**
+- **O Desafio:** A pesquisa atual busca apenas os resumos históricos dos livros. O usuário precisa conseguir pesquisar qualquer palavra-chave e encontrá-la em toda a Bíblia, recebendo os versículos na hora.
+- **Como Fazer:**
+  - Integrar um motor de busca local rápido após baixar a base offline. Se o aplicativo migrar para SQLite, utilizaremos índices **FTS5 (Full-Text Search)** nativos.
+  - Se mantivermos arquivos JSON estáticos, construiremos um "Inverted Index" reduzido e otimizado em WebWorker/Thread paralela.
+  - Na tela de pesquisa, os resultados serão divididos em abas visuais: "Resultados em Resumos" e "Resultados na Bíblia".
+
+### 7. [ ] **Reformulação Visual da Aba Pesquisa (Descubra)**
+- **O Desafio:** A interface de pesquisa atual tem temas em formato de cards simples com emojis. O usuário forneceu prints de um app líder de mercado como inspiração ("ideias boas"), focando na estrutura de descoberta e atalhos.
+- **Diretriz de Design:** **Não copiar explicitamente.** As referências servem apenas para inspirar a estrutura de UX. A identidade visual, ícones e paletas de cores devem ser originais e alinhados com o nosso app.
+- **Como Fazer (Adaptação das Ideias):**
+  - Alterar o título de "Pesquisa" para "Descubra" (ou sinônimo adequado).
+  - Adicionar uma linha de botões de atalhos funcionais para recursos do nosso app abaixo da barra de pesquisa.
+  - Refatorar os cards de `TEMAS_BUSCA` para um grid estruturado.
+  - O estilo de cada card de tema deve ter:
+    - Fundo com cor sólida pastel/vibrante da nossa própria paleta.
+    - O título do tema alinhado de forma clara e legível.
+    - Uma ilustração ou imagem gerada dinamicamente (com estilo próprio do nosso app) flutuando no card para gerar interesse visual.
+
+### 8. [ ] **Reformulação Visual da Aba Perfil (Você)**
+- **O Desafio:** A página de perfil atual não explora o potencial de pertencimento e gamificação. O usuário forneceu referências de estrutura de perfil premium (focada em métricas de leitura e comunidade) apenas como inspiração.
+- **Diretriz de Design:** **Criar de forma autêntica.** Usaremos as boas ideias de gamificação (como cards de métricas e display de medalhas), mas os desenhos das medalhas, o estilo dos cards e as métricas específicas serão 100% autorais e focadas no nosso ecossistema de conteúdo.
+- **Como Fazer (Adaptação das Ideias):**
+  - Criar um cabeçalho superior bem estruturado com configurações e atalhos rápidos do usuário.
+  - Reformular a exibição do perfil com layout claro (Nome em destaque, tag de progresso, localização e foto harmonizadas).
+  - Criar uma área de botões rápidos para ações chave (ex: Salvos, Notas, etc).
+  - Desenvolver **Cards de Gamificação Próprios**, incluindo:
+    - Card de Streak (Perseverança) evoluindo nosso "Foguinho" atual.
+    - Card de Estatísticas de Leitura original.
+    - Card Imersivo de Medalhas: Um container elegante exibindo nossas medalhas originais de leitura (Pentateuco, Evangelhos, etc.) em destaque com barras de progresso próprias.

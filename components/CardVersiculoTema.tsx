@@ -1,11 +1,23 @@
 import { useEffect, useState } from "react";
-import { ActivityIndicator, Text, View } from "react-native";
+import { ActivityIndicator, Text, View, Pressable } from "react-native";
+import { Link } from "expo-router";
 import { buscarReferencia } from "../core/biblia/BibliaAPI";
 import type { CapituloTexto } from "../core/biblia/tipos";
+import { livros } from "../core/content/livros";
 
-// Um card por referência curada de um tema (ver core/biblia/temasBusca.ts)
-// — cada um busca e cacheia seu próprio versículo via BibliaAPI, sem
-// travar os outros cards enquanto carrega.
+function getLinkHref(ref: string): any {
+  const match = ref.match(/(.+?)\s+(\d+):(\d+)/);
+  if (!match) return null;
+  const nomeLivro = match[1].trim();
+  const capitulo = match[2];
+  const versiculo = match[3];
+  
+  const livro = livros.find(l => l.nome.toLowerCase() === nomeLivro.toLowerCase() || l.abreviacao.toLowerCase() === nomeLivro.toLowerCase());
+  if (!livro) return null;
+
+  return `/biblia/${livro.slug}/${capitulo}?versiculo=${versiculo}`;
+}
+
 export function CardVersiculoTema({ referencia }: { referencia: string }) {
   const [dados, setDados] = useState<CapituloTexto | null>(null);
   const [erro, setErro] = useState(false);
@@ -18,7 +30,9 @@ export function CardVersiculoTema({ referencia }: { referencia: string }) {
       .catch(() => setErro(true));
   }, [referencia]);
 
-  return (
+  const href = getLinkHref(referencia);
+
+  const conteudo = (
     <View
       className="rounded-2xl bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark px-4 py-3.5 mb-2.5 shadow-sm"
       style={{ shadowColor: "#000", shadowOpacity: 0.06, shadowRadius: 4, shadowOffset: { width: 0, height: 1 } }}
@@ -39,4 +53,14 @@ export function CardVersiculoTema({ referencia }: { referencia: string }) {
       )}
     </View>
   );
+
+  if (href && dados) {
+    return (
+      <Link href={href} asChild>
+        <Pressable>{conteudo}</Pressable>
+      </Link>
+    );
+  }
+
+  return conteudo;
 }

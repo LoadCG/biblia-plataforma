@@ -37,19 +37,25 @@ export function CardVersiculoDia() {
   return (
     <View className="rounded-3xl overflow-hidden mb-4 shadow-sm bg-black">
       <ImageBackground source={{ uri: imageUrl }} className="w-full h-[450px]">
-        {/* Gradiente escuro para dar contraste ao texto branco */}
+        {/* Gradiente mais forte para dar contraste real ao texto branco */}
         <LinearGradient
-          colors={['rgba(0,0,0,0.3)', 'rgba(0,0,0,0.6)', 'rgba(0,0,0,0.9)']}
+          colors={['rgba(0,0,0,0.5)', 'rgba(0,0,0,0.75)', 'rgba(0,0,0,0.95)']}
           className="absolute inset-0"
         />
         
         <View className="p-5 flex-1 justify-between">
           {/* Header do Card */}
           <View>
-            <Text className="text-white/80 text-xs font-semibold uppercase tracking-widest mb-1">
+            <Text 
+              className="text-white/90 text-xs font-semibold uppercase tracking-widest mb-1"
+              style={{ textShadowColor: 'rgba(0,0,0,0.8)', textShadowOffset: { width: 0, height: 1 }, textShadowRadius: 3 }}
+            >
               Versículo do Dia
             </Text>
-            <Text className="text-white font-bold text-sm">
+            <Text 
+              className="text-white font-bold text-sm"
+              style={{ textShadowColor: 'rgba(0,0,0,0.8)', textShadowOffset: { width: 0, height: 1 }, textShadowRadius: 3 }}
+            >
               {carregando ? "Carregando..." : dados?.referencia}
             </Text>
           </View>
@@ -59,7 +65,16 @@ export function CardVersiculoDia() {
             {carregando ? (
               <ActivityIndicator color="white" />
             ) : (
-              <Text className="text-white text-2xl" style={{ fontFamily: "serif", lineHeight: 34 }}>
+              <Text 
+                className="text-white text-2xl" 
+                style={{ 
+                  fontFamily: "serif", 
+                  lineHeight: 34,
+                  textShadowColor: 'rgba(0, 0, 0, 0.9)',
+                  textShadowOffset: { width: 0, height: 2 },
+                  textShadowRadius: 8
+                }}
+              >
                 {dados?.texto}
               </Text>
             )}

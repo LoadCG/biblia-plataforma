@@ -50,10 +50,6 @@ export default function Pesquisa() {
           placeholderTextColor="#9ca3af"
           className="px-4 py-3.5 rounded-full border border-cor-borda dark:border-cor-borda-dark bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark text-cor-texto dark:text-cor-texto-dark text-base"
         />
-        <Text className="text-xs text-cor-texto-suave dark:text-cor-texto-suave-dark mt-2 mb-1">
-          Busca hoje só no conteúdo dos resumos — busca no texto bíblico inteiro é uma entrega maior, planejada à
-          parte (ver PLANO-NAVEGACAO.md).
-        </Text>
       </View>
 
       <ScrollView className="flex-1">

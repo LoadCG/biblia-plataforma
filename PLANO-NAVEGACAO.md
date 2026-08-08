@@ -480,17 +480,18 @@ para uso por mim ou por qualquer outro agente que continue o trabalho.
 
 ### Status atual
 
-- **Fase em andamento:** Fase 3 concluída — próxima é a Fase 4
-  (Pesquisa, parte 3b: temas).
+- **Fase em andamento:** Fase 4 concluída (parte 3b: temas) — próxima é
+  a Fase 5 (Você).
 - **Concluído:** Fase 1 completa exceto 1.9; Fase 2 completa; Fase 3
-  completa (3.1–3.6).
+  completa; Fase 4 completa (4.1–4.5).
 - **Pendente/adiado:** 1.9 (barra lateral no desktop); ajuste fino do
-  item 3.5 (modal não cobre a barra de abas no web, só no nativo —
-  funcional, só não 100% visualmente).
+  item 3.5 (modal não cobre a barra de abas no web, só no nativo);
+  4.6 (busca de texto completo, 3a/9.5) permanece backlog explícito
+  com sub-plano próprio, não teve trabalho nesta fase.
 - **Dependências novas instaladas nesta sessão** (nenhuma vinha
   incluída por padrão, ao contrário do que o plano original assumia):
   `@expo/vector-icons` (Fase 1) e `react-native-svg` (Fase 2, streak).
-- **Próximo passo:** começar Fase 4 (Pesquisa, parte 3b), item 4.1.
+- **Próximo passo:** começar Fase 5 (Você), item 5.1.
 
 ---
 
@@ -650,17 +651,36 @@ para uso por mim ou por qualquer outro agente que continue o trabalho.
 
 ### Fase 4 — Pesquisa (parte 3b: temas)
 
-- [ ] 4.1 Criar `core/biblia/temasBusca.ts` com a lista curada de temas
-      e referências.
-- [ ] 4.2 Barra de busca em destaque no topo (reaproveita
-      `core/content/busca.ts` pro resumo, e `buscarReferencia` pro
-      texto de temas).
-- [ ] 4.3 Cards coloridos de tema, grid ou lista horizontal.
-- [ ] 4.4 Resultado da busca por tema mostra o texto de verdade dos
-      versículos sugeridos (não só a referência).
-- [ ] 4.5 `tsc`/`export` limpos, teste manual (buscar por palavra,
-      tocar em card de tema, estado vazio sem resultado), commit +
-      push, marcar 9.4 como `✅`.
+- [x] 4.1 Criado `core/biblia/temasBusca.ts` com 8 temas (Amor, Cura,
+      Ansiedade, Raiva, Alegria, Perdão, Esperança, Sabedoria), 4
+      referências curadas cada (32 no total). Cores reaproveitam a
+      paleta de `genero.ts`/`cor-grifo-*` do `tailwind.config.js`, não
+      cores inventadas. **Todas as 32 referências verificadas por
+      chamada real à bible-api.com antes de codificar** (achado no
+      caminho: metade delas retornou erro de parse na primeira leva —
+      era o rate limit de ~15 req/30s documentado na Decisão 4 do
+      PLANO-PLATAFORMA.md, não referência inválida; confirmado OK em
+      todas ao repetir com 2,2s de intervalo entre chamadas).
+- [x] 4.2 Barra de busca no topo da aba Pesquisa, reaproveitando
+      `buscarLivros` de `core/content/busca.ts` (mesma busca por
+      conteúdo do resumo já usada em `/resumos`) — texto explicando que
+      isso não é busca no texto bíblico inteiro (deixa claro o escopo
+      atual, evita expectativa errada enquanto 9.5/3a não existe).
+- [x] 4.3 Grid de cards coloridos por tema (`components/CardVersiculoTema.tsx`
+      pro resultado, cores claras/escuras aplicadas via `useColorScheme`
+      do `core/theme.ts` — não dá pra usar `dark:` do NativeWind com
+      cor vinda de dado dinâmico, então a escolha de cor é feita em JS).
+- [x] 4.4 Cada referência de um tema busca e mostra o texto de verdade
+      via `buscarReferencia` (já existente, com cache), um card por
+      versículo, carregando de forma independente (não trava os outros
+      enquanto um ainda busca).
+- [x] 4.5 `tsc --noEmit` limpo, `expo export --platform web` limpo
+      (1.7MB). Teste manual: tema "Amor" mostrou os 4 versículos com
+      texto real; "← Voltar aos temas" funcionando; busca por
+      "cordeiro" retornou Êxodo/Apocalipse com trecho (mesmo
+      comportamento de `/resumos`); busca sem resultado mostrou
+      `EstadoVazio`; zero erros de console em todo o fluxo. Marcar 9.4
+      como `✅` no FUNCIONALIDADES.md.
 - [ ] 4.6 **(Backlog, sub-plano próprio — não bloqueia o resto)**
       Planejar e gerar o índice de busca de texto completo (9.5) —
       só depois da auditoria de performance (7.4) ter rodado.

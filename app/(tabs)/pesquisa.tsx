@@ -1,22 +1,99 @@
-import { View, Text } from "react-native";
+import { Link } from "expo-router";
+import { useMemo, useState } from "react";
+import { Pressable, ScrollView, Text, TextInput, View } from "react-native";
 import { BotaoTema } from "../../components/BotaoTema";
+import { CardVersiculoTema } from "../../components/CardVersiculoTema";
+import { EstadoVazio } from "../../components/EstadoVazio";
+import { buscarLivros } from "../../core/content/busca";
+import { TEMAS_BUSCA, type Tema } from "../../core/biblia/temasBusca";
+import { useColorScheme } from "../../core/theme";
 
-// Placeholder da Fase 1 (casca de navegação) — conteúdo real (busca por
-// tema e por palavra) entra na Fase 4, ver PLANO-NAVEGACAO.md.
 export default function Pesquisa() {
+  const [termo, setTermo] = useState("");
+  const [temaSelecionado, setTemaSelecionado] = useState<Tema | null>(null);
+  const { colorScheme } = useColorScheme();
+  const escuro = colorScheme === "dark";
+
+  const resultadosResumo = useMemo(() => (termo.trim() ? buscarLivros(termo) : []), [termo]);
+
   return (
     <View className="flex-1 bg-cor-fundo dark:bg-cor-fundo-dark">
-      <View className="px-5 pt-6 max-w-2xl w-full mx-auto flex-1">
-        <View className="flex-row items-center justify-between mb-6">
+      <View className="px-4 pt-6 max-w-2xl w-full mx-auto">
+        <View className="flex-row items-center justify-between mb-4">
           <Text className="text-2xl font-bold text-cor-texto dark:text-cor-texto-dark">Pesquisa</Text>
           <BotaoTema />
         </View>
-        <View className="flex-1 items-center justify-center">
-          <Text className="text-cor-texto-suave dark:text-cor-texto-suave-dark text-center">
-            Em breve: busca por tema e por palavra na Bíblia.
-          </Text>
-        </View>
+        <TextInput
+          value={termo}
+          onChangeText={(t) => {
+            setTermo(t);
+            if (t.trim()) setTemaSelecionado(null);
+          }}
+          placeholder="Buscar palavra nos resumos bíblicos..."
+          placeholderTextColor="#9ca3af"
+          className="px-4 py-3.5 rounded-full border border-cor-borda dark:border-cor-borda-dark bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark text-cor-texto dark:text-cor-texto-dark text-base"
+        />
+        <Text className="text-xs text-cor-texto-suave dark:text-cor-texto-suave-dark mt-2 mb-1">
+          Busca hoje só no conteúdo dos resumos — busca no texto bíblico inteiro é uma entrega maior, planejada à
+          parte (ver PLANO-NAVEGACAO.md).
+        </Text>
       </View>
+
+      <ScrollView className="flex-1">
+        <View className="px-4 pt-2 pb-10 max-w-2xl w-full mx-auto">
+          {termo.trim() ? (
+            resultadosResumo.length === 0 ? (
+              <EstadoVazio titulo="Nenhum resultado" descricao="Tente outra palavra ou o nome de um livro." />
+            ) : (
+              resultadosResumo.map(({ livro, trecho }) => (
+                <Link key={livro.slug} href={`/resumos/${livro.slug}`} asChild>
+                  <Pressable
+                    className="rounded-2xl bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark px-4 py-3 mb-2 shadow-sm"
+                    style={{ shadowColor: "#000", shadowOpacity: 0.06, shadowRadius: 4, shadowOffset: { width: 0, height: 1 } }}
+                  >
+                    <Text className="text-cor-texto dark:text-cor-texto-dark font-semibold">{livro.nome}</Text>
+                    {trecho ? (
+                      <Text className="text-xs text-cor-texto-suave dark:text-cor-texto-suave-dark mt-0.5 italic" numberOfLines={2}>
+                        "{trecho}"
+                      </Text>
+                    ) : null}
+                  </Pressable>
+                </Link>
+              ))
+            )
+          ) : temaSelecionado ? (
+            <>
+              <Pressable onPress={() => setTemaSelecionado(null)} className="self-start mb-3">
+                <Text className="text-sm text-cor-destaque dark:text-cor-destaque-dark font-semibold">← Voltar aos temas</Text>
+              </Pressable>
+              <Text className="text-lg font-bold text-cor-texto dark:text-cor-texto-dark mb-3">{temaSelecionado.titulo}</Text>
+              {temaSelecionado.referencias.map((ref) => (
+                <CardVersiculoTema key={ref} referencia={ref} />
+              ))}
+            </>
+          ) : (
+            <>
+              <Text className="text-sm font-semibold text-cor-texto-suave dark:text-cor-texto-suave-dark mb-2">
+                Ou explore por tema
+              </Text>
+              <View className="flex-row flex-wrap gap-2">
+                {TEMAS_BUSCA.map((tema) => (
+                  <Pressable
+                    key={tema.id}
+                    onPress={() => setTemaSelecionado(tema)}
+                    style={{ backgroundColor: escuro ? tema.corBgDark : tema.corBg }}
+                    className="px-4 py-3 rounded-2xl"
+                  >
+                    <Text style={{ color: escuro ? tema.corTextoDark : tema.corTexto }} className="font-semibold">
+                      {tema.titulo}
+                    </Text>
+                  </Pressable>
+                ))}
+              </View>
+            </>
+          )}
+        </View>
+      </ScrollView>
     </View>
   );
 }

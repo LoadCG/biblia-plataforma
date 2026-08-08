@@ -528,14 +528,20 @@ seletor não cobre visualmente a barra de abas no web (cobre no
 nativo/iOS/Android) — funcional nos dois casos, só o efeito visual não
 é idêntico entre plataformas; registrado como ajuste fino pendente.
 
-### 9.4 Pesquisa: temas pré-definidos `⬜`
-**Funcionalidade:** barra de busca em destaque + cards coloridos por
-tema (Amor, Cura, Ansiedade, Raiva, Alegria...), cada um dispara uma
-busca pré-definida (`core/biblia/temasBusca.ts`, novo — lista curada de
-referências por tema, no espírito de `versiculoDoDia.ts`, combinada com
-`core/content/busca.ts` já existente).
-**UX/UI:** cards com cor própria por tema, resultado mostra sugestões
-de versículos que citam o termo.
+### 9.4 Pesquisa: temas pré-definidos `✅`
+**Funcionalidade:** barra de busca reaproveitando `buscarLivros` de
+`core/content/busca.ts` (busca por conteúdo do resumo, mesma de
+`/resumos`) + 8 cards coloridos por tema (Amor, Cura, Ansiedade, Raiva,
+Alegria, Perdão, Esperança, Sabedoria — `core/biblia/temasBusca.ts`,
+32 referências curadas, todas verificadas por chamada real à
+bible-api.com). Tocar num tema busca e mostra o texto de verdade de
+cada versículo (`components/CardVersiculoTema.tsx`), carregando cada
+um independentemente.
+**UX/UI:** cards com cor própria por tema (paleta reaproveitada de
+`genero.ts`/`cor-grifo-*`, escolhida em JS via `useColorScheme` porque
+vem de dado dinâmico, não dá pra usar `dark:` do NativeWind ali); texto
+deixa claro que a busca hoje é só nos resumos, não no texto bíblico
+inteiro (ver 9.5) — evita expectativa errada.
 
 ### 9.5 Pesquisa: busca por palavra na Bíblia inteira `⬜`
 **Funcionalidade:** a peça mais pesada do plano — exige um índice de

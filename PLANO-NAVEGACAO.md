@@ -480,14 +480,15 @@ para uso por mim ou por qualquer outro agente que continue o trabalho.
 
 ### Status atual
 
-- **Fase em andamento:** Fase 1 — casca de navegação.
-- **Concluído:** 1.1–1.8, 1.10 (ver detalhes marcados abaixo).
+- **Fase em andamento:** Fase 2 concluída — próxima é a Fase 3 (Bíblia).
+- **Concluído:** Fase 1 completa exceto 1.9; Fase 2 completa (2.1–2.8).
 - **Pendente/adiado:** 1.9 (barra lateral no desktop) — decisão
-  registrada abaixo do próprio item sobre por que foi adiado, não
-  bloqueia o resto do plano.
-- **Próximo passo:** começar Fase 2 (Início), item 2.1. 1.9 fica como
-  débito registrado, retomar quando fizer sentido dedicar uma sessão
-  só a isso.
+  registrada no próprio item sobre por que foi adiado, não bloqueia o
+  resto do plano.
+- **Dependências novas instaladas nesta sessão** (nenhuma vinha
+  incluída por padrão, ao contrário do que o plano original assumia):
+  `@expo/vector-icons` (Fase 1) e `react-native-svg` (Fase 2, streak).
+- **Próximo passo:** começar Fase 3 (Bíblia), item 3.1.
 
 ---
 
@@ -565,26 +566,47 @@ para uso por mim ou por qualquer outro agente que continue o trabalho.
 
 ### Fase 2 — Início
 
-- [ ] 2.1 Card "Estude por resumos" — migrar a lista de livros com
-      busca de `app/index.tsx` pra trás desse card (nova rota, ex.
-      `app/(tabs)/resumos-lista.tsx` ou reaproveitar `/resumos` como
-      lista — decidir na implementação).
-- [ ] 2.2 Extrair `core/estatisticas/mensagemStreak.ts` (lógica pura de
-      faixa → mensagem, seção "Revisão estratégica" item 7) antes de
-      construir qualquer componente visual de streak.
-- [ ] 2.3 Componente SVG de fogo animado (`react-native-svg`), estado
-      cinza/parado vs. colorido/animado.
-- [ ] 2.4 Card de streak completo (número + SVG + mensagem), usando
-      `calcularSequenciaAtual` (já existe) + `mensagemStreak` (2.2).
-- [ ] 2.5 Estender `Conquista` com `descricao`/`progressoAtual`/
-      `progressoTotal` em `core/content/conquistas.ts`.
-- [ ] 2.6 Card de conquistas com botão de expandir (mostra as 6
-      conquistas com descrição e barra de progresso).
-- [ ] 2.7 Botão "Envie-me diariamente" no card de versículo do dia,
-      **como aviso "em breve"** — sem ação real (backlog, item 9.10).
-- [ ] 2.8 `tsc`/`export` limpos, teste manual (streak em 0 e >0,
-      conquista parcial e completa, estados de loading/skeleton),
-      commit + push, marcar 9.2 como `✅`.
+- [x] 2.1 Decidido: reaproveitar `/resumos` como lista (não uma rota
+      nova) — criado `app/resumos/index.tsx` com a lista de livros +
+      busca que antes vivia na Início; `app/resumos/[livro].tsx`
+      (detalhe de um livro) continua igual. Card "Estude por resumos"
+      na Início linka pra `/resumos`.
+- [x] 2.2 Criado `core/estatisticas/mensagemStreak.ts`.
+- [x] 2.3 Criado `components/FogoStreak.tsx` (`react-native-svg`
+      instalado — **não vinha incluso**, mesma situação de
+      `@expo/vector-icons` na Fase 1). **Bug real encontrado e
+      corrigido:** animar o componente `Svg` diretamente via
+      `Animated.createAnimatedComponent(Svg)` gera um erro de console
+      no web ("non-boolean attribute `collapsable`") e quebra a
+      renderização depois de um refresh de cache — corrigido animando
+      um `Animated.View` por fora e deixando o `Svg` interno estático.
+      **Registrar como padrão:** nunca envolver `Svg` diretamente em
+      `Animated.createAnimatedComponent` neste projeto: animar um
+      `Animated.View` wrapper.
+- [x] 2.4 Criado `components/CardStreak.tsx`. Testado com dado real via
+      injeção de `capitulos-lidos` no `localStorage`: sequência de 2
+      dias mostrou "2" e a mensagem certa da faixa 2-4
+      ("Você está pegando o ritmo").
+- [x] 2.5 `Conquista` estendida com `descricao`/`progressoAtual`/
+      `progressoTotal` em `core/content/conquistas.ts`; títulos também
+      viraram nomes próprios (ex. "Fundamentos da Fé" no lugar de
+      "Pentateuco completo").
+- [x] 2.6 Criado `components/CardConquistas.tsx` (compacto por padrão,
+      expande com botão "Ver todas" mostrando descrição + barra de
+      progresso por conquista). **Removido `components/FaixaConquistas.tsx`**
+      (versão antiga, sem progresso) — só era usado na Início, que foi
+      reescrita; nenhum código morto deixado pra trás.
+- [x] 2.7 Botão "🔔 Envie-me diariamente" adicionado a
+      `CardVersiculoDia`, `disabled` com rótulo "em breve".
+- [x] 2.8 `tsc --noEmit` limpo, `expo export --platform web` limpo
+      (1.6MB). Teste manual completo: streak em 0 (mensagem/ícone cinza)
+      e em 2 (colorido, mensagem certa); conquistas 0/6 e 2/6 (Primeiro
+      Passo + Pentateuco, testado com 5 livros do Pentateuco marcados
+      como lidos); expandir/ocultar conquistas funcionando; navegação
+      Início → "Estude por resumos" → `/resumos` → `/resumos/01-genesis`
+      confirmada; zero erros de console (depois do fix do 2.3); dado de
+      teste limpo do `localStorage` ao final. Marcar 9.2 como `✅` no
+      FUNCIONALIDADES.md.
 
 ### Fase 3 — Bíblia
 

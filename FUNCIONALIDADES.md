@@ -28,12 +28,13 @@ precisar voltar pra lista.
 genérica — a pessoa já vê pra onde vai antes de tocar.
 
 ### 1.3 Marcar livro como lido `✅`
-**Funcionalidade:** alterna e persiste por dispositivo (`LivrosLidosRepository`), refletido na lista da home e na tela do livro.
+**Funcionalidade:** alterna e persiste por dispositivo (`LivrosLidosRepository`), refletido na lista de resumos (`/resumos`) e na tela do livro.
 **UX/UI:** selo verde visível no card da lista, sem precisar abrir o
 livro pra saber se já foi lido.
 
 ### 1.4 Buscar livro por nome `✅`
-**Funcionalidade:** filtro em tempo real na lista da home.
+**Funcionalidade:** filtro em tempo real na lista de resumos (`/resumos`,
+migrada da Início na Fase 2 do plano de navegação — ver PLANO-NAVEGACAO.md).
 **UX/UI:** campo de busca com placeholder claro, mensagem de "nenhum
 resultado" quando a busca não bate com nada.
 
@@ -485,18 +486,25 @@ varredura solta). **Falta:** adaptação de barra lateral no desktop
 pronta do Expo Router/React Navigation instalado neste projeto; ver
 PLANO-NAVEGACAO.md item 1.9 pro raciocínio completo).
 
-### 9.2 Início redesenhado `⬜`
-**Funcionalidade:** card "Estude por resumos" (66 Livros bíblicos, leva
-pra tela de resumos — a lista de livros sai da home e migra pra trás
-desse card); card de sequência (streak) com SVG de fogo animado
-(cinza/parado em 0, colorido/animado acima de 0, mensagem motivacional);
-card de conquistas expansível, cada uma com nome, descrição e barra de
-progresso (exige estender `Conquista` com `descricao`/`progressoAtual`/
-`progressoTotal`, hoje só tem `conquistada` booleano).
-**UX/UI:** botão "Envie-me diariamente" no card do versículo do dia
-aparece como aviso "em breve" nesta fase — a ação real (notificação
-diária) fica em backlog explícito, depende de conta + backend com
-agendamento (ver seção de Notificações do plano).
+### 9.2 Início redesenhado `✅`
+**Funcionalidade:** card "Estude por resumos" leva pra `/resumos`
+(lista de livros + busca, que saiu da Início e ganhou rota própria);
+card de sequência (streak) com SVG de fogo animado (cinza/parado em 0,
+colorido/animado acima de 0, mensagem motivacional, lógica de mensagem
+extraída pra `core/estatisticas/mensagemStreak.ts` — compartilhável com
+a futura aba Você); card de conquistas expansível, cada uma com nome
+próprio, descrição e barra de progresso (`Conquista` estendida com
+`descricao`/`progressoAtual`/`progressoTotal`). `react-native-svg`
+precisou ser instalado (não vinha incluso). Testado com dado real
+injetado: streak de 2 dias mostrando mensagem certa, 2/6 conquistas
+calculadas corretamente (Primeiro Passo + Pentateuco completo).
+**UX/UI:** botão "🔔 Envie-me diariamente" no card do versículo do dia
+aparece desabilitado, com aviso "em breve" — a ação real (notificação
+diária) fica em backlog explícito (9.10), depende de conta + backend
+com agendamento. **Bug corrigido durante a implementação:** animar o
+componente `Svg` diretamente (em vez de um `Animated.View` por fora)
+gerava erro de console no web e quebrava a renderização — corrigido,
+registrado como padrão a seguir em `PLANO-NAVEGACAO.md`.
 
 ### 9.3 Bíblia: última leitura + navegação fixa `⬜`
 **Funcionalidade:** abre direto no último capítulo lido (dado novo,

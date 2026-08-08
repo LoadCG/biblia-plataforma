@@ -46,6 +46,18 @@ export function CardVersiculoDia() {
           </Text>
         </>
       )}
+
+      {/* Notificação diária ainda não existe (depende de conta + backend
+          com agendador, ver PLANO-NAVEGACAO.md) — botão comunica a
+          intenção sem prometer uma ação que ainda não funciona. */}
+      <Pressable
+        disabled
+        accessibilityLabel="Enviar versículo do dia diariamente — em breve"
+        className="flex-row items-center gap-1.5 self-start mt-2.5 px-3 py-1.5 rounded-full border border-cor-borda dark:border-cor-borda-dark opacity-60"
+      >
+        <Text className="text-xs text-cor-texto-suave dark:text-cor-texto-suave-dark">🔔 Envie-me diariamente</Text>
+        <Text className="text-[10px] text-cor-texto-suave dark:text-cor-texto-suave-dark">· em breve</Text>
+      </Pressable>
     </View>
   );
 }

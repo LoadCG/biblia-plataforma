@@ -47,8 +47,85 @@ function encontrarTrecho(resumo: (typeof resumosCompletos)[number], termoNormali
   return null;
 }
 
+const ALIAS_MAP: Record<string, string> = {
+  "genezis": "genesis",
+  "gn": "genesis",
+  "ex": "exodo",
+  "lv": "levitico",
+  "nm": "numeros",
+  "dt": "deuteronomio",
+  "js": "josue",
+  "jz": "juizes",
+  "rt": "rute",
+  "1sm": "1 samuel",
+  "2sm": "2 samuel",
+  "1rs": "1 reis",
+  "2rs": "2 reis",
+  "1cr": "1 cronicas",
+  "2cr": "2 cronicas",
+  "ed": "esdras",
+  "ne": "neemias",
+  "et": "ester",
+  "jo": "jo",
+  "sl": "salmos",
+  "pv": "proverbios",
+  "ec": "eclesiastes",
+  "ct": "cantares",
+  "is": "isaias",
+  "jr": "jeremias",
+  "lm": "lamentacoes",
+  "ez": "ezequiel",
+  "dn": "daniel",
+  "os": "oseias",
+  "jl": "joel",
+  "am": "amos",
+  "ob": "obadias",
+  "jn": "jonas",
+  "mq": "miqueias",
+  "na": "naum",
+  "hc": "habacuque",
+  "sf": "sofonias",
+  "ag": "ageu",
+  "zc": "zacarias",
+  "ml": "malaquias",
+  "mt": "mateus",
+  "mc": "marcos",
+  "mr": "marcos",
+  "lc": "lucas",
+  "joao": "joao",
+  "atos": "atos",
+  "rm": "romanos",
+  "1co": "1 corintios",
+  "2co": "2 corintios",
+  "gl": "galatas",
+  "ef": "efesios",
+  "fp": "filipenses",
+  "cl": "colossenses",
+  "1ts": "1 tessalonicenses",
+  "2ts": "2 tessalonicenses",
+  "1tm": "1 timoteo",
+  "2tm": "2 timoteo",
+  "tt": "tito",
+  "fm": "filemon",
+  "hb": "hebreus",
+  "tg": "tiago",
+  "1pe": "1 pedro",
+  "2pe": "2 pedro",
+  "1jo": "1 joao",
+  "2jo": "2 joao",
+  "3jo": "3 joao",
+  "jd": "judas",
+  "ap": "apocalipse",
+  "apocalipse": "apocalipse"
+};
+
 export function buscarLivros(termoBruto: string): ResultadoBusca[] {
-  const termo = normalizar(termoBruto.trim());
+  let termo = normalizar(termoBruto.trim());
+  
+  if (ALIAS_MAP[termo]) {
+    termo = ALIAS_MAP[termo];
+  }
+
   if (!termo) return resumosCompletos.map((livro) => ({ livro, trecho: null }));
 
   const porNome: ResultadoBusca[] = [];

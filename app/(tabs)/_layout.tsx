@@ -36,7 +36,7 @@ const CORES = {
 const ABAS = [
   { nome: "index", href: "/" as const, rotulo: "Início", icone: "home" as const },
   { nome: "biblia", href: "/biblia" as const, rotulo: "Bíblia", icone: "menu-book" as const },
-  { nome: "pesquisa", href: "/pesquisa" as const, rotulo: "Pesquisa", icone: "search" as const },
+  { nome: "pesquisa", href: "/pesquisa" as const, rotulo: "Descubra", icone: "search" as const },
   { nome: "voce", href: "/voce" as const, rotulo: "Você", icone: "person" as const },
 ];
 
@@ -79,50 +79,64 @@ const BotaoAba = forwardRef<View, BotaoAbaProps>(({ rotulo, icone, sidebar, isFo
 });
 BotaoAba.displayName = "BotaoAba";
 
+import { createContext, useContext, useState } from "react";
+
+export const NavbarContext = createContext({
+  oculta: false,
+  setOculta: (v: boolean) => {},
+});
+
+export function useNavbar() {
+  return useContext(NavbarContext);
+}
+
 export default function TabsLayout() {
   const { width } = useWindowDimensions();
   const { colorScheme } = useColorScheme();
   const sidebar = width >= BREAKPOINT_DESKTOP;
   const cores = colorScheme === "dark" ? CORES.dark : CORES.light;
+  const [oculta, setOculta] = useState(false);
 
   return (
-    <Tabs style={{ flex: 1, flexDirection: sidebar ? "row" : "column", backgroundColor: cores.fundo }}>
-      {sidebar ? (
-        <TabList
-          style={{
-            width: 224,
-            flexDirection: "column",
-            alignItems: "stretch",
-            justifyContent: "flex-start",
-            borderRightWidth: 1,
-            borderRightColor: cores.borda,
-            backgroundColor: cores.elevado,
-            paddingHorizontal: 12,
-            paddingTop: 32,
-          }}
-        >
-          <Text style={{ color: cores.texto, fontSize: 18, fontWeight: "800", paddingHorizontal: 4, marginBottom: 24 }}>
-            Resumo Bíblico
-          </Text>
-          {ABAS.map((aba) => (
-            <TabTrigger key={aba.nome} name={aba.nome} href={aba.href} asChild>
-              <BotaoAba rotulo={aba.rotulo} icone={aba.icone} sidebar />
-            </TabTrigger>
-          ))}
-        </TabList>
-      ) : null}
+    <NavbarContext.Provider value={{ oculta, setOculta }}>
+      <Tabs style={{ flex: 1, flexDirection: sidebar ? "row" : "column", backgroundColor: cores.fundo }}>
+        {sidebar ? (
+          <TabList
+            style={{
+              width: 224,
+              flexDirection: "column",
+              alignItems: "stretch",
+              justifyContent: "flex-start",
+              borderRightWidth: 1,
+              borderRightColor: cores.borda,
+              backgroundColor: cores.elevado,
+              paddingHorizontal: 12,
+              paddingTop: 32,
+            }}
+          >
+            <Text style={{ color: cores.texto, fontSize: 18, fontWeight: "800", paddingHorizontal: 4, marginBottom: 24 }}>
+              Resumo Bíblico
+            </Text>
+            {ABAS.map((aba) => (
+              <TabTrigger key={aba.nome} name={aba.nome} href={aba.href} asChild>
+                <BotaoAba rotulo={aba.rotulo} icone={aba.icone} sidebar />
+              </TabTrigger>
+            ))}
+          </TabList>
+        ) : null}
 
-      <TabSlot style={{ flex: 1 }} />
+        <TabSlot style={{ flex: 1 }} />
 
-      {!sidebar ? (
-        <TabList style={{ borderTopWidth: 1, borderTopColor: cores.borda, backgroundColor: cores.elevado }}>
-          {ABAS.map((aba) => (
-            <TabTrigger key={aba.nome} name={aba.nome} href={aba.href} asChild>
-              <BotaoAba rotulo={aba.rotulo} icone={aba.icone} sidebar={false} />
-            </TabTrigger>
-          ))}
-        </TabList>
-      ) : null}
-    </Tabs>
+        {!sidebar && !oculta ? (
+          <TabList style={{ backgroundColor: cores.elevado, paddingTop: 6, paddingBottom: 6 }}>
+            {ABAS.map((aba) => (
+              <TabTrigger key={aba.nome} name={aba.nome} href={aba.href} asChild>
+                <BotaoAba rotulo={aba.rotulo} icone={aba.icone} sidebar={false} />
+              </TabTrigger>
+            ))}
+          </TabList>
+        ) : null}
+      </Tabs>
+    </NavbarContext.Provider>
   );
 }

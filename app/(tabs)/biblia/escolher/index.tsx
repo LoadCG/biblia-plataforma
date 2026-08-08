@@ -1,36 +1,21 @@
-import { Link } from "expo-router";
-import { useMemo, useState } from "react";
+import { Link, router } from "expo-router";
+import { useEffect, useMemo, useState } from "react";
 import { FlatList, Pressable, Text, TextInput, View } from "react-native";
 import { BotaoTema } from "../../../../components/BotaoTema";
 import { EstadoVazio } from "../../../../components/EstadoVazio";
-import { coresDoGenero } from "../../../../core/content/genero";
 import { livros } from "../../../../core/content/livros";
 import type { Livro } from "../../../../core/content/tipos";
-
-function CardLivro({ livro }: { livro: Livro }) {
-  const cores = coresDoGenero(livro.genero);
-  return (
-    <Link href={`/biblia/escolher/${livro.slug}`} asChild>
-      <Pressable
-        className="flex-row items-center gap-3 px-4 py-3 rounded-2xl bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark mb-2 shadow-sm"
-        style={{ shadowColor: "#000", shadowOpacity: 0.06, shadowRadius: 4, shadowOffset: { width: 0, height: 1 } }}
-      >
-        <View className={`w-8 h-8 rounded-full items-center justify-center ${cores.bg}`}>
-          <Text className={`text-xs font-bold ${cores.texto}`}>{livro.numero}</Text>
-        </View>
-        <View className="flex-1">
-          <Text className="text-cor-texto dark:text-cor-texto-dark font-semibold">{livro.nome}</Text>
-          <Text className="text-xs text-cor-texto-suave dark:text-cor-texto-suave-dark">
-            {livro.capitulos} {livro.capitulos > 1 ? "capítulos" : "capítulo"}
-          </Text>
-        </View>
-      </Pressable>
-    </Link>
-  );
-}
+import { carregarUltimaLeitura } from "../../../../core/leitura/ultimaLeitura";
 
 export default function EscolherLivro() {
   const [termo, setTermo] = useState("");
+  const [livroExpandido, setLivroExpandido] = useState<string | null>(null);
+
+  useEffect(() => {
+    carregarUltimaLeitura().then(({ livroSlug }) => {
+      if (livroSlug) setLivroExpandido(livroSlug);
+    });
+  }, []);
 
   const listaFiltrada = useMemo(() => {
     const termoNormalizado = termo.trim().toLowerCase();
@@ -38,37 +23,66 @@ export default function EscolherLivro() {
     return livros.filter((l) => l.nome.toLowerCase().includes(termoNormalizado));
   }, [termo]);
 
+  const renderItem = ({ item }: { item: Livro }) => {
+    const expandido = livroExpandido === item.slug;
+    
+    return (
+      <View className="mb-2">
+        <Pressable
+          onPress={() => setLivroExpandido(expandido ? null : item.slug)}
+          className={`flex-row items-center justify-between px-4 py-4 rounded-xl ${expandido ? 'bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark' : ''}`}
+        >
+          <Text className="text-cor-texto dark:text-cor-texto-dark text-lg font-semibold">{item.nome}</Text>
+        </Pressable>
+
+        {expandido && (
+          <View className="flex-row flex-wrap gap-2 px-2 py-4 bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark rounded-b-xl -mt-2 pt-6">
+            {Array.from({ length: item.capitulos }).map((_, i) => {
+              const cap = i + 1;
+              return (
+                <Pressable
+                  key={cap}
+                  onPress={() => router.push(`/biblia/escolher/${item.slug}/${cap}`)}
+                  className="w-[18%] aspect-square rounded-xl bg-cor-fundo dark:bg-cor-fundo-dark border border-cor-borda dark:border-cor-borda-dark items-center justify-center"
+                >
+                  <Text className="text-base font-bold text-cor-texto dark:text-cor-texto-dark">{cap}</Text>
+                </Pressable>
+              );
+            })}
+          </View>
+        )}
+      </View>
+    );
+  };
+
   return (
     <View className="flex-1 bg-cor-fundo dark:bg-cor-fundo-dark">
+      {/* Header Fixo */}
+      <View className="px-5 py-4 border-b border-cor-borda dark:border-cor-borda-dark bg-cor-fundo dark:bg-cor-fundo-dark z-10">
+        <View className="flex-row items-center justify-between mb-4">
+          <View className="flex-row items-center gap-4">
+            <Pressable onPress={() => router.back()} className="w-8 h-8 items-center justify-center">
+              <Text className="text-cor-texto dark:text-cor-texto-dark text-xl">←</Text>
+            </Pressable>
+            <Text className="text-2xl font-bold text-cor-texto dark:text-cor-texto-dark">Livros</Text>
+          </View>
+          <BotaoTema />
+        </View>
+        <TextInput
+          value={termo}
+          onChangeText={setTermo}
+          placeholder="Buscar livro..."
+          placeholderTextColor="#9ca3af"
+          className="px-4 py-2.5 rounded-full border border-cor-borda dark:border-cor-borda-dark bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark text-cor-texto dark:text-cor-texto-dark"
+        />
+      </View>
+
       <FlatList
         data={listaFiltrada}
         keyExtractor={(item) => item.slug}
-        renderItem={({ item }) => <CardLivro livro={item} />}
-        contentContainerClassName="px-4 pt-6 pb-10 max-w-2xl w-full mx-auto"
+        renderItem={renderItem}
+        contentContainerClassName="px-4 pt-4 pb-32 max-w-2xl w-full mx-auto"
         keyboardShouldPersistTaps="handled"
-        ListHeaderComponent={
-          <View className="mb-4">
-            <View className="flex-row items-start justify-between mb-2">
-              <View className="flex-1 mr-3">
-                <Link href="/biblia" className="text-cor-destaque dark:text-cor-destaque-dark text-sm mb-1">
-                  ← Voltar pra leitura
-                </Link>
-                <Text className="text-2xl font-bold text-cor-texto dark:text-cor-texto-dark">Escolher livro</Text>
-              </View>
-              <BotaoTema />
-            </View>
-            <Text className="text-sm text-cor-texto-suave dark:text-cor-texto-suave-dark mb-3">
-              Escolha um livro para começar.
-            </Text>
-            <TextInput
-              value={termo}
-              onChangeText={setTermo}
-              placeholder="Buscar por nome do livro..."
-              placeholderTextColor="#9ca3af"
-              className="px-4 py-3 rounded-full border border-cor-borda dark:border-cor-borda-dark bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark text-cor-texto dark:text-cor-texto-dark"
-            />
-          </View>
-        }
         ListEmptyComponent={
           <EstadoVazio titulo="Nenhum livro encontrado" descricao="Tente buscar por outro nome." />
         }

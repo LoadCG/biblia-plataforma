@@ -8,5 +8,5 @@ export interface GrifosRepository {
   listarPorCapitulo(ownerId: string, livroSlug: string, capitulo: number): Promise<Grifo[]>;
   listarTodos(ownerId: string): Promise<Grifo[]>;
   estaGrifado(ownerId: string, ref: ReferenciaVersiculo): Promise<boolean>;
-  alternar(ownerId: string, ref: ReferenciaVersiculo): Promise<boolean>;
+  alternar(ownerId: string, ref: ReferenciaVersiculo, cor?: string): Promise<boolean>;
 }

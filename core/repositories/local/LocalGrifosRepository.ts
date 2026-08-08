@@ -39,18 +39,25 @@ export const localGrifosRepository: GrifosRepository = {
     return todos.some((g) => g.ownerId === ownerId && mesmaReferencia(g, ref));
   },
 
-  alternar(ownerId, ref) {
+  alternar(ownerId, ref, cor) {
     return comFila(CHAVE, async () => {
       const todos = await lerTudo();
       const indice = todos.findIndex((g) => g.ownerId === ownerId && mesmaReferencia(g, ref));
 
       if (indice !== -1) {
+        // Se o grifo já existe e a cor passada for diferente, só atualiza a cor
+        if (cor && todos[indice].cor !== cor) {
+          todos[indice].cor = cor;
+          await salvarTudo(todos);
+          return true;
+        }
+        // Senão (mesma cor ou chamou sem cor explícita), desmarca
         todos.splice(indice, 1);
         await salvarTudo(todos);
         return false;
       }
 
-      todos.push({ ...ref, ownerId, criadoEm: new Date().toISOString() });
+      todos.push({ ...ref, ownerId, criadoEm: new Date().toISOString(), cor });
       await salvarTudo(todos);
       return true;
     });

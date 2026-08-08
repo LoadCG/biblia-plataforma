@@ -582,7 +582,7 @@ leitura. Alcançada por um card no fim da aba Você, não é aba própria.
 não uma lista solta de toggles; espaço já previsto pras preferências
 futuras abaixo.
 
-### 9.8 Grifar em várias cores `⬜`
+### 9.8 Grifar em várias cores `✅`
 **Funcionalidade:** hoje `Grifo` é binário — vira um campo `cor` no
 tipo (com default pra não quebrar grifos já salvos), paleta pequena e
 fixa (4-6 cores com significado, não um color picker livre), seletor no

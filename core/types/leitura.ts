@@ -12,6 +12,7 @@ export type ReferenciaVersiculo = {
 export type Grifo = ReferenciaVersiculo & {
   ownerId: string;
   criadoEm: string;
+  cor?: string;
 };
 
 export type ReferenciaCapitulo = {

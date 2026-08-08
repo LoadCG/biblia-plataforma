@@ -73,18 +73,19 @@ export default function Pesquisa() {
             </>
           ) : (
             <>
-              <Text className="text-sm font-semibold text-cor-texto-suave dark:text-cor-texto-suave-dark mb-2">
+              <Text className="text-sm font-semibold text-cor-texto-suave dark:text-cor-texto-suave-dark mb-3">
                 Ou explore por tema
               </Text>
-              <View className="flex-row flex-wrap gap-2">
+              <View className="flex-row flex-wrap justify-between">
                 {TEMAS_BUSCA.map((tema) => (
                   <Pressable
                     key={tema.id}
                     onPress={() => setTemaSelecionado(tema)}
-                    style={{ backgroundColor: escuro ? tema.corBgDark : tema.corBg }}
-                    className="px-4 py-3 rounded-2xl"
+                    style={{ backgroundColor: escuro ? tema.corBgDark : tema.corBg, width: "48%" }}
+                    className="rounded-2xl px-4 py-6 mb-3 items-start"
                   >
-                    <Text style={{ color: escuro ? tema.corTextoDark : tema.corTexto }} className="font-semibold">
+                    <Text className="text-3xl mb-2">{tema.icone}</Text>
+                    <Text style={{ color: escuro ? tema.corTextoDark : tema.corTexto }} className="text-base font-bold">
                       {tema.titulo}
                     </Text>
                   </Pressable>

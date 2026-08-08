@@ -670,6 +670,12 @@ para uso por mim ou por qualquer outro agente que continue o trabalho.
       pro resultado, cores claras/escuras aplicadas via `useColorScheme`
       do `core/theme.ts` — não dá pra usar `dark:` do NativeWind com
       cor vinda de dado dinâmico, então a escolha de cor é feita em JS).
+      **Revisado a pedido do usuário** depois da primeira versão (que
+      usava pills pequenos numa linha só): cards grandes, 2 colunas
+      fixas (`width: "48%"`, não `flex-wrap` livre — dá a impressão de
+      mais conteúdo por ocupar mais espaço vertical), ícone emoji por
+      tema adicionado ao tipo `Tema` (`icone`), cores mantidas em tom
+      pastel (já eram, reaproveitadas de `genero.ts`).
 - [x] 4.4 Cada referência de um tema busca e mostra o texto de verdade
       via `buscarReferencia` (já existente, com cache), um card por
       versículo, carregando de forma independente (não trava os outros

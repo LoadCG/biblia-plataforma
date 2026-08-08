@@ -5,6 +5,7 @@
 export type Tema = {
   id: string;
   titulo: string;
+  icone: string;
   corBg: string;
   corBgDark: string;
   corTexto: string;
@@ -16,6 +17,7 @@ export const TEMAS_BUSCA: Tema[] = [
   {
     id: "amor",
     titulo: "Amor",
+    icone: "❤️",
     corBg: "#f8e1df",
     corBgDark: "#3a2624",
     corTexto: "#934840",
@@ -25,6 +27,7 @@ export const TEMAS_BUSCA: Tema[] = [
   {
     id: "cura",
     titulo: "Cura",
+    icone: "🌿",
     corBg: "#dff0e5",
     corBgDark: "#1e3527",
     corTexto: "#287a45",
@@ -34,6 +37,7 @@ export const TEMAS_BUSCA: Tema[] = [
   {
     id: "ansiedade",
     titulo: "Ansiedade",
+    icone: "🕊️",
     corBg: "#e2eef0",
     corBgDark: "#1c2f32",
     corTexto: "#326b75",
@@ -43,6 +47,7 @@ export const TEMAS_BUSCA: Tema[] = [
   {
     id: "raiva",
     titulo: "Raiva",
+    icone: "🔥",
     corBg: "#f3e6d3",
     corBgDark: "#3a2c18",
     corTexto: "#8a5a2b",
@@ -52,6 +57,7 @@ export const TEMAS_BUSCA: Tema[] = [
   {
     id: "alegria",
     titulo: "Alegria",
+    icone: "☀️",
     corBg: "#ebe4f6",
     corBgDark: "#2c2438",
     corTexto: "#664795",
@@ -61,6 +67,7 @@ export const TEMAS_BUSCA: Tema[] = [
   {
     id: "perdao",
     titulo: "Perdão",
+    icone: "🤍",
     corBg: "#f2e2f1",
     corBgDark: "#332030",
     corTexto: "#84477e",
@@ -70,6 +77,7 @@ export const TEMAS_BUSCA: Tema[] = [
   {
     id: "esperanca",
     titulo: "Esperança",
+    icone: "🌅",
     corBg: "#e7edf9",
     corBgDark: "#1f2a3d",
     corTexto: "#395990",
@@ -79,6 +87,7 @@ export const TEMAS_BUSCA: Tema[] = [
   {
     id: "sabedoria",
     titulo: "Sabedoria",
+    icone: "📖",
     corBg: "#fdf1b8",
     corBgDark: "#4a3f14",
     corTexto: "#caa000",

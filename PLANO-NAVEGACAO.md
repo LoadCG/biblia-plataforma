@@ -480,21 +480,26 @@ para uso por mim ou por qualquer outro agente que continue o trabalho.
 
 ### Status atual
 
-- **Fase em andamento:** Fase 5 concluída (Você) — próxima é a Fase 6
-  (Configurações).
+- **Fase em andamento:** Fase 6 concluída (Configurações) — próxima é a
+  Fase 7 (backlog explícito, ver seção acima: busca de texto completo,
+  notificação diária, grifos coloridos, contraste, conta/login).
 - **Concluído:** Fase 1 completa exceto 1.9; Fase 2 completa; Fase 3
-  completa; Fase 4 completa (4.1–4.5); Fase 5 completa (5.1–5.12).
+  completa; Fase 4 completa (4.1–4.5); Fase 5 completa (5.1–5.12); Fase
+  6 completa (6.1–6.3).
 - **Pendente/adiado:** 1.9 (barra lateral no desktop); ajuste fino do
   item 3.5 (modal não cobre a barra de abas no web, só no nativo);
   4.6 (busca de texto completo, 3a/9.5) permanece backlog explícito
   com sub-plano próprio, não teve trabalho nesta fase; 5.8/5.9 usaram
   a versão mínima de "compartilhar" (clipboard no web, `Share` nativo
   no app) em vez de esperar uma funcionalidade de compartilhamento
-  completa — decisão registrada na Fase 5 abaixo.
+  completa — decisão registrada na Fase 5 abaixo; 6.2 é só placeholder
+  visual, cores de grifo e contraste continuam como itens da Fase 7.
 - **Dependências novas instaladas nesta sessão** (nenhuma vinha
   incluída por padrão, ao contrário do que o plano original assumia):
   `@expo/vector-icons` (Fase 1) e `react-native-svg` (Fase 2, streak).
-- **Próximo passo:** começar Fase 6 (Configurações), item 6.1.
+- **Próximo passo:** as 6 fases da navegação principal estão completas.
+  Próximo trabalho é escolher um item da Fase 7 (backlog) pra destravar,
+  ou o item 1.9 (barra lateral desktop) que ficou pendente.
 
 ---
 
@@ -733,13 +738,17 @@ para uso por mim ou por qualquer outro agente que continue o trabalho.
 
 ### Fase 6 — Configurações
 
-- [ ] 6.1 Tela de Configurações agrupada em seções (Leitura, Aparência,
-      Dados), lendo/escrevendo `core/leitura/preferenciaFonte.ts` e o
-      tema já existente (`core/theme.ts`) — sem duplicar lógica.
-- [ ] 6.2 Placeholder "em breve" pras preferências futuras (cores de
-      grifo, contraste).
-- [ ] 6.3 `tsc`/`export` limpos, teste manual, commit + push, marcar
-      9.7 como `✅`.
+- [x] 6.1 Tela de Configurações (`app/configuracoes.tsx`) agrupada em
+      seções (Leitura, Aparência, Dados), lendo/escrevendo
+      `core/leitura/preferenciaFonte.ts` (tamanho A-/A+, fonte serifada)
+      e `core/theme.ts` (`alternarTema`/`useColorScheme`) — sem duplicar
+      lógica, mesmos controles já usados em `app/resumos/[livro].tsx`.
+- [x] 6.2 Placeholder "Em breve" pras preferências futuras (cores de
+      grifo, contraste) na seção Dados.
+- [x] 6.3 `tsc --noEmit` limpo, `expo export --platform web` limpo
+      (1.7MB). Testado manualmente no navegador nos dois temas (claro e
+      escuro) — seções, toggle de fonte serifada e alternância de tema
+      renderizam corretamente. Marcar 9.7 como `✅`.
 
 ### Fase 7 — Backlog explícito (fora de escopo até serem retomados)
 

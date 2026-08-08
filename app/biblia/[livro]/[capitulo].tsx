@@ -1,4 +1,4 @@
-import { Link, useLocalSearchParams } from "expo-router";
+import { Link, router, useLocalSearchParams } from "expo-router";
 import { useEffect, useRef, useState } from "react";
 import { ActivityIndicator, NativeSyntheticEvent, NativeScrollEvent, Pressable, ScrollView, Text, View } from "react-native";
 import { BotaoTema } from "../../../components/BotaoTema";
@@ -15,6 +15,7 @@ import {
   salvarIndiceFonte,
   TAMANHOS_FONTE,
 } from "../../../core/leitura/preferenciaFonte";
+import { salvarUltimaLeitura } from "../../../core/leitura/ultimaLeitura";
 import { grifosRepository, notasRepository, progressoRepository } from "../../../core/repositories";
 import { useOwnerId } from "../../../core/useOwnerId";
 
@@ -71,6 +72,11 @@ export default function Leitura() {
     buscarReferencia(`${livro.nome} ${capitulo}`)
       .then(setDados)
       .catch(() => setErro(true));
+  }, [valido, livro, capitulo]);
+
+  useEffect(() => {
+    if (!valido || !livro) return;
+    salvarUltimaLeitura(livro.slug, capitulo);
   }, [valido, livro, capitulo]);
 
   useEffect(() => {
@@ -193,10 +199,7 @@ export default function Leitura() {
       </View>
 
       <View className="border-b border-cor-borda dark:border-cor-borda-dark bg-cor-fundo dark:bg-cor-fundo-dark">
-        <View className="px-5 py-3 max-w-2xl w-full mx-auto flex-row items-center justify-between">
-          <Link href={`/biblia/${livro.slug}`} className="text-cor-destaque dark:text-cor-destaque-dark text-sm">
-            ← {livro.nome} {capitulo}
-          </Link>
+        <View className="px-5 py-3 max-w-2xl w-full mx-auto flex-row items-center justify-end">
           <View className="flex-row items-center gap-3">
             <View className="flex-row items-center gap-1">
               <Pressable
@@ -341,35 +344,42 @@ export default function Leitura() {
               {dados.texto}
             </Text>
           )}
-
-          <View className="flex-row gap-3 mt-6 border-t border-cor-borda dark:border-cor-borda-dark pt-5">
-            <View className="flex-1">
-              {anterior ? (
-                <Link href={`/biblia/${anterior.slug}/${anterior.capitulo}`} asChild>
-                  <Pressable className="border border-cor-borda dark:border-cor-borda-dark rounded-xl p-3">
-                    <Text className="text-xs text-cor-texto-suave dark:text-cor-texto-suave-dark">← Anterior</Text>
-                    <Text className="text-cor-texto dark:text-cor-texto-dark font-semibold">
-                      {anterior.nome} {anterior.capitulo}
-                    </Text>
-                  </Pressable>
-                </Link>
-              ) : null}
-            </View>
-            <View className="flex-1">
-              {proximo ? (
-                <Link href={`/biblia/${proximo.slug}/${proximo.capitulo}`} asChild>
-                  <Pressable className="border border-cor-borda dark:border-cor-borda-dark rounded-xl p-3 items-end">
-                    <Text className="text-xs text-cor-texto-suave dark:text-cor-texto-suave-dark">Próximo →</Text>
-                    <Text className="text-cor-texto dark:text-cor-texto-dark font-semibold">
-                      {proximo.nome} {proximo.capitulo}
-                    </Text>
-                  </Pressable>
-                </Link>
-              ) : null}
-            </View>
-          </View>
         </View>
       </ScrollView>
+
+      {/* Barra fixa de navegação — decisão registrada em
+          PLANO-NAVEGACAO.md item 1.4: trocar de capítulo usa replace
+          (não empilha uma tela por capítulo lido em sequência); tocar
+          no nome do livro abre o seletor como modal (item 3.5). */}
+      <View className="border-t border-cor-borda dark:border-cor-borda-dark bg-cor-fundo dark:bg-cor-fundo-dark">
+        <View className="px-3 py-2.5 max-w-2xl w-full mx-auto flex-row items-center justify-between">
+          <Pressable
+            onPress={() => anterior && router.replace(`/biblia/${anterior.slug}/${anterior.capitulo}`)}
+            disabled={!anterior}
+            accessibilityLabel="Capítulo anterior"
+            className={`w-10 h-10 items-center justify-center rounded-full ${anterior ? "" : "opacity-30"}`}
+          >
+            <Text className="text-lg text-cor-texto dark:text-cor-texto-dark">←</Text>
+          </Pressable>
+
+          <Link href={`/biblia/escolher/${livro.slug}`} asChild>
+            <Pressable className="flex-1 items-center px-2 py-1.5">
+              <Text className="text-sm font-semibold text-cor-texto dark:text-cor-texto-dark" numberOfLines={1}>
+                {livro.nome} {capitulo}
+              </Text>
+            </Pressable>
+          </Link>
+
+          <Pressable
+            onPress={() => proximo && router.replace(`/biblia/${proximo.slug}/${proximo.capitulo}`)}
+            disabled={!proximo}
+            accessibilityLabel="Próximo capítulo"
+            className={`w-10 h-10 items-center justify-center rounded-full ${proximo ? "" : "opacity-30"}`}
+          >
+            <Text className="text-lg text-cor-texto dark:text-cor-texto-dark">→</Text>
+          </Pressable>
+        </View>
+      </View>
 
       {versiculoEditandoNota !== null ? (
         <ModalNota

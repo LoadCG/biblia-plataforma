@@ -480,15 +480,17 @@ para uso por mim ou por qualquer outro agente que continue o trabalho.
 
 ### Status atual
 
-- **Fase em andamento:** Fase 2 concluída — próxima é a Fase 3 (Bíblia).
-- **Concluído:** Fase 1 completa exceto 1.9; Fase 2 completa (2.1–2.8).
-- **Pendente/adiado:** 1.9 (barra lateral no desktop) — decisão
-  registrada no próprio item sobre por que foi adiado, não bloqueia o
-  resto do plano.
+- **Fase em andamento:** Fase 3 concluída — próxima é a Fase 4
+  (Pesquisa, parte 3b: temas).
+- **Concluído:** Fase 1 completa exceto 1.9; Fase 2 completa; Fase 3
+  completa (3.1–3.6).
+- **Pendente/adiado:** 1.9 (barra lateral no desktop); ajuste fino do
+  item 3.5 (modal não cobre a barra de abas no web, só no nativo —
+  funcional, só não 100% visualmente).
 - **Dependências novas instaladas nesta sessão** (nenhuma vinha
   incluída por padrão, ao contrário do que o plano original assumia):
   `@expo/vector-icons` (Fase 1) e `react-native-svg` (Fase 2, streak).
-- **Próximo passo:** começar Fase 3 (Bíblia), item 3.1.
+- **Próximo passo:** começar Fase 4 (Pesquisa, parte 3b), item 4.1.
 
 ---
 
@@ -610,18 +612,41 @@ para uso por mim ou por qualquer outro agente que continue o trabalho.
 
 ### Fase 3 — Bíblia
 
-- [ ] 3.1 Criar `core/leitura/ultimaLeitura.ts` (carregar/salvar
-      livroSlug+capítulo, mesmo padrão de `preferenciaFonte.ts`).
-- [ ] 3.2 Gravar última leitura no mount da tela de capítulo.
-- [ ] 3.3 Aba Bíblia abre direto no último capítulo salvo (ou Gênesis 1
-      na primeira vez).
-- [ ] 3.4 Barra fixa `← Nome do Livro →` no rodapé da leitura,
-      substituindo os cards atuais de Anterior/Próximo.
-- [ ] 3.5 Tocar no nome do livro abre o seletor como modal (decisão da
-      Fase 1.4).
-- [ ] 3.6 `tsc`/`export` limpos, teste manual (abrir app e cair no
-      capítulo certo, trocar de capítulo pela barra, abrir seletor),
-      commit + push, marcar 9.3 como `✅`.
+- [x] 3.1 Criado `core/leitura/ultimaLeitura.ts`.
+- [x] 3.2 Gravado no mount da tela de capítulo (`useEffect` dedicado).
+- [x] 3.3 `app/(tabs)/biblia/index.tsx` virou uma tela de redirect: lê
+      `ultimaLeitura` e faz `router.replace` pra rota de leitura de
+      verdade (fora do group de abas). **Decisão que emergiu na
+      implementação, não prevista em detalhe no plano original:** o
+      picker de livro/capítulo (antes em `app/(tabs)/biblia/index.tsx`
+      e `[livro]/index.tsx`) precisou se mudar pra
+      `app/(tabs)/biblia/escolher/` — senão a rota-índice da aba
+      ficaria disputada entre "mostrar a lista" e "redirecionar pra
+      última leitura".
+- [x] 3.4 Barra fixa `← {Livro} {Capítulo} →` no rodapé da leitura
+      (substitui os cards de Anterior/Próximo do fim da página).
+      Setas usam `router.replace` (não empilham histórico por
+      capítulo, decisão 1.4); tocar no nome do livro abre
+      `/biblia/escolher/[livro]`.
+- [x] 3.5 Seletor configurado com `presentation: "modal"` no
+      `app/(tabs)/biblia/_layout.tsx`. **Limitação encontrada e
+      registrada, não escondida:** no web, a apresentação modal do
+      React Navigation não cobre visualmente a barra de abas embaixo
+      (ela continua visível atrás do seletor) — diferente do
+      comportamento nativo (iOS/Android), onde modal cobre a tela
+      inteira de verdade. Funcionalmente tudo funciona (navegação,
+      seleção de capítulo, voltar), só o efeito visual "cobre tudo" não
+      é 100% no web. Registrado como ajuste fino a revisitar, não
+      bloqueia a Fase 3.
+- [x] 3.6 `tsc --noEmit` limpo, `expo export --platform web` limpo
+      (1.6MB). Teste manual completo no navegador: abrir `/biblia` cai
+      em Gênesis 1 (primeira vez); "Próximo capítulo" via `replace`
+      confirmado (URL muda pra Gênesis 2, sem crescer o histórico
+      indevidamente); tocar no nome do livro abre o seletor de
+      capítulos, escolher capítulo 6 navega certo; reabrir `/biblia`
+      depois disso cai direto em Gênesis 6 (persistência confirmada);
+      zero erros de console em todo o fluxo. Marcar 9.3 como `✅` no
+      FUNCIONALIDADES.md.
 
 ### Fase 4 — Pesquisa (parte 3b: temas)
 

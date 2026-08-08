@@ -105,12 +105,15 @@ claro) — nunca prender a pessoa numa tela sem rota de escape visível.
 ## 2. Leitura bíblica
 
 ### 2.1 Escolher livro → capítulo `✅`
-**Funcionalidade:** dois passos reais de seleção (`app/biblia/index.tsx`
-→ `app/biblia/[livro]/index.tsx`), com contagem de capítulos correta por
-livro (tabela fixa). Não existe uma terceira tela de "escolher
-versículo" — o foco num versículo específico só acontece via parâmetro
-de URL (`?versiculo=N`) direto na tela de leitura (ver 2.2), nunca por
-uma grade navegável de versículos.
+**Funcionalidade:** dois passos reais de seleção, hoje em
+`app/(tabs)/biblia/escolher/index.tsx` → `escolher/[livro]/index.tsx`
+(movidos da raiz da aba Bíblia na Fase 3 do plano de navegação — a aba
+em si abre direto na última leitura, o seletor é alcançado tocando no
+nome do livro durante a leitura, ver 9.3), com contagem de capítulos
+correta por livro (tabela fixa). Não existe uma terceira tela de
+"escolher versículo" — o foco num versículo específico só acontece via
+parâmetro de URL (`?versiculo=N`) direto na tela de leitura (ver 2.2),
+nunca por uma grade navegável de versículos.
 **UX/UI:** grade de números clara, tocável com o polegar (alvo de toque
 adequado), estado visual de "já lido" visível na grade de capítulos
 antes de entrar num deles.
@@ -171,10 +174,10 @@ um capítulo tem versículos grifados dentro dele — só mostra
 ### 2.4 Marcar capítulo como lido `✅`
 **Funcionalidade:** separado de propósito de "livro lido" (que é sobre o
 resumo). Progresso visível dentro da grade de capítulos daquele livro
-("X de Y lidos" no topo de `app/biblia/[livro]/index.tsx`). A lista de
-livros da leitura bíblica (`app/biblia/index.tsx`) **não** mostra essa
-contagem hoje — só mostra o total de capítulos do livro, sem quantos já
-foram lidos (ver 2.4b).
+("X de Y lidos" no topo de `app/(tabs)/biblia/escolher/[livro]/index.tsx`).
+A lista de livros (`app/(tabs)/biblia/escolher/index.tsx`) **não** mostra
+essa contagem hoje — só mostra o total de capítulos do livro, sem
+quantos já foram lidos (ver 2.4b).
 **UX/UI:** feedback imediato ao marcar (o botão já muda no mesmo toque,
 sem esperar round-trip perceptível).
 
@@ -189,8 +192,12 @@ listas do app, pra manter consistência.
 ### 2.5 Navegar entre capítulos `✅`
 **Funcionalidade:** anterior/próximo, cruzando de um livro pro outro nas
 fronteiras (testado: Malaquias 4 → Mateus 1, Gênesis 1 sem anterior).
-**UX/UI:** mesma qualidade visual dos cartões de navegação dos resumos
-(1.2) — reaproveitar o componente, não recriar um diferente.
+Migrado na Fase 3 do plano de navegação: era um par de cartões no fim
+da página, agora é uma **barra fixa no rodapé** (`← Livro Capítulo →`)
+sempre visível, sem precisar rolar — as setas usam navegação `replace`
+(não empilham uma tela por capítulo lido em sequência).
+**UX/UI:** nome do livro no centro da barra é tocável e abre o seletor
+de capítulo (ver 9.3).
 
 ### 2.6 Buscar por palavra-chave no texto bíblico inteiro `⬜`
 **Funcionalidade:** esta é a peça mais cara tecnicamente do sistema —
@@ -506,14 +513,20 @@ componente `Svg` diretamente (em vez de um `Animated.View` por fora)
 gerava erro de console no web e quebrava a renderização — corrigido,
 registrado como padrão a seguir em `PLANO-NAVEGACAO.md`.
 
-### 9.3 Bíblia: última leitura + navegação fixa `⬜`
-**Funcionalidade:** abre direto no último capítulo lido (dado novo,
-`core/leitura/ultimaLeitura.ts`, não existe hoje); barra fixa no rodapé
-`← Nome do Livro →` substitui os cards "Anterior/Próximo" do fim da
-página atual — tocar no nome do livro abre o fluxo de
-escolher-livro→capítulo→versículo por cima da leitura.
+### 9.3 Bíblia: última leitura + navegação fixa `✅`
+**Funcionalidade:** aba Bíblia abre direto no último capítulo lido
+(`core/leitura/ultimaLeitura.ts`), ou Gênesis 1 na primeira vez. Barra
+fixa no rodapé `← Livro Capítulo →` substitui os cards
+"Anterior/Próximo" do fim da página antiga — setas usam `router.replace`
+(decisão de não empilhar histórico por capítulo, ver PLANO-NAVEGACAO.md
+item 1.4); tocar no nome do livro abre `/biblia/escolher/[livro]` como
+modal. Testado com dado real: navegar até Gênesis 6 e reabrir a aba
+Bíblia depois confirma que volta direto pra Gênesis 6.
 **UX/UI:** barra sempre visível, sem precisar rolar até o fim pra
-trocar de capítulo.
+trocar de capítulo. **Limitação conhecida:** a apresentação modal do
+seletor não cobre visualmente a barra de abas no web (cobre no
+nativo/iOS/Android) — funcional nos dois casos, só o efeito visual não
+é idêntico entre plataformas; registrado como ajuste fino pendente.
 
 ### 9.4 Pesquisa: temas pré-definidos `⬜`
 **Funcionalidade:** barra de busca em destaque + cards coloridos por

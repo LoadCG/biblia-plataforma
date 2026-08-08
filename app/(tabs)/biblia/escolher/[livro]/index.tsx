@@ -1,9 +1,9 @@
 import { Link, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import { Pressable, ScrollView, Text, View } from "react-native";
-import { obterLivro } from "../../../../core/content/livros";
-import { progressoRepository } from "../../../../core/repositories";
-import { useOwnerId } from "../../../../core/useOwnerId";
+import { obterLivro } from "../../../../../core/content/livros";
+import { progressoRepository } from "../../../../../core/repositories";
+import { useOwnerId } from "../../../../../core/useOwnerId";
 
 export default function EscolherCapitulo() {
   const { livro: slug } = useLocalSearchParams<{ livro: string }>();
@@ -31,7 +31,7 @@ export default function EscolherCapitulo() {
   return (
     <ScrollView className="flex-1 bg-cor-fundo dark:bg-cor-fundo-dark">
       <View className="px-5 pt-6 pb-10 max-w-2xl w-full mx-auto">
-        <Link href="/biblia" className="text-cor-destaque dark:text-cor-destaque-dark text-sm mb-2">
+        <Link href="/biblia/escolher" className="text-cor-destaque dark:text-cor-destaque-dark text-sm mb-2">
           ← Trocar de livro
         </Link>
         <Text className="text-2xl font-bold text-cor-texto dark:text-cor-texto-dark mb-1">{livro.nome}</Text>

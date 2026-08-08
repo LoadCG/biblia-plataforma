@@ -6,6 +6,7 @@
 export type Livro = {
   slug: string;
   nome: string;
+  abreviacao?: string;
   numero: number;
   testamento: "Antigo Testamento" | "Novo Testamento";
   capitulos: number;

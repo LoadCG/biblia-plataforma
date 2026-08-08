@@ -1,19 +1,36 @@
 import { Link } from "expo-router";
 import { useEffect, useMemo, useState } from "react";
-import { Pressable, ScrollView, Text, TextInput, View } from "react-native";
+import { Alert, Pressable, ScrollView, Text, TextInput, View, ActivityIndicator } from "react-native";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { BotaoTema } from "../../components/BotaoTema";
 import { CardVersiculoTema } from "../../components/CardVersiculoTema";
 import { EstadoVazio } from "../../components/EstadoVazio";
 import { buscarLivros } from "../../core/content/busca";
+import { buscarGlobal, ResultadoBuscaGlobal } from "../../core/biblia/BibliaAPI";
 import { TEMAS_BUSCA, type Tema } from "../../core/biblia/temasBusca";
 import { pesquisasFavoritasRepository } from "../../core/repositories";
 import { useColorScheme } from "../../core/theme";
 import { useOwnerId } from "../../core/useOwnerId";
 
+// [MOCK — FRONT-END] Atalhos pedidos no handoff do back-end ("Planos,
+// Favoritos, Apoie") — nenhuma dessas telas/funcionalidades existe
+// ainda no app, então os botões mostram um alerta "Em breve" de
+// propósito. Quando a tela/rota real existir, troque o `onPress` por
+// navegação de verdade.
+const ATALHOS_MOCK: { id: string; rotulo: string; icone: keyof typeof MaterialIcons.glyphMap }[] = [
+  { id: "planos", rotulo: "Planos", icone: "event-note" },
+  { id: "favoritos", rotulo: "Favoritos", icone: "star-border" },
+  { id: "apoie", rotulo: "Apoie", icone: "favorite-border" },
+];
+
 export default function Pesquisa() {
   const [termo, setTermo] = useState("");
   const [temaSelecionado, setTemaSelecionado] = useState<Tema | null>(null);
   const [favoritada, setFavoritada] = useState(false);
+  const [resultadosBiblia, setResultadosBiblia] = useState<ResultadoBuscaGlobal[]>([]);
+  const [buscando, setBuscando] = useState(false);
+  const [abaExibicao, setAbaExibicao] = useState<'biblia' | 'resumos'>('biblia');
+  
   const { colorScheme } = useColorScheme();
   const escuro = colorScheme === "dark";
   const ownerId = useOwnerId();
@@ -23,9 +40,22 @@ export default function Pesquisa() {
   useEffect(() => {
     if (!ownerId || !termo.trim()) {
       setFavoritada(false);
+      setResultadosBiblia([]);
       return;
     }
+    
     pesquisasFavoritasRepository.estaFavoritada(ownerId, termo).then(setFavoritada);
+    
+    // Busca assíncrona na Bíblia
+    const timeout = setTimeout(() => {
+      setBuscando(true);
+      buscarGlobal(termo)
+        .then(setResultadosBiblia)
+        .catch(console.error)
+        .finally(() => setBuscando(false));
+    }, 500); // debounce de 500ms
+    
+    return () => clearTimeout(timeout);
   }, [ownerId, termo]);
 
   async function alternarFavorita() {
@@ -37,19 +67,56 @@ export default function Pesquisa() {
     <View className="flex-1 bg-cor-fundo dark:bg-cor-fundo-dark">
       <View className="px-4 pt-6 max-w-2xl w-full mx-auto">
         <View className="flex-row items-center justify-between mb-4">
-          <Text className="text-2xl font-bold text-cor-texto dark:text-cor-texto-dark">Pesquisa</Text>
+          <Text className="text-2xl font-bold text-cor-texto dark:text-cor-texto-dark">Descubra</Text>
           <BotaoTema />
         </View>
+
+        {!termo.trim() ? (
+          <View className="flex-row justify-between mb-4">
+            {ATALHOS_MOCK.map((atalho) => (
+              <Pressable
+                key={atalho.id}
+                onPress={() => Alert.alert(atalho.rotulo, "Em breve!")}
+                className="flex-1 items-center gap-1.5 mx-1 rounded-2xl bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark py-3.5"
+              >
+                <MaterialIcons name={atalho.icone} size={20} color="#8a5a2b" />
+                <Text className="text-xs font-semibold text-cor-texto dark:text-cor-texto-dark">{atalho.rotulo}</Text>
+              </Pressable>
+            ))}
+          </View>
+        ) : null}
+
         <TextInput
           value={termo}
           onChangeText={(t) => {
             setTermo(t);
             if (t.trim()) setTemaSelecionado(null);
           }}
-          placeholder="Buscar palavra nos resumos bíblicos..."
+          placeholder="Buscar palavra na Bíblia ou nos resumos..."
           placeholderTextColor="#9ca3af"
           className="px-4 py-3.5 rounded-full border border-cor-borda dark:border-cor-borda-dark bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark text-cor-texto dark:text-cor-texto-dark text-base"
         />
+        
+        {termo.trim() ? (
+          <View className="flex-row mt-4 mb-2">
+            <Pressable 
+              onPress={() => setAbaExibicao('biblia')}
+              className={`mr-4 pb-2 border-b-2 ${abaExibicao === 'biblia' ? 'border-cor-destaque dark:border-cor-destaque-dark' : 'border-transparent'}`}
+            >
+              <Text className={`font-semibold ${abaExibicao === 'biblia' ? 'text-cor-texto dark:text-cor-texto-dark' : 'text-cor-texto-suave dark:text-cor-texto-suave-dark'}`}>
+                Na Bíblia {resultadosBiblia.length > 0 && `(${resultadosBiblia.length})`}
+              </Text>
+            </Pressable>
+            <Pressable 
+              onPress={() => setAbaExibicao('resumos')}
+              className={`pb-2 border-b-2 ${abaExibicao === 'resumos' ? 'border-cor-destaque dark:border-cor-destaque-dark' : 'border-transparent'}`}
+            >
+              <Text className={`font-semibold ${abaExibicao === 'resumos' ? 'text-cor-texto dark:text-cor-texto-dark' : 'text-cor-texto-suave dark:text-cor-texto-suave-dark'}`}>
+                Nos Resumos {resultadosResumo.length > 0 && `(${resultadosResumo.length})`}
+              </Text>
+            </Pressable>
+          </View>
+        ) : null}
       </View>
 
       <ScrollView className="flex-1">
@@ -66,24 +133,49 @@ export default function Pesquisa() {
                   {favoritada ? "Busca favoritada" : "Favoritar esta busca"}
                 </Text>
               </Pressable>
-              {resultadosResumo.length === 0 ? (
-                <EstadoVazio titulo="Nenhum resultado" descricao="Tente outra palavra ou o nome de um livro." />
+              
+              {abaExibicao === 'resumos' ? (
+                resultadosResumo.length === 0 ? (
+                  <EstadoVazio titulo="Nenhum resultado nos resumos" descricao="Tente pesquisar na aba da Bíblia." />
+                ) : (
+                  resultadosResumo.map(({ livro, trecho }) => (
+                    <Link key={livro.slug} href={`/resumos/${livro.slug}`} asChild>
+                      <Pressable
+                        className="rounded-2xl bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark px-4 py-3 mb-2 shadow-sm"
+                        style={{ shadowColor: "#000", shadowOpacity: 0.06, shadowRadius: 4, shadowOffset: { width: 0, height: 1 } }}
+                      >
+                        <Text className="text-cor-texto dark:text-cor-texto-dark font-semibold">{livro.nome}</Text>
+                        {trecho ? (
+                          <Text className="text-xs text-cor-texto-suave dark:text-cor-texto-suave-dark mt-0.5 italic" numberOfLines={2}>
+                            "{trecho}"
+                          </Text>
+                        ) : null}
+                      </Pressable>
+                    </Link>
+                  ))
+                )
               ) : (
-                resultadosResumo.map(({ livro, trecho }) => (
-                  <Link key={livro.slug} href={`/resumos/${livro.slug}`} asChild>
-                    <Pressable
-                      className="rounded-2xl bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark px-4 py-3 mb-2 shadow-sm"
-                      style={{ shadowColor: "#000", shadowOpacity: 0.06, shadowRadius: 4, shadowOffset: { width: 0, height: 1 } }}
-                    >
-                      <Text className="text-cor-texto dark:text-cor-texto-dark font-semibold">{livro.nome}</Text>
-                      {trecho ? (
-                        <Text className="text-xs text-cor-texto-suave dark:text-cor-texto-suave-dark mt-0.5 italic" numberOfLines={2}>
-                          "{trecho}"
+                buscando ? (
+                  <ActivityIndicator size="large" className="mt-8" />
+                ) : resultadosBiblia.length === 0 ? (
+                  <EstadoVazio titulo="Nenhum versículo encontrado" descricao="Tente outra palavra." />
+                ) : (
+                  resultadosBiblia.map((resultado, i) => (
+                    <Link key={`${resultado.livroSlug}-${resultado.capitulo}-${resultado.versiculo}-${i}`} href={`/biblia/${resultado.livroSlug}/${resultado.capitulo}?versiculo=${resultado.versiculo}`} asChild>
+                      <Pressable
+                        className="rounded-2xl bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark px-4 py-3 mb-2 shadow-sm"
+                        style={{ shadowColor: "#000", shadowOpacity: 0.06, shadowRadius: 4, shadowOffset: { width: 0, height: 1 } }}
+                      >
+                        <Text className="text-xs text-cor-destaque dark:text-cor-destaque-dark font-semibold mb-1">
+                          {resultado.nomeLivro} {resultado.capitulo}:{resultado.versiculo}
                         </Text>
-                      ) : null}
-                    </Pressable>
-                  </Link>
-                ))
+                        <Text className="text-sm text-cor-texto dark:text-cor-texto-dark" numberOfLines={3}>
+                          "{resultado.texto}"
+                        </Text>
+                      </Pressable>
+                    </Link>
+                  ))
+                )
               )}
             </>
           ) : temaSelecionado ? (
@@ -99,18 +191,25 @@ export default function Pesquisa() {
           ) : (
             <>
               <Text className="text-sm font-semibold text-cor-texto-suave dark:text-cor-texto-suave-dark mb-3">
-                Ou explore por tema
+                Explore por tema
               </Text>
               <View className="flex-row flex-wrap justify-between">
                 {TEMAS_BUSCA.map((tema) => (
                   <Pressable
                     key={tema.id}
                     onPress={() => setTemaSelecionado(tema)}
-                    style={{ backgroundColor: escuro ? tema.corBgDark : tema.corBg, width: "48%" }}
-                    className="rounded-2xl px-4 py-6 mb-3 items-start"
+                    style={{ backgroundColor: escuro ? tema.corBgDark : tema.corBg, width: "48%", height: 128 }}
+                    className="rounded-3xl mb-3 justify-end overflow-hidden"
                   >
-                    <Text className="text-3xl mb-2">{tema.icone}</Text>
-                    <Text style={{ color: escuro ? tema.corTextoDark : tema.corTexto }} className="text-base font-bold">
+                    <Text
+                      style={{ position: "absolute", top: -14, right: -10, fontSize: 68, opacity: 0.5, transform: [{ rotate: "-12deg" }] }}
+                    >
+                      {tema.icone}
+                    </Text>
+                    <Text
+                      style={{ color: escuro ? tema.corTextoDark : tema.corTexto }}
+                      className="text-lg font-extrabold px-4 pb-4"
+                    >
                       {tema.titulo}
                     </Text>
                   </Pressable>

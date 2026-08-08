@@ -1,20 +1,17 @@
-// Único lugar do projeto que decide qual implementação de cada
-// repositório está ativa. Hoje: local (AsyncStorage). Quando o banco de
-// dados entrar (Supabase/Firebase, ver PLANO-PLATAFORMA.md), troca-se a
-// importação aqui — nenhuma tela precisa mudar, porque todas dependem só
-// da interface (GrifosRepository, ProgressoRepository, NotasRepository).
-import { localGrifosRepository } from "./local/LocalGrifosRepository";
-import { localProgressoRepository } from "./local/LocalProgressoRepository";
-import { localNotasRepository } from "./local/LocalNotasRepository";
-import { localLivrosLidosRepository } from "./local/LocalLivrosLidosRepository";
-import { localPesquisasFavoritasRepository } from "./local/LocalPesquisasFavoritasRepository";
-import { localVersiculosSalvosRepository } from "./local/LocalVersiculosSalvosRepository";
+import { sqliteGrifosRepository } from "./sqlite/SqliteGrifosRepository";
+import { sqliteProgressoRepository } from "./sqlite/SqliteProgressoRepository";
+import { sqliteNotasRepository } from "./sqlite/SqliteNotasRepository";
+import { sqliteLivrosLidosRepository } from "./sqlite/SqliteLivrosLidosRepository";
+import { sqlitePesquisasFavoritasRepository } from "./sqlite/SqlitePesquisasFavoritasRepository";
+import { sqliteVersiculosSalvosRepository } from "./sqlite/SqliteVersiculosSalvosRepository";
 
-export const grifosRepository = localGrifosRepository;
-export const progressoRepository = localProgressoRepository;
-export const notasRepository = localNotasRepository;
-export const livrosLidosRepository = localLivrosLidosRepository;
-export const pesquisasFavoritasRepository = localPesquisasFavoritasRepository;
-export const versiculosSalvosRepository = localVersiculosSalvosRepository;
+// No nativo (iOS/Android), exportamos os repositórios reais do SQLite.
+
+export const grifosRepository = sqliteGrifosRepository;
+export const progressoRepository = sqliteProgressoRepository;
+export const notasRepository = sqliteNotasRepository;
+export const livrosLidosRepository = sqliteLivrosLidosRepository;
+export const pesquisasFavoritasRepository = sqlitePesquisasFavoritasRepository;
+export const versiculosSalvosRepository = sqliteVersiculosSalvosRepository;
 
 export { obterOwnerId } from "../owner";

@@ -22,14 +22,14 @@
 
 Abaixo, um detalhamento técnico e arquitetural de como implementaremos as próximas evoluções da plataforma, garantindo escalabilidade e robustez.
 
-### 1. [ ] **Persistência de Dados (SQLite / Zustand + MMKV)**
+### 1. [x] **Persistência de Dados (SQLite / Zustand + MMKV)**
 - **O Desafio:** Atualmente, os grifos, notas e itens salvos podem se perder ao fechar o app, pois estão apenas em estado de sessão ou dependem de abstrações em memória.
 - **Como Fazer:**
   - Migrar os repósitórios locais (`LocalGrifosRepository`, etc.) para o `expo-sqlite` caso tenhamos dados relacionais complexos, OU usar uma store global com `zustand` integrada ao `react-native-mmkv` para persistência super rápida e síncrona de chave-valor.
   - Implementar um adapter que espelha as operações de memória (`Map` / `Set`) em JSONs persistidos.
   - **Benefício:** Experiência consistente; o usuário não perde o histórico e o banco de dados fica pronto para uma futura sincronização em nuvem.
 
-### 2. [ ] **Modo Offline & Cache Persistente Inteligente**
+### 2. [x] **Modo Offline & Cache Persistente Inteligente**
 - **O Desafio:** A leitura da Bíblia precisa ser instantânea e não pode depender de conexão ativa constante.
 - **Como Fazer:**
   - Implementar um Service Worker (em web) ou usar `expo-file-system` + `SQLite` (nativo) para baixar a base da Bíblia inteira (~5MB de texto JSON).
@@ -37,7 +37,7 @@ Abaixo, um detalhamento técnico e arquitetural de como implementaremos as próx
   - Criar um botão "Baixar Bíblia para acesso Offline" nas configurações.
   - **Benefício:** A leitura de qualquer capítulo ficará na ordem de < 10ms, eliminando os loaders e quebras por falta de rede.
 
-### 3. [ ] **Histórico de Leitura (Continue Lendo / Recentemente Lidos)**
+### 3. [x] **Histórico de Leitura (Continue Lendo / Recentemente Lidos)**
 - **O Desafio:** Facilitar o retorno do usuário para capítulos que ele estava estudando ontem, quebrando a fricção de sempre ter que caçar o livro na tela de seleção.
 - **Como Fazer:**
   - Criar um estado persistido `historicoLeituras: Array<{livro, capitulo, timestamp, versiculoProgresso}>`.
@@ -58,14 +58,14 @@ Abaixo, um detalhamento técnico e arquitetural de como implementaremos as próx
   - Escrever unit testes para as core business rules (`BibliaAPI`, `calcularSequenciaAtual`).
   - Escrever testes E2E com Maestro ou Detox testando a jornada principal: `Abrir App -> Escolher Livro -> Escolher Versículo -> Grifar Texto`.
 
-### 6. [ ] **Busca Global na Bíblia Completa**
+### 6. [x] **Busca Global na Bíblia Completa**
 - **O Desafio:** A pesquisa atual busca apenas os resumos históricos dos livros. O usuário precisa conseguir pesquisar qualquer palavra-chave e encontrá-la em toda a Bíblia, recebendo os versículos na hora.
 - **Como Fazer:**
   - Integrar um motor de busca local rápido após baixar a base offline. Se o aplicativo migrar para SQLite, utilizaremos índices **FTS5 (Full-Text Search)** nativos.
   - Se mantivermos arquivos JSON estáticos, construiremos um "Inverted Index" reduzido e otimizado em WebWorker/Thread paralela.
   - Na tela de pesquisa, os resultados serão divididos em abas visuais: "Resultados em Resumos" e "Resultados na Bíblia".
 
-### 7. [ ] **Reformulação Visual da Aba Pesquisa (Descubra)**
+### 7. [x] **Reformulação Visual da Aba Pesquisa (Descubra)**
 - **O Desafio:** A interface de pesquisa atual tem temas em formato de cards simples com emojis. O usuário forneceu prints de um app líder de mercado como inspiração ("ideias boas"), focando na estrutura de descoberta e atalhos.
 - **Diretriz de Design:** **Não copiar explicitamente.** As referências servem apenas para inspirar a estrutura de UX. A identidade visual, ícones e paletas de cores devem ser originais e alinhados com o nosso app.
 - **Como Fazer (Adaptação das Ideias):**
@@ -77,7 +77,7 @@ Abaixo, um detalhamento técnico e arquitetural de como implementaremos as próx
     - O título do tema alinhado de forma clara e legível.
     - Uma ilustração ou imagem gerada dinamicamente (com estilo próprio do nosso app) flutuando no card para gerar interesse visual.
 
-### 8. [ ] **Reformulação Visual da Aba Perfil (Você)**
+### 8. [x] **Reformulação Visual da Aba Perfil (Você)**
 - **O Desafio:** A página de perfil atual não explora o potencial de pertencimento e gamificação. O usuário forneceu referências de estrutura de perfil premium (focada em métricas de leitura e comunidade) apenas como inspiração.
 - **Diretriz de Design:** **Criar de forma autêntica.** Usaremos as boas ideias de gamificação (como cards de métricas e display de medalhas), mas os desenhos das medalhas, o estilo dos cards e as métricas específicas serão 100% autorais e focadas no nosso ecossistema de conteúdo.
 - **Como Fazer (Adaptação das Ideias):**

@@ -94,11 +94,16 @@ de rede mostra mensagem amigável sem quebrar a leitura do resumo em
 volta (é um extra, não uma dependência crítica da tela); popover fecha
 tocando fora ou no ✕.
 
-### 1.8 Modo foco `⬜`
-**Funcionalidade:** esconder navegação/controles, deixando só o texto
-visível durante a leitura.
-**UX/UI:** saída óbvia e sempre acessível (botão flutuante ou gesto
-claro) — nunca prender a pessoa numa tela sem rota de escape visível.
+### 1.8 Modo foco `✅`
+**Funcionalidade:** implementado em `app/(tabs)/biblia/[livro]/[capitulo].tsx`
+via `focoAtivo` — ativa automaticamente ao rolar pra baixo (esconde a
+barra de topo com abas Texto/Resumo e ajustes, mostrando só uma faixa
+fina com "Livro Capítulo"), desativa ao rolar pra cima ou voltar perto
+do topo.
+**UX/UI:** saída é automática (rolar pra cima), não depende de um botão
+escondido — a barra flutuante de navegação de capítulo (pill) e a tab
+bar continuam sempre visíveis mesmo em foco ativo, então a pessoa nunca
+fica presa sem controles de navegação.
 
 ---
 
@@ -199,24 +204,33 @@ sempre visível, sem precisar rolar — as setas usam navegação `replace`
 **UX/UI:** nome do livro no centro da barra é tocável e abre o seletor
 de capítulo (ver 9.3).
 
-### 2.6 Buscar por palavra-chave no texto bíblico inteiro `⬜`
-**Funcionalidade:** esta é a peça mais cara tecnicamente do sistema —
-buscar a Bíblia inteira em tempo real pela API estouraria o rate limit em
-segundos. Precisa de um índice de busca pré-gerado (todo o texto bíblico
-buscado uma vez, em build ou num processo de servidor, não pelo
-cliente a cada busca). Bloqueado até essa decisão de arquitetura ser
-tomada (ver Decisão 4/11 do `PLANO-PLATAFORMA.md`).
-**UX/UI:** resultado agrupado por livro, com o trecho em contexto, link
-direto pro versículo (reaproveitando o `?versiculo=` já existente).
+### 2.6 Buscar por palavra-chave no texto bíblico inteiro `✅`
+**Funcionalidade:** resolvido com a migração pra `expo-sqlite` (ver
+`backend-log.md`): a Bíblia inteira (31.102 versículos, Almeida ACF)
+foi embutida em `assets/biblia.json` e injetada numa tabela virtual
+FTS5 do SQLite na primeira execução (`garantirBaseBiblia()`). A busca
+roda 100% local via `buscarGlobal(termo)` em
+`core/biblia/BibliaAPI.ts` — nada de rate limit de API externa.
+**UX/UI:** aba "Na Bíblia" dentro da tela Descubra
+(`app/(tabs)/pesquisa.tsx`), com debounce de 500ms; cada resultado
+mostra a referência e o trecho, link direto pro versículo
+(`?versiculo=`).
 
-### 2.7 Favoritar/salvar versículo (distinto de grifar) `⬜`
-**Funcionalidade:** grifar é uma marcação de leitura (qualquer versículo
-lido pode ser grifado); favoritar é uma curadoria intencional ("quero
-guardar este") — decidir se isso justifica ser uma funcionalidade
-separada de grifar ou se é redundante. Se for separada: repositório
-próprio, mesmo padrão dos outros (`ownerId` + referência de versículo).
-**UX/UI:** ícone visualmente distinto do grifo (evitar confundir as duas
-ações), tela "Meus favoritos" agrupada por livro.
+### 2.7 Favoritar/salvar versículo (distinto de grifar) `✅`
+**Funcionalidade:** o "Salvar" em si está pronto — distinto de grifo e
+nota, `VersiculoSalvo`/`versiculosSalvosRepository` (mesmo padrão
+`ownerId` + referência de versículo dos outros repositórios). Acionado
+pela barra de seleção múltipla na leitura do capítulo. **Falta:**
+`core/estatisticas/atividade.ts` (o agregador que alimenta o card
+"Salvo" e a tela `/salvo`) ainda só junta grifo/nota/pesquisa —
+**não inclui `versiculosSalvosRepository`**. Resultado: um versículo
+salvo não aparece em nenhum lugar da UI hoje, nem no botão "Salvos" da
+aba Você (adicionado nesta sessão como atalho pra `/salvo`, que hoje
+não mostra salvos). Precisa de um 4º tipo em `ItemAtividade` (`"salvo"`)
+e um filtro correspondente em `app/salvo.tsx`.
+**UX/UI:** ícone de marcador (🔖/`bookmark`) distinto do grifo (cor) e
+da nota (📝) já usado no botão/na leitura — só falta a tela de listagem
+reconhecer o dado.
 
 ### 2.8 Notas pessoais por versículo `✅`
 **Funcionalidade:** campo de texto livre por versículo, editável e
@@ -545,60 +559,74 @@ vem de dado dinâmico, não dá pra usar `dark:` do NativeWind ali); texto
 deixa claro que a busca hoje é só nos resumos, não no texto bíblico
 inteiro (ver 9.5) — evita expectativa errada.
 
-### 9.5 Pesquisa: busca por palavra na Bíblia inteira `⬜`
-**Funcionalidade:** a peça mais pesada do plano — exige um índice de
-texto completo gerado por script (buscar os 1.189 capítulos via
-bible-api.com uma vez, montar índice invertido, versionar como JSON),
-porque a API não oferece busca por palavra. Tratado como sub-entrega
-própria com planejamento técnico dedicado quando for a vez — ver seção
-3a do PLANO-NAVEGACAO.md pros detalhes de tamanho/rate-limit.
-**UX/UI:** resultado mostra o versículo de verdade, não só a
-referência, igual ao padrão já usado no popover de referências (1.9).
+### 9.5 Pesquisa: busca por palavra na Bíblia inteira `✅`
+**Funcionalidade:** resolvido junto com a migração pro SQLite (ver
+2.6) — índice de texto completo virou uma tabela virtual FTS5 do
+SQLite (`biblia_fts`), populada a partir de `assets/biblia.json` (todo
+o texto da Almeida ACF embutido no app, sem depender de rate-limit de
+API externa). `buscarGlobal(termo)` em `core/biblia/BibliaAPI.ts` varre
+em milissegundos.
+**UX/UI:** aba "Na Bíblia" na tela Descubra (`app/(tabs)/pesquisa.tsx`),
+ao lado de "Nos Resumos"; resultado mostra o versículo de verdade, não
+só a referência, igual ao padrão já usado no popover de referências
+(1.9).
 
-### 9.6 Você: perfil, Salvo e Atividade `⬜`
-**Funcionalidade:** cabeçalho de perfil (estado "Visitante" até existir
-login); card "Salvo" com prévia dos grifos/notas recentes (data
-relativa curta — novo helper `core/util/tempoRelativo.ts` — e menu de
-3 pontinhos com Ler/Compartilhar/Resumo do livro/Copiar/Editar/Excluir,
-funcionando também com botão direito no web); tela "Salvo" completa com
-filtro Anotações/Grifados/**Pesquisas favoritas** (repositório novo,
-`PesquisasFavoritasRepository`); "Perseverança" (mesmo streak da
-Início, layout compacto); "Compartilhamentos" (contador novo,
-`core/estatisticas/compartilhamentos.ts`, nasce junto com a
-funcionalidade de compartilhar de verdade — seção 5); conquistas
-(mesmo dado de 9.2, layout diferente); "Atividade" com as 5 ações mais
-recentes + botão "ver mais" pra tela de Salvo; card de Configurações no
-fim.
-**UX/UI:** menu de 3 pontinhos reaproveitado em Salvo e Atividade (uma
-implementação só); estado vazio orienta o que fazer.
+### 9.6 Você: perfil, Salvo e Atividade `✅`
+**Funcionalidade:** cabeçalho de perfil (nome, `@visitante`, tag de
+localização placeholder, avatar); card "Salvo" com prévia dos
+grifos/notas recentes (`core/util/tempoRelativo.ts`) e menu de 3
+pontinhos com Ler/Compartilhar/Resumo do livro/Copiar/Editar/Excluir,
+funcionando também com botão direito no web; tela `/salvo` completa
+com filtro Todos/Anotações/Grifados/Pesquisas favoritas
+(`PesquisasFavoritasRepository`); dois botões de atalho "Salvos"/
+"Notas" (redesenho de gamificação); "Perseverança"/streak num card
+escuro com número grande; "Compartilhamentos" (contador,
+`core/estatisticas/compartilhamentos.ts`, via a ação mínima de
+copiar/compartilhar — não espera a funcionalidade completa da seção 5);
+Medalhas num carrossel horizontal com barra de progresso por conquista
+(redesenho de gamificação); "Atividade" com as 5 ações mais recentes +
+"ver mais"; ícone de engrenagem no topo e card de Configurações no fim,
+ambos levando pra `/configuracoes`.
+**UX/UI:** cards de streak/medalhas usam um fundo escuro/metalizado
+fixo, deliberadamente fora do tema claro/escuro do resto do app (padrão
+comum em dashboards de gamificação). **Gap conhecido:** o botão
+"Salvos" leva pra `/salvo`, mas a tela ainda não lista versículos
+salvos de verdade — ver 2.7.
 
-### 9.7 Tela "Configurações" `⬜`
-**Funcionalidade:** tamanho de fonte, fonte serifada (já existem como
-estado persistido em `core/leitura/preferenciaFonte.ts` — a tela lê/
-escreve o mesmo módulo, não duplica lógica) e tema, centralizados numa
-tela só, além dos controles rápidos que já existem inline nas telas de
-leitura. Alcançada por um card no fim da aba Você, não é aba própria.
-**UX/UI:** agrupado em seções com título (Leitura, Aparência, Dados),
-não uma lista solta de toggles; espaço já previsto pras preferências
-futuras abaixo.
+### 9.7 Tela "Configurações" `✅`
+**Funcionalidade:** tamanho de fonte, fonte serifada (lê/escreve
+`core/leitura/preferenciaFonte.ts`, mesmo módulo das telas de leitura,
+sem duplicar lógica) e tema, centralizados em `app/configuracoes.tsx`,
+agrupados em 3 seções (Leitura, Aparência, Dados). Alcançada por um
+ícone de engrenagem no topo e um card no fim da aba Você — não é aba
+própria.
+**UX/UI:** seção "Dados" tem placeholders "Em breve" pras preferências
+futuras (cores de grifo, contraste).
 
 ### 9.8 Grifar em várias cores `✅`
-**Funcionalidade:** hoje `Grifo` é binário — vira um campo `cor` no
-tipo (com default pra não quebrar grifos já salvos), paleta pequena e
-fixa (4-6 cores com significado, não um color picker livre), seletor no
-lugar do botão único "✎ Grifar" na barra de seleção do versículo (ver
-2.3). Complementa 9.6 (filtro por cor em Salvo) e 9.7 (legenda da
-paleta em Configurações).
-**UX/UI:** cores com significado claro e documentado (ex. amarelo =
-importante, verde = promessa, azul = estudo), não só decorativas.
+**Funcionalidade:** `Grifo` (`core/types/leitura.ts`) ganhou um campo
+`cor: string`; `GrifosRepository.alternar(ownerId, ref, cor)` recoloriza
+sem duplicar registro quando o versículo já está grifado com outra cor.
+Seletor de cor substitui o botão único "✎ Grifar" na barra de seleção
+múltipla da leitura do capítulo (ver 2.3), com "cores recentes" +
+paleta completa expansível — inspirado no app de Bíblia mais baixado da
+Play Store (referência trazida pelo usuário, ver PLANO-NAVEGACAO.md
+Fase 8).
+**UX/UI:** cor do destaque do versículo lido dinamicamente do grifo
+salvo, não mais uma cor Tailwind fixa.
 
-### 9.9 Modo escuro mais contrastado `⬜`
-**Funcionalidade:** segunda variante de tema escuro (preto mais puro,
-texto com contraste mais alto que o `cor-fundo-dark` atual, pensado pra
-baixa visão/uso em sol forte), selecionável em Configurações (9.7) —
-não substitui o escuro atual, some como opção adicional.
-**UX/UI:** troca de tema continua um toggle simples, só com uma terceira
-opção em vez de duas.
+### 9.9 Modo escuro mais contrastado `🔶`
+**Funcionalidade:** auditoria de contraste feita (não implementação
+nova): calculado manualmente o contraste WCAG entre
+`cor-texto-suave-dark` (`#b3a894`) e os dois fundos escuros usados
+atrás dele — 6.87:1 contra `cor-fundo-elevado-dark` e 7.59:1 contra
+`cor-fundo-dark`. Ambos já passam WCAG AA (mínimo 4.5:1) com folga, e
+quase alcançam AAA (7:1). **Nenhuma mudança de cor foi feita** — não há
+falha objetiva de contraste nos tokens atuais pra corrigir. Se o pedido
+for uma segunda variante de tema (preto mais puro, estilo AMOLED, por
+preferência visual e não por falha de acessibilidade), isso ainda não
+foi construído e precisa de direção de design mais específica antes.
+**UX/UI:** sem mudança visual ainda — ver acima.
 
 ### 9.10 Notificação diária do versículo do dia `⬜`
 **Funcionalidade:** backlog explícito, mencionado pelo usuário mas

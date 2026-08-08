@@ -10,6 +10,7 @@ export type ReferenciaVersiculo = {
 };
 
 export type Grifo = ReferenciaVersiculo & {
+  id?: number;
   ownerId: string;
   criadoEm: string;
   cor?: string;
@@ -21,11 +22,13 @@ export type ReferenciaCapitulo = {
 };
 
 export type CapituloLido = ReferenciaCapitulo & {
+  id?: number;
   ownerId: string;
   lidoEm: string;
 };
 
 export type Nota = ReferenciaVersiculo & {
+  id?: number;
   ownerId: string;
   texto: string;
   criadoEm: string;
@@ -33,7 +36,14 @@ export type Nota = ReferenciaVersiculo & {
 };
 
 export type PesquisaFavorita = {
+  id?: number;
   ownerId: string;
   termo: string;
   criadoEm: string;
+};
+
+export type VersiculoSalvo = ReferenciaVersiculo & {
+  id?: number;
+  ownerId: string;
+  salvoEm: string;
 };

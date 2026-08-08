@@ -1,4 +1,4 @@
-import { Link } from "expo-router";
+import { Link, router } from "expo-router";
 import { useEffect, useMemo, useState } from "react";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
@@ -7,10 +7,11 @@ import { CardStreak } from "../../components/CardStreak";
 import { CardVersiculoDia } from "../../components/CardVersiculoDia";
 import { BotaoTema } from "../../components/BotaoTema";
 import { calcularConquistas } from "../../core/content/conquistas";
-import { livros } from "../../core/content/livros";
+import { livros, obterLivro } from "../../core/content/livros";
 import { calcularSequenciaAtual } from "../../core/estatisticas/streak";
 import { livrosLidosRepository, progressoRepository } from "../../core/repositories";
 import { useOwnerId } from "../../core/useOwnerId";
+import type { CapituloLido } from "../../core/types/leitura";
 
 function obterSaudacao() {
   const hora = new Date().getHours();
@@ -19,22 +20,64 @@ function obterSaudacao() {
   return "Boa noite";
 }
 
+// "Continue Lendo": um capítulo só aparece uma vez, na posição da
+// leitura mais recente dele — sem isso, reler o mesmo capítulo várias
+// vezes criaria cards duplicados no carrossel.
+function capitulosRecentes(itens: CapituloLido[], limite: number) {
+  const maisRecentePorCapitulo = new Map<string, CapituloLido>();
+  for (const item of itens) {
+    const chave = `${item.livroSlug}-${item.capitulo}`;
+    const existente = maisRecentePorCapitulo.get(chave);
+    if (!existente || new Date(item.lidoEm) > new Date(existente.lidoEm)) {
+      maisRecentePorCapitulo.set(chave, item);
+    }
+  }
+  return Array.from(maisRecentePorCapitulo.values())
+    .sort((a, b) => new Date(b.lidoEm).getTime() - new Date(a.lidoEm).getTime())
+    .slice(0, limite);
+}
+
+function CardContinueLendo({ item }: { item: CapituloLido }) {
+  const livro = obterLivro(item.livroSlug);
+  if (!livro) return null;
+
+  return (
+    <Pressable
+      onPress={() => router.push(`/biblia/${livro.slug}/${item.capitulo}`)}
+      className="w-32 mr-3 rounded-2xl bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark px-3.5 py-4 shadow-sm"
+      style={{ shadowColor: "#000", shadowOpacity: 0.06, shadowRadius: 4, shadowOffset: { width: 0, height: 1 } }}
+    >
+      <View className="w-9 h-9 rounded-full bg-cor-destaque-fundo dark:bg-cor-destaque-fundo-dark items-center justify-center mb-2.5">
+        <MaterialIcons name="auto-stories" size={18} color="#8a5a2b" />
+      </View>
+      <Text numberOfLines={1} className="text-sm font-bold text-cor-texto dark:text-cor-texto-dark">
+        {livro.nome}
+      </Text>
+      <Text className="text-xs text-cor-texto-suave dark:text-cor-texto-suave-dark mt-0.5">
+        Capítulo {item.capitulo}
+      </Text>
+    </Pressable>
+  );
+}
+
 export default function Inicio() {
   const ownerId = useOwnerId();
   const [lidos, setLidos] = useState<string[]>([]);
   const [sequencia, setSequencia] = useState(0);
+  const [recentes, setRecentes] = useState<CapituloLido[]>([]);
 
   useEffect(() => {
     if (!ownerId) return;
     livrosLidosRepository.listar(ownerId).then(setLidos);
     progressoRepository.listarTodos(ownerId).then((itens) => {
       setSequencia(calcularSequenciaAtual(itens.map((i) => i.lidoEm)));
+      setRecentes(capitulosRecentes(itens, 10));
     });
   }, [ownerId]);
 
   const lidosSet = useMemo(() => new Set(lidos), [lidos]);
   const conquistas = useMemo(() => calcularConquistas(lidosSet), [lidosSet]);
-  
+
   const saudacao = obterSaudacao();
 
   return (
@@ -54,6 +97,17 @@ export default function Inicio() {
         </View>
 
         <CardVersiculoDia />
+
+        {recentes.length > 0 ? (
+          <View className="mb-4 -mx-4 px-4">
+            <Text className="text-sm font-bold text-cor-texto dark:text-cor-texto-dark mb-2.5">Continue lendo</Text>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+              {recentes.map((item) => (
+                <CardContinueLendo key={`${item.livroSlug}-${item.capitulo}`} item={item} />
+              ))}
+            </ScrollView>
+          </View>
+        ) : null}
 
         {/* Resumos Div */}
         <Link href="/resumos" asChild>

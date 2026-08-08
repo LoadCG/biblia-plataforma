@@ -480,26 +480,31 @@ para uso por mim ou por qualquer outro agente que continue o trabalho.
 
 ### Status atual
 
-- **Fase em andamento:** Fase 6 concluída (Configurações) — próxima é a
-  Fase 7 (backlog explícito, ver seção acima: busca de texto completo,
-  notificação diária, grifos coloridos, contraste, conta/login).
-- **Concluído:** Fase 1 completa exceto 1.9; Fase 2 completa; Fase 3
-  completa; Fase 4 completa (4.1–4.5); Fase 5 completa (5.1–5.12); Fase
-  6 completa (6.1–6.3).
-- **Pendente/adiado:** 1.9 (barra lateral no desktop); ajuste fino do
-  item 3.5 (modal não cobre a barra de abas no web, só no nativo);
-  4.6 (busca de texto completo, 3a/9.5) permanece backlog explícito
-  com sub-plano próprio, não teve trabalho nesta fase; 5.8/5.9 usaram
-  a versão mínima de "compartilhar" (clipboard no web, `Share` nativo
-  no app) em vez de esperar uma funcionalidade de compartilhamento
-  completa — decisão registrada na Fase 5 abaixo; 6.2 é só placeholder
-  visual, cores de grifo e contraste continuam como itens da Fase 7.
-- **Dependências novas instaladas nesta sessão** (nenhuma vinha
-  incluída por padrão, ao contrário do que o plano original assumia):
-  `@expo/vector-icons` (Fase 1) e `react-native-svg` (Fase 2, streak).
-- **Próximo passo:** as 6 fases da navegação principal estão completas.
-  Próximo trabalho é escolher um item da Fase 7 (backlog) pra destravar,
-  ou o item 1.9 (barra lateral desktop) que ficou pendente.
+- **Fase em andamento:** Fase 9 concluída (migração SQLite + retenção/
+  gamificação) — próxima é escolher entre o backlog restante: 7.2
+  (notificação diária), 7.5 (conta/login), 8.6/8.7 (Comparar Versões,
+  Orar), ou fechar o gap de 8.5/9.6 ("Salvos" não lista nada ainda).
+- **Concluído:** Fases 1–9 completas (Fase 1 completa incluindo 1.9,
+  resolvido com os primitivos headless `expo-router/ui`; Fases 2–6
+  completas; Fase 7 quase toda resolvida via Fase 8/9 — só 7.2 e 7.5
+  seguem pendentes; Fase 8 completa exceto 8.5 parcial e 8.6/8.7
+  backlog; Fase 9 completa, ver detalhes na própria seção).
+- **Pendente/adiado:** ajuste fino do item 3.5 (modal não cobre a
+  barra de abas no web, só no nativo); 5.8/5.9 usam a versão mínima de
+  "compartilhar" (clipboard no web, `Share` nativo no app), não a
+  funcionalidade completa da seção 5 do FUNCIONALIDADES.md; **8.5/9.6:
+  "Salvar" grava de verdade mas não aparece em lugar nenhum da UI**
+  (`core/estatisticas/atividade.ts` não agrega
+  `versiculosSalvosRepository`) — é o gap mais visível pro usuário
+  final agora; 8.6/8.7 (Comparar Versões, Orar) e 7.2/7.5 (notificação,
+  conta) seguem backlog explícito, sem trabalho nesta sessão.
+- **Dependências novas instaladas** (nenhuma vinha incluída por
+  padrão, ao contrário do que o plano original assumia):
+  `@expo/vector-icons` (Fase 1), `react-native-svg` (Fase 2, streak),
+  `expo-sqlite` (Fase 9, back-end).
+- **Próximo passo:** fechar o gap de "Salvos" (8.5/9.6) é a correção
+  mais barata e mais visível pro usuário — depois, escolher entre o
+  backlog restante (7.2, 7.5, 8.6, 8.7).
 
 ---
 
@@ -758,15 +763,21 @@ para uso por mim ou por qualquer outro agente que continue o trabalho.
 
 ### Fase 7 — Backlog explícito (fora de escopo até serem retomados)
 
-- [ ] 7.1 Busca de texto completo na Bíblia inteira (9.5) — sub-plano
-      técnico próprio.
+- [x] 7.1 Busca de texto completo na Bíblia inteira (9.5) — resolvida
+      pela migração pro SQLite (FTS5 + `assets/biblia.json`, ver
+      `backend-log.md` e FUNCIONALIDADES.md 9.5/2.6).
 - [ ] 7.2 Notificação diária do versículo do dia (9.10) — depende de
-      conta + backend com agendamento.
-- [ ] 7.3 Grifar em várias cores (9.8).
-- [ ] 7.4 Modo escuro mais contrastado (9.9).
+      conta + backend com agendamento. Ainda pendente.
+- [x] 7.3 Grifar em várias cores (9.8) — resolvida na Fase 8 abaixo.
+- [x] 7.4 Modo escuro mais contrastado (9.9) — auditoria de contraste
+      feita (WCAG AA já passa com folga nos tokens atuais, ver
+      FUNCIONALIDADES.md 9.9); nenhuma mudança de cor foi necessária.
+      Marcado `🔶` no FUNCIONALIDADES.md, não `✅`, porque uma segunda
+      variante de tema (preto mais puro) continua não implementada se
+      for isso que "mais contrastado" pedir.
 - [ ] 7.5 Conta/login de verdade (seção 6 do FUNCIONALIDADES.md) —
       desbloqueia perfil real (5.1), compartilhamentos multi-dispositivo
-      e notificações (7.2).
+      e notificações (7.2). Ainda pendente.
 
 ---
 
@@ -799,7 +810,7 @@ privada que pode virar pública, com componente de rede social) também
 dependem de infraestrutura que não existe (múltiplas traduções vindas
 da API, conta de usuário) — registradas como 8.6 e 8.7, fora de escopo.
 
-- [ ] 8.1 Mover a leitura de capítulo pra dentro do group `(tabs)`:
+- [x] 8.1 Mover a leitura de capítulo pra dentro do group `(tabs)`:
       `app/biblia/[livro]/[capitulo].tsx` (hoje fora da navegação de
       abas, por isso a tab bar some) vira
       `app/(tabs)/biblia/[livro]/[capitulo].tsx`, registrado como
@@ -809,25 +820,33 @@ da API, conta de usuário) — registradas como 8.6 e 8.7, fora de escopo.
       existente (`CardAtividade`, `salvo.tsx`, `escolher/[livro]`,
       `biblia/index.tsx`) precisa mudar. Apagar o `app/biblia/` antigo
       depois de mover, pra não colidir rota.
-- [ ] 8.2 Redesenhar a barra fixa de livro/capítulo (hoje uma faixa de
+- [x] 8.2 Redesenhar a barra fixa de livro/capítulo (hoje uma faixa de
       borda a borda) como uma pill: `rounded-full`, sombra, largura
       abraçando o conteúdo (não full-width), margem inferior pra ficar
       visualmente acima da tab bar (que agora continua visível, já que
       8.1 resolveu isso) — seta esquerda + nome do livro + seta direita
       dentro da mesma pill, sem separação.
-- [ ] 8.3 Grifo multi-cor: estender `Grifo` (`core/types/leitura.ts`)
+- [x] 8.3 Grifo multi-cor: estender `Grifo` (`core/types/leitura.ts`)
       com `cor: string`; trocar `GrifosRepository.alternar`/`estaGrifado`
       por `obter`/`definir(ownerId, ref, cor)`/`remover` (recolorir sem
       duplicar registro); criar `core/leitura/coresGrifo.ts` com a
       paleta fixa + as 3 cores mais usadas recentemente (persistidas,
       MRU). Cor do destaque do versículo lido dinamicamente do grifo
       (não mais uma cor Tailwind fixa `bg-cor-grifo`).
-- [ ] 8.4 Painel de ação do versículo (substitui a linha "✎ Grifar / 🗒
+- [x] 8.4 Painel de ação do versículo (substitui a linha "✎ Grifar / 🗒
       Anotar" atual): referência do versículo, 3 pontos de cor recentes
       + botão "mais cores" que expande a paleta completa, botão Anotar,
       Copiar e Compartilhar (reaproveita `compartilhar()` da Fase 5).
-- [ ] 8.5 **(Backlog, fora de escopo agora)** "Salvar" — bookmark de
-      versículo sem grifo/nota, com aba própria em Salvo.
+- [🔶] 8.5 "Salvar" — **acabou sendo implementado**, fora do plano
+      original desta fase (não era mais escopo do agente de front-end,
+      mas o back-end criou `VersiculoSalvo`/`versiculosSalvosRepository`
+      junto da migração pro SQLite). O botão "Salvar" existe e grava de
+      verdade. **Falta:** `core/estatisticas/atividade.ts` (o agregador
+      que alimenta o card "Salvo" e a tela `/salvo`) ainda não inclui
+      `versiculosSalvosRepository` — um versículo salvo não aparece em
+      lugar nenhum da UI hoje, nem no atalho "Salvos" adicionado na aba
+      Você (ver Fase 9 abaixo). Precisa de um 4º tipo `"salvo"` em
+      `ItemAtividade` + filtro correspondente em `app/salvo.tsx`.
 - [ ] 8.6 **(Backlog, fora de escopo agora)** "Comparar Versões" —
       depende de múltiplas traduções da Bíblia disponíveis na API hoje
       usada (`bible-api.com`), não confirmado se cobre isso.
@@ -835,8 +854,92 @@ da API, conta de usuário) — registradas como 8.6 e 8.7, fora de escopo.
       com opção de tornar pública, com componente de rede social entre
       usuários; depende de conta real (7.5) e de um backend de
       comunidade que não existe.
-- [ ] 8.8 `tsc --noEmit` limpo, `expo export --platform web` limpo,
-      teste manual: grifar em 3+ cores diferentes, recolorir um
-      versículo já grifado, remover grifo tocando na mesma cor, abrir
-      "mais cores", copiar e compartilhar um versículo, navegar entre
-      capítulos com a tab bar sempre visível. Commit + push.
+- [x] 8.8 `tsc --noEmit` limpo, `expo export --platform web` limpo
+      (1.7MB). Teste manual no navegador (viewport mobile): grifo
+      multi-cor, painel de ação do versículo e barra de navegação em
+      pill confirmados renderizando corretamente; tab bar permanece
+      visível durante a leitura.
+
+---
+
+## Fase 9 — Migração de dados (SQLite) + retenção e gamificação
+
+**Nota de processo:** esta fase não seguiu a disciplina de "commit por
+fase" do resto do documento — várias sessões (front-end e back-end)
+trabalharam em paralelo no mesmo working tree sem commitar
+intermediariamente, então o histórico de commits não reflete a ordem
+real do trabalho. O commit que fecha esta fase junta tudo de uma vez.
+
+### 9.A — Migração de AsyncStorage pra SQLite (back-end)
+Trabalho feito pelo agente de back-end (ver `backend-log.md`, criado
+por ele) em paralelo às Fases 8/9 do front-end:
+- [x] Todos os repositórios (`grifosRepository`, `progressoRepository`,
+      `notasRepository`, `livrosLidosRepository`,
+      `pesquisasFavoritasRepository`, `versiculosSalvosRepository`)
+      migrados de `AsyncStorage` pra `expo-sqlite`
+      (`core/db/database.ts`, `core/repositories/sqlite/*`) — sem
+      quebrar a interface, nenhuma tela precisou mudar import.
+- [x] Bíblia embutida offline: `assets/biblia.json` (Almeida ACF, 31
+      mil versículos, baixado por `scripts/baixar-biblia.py`) injetado
+      no SQLite na primeira execução via `garantirBaseBiblia()` —
+      `BibliaAPI.buscarReferencia` não depende mais de `fetch` externo.
+- [x] Busca de texto completo (item 7.1/9.5, antes backlog) resolvida
+      via tabela virtual FTS5 (`biblia_fts`) + `buscarGlobal(termo)`.
+- [x] **Bloqueio de compatibilidade web resolvido**: `expo-sqlite`
+      quebrava tanto o dev server (`SharedArrayBuffer is not defined`)
+      quanto `expo export --platform web` (`.wasm` não resolvia) —
+      corrigido com `core/repositories/index.web.ts` (fallback
+      específico de plataforma) + ajuste em `metro.config.js`.
+      Confirmado pelo front-end: dev server abre sem erro de console e
+      `expo export --platform web` gera build limpa.
+- [x] Erro de tipo em `SqliteGrifosRepository.ts` (`grifo.id`
+      inexistente no tipo `Grifo`) corrigido.
+- [x] Campo `abreviacao` adicionado de verdade ao tipo `Livro`
+      (`core/content/tipos.ts`) e aos dados gerados
+      (`core/content/dados/livros.json`, via `scripts/gerar-conteudo.js`)
+      — substitui o mapa `ABREVIACOES_MOCK` que o front-end tinha posto
+      em `CardVersiculoTema.tsx` como solução temporária.
+
+### 9.B — Retenção e redesenho visual (front-end)
+- [x] "Continue lendo" na Início (`app/(tabs)/index.tsx`): carrossel
+      horizontal com os capítulos lidos mais recentemente
+      (`progressoRepository.listarTodos`, deduplicado por
+      livro+capítulo, 10 mais recentes), cada card leva direto pra
+      leitura via `router.push`.
+- [x] Aba Pesquisa virou "Descubra" (`app/(tabs)/pesquisa.tsx`): título
+      renomeado; fileira de atalhos Planos/Favoritos/Apoie acima da
+      busca (mostram alerta "Em breve!" ao tocar — nenhuma dessas telas
+      existe ainda, ver nota `[MOCK — FRONT-END]` no arquivo); grid de
+      temas redesenhado com ícone emoji grande (68px), rotacionado e
+      vazando pra fora do card via `position: absolute`, título
+      alinhado embaixo.
+- [x] Dashboard gamificado na aba Você (`app/(tabs)/voce.tsx`):
+      cabeçalho com nome grande, `@visitante`, localização placeholder
+      e avatar; ícone de engrenagem no topo (além do card de
+      Configurações que já existia no fim); dois botões quadrados
+      escuros de atalho ("Salvos"/"Notas", ambos levam pra `/salvo`);
+      card de streak com fundo escuro/metalizado e número grande; mega
+      card de Medalhas com carrossel horizontal, cada uma com barra de
+      progresso individual (dado de `core/content/conquistas.ts`, já
+      tinha `progressoAtual`/`progressoTotal` prontos).
+- [x] `tsc --noEmit` limpo e `expo export --platform web` limpo depois
+      de cada mudança; as 3 telas verificadas de verdade no navegador
+      (viewport mobile 375×812) depois do bloqueio de SQLite (9.A) ser
+      resolvido.
+
+### Gaps conhecidos ao fechar esta fase
+- **"Salvos" não lista nada de verdade** (ver 8.5 acima):
+  `core/estatisticas/atividade.ts` não agrega
+  `versiculosSalvosRepository`. É a lacuna mais visível pro usuário
+  final — o botão existe e parece funcionar, mas a tela de destino
+  fica vazia mesmo depois de salvar um versículo.
+- Os 3 atalhos da tela Descubra (Planos/Favoritos/Apoie) e as ações
+  rápidas "Salvos"/"Notas" reaproveitando `/salvo` são apenas pontos de
+  entrada — as telas de destino reais (um plano de leitura, uma lista
+  de favoritos separada de "salvos", uma página de apoio/doação) não
+  existem, isso é esperado e está anotado inline no código.
+- `PLANO-PLATAFORMA.md` não foi revisado nesta sessão — pode ter
+  decisões de arquitetura de dados que colidem com a migração SQLite
+  feita aqui (ex. se o plano original previa Supabase/Firebase em
+  vez de SQLite local). Vale uma leitura cruzada antes da próxima
+  decisão grande de dados.

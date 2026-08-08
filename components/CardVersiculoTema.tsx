@@ -11,8 +11,13 @@ function getLinkHref(ref: string): any {
   const nomeLivro = match[1].trim();
   const capitulo = match[2];
   const versiculo = match[3];
+
+  const chaveNormalizada = nomeLivro.toLowerCase().replace(/[.\s]/g, "");
   
-  const livro = livros.find(l => l.nome.toLowerCase() === nomeLivro.toLowerCase() || l.abreviacao.toLowerCase() === nomeLivro.toLowerCase());
+  const livro = livros.find(
+    (l) => l.nome.toLowerCase() === nomeLivro.toLowerCase() || 
+           (l.abreviacao && l.abreviacao === chaveNormalizada)
+  );
   if (!livro) return null;
 
   return `/biblia/${livro.slug}/${capitulo}?versiculo=${versiculo}`;

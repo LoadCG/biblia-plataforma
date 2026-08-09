@@ -42,7 +42,7 @@ export function CardVersiculoDia() {
             foto ainda aparecia clara demais atrás do rótulo. */}
         <LinearGradient
           colors={['rgba(0,0,0,0.78)', 'rgba(0,0,0,0.9)', 'rgba(0,0,0,0.98)']}
-          className="absolute inset-0"
+          style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0 }}
         />
         
         <View className="p-5 flex-1 justify-between">

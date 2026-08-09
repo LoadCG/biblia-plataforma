@@ -1024,3 +1024,49 @@ cobrir uma tela inteira — são retoques.
       de WCAG AAA (7:1). Contraste já estava garantido pra qualquer
       foto possível; não havia necessidade de escurecer mais (isso só
       apagaria a foto de fundo à toa).
+
+---
+
+## Fase 11 — Telas de Planos de leitura + toggle de notificação
+
+Handoff do back-end (Task 4 — infraestrutura de dados de Planos e
+notificações, congelada e testada em Jest): `core/content/planos.ts`,
+`PlanosRepository`/`LocalPlanosRepository`/`SqlitePlanosRepository`,
+`core/notifications/notificacoes.ts`. Faltava a UI consumindo isso —
+construída nesta fase.
+
+- [x] 11.1 `app/planos/index.tsx`: lista os planos de
+      `planosLeitura` (`core/content/planos.ts`) com barra de
+      progresso por plano (`planosRepository.listarDiasConcluidos`),
+      ícone de concluído quando os dias batem com `duracaoDias`.
+- [x] 11.2 `app/planos/[id].tsx`: detalhe do plano — progresso geral,
+      lista de dias com as referências do dia como pills tocáveis
+      (parse local de "Livro Capítulo" pra `/biblia/${slug}/${capitulo}`,
+      mesmo padrão de `CardVersiculoTema.tsx`/`pesquisa.tsx`) e botão
+      "Marcar"/"Concluído" por dia
+      (`planosRepository.alternarDiaConcluido`, toggle real).
+- [x] 11.3 Atalho "Planos" na aba Descubra (`app/(tabs)/pesquisa.tsx`)
+      trocado de mock (`Alert.alert` "Em breve") pra navegação real
+      (`router.push("/planos")). "Favoritos" e "Apoie" continuam mock
+      — não têm tela/funcionalidade própria ainda.
+- [x] 11.4 Toggle de lembrete diário em Configurações
+      (`app/configuracoes.tsx`, nova seção "Notificações"): liga/desliga
+      chamando `agendarLembreteDiario`/`cancelarTodosLembretes` de
+      `core/notifications/notificacoes.ts`. Estado do toggle persistido
+      em `core/notifications/preferenciaNotificacao.ts` (novo módulo,
+      mesmo padrão de `core/leitura/preferenciaFonte.ts` — as funções
+      de agendar/cancelar são ações fire-and-forget, não guardam se
+      "está ligado"). No web, mostra alerta "não disponível no
+      navegador" e não muda o toggle (notificação nativa não funciona
+      lá); testado que o guard realmente impede a mudança de estado.
+- [x] 11.5 `tsconfig.json` ganha `"types": ["jest"]` — sem isso
+      `tsc --noEmit` quebrava com os testes do back-end
+      (`core/biblia/__tests__/BibliaAPI.test.ts`, globals do Jest não
+      reconhecidos). Não é sobre Planos especificamente, mas foi
+      corrigido nesta fase pra manter `tsc` como sinal confiável.
+- [x] 11.6 `tsc --noEmit` e `expo export --platform web` limpos.
+      Testado ao vivo no navegador: lista de planos renderiza,
+      navegação de uma referência do dia leva pro capítulo certo
+      (`/biblia/40-mateus/1`), marcar um dia como concluído persiste
+      de verdade (1/14 dias, "Concluído" com ✓ visível, refletido de
+      volta na lista de planos).

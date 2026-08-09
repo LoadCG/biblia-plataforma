@@ -1,4 +1,4 @@
-import { Link } from "expo-router";
+import { Link, router } from "expo-router";
 import { useEffect, useMemo, useState } from "react";
 import { Alert, Pressable, ScrollView, Text, TextInput, View, ActivityIndicator } from "react-native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
@@ -13,13 +13,11 @@ import { pesquisasFavoritasRepository } from "../../core/repositories";
 import { useColorScheme } from "../../core/theme";
 import { useOwnerId } from "../../core/useOwnerId";
 
-// [MOCK — FRONT-END] Atalhos pedidos no handoff do back-end ("Planos,
-// Favoritos, Apoie") — nenhuma dessas telas/funcionalidades existe
-// ainda no app, então os botões mostram um alerta "Em breve" de
-// propósito. Quando a tela/rota real existir, troque o `onPress` por
-// navegação de verdade.
+// "Planos" agora navega de verdade pra /planos (ver app/planos/index.tsx).
+// [MOCK — FRONT-END] "Favoritos" e "Apoie" continuam sem tela/funcionalidade
+// própria — mostram um alerta "Em breve" de propósito. Quando existirem,
+// troque o `onPress` por navegação de verdade.
 const ATALHOS_MOCK: { id: string; rotulo: string; icone: keyof typeof MaterialIcons.glyphMap }[] = [
-  { id: "planos", rotulo: "Planos", icone: "event-note" },
   { id: "favoritos", rotulo: "Favoritos", icone: "star-border" },
   { id: "apoie", rotulo: "Apoie", icone: "favorite-border" },
 ];
@@ -74,6 +72,13 @@ export default function Pesquisa() {
 
         {!termo.trim() ? (
           <View className="flex-row justify-between mb-4">
+            <Pressable
+              onPress={() => router.push("/planos")}
+              className="flex-1 items-center gap-1.5 mx-1 rounded-2xl bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark py-3.5"
+            >
+              <MaterialIcons name="event-note" size={20} color="#8a5a2b" />
+              <Text className="text-xs font-semibold text-cor-texto dark:text-cor-texto-dark">Planos</Text>
+            </Pressable>
             {ATALHOS_MOCK.map((atalho) => (
               <Pressable
                 key={atalho.id}

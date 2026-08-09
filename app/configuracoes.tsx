@@ -1,6 +1,6 @@
 import { Link } from "expo-router";
 import { useEffect, useState } from "react";
-import { Pressable, ScrollView, Text, View } from "react-native";
+import { Alert, Platform, Pressable, ScrollView, Text, View } from "react-native";
 import {
   carregarFonteSerifada,
   carregarIndiceFonte,
@@ -10,6 +10,8 @@ import {
   salvarIndiceFonte,
   TAMANHOS_FONTE,
 } from "../core/leitura/preferenciaFonte";
+import { agendarLembreteDiario, cancelarTodosLembretes } from "../core/notifications/notificacoes";
+import { HORARIO_LEMBRETE_PADRAO, lembreteDiarioAtivo, salvarLembreteDiarioAtivo } from "../core/notifications/preferenciaNotificacao";
 import { alternarTema, useColorScheme } from "../core/theme";
 
 const SOMBRA = { shadowColor: "#000", shadowOpacity: 0.06, shadowRadius: 4, shadowOffset: { width: 0, height: 1 } };
@@ -40,11 +42,33 @@ export default function Configuracoes() {
   const escuro = colorScheme === "dark";
   const [indiceFonte, setIndiceFonte] = useState(INDICE_PADRAO);
   const [fonteSerifada, setFonteSerifada] = useState(false);
+  const [lembreteAtivo, setLembreteAtivo] = useState(false);
 
   useEffect(() => {
     carregarIndiceFonte().then(setIndiceFonte);
     carregarFonteSerifada().then(setFonteSerifada);
+    lembreteDiarioAtivo().then(setLembreteAtivo);
   }, []);
+
+  async function alternarLembreteDiario() {
+    if (Platform.OS === "web") {
+      Alert.alert("Não disponível no navegador", "Notificações diárias funcionam no app instalado (Android/iOS).");
+      return;
+    }
+    const novo = !lembreteAtivo;
+    if (novo) {
+      await agendarLembreteDiario(
+        HORARIO_LEMBRETE_PADRAO.hora,
+        HORARIO_LEMBRETE_PADRAO.minuto,
+        "Versículo do dia",
+        "Sua leitura de hoje já está esperando por você."
+      );
+    } else {
+      await cancelarTodosLembretes();
+    }
+    salvarLembreteDiarioAtivo(novo);
+    setLembreteAtivo(novo);
+  }
 
   function ajustarFonte(delta: number) {
     setIndiceFonte((atual) => {
@@ -133,6 +157,26 @@ export default function Configuracoes() {
               <Text className="text-sm text-cor-texto-suave dark:text-cor-texto-suave-dark">
                 {escuro ? "☾ Escuro" : "☀ Claro"} · toque pra trocar
               </Text>
+            </Pressable>
+          </Linha>
+        </Secao>
+
+        <Secao titulo="Notificações">
+          <Linha ultima>
+            <Pressable onPress={alternarLembreteDiario} className="flex-row items-center justify-between">
+              <View className="flex-1 pr-3">
+                <Text className="text-cor-texto dark:text-cor-texto-dark font-semibold">Lembrete diário</Text>
+                <Text className="text-xs text-cor-texto-suave dark:text-cor-texto-suave-dark mt-0.5">
+                  Um aviso todo dia às {String(HORARIO_LEMBRETE_PADRAO.hora).padStart(2, "0")}h pra não perder a leitura
+                </Text>
+              </View>
+              <View
+                className={`w-11 h-6 rounded-full justify-center px-0.5 ${
+                  lembreteAtivo ? "bg-cor-destaque dark:bg-cor-destaque-dark items-end" : "bg-cor-borda dark:bg-cor-borda-dark items-start"
+                }`}
+              >
+                <View className="w-5 h-5 rounded-full bg-white" />
+              </View>
             </Pressable>
           </Linha>
         </Secao>

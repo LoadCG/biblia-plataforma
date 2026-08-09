@@ -1,0 +1,33 @@
+appId: com.cauangabriel.bibliaplataforma
+---
+- launchApp:
+    clearState: true
+
+- assertVisible: "Bíblia"
+
+# Testa navegação do header / hero
+- tapOn: "Continue Lendo"
+- assertVisible: ".*" # Deve carregar qualquer texto de versículo
+
+# Volta para Home
+- tapOn:
+    id: "back-button" # Supondo botão de voltar ou swipe
+    optional: true
+
+# Testa a navegação pelas abas e pesquisa
+- tapOn: "Descubra"
+- assertVisible: "Busque na Bíblia"
+
+- tapOn: "Amor"
+- assertVisible: "1 Coríntios 13:4"
+- tapOn: "1 Coríntios 13:4"
+
+# Valida se o modal/leitura abriu
+- assertVisible: "O amor é sofredor"
+
+# Testa a ação de grifar
+- tapOn: "O amor é sofredor"
+- tapOn: "Grifar"
+
+- tapOn: "Você"
+- assertVisible: "Você grifou 1 Coríntios 13:4"

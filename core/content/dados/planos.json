@@ -1,0 +1,39 @@
+[
+  {
+    "id": "evangelhos-14",
+    "titulo": "Os Evangelhos em 14 Dias",
+    "descricao": "Uma jornada pelas boas novas de Jesus através de Mateus, Marcos, Lucas e João.",
+    "duracaoDias": 14,
+    "dias": [
+      { "dia": 1, "referencias": ["Mateus 1", "Mateus 2"] },
+      { "dia": 2, "referencias": ["Mateus 5", "Mateus 6", "Mateus 7"] },
+      { "dia": 3, "referencias": ["Mateus 26", "Mateus 27", "Mateus 28"] },
+      { "dia": 4, "referencias": ["Marcos 1", "Marcos 2"] },
+      { "dia": 5, "referencias": ["Marcos 8", "Marcos 9"] },
+      { "dia": 6, "referencias": ["Marcos 15", "Marcos 16"] },
+      { "dia": 7, "referencias": ["Lucas 1", "Lucas 2"] },
+      { "dia": 8, "referencias": ["Lucas 10", "Lucas 15"] },
+      { "dia": 9, "referencias": ["Lucas 22", "Lucas 23", "Lucas 24"] },
+      { "dia": 10, "referencias": ["João 1", "João 3"] },
+      { "dia": 11, "referencias": ["João 14", "João 15", "João 16", "João 17"] },
+      { "dia": 12, "referencias": ["João 18", "João 19"] },
+      { "dia": 13, "referencias": ["João 20", "João 21"] },
+      { "dia": 14, "referencias": ["Atos 1", "Atos 2"] }
+    ]
+  },
+  {
+    "id": "sabedoria-7",
+    "titulo": "Semana da Sabedoria",
+    "descricao": "7 dias imerso nos livros poéticos e sapienciais para fortalecer a mente e o espírito.",
+    "duracaoDias": 7,
+    "dias": [
+      { "dia": 1, "referencias": ["Provérbios 1", "Provérbios 2", "Provérbios 3"] },
+      { "dia": 2, "referencias": ["Salmos 1", "Salmos 23", "Salmos 91"] },
+      { "dia": 3, "referencias": ["Eclesiastes 3", "Eclesiastes 11", "Eclesiastes 12"] },
+      { "dia": 4, "referencias": ["Provérbios 4", "Provérbios 8"] },
+      { "dia": 5, "referencias": ["Salmos 119:1-32"] },
+      { "dia": 6, "referencias": ["Jó 38", "Jó 42"] },
+      { "dia": 7, "referencias": ["Tiago 1", "Tiago 3"] }
+    ]
+  }
+]

@@ -4,6 +4,7 @@ import { sqliteNotasRepository } from "./sqlite/SqliteNotasRepository";
 import { sqliteLivrosLidosRepository } from "./sqlite/SqliteLivrosLidosRepository";
 import { sqlitePesquisasFavoritasRepository } from "./sqlite/SqlitePesquisasFavoritasRepository";
 import { sqliteVersiculosSalvosRepository } from "./sqlite/SqliteVersiculosSalvosRepository";
+import { sqlitePlanosRepository } from "./sqlite/SqlitePlanosRepository";
 
 // No nativo (iOS/Android), exportamos os repositórios reais do SQLite.
 
@@ -13,5 +14,6 @@ export const notasRepository = sqliteNotasRepository;
 export const livrosLidosRepository = sqliteLivrosLidosRepository;
 export const pesquisasFavoritasRepository = sqlitePesquisasFavoritasRepository;
 export const versiculosSalvosRepository = sqliteVersiculosSalvosRepository;
+export const planosRepository = sqlitePlanosRepository;
 
 export { obterOwnerId } from "../owner";

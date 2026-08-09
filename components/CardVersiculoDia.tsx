@@ -37,9 +37,11 @@ export function CardVersiculoDia() {
   return (
     <View className="rounded-3xl overflow-hidden mb-4 shadow-sm bg-black">
       <ImageBackground source={{ uri: imageUrl }} className="w-full h-[450px]">
-        {/* Gradiente mais forte para dar contraste real ao texto branco */}
+        {/* Escurece a foto de fundo de verdade (não só a sombra do texto) —
+            overlay bem mais escuro mesmo no topo do card, onde antes a
+            foto ainda aparecia clara demais atrás do rótulo. */}
         <LinearGradient
-          colors={['rgba(0,0,0,0.5)', 'rgba(0,0,0,0.75)', 'rgba(0,0,0,0.95)']}
+          colors={['rgba(0,0,0,0.78)', 'rgba(0,0,0,0.9)', 'rgba(0,0,0,0.98)']}
           className="absolute inset-0"
         />
         
@@ -65,11 +67,11 @@ export function CardVersiculoDia() {
             {carregando ? (
               <ActivityIndicator color="white" />
             ) : (
-              <Text 
-                className="text-white text-2xl" 
-                style={{ 
-                  fontFamily: "serif", 
-                  lineHeight: 34,
+              <Text
+                className="text-white text-xl"
+                style={{
+                  fontFamily: "serif",
+                  lineHeight: 29,
                   textShadowColor: 'rgba(0, 0, 0, 0.9)',
                   textShadowOffset: { width: 0, height: 2 },
                   textShadowRadius: 8

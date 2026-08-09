@@ -943,3 +943,84 @@ por ele) em paralelo às Fases 8/9 do front-end:
   feita aqui (ex. se o plano original previa Supabase/Firebase em
   vez de SQLite local). Vale uma leitura cruzada antes da próxima
   decisão grande de dados.
+
+---
+
+## Fase 10 — Polimento visual pós-lançamento (priorizado por impacto)
+
+Itens pequenos e pontuais de ajuste fino, pedidos depois que as fases
+principais já estavam no ar. Diferente das fases anteriores, não tenta
+cobrir uma tela inteira — são retoques.
+
+- [x] 10.1 `components/CardVersiculoDia.tsx`: gradiente escurecido
+      (de `0.5/0.75/0.95` pra `0.65/0.85/0.97` de opacidade) pra dar
+      mais contraste ao texto branco sobre a foto de fundo, que varia
+      por dia (`picsum.photos` com seed do texto do versículo — em
+      fotos mais claras o contraste ficava insuficiente); fonte do
+      texto bíblico reduzida de `text-2xl`/`lineHeight 34` pra
+      `text-xl`/`lineHeight 29`.
+- [x] 10.2 **Bug corrigido, não pedido, encontrado no caminho**: erro
+      de sintaxe em `app/(tabs)/pesquisa.tsx` (chave de função não
+      fechada no `.map()` dos resultados "Na Bíblia", introduzido por
+      uma edição concorrente de outra sessão que adicionou o fallback
+      `livroCorreto` sem fechar o bloco) — `tsc --noEmit` estava
+      quebrado antes desta correção. Registrado aqui porque é o tipo
+      de erro que edições paralelas no mesmo arquivo tendem a causar;
+      rodar `tsc --noEmit` a cada mudança pega isso cedo.
+- [x] 10.3 `tsc --noEmit` limpo, teste manual no navegador (viewport
+      mobile) confirmando o card do Versículo do Dia com o contraste
+      novo.
+- [x] 10.4 Overlay do Versículo do Dia escurecido de novo — o usuário
+      apontou que a primeira tentativa (10.1) só ficou perceptível na
+      sombra do texto, não na camada da foto em si. Gradiente
+      (`LinearGradient` em `CardVersiculoDia.tsx`) subiu de
+      `0.65/0.85/0.97` pra `0.78/0.9/0.98` de opacidade, mais forte
+      logo no topo do card (onde a foto ainda aparecia clara demais
+      atrás do rótulo "Versículo do Dia"). Verificado que o código
+      mudou de verdade; a diferença visual em si variou pouco no teste
+      porque a foto do dia testado já era naturalmente escura (seed
+      determinístico por texto do versículo via picsum.photos) — vale
+      reconferir num dia com foto mais clara.
+- [x] 10.5 Navegação da leitura bíblica, dois pontos pedidos pelo
+      usuário:
+      - Tocar no nome do livro na pill de navegação (`[livro]/[capitulo].tsx`)
+        já vai pra tela de escolher capítulo (`/biblia/escolher/${livro.slug}`),
+        não pra escolher livro — testado ao vivo no navegador e
+        confirmado correto. O relato original provavelmente refletia
+        um estado anterior ao redesenho concorrente da Fase 9/10 (a
+        tela `escolher/index.tsx` mudou de navegação em cascata pra
+        expansão inline nesse meio tempo).
+      - **Bug real corrigido**: a aba Bíblia sempre abria em Gênesis 1
+        pra quem nunca tinha lido nada, porque
+        `core/leitura/ultimaLeitura.ts` tinha um valor `PADRAO` fixo
+        em vez de distinguir "nunca leu" de "leu Gênesis 1 de
+        propósito". `carregarUltimaLeitura()` agora retorna `null`
+        nesse caso; `app/(tabs)/biblia/index.tsx` redireciona pra
+        `/biblia/escolher` quando `null`, ou pro último capítulo
+        quando existe. `escolher/index.tsx` (que usa a mesma função só
+        pra pré-expandir o livro atual na lista) ajustado pro mesmo
+        contrato. Testado ao vivo nos dois cenários (com e sem leitura
+        salva, limpando `localStorage` manualmente pra simular
+        "primeira vez").
+- [x] 10.6 `tsc --noEmit` limpo depois de todas as mudanças acima.
+- [x] 10.7 **Bug de contraste real encontrado e corrigido**: o card
+      "Estudo por Resumos" (`app/(tabs)/index.tsx`) usa
+      `bg-cor-destaque dark:bg-cor-destaque-dark` — no modo escuro esse
+      token é um dourado CLARO (`#e0a75e`, pensado pra texto/ícone
+      sobre fundo escuro, não pra ser fundo com texto branco em cima).
+      Com `text-white` fixo, o contraste calculado era ~2.1:1 (WCAG AA
+      exige 4.5:1 mínimo) — texto branco quase ilegível sobre fundo
+      claro. Corrigido com `dark:text-cor-texto` (marrom quase preto,
+      ~7.2:1 de contraste calculado) no título, subtítulo, fundo do
+      círculo do ícone e cor do ícone (via prop `color`, não
+      `className` — `MaterialIcons` é componente de terceiros, mesma
+      pegadinha documentada em `app/(tabs)/_layout.tsx`). Verificado
+      visualmente no navegador em modo escuro.
+- [x] 10.8 **Contraste do Versículo do Dia reconfirmado**, não
+      alterado de novo: com o overlay em 0.78/0.9/0.98 de opacidade
+      (10.4), o pior caso matematicamente possível (foto 100% branca)
+      resulta numa cor de fundo ~RGB(56,56,56) na região mais clara do
+      gradiente, dando ~11.7:1 de contraste com o texto branco — acima
+      de WCAG AAA (7:1). Contraste já estava garantido pra qualquer
+      foto possível; não havia necessidade de escurecer mais (isso só
+      apagaria a foto de fundo à toa).

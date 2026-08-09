@@ -10,6 +10,7 @@ import { calcularConquistas } from "../../core/content/conquistas";
 import { livros, obterLivro } from "../../core/content/livros";
 import { calcularSequenciaAtual } from "../../core/estatisticas/streak";
 import { livrosLidosRepository, progressoRepository } from "../../core/repositories";
+import { useColorScheme } from "../../core/theme";
 import { useOwnerId } from "../../core/useOwnerId";
 import type { CapituloLido } from "../../core/types/leitura";
 
@@ -65,6 +66,8 @@ export default function Inicio() {
   const [lidos, setLidos] = useState<string[]>([]);
   const [sequencia, setSequencia] = useState(0);
   const [recentes, setRecentes] = useState<CapituloLido[]>([]);
+  const { colorScheme } = useColorScheme();
+  const escuro = colorScheme === "dark";
 
   useEffect(() => {
     if (!ownerId) return;
@@ -109,19 +112,25 @@ export default function Inicio() {
           </View>
         ) : null}
 
-        {/* Resumos Div */}
+        {/* Resumos Div — no claro o fundo é escuro (cor-destaque) com
+            texto branco; no escuro o token cor-destaque-dark é um
+            dourado CLARO (feito pra texto/ícone sobre fundo escuro, não
+            pra ser fundo com texto branco em cima — branco sobre esse
+            dourado dava só ~2.1:1 de contraste, bem abaixo do mínimo
+            de 4.5:1). Por isso o texto usa `dark:text-cor-texto`
+            (marrom quase preto) só neste card. */}
         <Link href="/resumos" asChild>
           <Pressable
             className="flex-row items-center justify-between rounded-3xl bg-cor-destaque dark:bg-cor-destaque-dark px-6 py-5 mb-4 shadow-sm"
           >
             <View>
-              <Text className="text-xl font-bold text-white mb-1">Estudo por Resumos</Text>
-              <Text className="text-sm text-white/80">
+              <Text className="text-xl font-bold text-white dark:text-cor-texto mb-1">Estudo por Resumos</Text>
+              <Text className="text-sm text-white/80 dark:text-cor-texto/70">
                 {lidos.length} de {livros.length} livros lidos
               </Text>
             </View>
-            <View className="w-12 h-12 rounded-full bg-white/20 items-center justify-center">
-              <MaterialIcons name="menu-book" size={24} color="white" />
+            <View className="w-12 h-12 rounded-full bg-white/20 dark:bg-cor-texto/10 items-center justify-center">
+              <MaterialIcons name="menu-book" size={24} color={escuro ? "#2a241c" : "white"} />
             </View>
           </Pressable>
         </Link>

@@ -4,9 +4,10 @@ import type { Livro, ResumoCompleto } from "./tipos";
 export const resumosCompletos: ResumoCompleto[] = dados as ResumoCompleto[];
 
 // Lista leve (sem o texto dos resumos) para telas de listagem/navegação.
-export const livros: Livro[] = resumosCompletos.map(({ slug, nome, numero, testamento, capitulos, genero }) => ({
+export const livros: Livro[] = resumosCompletos.map(({ slug, nome, abreviacao, numero, testamento, capitulos, genero }) => ({
   slug,
   nome,
+  abreviacao,
   numero,
   testamento,
   capitulos,

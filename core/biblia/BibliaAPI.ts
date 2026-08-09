@@ -51,44 +51,53 @@ async function buscarWeb(ref: string): Promise<CapituloTexto> {
   return resultado;
 }
 
+import { livros } from "../content/livros";
+
 // Função para buscar um capítulo ou versículo específico
 export async function buscarReferencia(ref: string): Promise<CapituloTexto> {
   if (isWeb) return buscarWeb(ref);
 
   await garantirBaseBiblia(); // Garante que a Bíblia está populada
 
-  const chave = ref.trim().toLowerCase();
+  const chave = ref.trim();
   
-  // Parse da referência: "gn 1" ou "gn 1:1" ou "gn 1:1-5"
-  const partes = chave.split(' ');
-  const livroSlug = partes[0];
-  const resto = partes[1]; // "1" ou "1:1" ou "1:1-5"
+  // Parse da referência com regex para suportar nomes com espaços (ex: "1 Samuel 1:5" ou "Cântico dos Cânticos 2:1-3")
+  const match = chave.match(/(.+?)\s+(\d+)(?::(\d+)(?:-(\d+))?)?$/);
+  if (!match) throw new Error(`Referência inválida: ${chave}`);
   
-  let capituloNum = 0;
-  let versiculoNum = 0;
+  const nomeLivroRaw = match[1].trim();
+  const capituloNum = parseInt(match[2], 10);
+  const versiculoInicial = match[3] ? parseInt(match[3], 10) : 0;
+  const versiculoFinal = match[4] ? parseInt(match[4], 10) : versiculoInicial;
   
-  if (resto && resto.includes(':')) {
-    const [c, v] = resto.split(':');
-    capituloNum = parseInt(c);
-    // Para simplificar no momento, pega apenas o primeiro versículo se for um range
-    versiculoNum = parseInt(v.split('-')[0]); 
-  } else if (resto) {
-    capituloNum = parseInt(resto);
+  const chaveNormalizada = nomeLivroRaw.toLowerCase().replace(/[.\s]/g, "");
+  const livroEncontrado = livros.find(
+    (l) => l.nome.toLowerCase() === nomeLivroRaw.toLowerCase() || 
+           (l.abreviacao && l.abreviacao === chaveNormalizada)
+  );
+  
+  if (!livroEncontrado || !livroEncontrado.abreviacao) {
+    throw new Error(`Livro não encontrado para a referência: ${chave}`);
   }
+  
+  const livroSlug = livroEncontrado.abreviacao; // ex: "gn", "1sm"
 
-  if (versiculoNum > 0) {
-    // Busca apenas 1 versículo
-    const resultado = await db.getAllAsync<{ nomeLivro: string, texto: string }>(
-      `SELECT nomeLivro, texto FROM biblia_text WHERE livroSlug = ? AND capitulo = ? AND versiculo = ?`,
-      [livroSlug, capituloNum, versiculoNum]
+  if (versiculoInicial > 0) {
+    // Busca intervalo de versículos (ou apenas 1 se inicial == final)
+    const resultado = await db.getAllAsync<{ nomeLivro: string, versiculo: number, texto: string }>(
+      `SELECT nomeLivro, versiculo, texto FROM biblia_text WHERE livroSlug = ? AND capitulo = ? AND versiculo >= ? AND versiculo <= ? ORDER BY versiculo ASC`,
+      [livroSlug, capituloNum, versiculoInicial, versiculoFinal]
     );
 
     if (resultado.length === 0) throw new Error(`Falha ao buscar ${chave}`);
     
+    const textoCompleto = resultado.map(r => r.texto).join(" ");
+    const sufixoRef = versiculoInicial === versiculoFinal ? `${versiculoInicial}` : `${versiculoInicial}-${versiculoFinal}`;
+    
     return {
-      referencia: `${resultado[0].nomeLivro} ${capituloNum}:${versiculoNum}`,
-      texto: resultado[0].texto,
-      versiculos: [{ numero: versiculoNum, texto: resultado[0].texto }]
+      referencia: `${resultado[0].nomeLivro} ${capituloNum}:${sufixoRef}`,
+      texto: textoCompleto,
+      versiculos: resultado.map(r => ({ numero: r.versiculo, texto: r.texto }))
     };
   } else {
     // Busca o capítulo inteiro

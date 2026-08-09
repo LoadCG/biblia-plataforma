@@ -63,6 +63,15 @@ export function initDB() {
       UNIQUE(ownerId, livroSlug, capitulo, versiculo)
     );
 
+    CREATE TABLE IF NOT EXISTS progresso_planos (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      ownerId TEXT NOT NULL,
+      planoId TEXT NOT NULL,
+      diaConcluido INTEGER NOT NULL,
+      concluidoEm TEXT NOT NULL,
+      UNIQUE(ownerId, planoId, diaConcluido)
+    );
+
     CREATE TABLE IF NOT EXISTS biblia_text (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       livroSlug TEXT NOT NULL,

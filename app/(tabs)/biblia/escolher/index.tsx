@@ -12,8 +12,8 @@ export default function EscolherLivro() {
   const [livroExpandido, setLivroExpandido] = useState<string | null>(null);
 
   useEffect(() => {
-    carregarUltimaLeitura().then(({ livroSlug }) => {
-      if (livroSlug) setLivroExpandido(livroSlug);
+    carregarUltimaLeitura().then((ultima) => {
+      if (ultima) setLivroExpandido(ultima.livroSlug);
     });
   }, []);
 

@@ -6,6 +6,7 @@ import { BotaoTema } from "../../components/BotaoTema";
 import { CardVersiculoTema } from "../../components/CardVersiculoTema";
 import { EstadoVazio } from "../../components/EstadoVazio";
 import { buscarLivros } from "../../core/content/busca";
+import { livros } from "../../core/content/livros";
 import { buscarGlobal, ResultadoBuscaGlobal } from "../../core/biblia/BibliaAPI";
 import { TEMAS_BUSCA, type Tema } from "../../core/biblia/temasBusca";
 import { pesquisasFavoritasRepository } from "../../core/repositories";
@@ -160,8 +161,12 @@ export default function Pesquisa() {
                 ) : resultadosBiblia.length === 0 ? (
                   <EstadoVazio titulo="Nenhum versículo encontrado" descricao="Tente outra palavra." />
                 ) : (
-                  resultadosBiblia.map((resultado, i) => (
-                    <Link key={`${resultado.livroSlug}-${resultado.capitulo}-${resultado.versiculo}-${i}`} href={`/biblia/${resultado.livroSlug}/${resultado.capitulo}?versiculo=${resultado.versiculo}`} asChild>
+                  resultadosBiblia.map((resultado, i) => {
+                    const livroCorreto = livros.find(l => l.abreviacao === resultado.livroSlug) 
+                      || { slug: resultado.livroSlug }; // Fallback para não quebrar
+                      
+                    return (
+                    <Link key={`${resultado.livroSlug}-${resultado.capitulo}-${resultado.versiculo}-${i}`} href={`/biblia/${livroCorreto.slug}/${resultado.capitulo}?versiculo=${resultado.versiculo}`} asChild>
                       <Pressable
                         className="rounded-2xl bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark px-4 py-3 mb-2 shadow-sm"
                         style={{ shadowColor: "#000", shadowOpacity: 0.06, shadowRadius: 4, shadowOffset: { width: 0, height: 1 } }}
@@ -174,7 +179,8 @@ export default function Pesquisa() {
                         </Text>
                       </Pressable>
                     </Link>
-                  ))
+                    );
+                  })
                 )
               )}
             </>

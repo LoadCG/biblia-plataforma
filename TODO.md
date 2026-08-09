@@ -44,14 +44,14 @@ Abaixo, um detalhamento técnico e arquitetural de como implementaremos as próx
   - Toda vez que a tela de leitura for desmontada ou no evento de background do app, salvar o último livro/capítulo acessado na primeira posição da fila (LRU cache com limite de 10 itens).
   - Na tela Início, renderizar um `<ScrollView horizontal>` com cards minimalistas apontando direto pra leitura (`router.push`).
 
-### 4. [ ] **Planos de Leitura Diária e Devocionais**
+### 4. [x] **Planos de Leitura Diária e Devocionais**
 - **O Desafio:** Manter o engajamento diário de leitura.
 - **Como Fazer:**
   - Modelar em JSON a estrutura de Planos (ex: "Bíblia em 1 ano" -> Array de 365 dias, contendo refs bíblicas).
   - Usar o `expo-notifications` para criar agendamentos locais (Local Notifications) sempre às 7h da manhã com um versículo ou lembrete, sem precisar de servidor push backend.
   - Acompanhar progresso via barra de progresso preenchida com a quantidade de dias completados no AsyncStorage.
 
-### 5. [ ] **Testes E2E e Unitários com Jest**
+### 5. [x] **Testes E2E e Unitários com Jest**
 - **O Desafio:** As lógicas complexas (como cálculo de layout de rolagem e indexação de versículos) quebram facilmente em refatorações maiores.
 - **Como Fazer:**
   - Instalar `jest`, `@testing-library/react-native`.

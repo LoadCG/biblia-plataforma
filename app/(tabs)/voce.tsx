@@ -6,6 +6,7 @@ import { BotaoTema } from "../../components/BotaoTema";
 import { CardAtividade } from "../../components/CardAtividade";
 import { EstadoVazio } from "../../components/EstadoVazio";
 import { FogoStreak } from "../../components/FogoStreak";
+import { obterLivro } from "../../core/content/livros";
 import { calcularConquistas, type Conquista } from "../../core/content/conquistas";
 import { carregarAtividade, chaveAtividade, type ItemAtividade } from "../../core/estatisticas/atividade";
 import { carregarCompartilhamentos } from "../../core/estatisticas/compartilhamentos";
@@ -131,12 +132,15 @@ export default function Voce() {
             ) : (
               recentes
                 .slice(0, 3)
-                .map((item) => (
-                  <Text key={chaveAtividade(item)} numberOfLines={1} className="text-xs text-cor-texto-suave dark:text-cor-texto-suave-dark mb-1">
-                    {item.tipo === "grifo" ? "✎ " : item.tipo === "nota" ? "🗒 " : "☆ "}
-                    {item.tipo === "pesquisa" ? item.termo : `${item.livroSlug} ${item.capitulo}:${item.versiculo}`}
-                  </Text>
-                ))
+                  .map((item) => {
+                    const nomeLivro = item.tipo !== "pesquisa" ? obterLivro(item.livroSlug)?.nome || item.livroSlug : "";
+                    return (
+                    <Text key={chaveAtividade(item)} numberOfLines={1} className="text-xs text-cor-texto-suave dark:text-cor-texto-suave-dark mb-1">
+                      {item.tipo === "grifo" ? "✎ " : item.tipo === "nota" ? "🗒 " : "☆ "}
+                      {item.tipo === "pesquisa" ? item.termo : `${nomeLivro} ${item.capitulo}:${item.versiculo}`}
+                    </Text>
+                  );
+                })
             )}
           </Pressable>
         </Link>

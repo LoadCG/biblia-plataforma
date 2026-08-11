@@ -3,6 +3,11 @@
 Todas as mudanças notáveis feitas no projeto serão documentadas neste arquivo.
 O formato é baseado no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/).
 
+## [Unreleased] - 2026-08-11 (continuação)
+
+### Corrigido
+- **Causa raiz real dos bugs de leitura ("só Gênesis funciona", "erro ao carregar versículos")**: o acordeão de livros (`app/(tabs)/biblia/escolher/index.tsx`) enviava o toque num capítulo pra `/biblia/escolher/${slug}/${cap}` em vez de `/biblia/${slug}/${cap}` (a tela de leitura de verdade). O destino errado era uma tela de "escolher versículo" (`escolher/[livro]/[capitulo].tsx`) que o próprio FUNCIONALIDADES.md já dizia não existir — e que tinha um bug próprio, buscando o capítulo pelo *slug da URL* em vez do *nome do livro*, falhando sempre, pra qualquer livro. Corrigido o link e removida a tela órfã e quebrada. Testado ao vivo: Deuteronômio 2 e Apocalipse (último livro) carregam certo pela rota corrigida. As correções de resiliência anteriores (retry na bible-api.com, robustez do SQLite) continuam válidas, mas não eram a causa deste sintoma.
+
 ## [Unreleased] - 2026-08-11
 
 ### Corrigido

@@ -60,7 +60,7 @@ export default function EscolherLivro() {
               return (
                 <Pressable
                   key={cap}
-                  onPress={() => router.push(`/biblia/escolher/${item.slug}/${cap}`)}
+                  onPress={() => router.push(`/biblia/${item.slug}/${cap}`)}
                   className="w-[18%] aspect-square rounded-xl bg-cor-fundo dark:bg-cor-fundo-dark border border-cor-borda dark:border-cor-borda-dark items-center justify-center"
                 >
                   <Text className="text-base font-bold text-cor-texto dark:text-cor-texto-dark">{cap}</Text>

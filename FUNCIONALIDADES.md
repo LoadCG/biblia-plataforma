@@ -123,6 +123,39 @@ nunca por uma grade navegável de versículos.
 adequado), estado visual de "já lido" visível na grade de capítulos
 antes de entrar num deles.
 
+**Bug grave real, reportado por usuário em produção (2026-08-11):**
+"a rota certa é `/biblia/05-deuteronomio/2`, mas ao escolher leva para
+`/biblia/escolher/05-deuteronomio/2`" — o toque num capítulo, dentro
+do acordeão de livros (`app/(tabs)/biblia/escolher/index.tsx`), estava
+navegando pra `/biblia/escolher/${slug}/${cap}` em vez de
+`/biblia/${slug}/${cap}` (a tela de leitura de verdade). Esse destino
+errado era a tela `escolher/[livro]/[capitulo].tsx` — uma "grade de
+escolher versículo" que **este próprio documento já dizia não
+existir** (contradição encontrada só agora), sobra de uma versão
+anterior do fluxo de navegação. Além de ser o destino errado, essa
+tela tinha um bug próprio que a deixava sempre quebrada: chamava
+`buscarReferencia(\`${livroSlug} ${capitulo}\`)` usando o **slug da
+URL** (`"05-deuteronomio"`) em vez do **nome do livro**
+(`"Deuteronômio"`) — a bible-api.com (web) e o parser de nomes (SQLite
+nativo) não reconhecem o slug, então a busca falhava sempre, pra
+qualquer livro, com "Erro ao carregar versículos". **Esta é a causa
+raiz real** dos dois bugs de leitura reportados antes ("só Gênesis
+funciona", "leitura bíblica não funcionando") — a pessoa só via
+Gênesis funcionar porque a Início/`Continue lendo` usa a rota de
+leitura direta (correta), e qualquer outro livro acessado pelo
+acordeão caía nessa tela quebrada. As correções de resiliência feitas
+antes (retry na `bible-api.com`, robustez da população do SQLite) são
+melhorias legítimas por si só, mas não eram a causa deste sintoma
+específico.
+**Corrigido:** o toque no capítulo agora navega direto pra
+`/biblia/${slug}/${cap}` (rota de leitura real). A tela
+`escolher/[livro]/[capitulo].tsx` foi **removida** — sem nenhuma outra
+rota apontando pra ela, ficaria como código morto e quebrado.
+Confirmado ao vivo no navegador: acordeão → Deuteronômio → capítulo 2
+→ URL certa (`/biblia/05-deuteronomio/2`) → conteúdo carrega; repetido
+com Apocalipse (último livro) pra garantir que não era coincidência de
+um livro específico.
+
 ### 2.2 Ler o capítulo com foco no versículo escolhido `✅`
 **Funcionalidade:** abre o capítulo inteiro, rola automaticamente até o
 versículo pedido via `?versiculo=N` na URL.
@@ -181,7 +214,14 @@ original mas nunca construída; o app só chega num versículo específico
 recebendo `?versiculo=N` por link direto. Se fizer sentido ter uma grade
 de versículos navegável (como a de capítulos), é uma tela nova
 (`app/biblia/[livro]/[capitulo]/index.tsx` reorganizando a rota atual,
-por exemplo), não uma extensão da tela de leitura.
+por exemplo), não uma extensão da tela de leitura. **Achado
+(2026-08-11):** existia de fato uma versão dessa tela
+(`escolher/[livro]/[capitulo].tsx`), contradizendo esta nota — mas
+estava com um bug que a deixava sempre quebrada (buscava o versículo
+pelo slug da URL em vez do nome do livro) e era o destino de um link
+com a rota errada no acordeão de livros. Removida — ver 2.1 pro relato
+completo. Se essa funcionalidade for retomada no futuro, construir do
+zero seguindo esta nota, não reaproveitar a implementação antiga.
 **UX/UI:** mesma grade de números da seleção de capítulo (2.1), com
 indicador de "já grifado" por versículo, já que ali sim faz sentido
 granularidade de versículo.

@@ -457,15 +457,31 @@ ainda pendente.
 
 ### 7.3 Leitura offline de verdade `🔶`
 **Funcionalidade:** no app nativo instalado, o conteúdo dos resumos já
-funciona offline (é dado embutido no app). A leitura bíblica depende da
-API — precisa de estratégia de cache mais agressiva pra funcionar sem
-rede (hoje só cacheia o que já foi visitado). Na versão *web*, ainda não
-tem nenhuma estratégia de offline (o site antigo tinha um service worker
-completo — perdido na migração, precisa ser refeito ou substituído por
-divulgar a instalação do app).
+funciona offline (é dado embutido no app), e a Bíblia inteira também
+(ver 2.6, `assets/biblia.json` + SQLite FTS5) — a leitura bíblica não
+depende mais de rede em nenhuma plataforma desde a migração pro
+SQLite. Na versão *web*, a app em si (bundle JS/CSS/HTML) agora tem
+estratégia de offline: `public/sw.js`, um service worker registrado
+via `core/registrarServiceWorker.ts` (chamado em `app/_layout.tsx`,
+só no web). Estratégia deliberadamente conservadora — navegação
+(HTML) é *network-first* (nunca prende a pessoa numa versão antiga do
+app enquanto online), assets com hash no nome (JS/CSS do build) são
+*cache-first* (seguro porque o conteúdo nunca muda sob o mesmo nome de
+arquivo). Confirmado com `npx expo export --platform web` que o Expo
+Router copia `public/**` pro `dist/` de verdade (não documentado
+explicitamente, testado na prática); o `vercel.json` já prioriza
+arquivos estáticos reais sobre o rewrite catch-all pro SPA, então
+`/sw.js` chega ao navegador como script, não como `index.html`
+reescrito — mesmo comportamento que já garante que o bundle JS
+carrega hoje. **Faltou:** testar de verdade em produção (deploy real +
+DevTools "Offline") — o raciocínio da estratégia está são, mas
+service worker é uma das poucas coisas de web que só se confirma
+mesmo rodando no navegador de verdade.
 **UX/UI:** aviso claro quando uma funcionalidade não está disponível
 offline (ex.: "sem conexão — grifos serão sincronizados quando voltar",
-não um erro genérico).
+não um erro genérico) — ainda não avaliado, hoje o app já funciona
+offline de fato tanto no nativo quanto (depois da primeira visita) no
+web, então esse aviso importa menos do que antes.
 
 ### 7.4 Auditoria de performance `🔶`
 **Funcionalidade:** medido com `npx expo export --platform web`

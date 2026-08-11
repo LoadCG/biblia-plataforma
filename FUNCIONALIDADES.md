@@ -383,12 +383,26 @@ lugar do app chama `mostrarToast(mensagem)`, mesmo fora da árvore de
 componentes). No nativo o próprio sheet do sistema (`Share.share`) já
 serve de confirmação, sem precisar do toast.
 
-### 5.2 Gerar imagem de versículo pra compartilhar `⬜`
-**Funcionalidade:** cartão de imagem gerado a partir do texto + referência
-(via Canvas/renderização de imagem), sem depender de servidor.
-**UX/UI:** o design do cartão precisa parecer feito de propósito pra
-compartilhar (tipografia legível em miniatura de rede social), não só
-uma captura de tela da interface.
+### 5.2 Gerar imagem de versículo pra compartilhar `🔶`
+**Funcionalidade:** `core/util/gerarImagemVersiculo.ts` — cartão
+1080x1080 desenhado direto via Canvas API (sem dependência nova, sem
+servidor), fundo em gradiente com as cores de marca do app (mesmos
+tons de `cor-fundo-dark`/`cor-destaque-dark`), quebra de linha manual
+(`measureText`) e tamanho de fonte que diminui automaticamente pra
+versículos longos não estourarem o cartão. Só web por enquanto — no
+nativo exigiria capturar uma View de verdade (`react-native-view-shot`)
+e compartilhar o arquivo (`expo-sharing`), duas dependências novas que
+não dava pra validar sem dispositivo/simulador nativo à mão; fica pro
+próximo passo natural quando isso puder ser testado de verdade.
+Testado ao vivo no navegador: canvas gerado 1080×1080 de verdade (não
+em branco — confirmado decodificando os pixels), baixado como PNG via
+link temporário. Botão só aparece com exatamente 1 versículo
+selecionado (`versiculosSelecionados.size === 1`, testado com 1 e com
+2 selecionados).
+**UX/UI:** botão "Imagem" na barra de seleção da leitura (ao lado de
+Compartilhar), abre um modal de preview com "Baixar"/"Fechar". Fonte
+serifada (Georgia) e cores herdadas da identidade visual do app, não
+uma captura de tela crua da interface.
 
 ---
 
@@ -473,10 +487,21 @@ explicitamente, testado na prática); o `vercel.json` já prioriza
 arquivos estáticos reais sobre o rewrite catch-all pro SPA, então
 `/sw.js` chega ao navegador como script, não como `index.html`
 reescrito — mesmo comportamento que já garante que o bundle JS
-carrega hoje. **Faltou:** testar de verdade em produção (deploy real +
-DevTools "Offline") — o raciocínio da estratégia está são, mas
-service worker é uma das poucas coisas de web que só se confirma
-mesmo rodando no navegador de verdade.
+carrega hoje. **Testado ao vivo:** confirmado que o service worker registra
+(`scope: /`, `active: true`) rodando o app de verdade no navegador.
+**Achado durante o teste, não previsto:** em modo dev (`expo start
+--web`, Metro), as URLs do bundle JS não têm hash de conteúdo (ao
+contrário do build de produção, que usa nomes com hash — ver Decisão
+12 do `PLANO-PLATAFORMA.md`) — então o cache-first do service worker
+pode servir uma versão desatualizada do app *só em dev*, entre uma
+sessão de teste e outra, mascarando mudanças de código novas. Não é um
+bug da estratégia (que é sã e testada em produção via nomes com hash),
+é uma armadilha de testar localmente com o SW ativo: sempre que o
+código mudar durante o desenvolvimento, rodar
+`navigator.serviceWorker.getRegistrations().then(rs => rs.forEach(r => r.unregister()))`
++ limpar `caches` no console antes de testar de novo (ou usar aba
+anônima). **Ainda falta**: testar em deploy real de produção (DevTools
+"Offline"), onde esse problema específico de dev não se aplica.
 **UX/UI:** aviso claro quando uma funcionalidade não está disponível
 offline (ex.: "sem conexão — grifos serão sincronizados quando voltar",
 não um erro genérico) — ainda não avaliado, hoje o app já funciona

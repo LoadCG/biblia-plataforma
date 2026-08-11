@@ -1,7 +1,7 @@
 import { Link, router, useLocalSearchParams } from "expo-router";
 import { useNavbar } from "../../_layout";
 import { useEffect, useRef, useState, useMemo } from "react";
-import { ActivityIndicator, NativeSyntheticEvent, NativeScrollEvent, Pressable, ScrollView, Text, View, Share, LayoutAnimation, Platform, UIManager } from "react-native";
+import { ActivityIndicator, Image, NativeSyntheticEvent, NativeScrollEvent, Pressable, ScrollView, Text, View, Share, LayoutAnimation, Platform, UIManager } from "react-native";
 import * as Clipboard from "expo-clipboard";
 
 if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
@@ -29,6 +29,7 @@ import { salvarUltimaLeitura } from "../../../../core/leitura/ultimaLeitura";
 import { grifosRepository, notasRepository, progressoRepository, versiculosSalvosRepository } from "../../../../core/repositories";
 import { falarCapitulo, pararAudio, suportaAudio } from "../../../../core/leitura/audio";
 import { alternarTema } from "../../../../core/theme";
+import { gerarImagemVersiculo, suportaImagemVersiculo } from "../../../../core/util/gerarImagemVersiculo";
 import { linkVersiculo } from "../../../../core/util/linkVersiculo";
 import { mostrarToast } from "../../../../core/util/toast";
 import { useOwnerId } from "../../../../core/useOwnerId";
@@ -95,6 +96,7 @@ export default function Leitura() {
   const [versiculoRealcado, setVersiculoRealcado] = useState<number | null>(null);
   const [audioTocando, setAudioTocando] = useState(false);
   const [versiculoFalando, setVersiculoFalando] = useState<number | null>(null);
+  const [imagemVersiculo, setImagemVersiculo] = useState<string | null>(null);
 
   const { setOculta } = useNavbar();
 
@@ -348,6 +350,19 @@ export default function Leitura() {
       scrollRef.current?.scrollTo({ y: Math.max(0, y - 100), animated: true });
     }
   }, [versiculoFalando]);
+
+  function gerarImagemDoVersiculoSelecionado() {
+    if (!dados?.versiculos || versiculosSelecionados.size !== 1 || !livro) return;
+    const numero = Array.from(versiculosSelecionados)[0];
+    const texto = dados.versiculos.find((v) => v.numero === numero)?.texto;
+    if (!texto) return;
+    const referencia = `${livro.nome} ${capitulo}:${numero}`;
+    const imagem = gerarImagemVersiculo(texto, referencia);
+    if (imagem) {
+      setImagemVersiculo(imagem);
+      setVersiculosSelecionados(new Set());
+    }
+  }
 
   async function copiarVersiculos() {
     const texto = textoDosVersiculosSelecionados();
@@ -643,10 +658,17 @@ export default function Leitura() {
                 <Text className="text-cor-texto dark:text-cor-texto-dark font-semibold text-sm">Copiar</Text>
               </Pressable>
 
-              <Pressable onPress={compartilharVersiculos} className="flex-row items-center justify-center gap-1 bg-cor-borda dark:bg-cor-borda-dark px-4 py-2 rounded-lg mr-6">
+              <Pressable onPress={compartilharVersiculos} className={`flex-row items-center justify-center gap-1 bg-cor-borda dark:bg-cor-borda-dark px-4 py-2 rounded-lg ${suportaImagemVersiculo() && versiculosSelecionados.size === 1 ? "" : "mr-6"}`}>
                 <MaterialIcons name="share" size={18} className="text-cor-texto dark:text-cor-texto-dark" />
                 <Text className="text-cor-texto dark:text-cor-texto-dark font-semibold text-sm">Compartilhar</Text>
               </Pressable>
+
+              {suportaImagemVersiculo() && versiculosSelecionados.size === 1 ? (
+                <Pressable onPress={gerarImagemDoVersiculoSelecionado} className="flex-row items-center justify-center gap-1 bg-cor-borda dark:bg-cor-borda-dark px-4 py-2 rounded-lg mr-6">
+                  <MaterialIcons name="image" size={18} className="text-cor-texto dark:text-cor-texto-dark" />
+                  <Text className="text-cor-texto dark:text-cor-texto-dark font-semibold text-sm">Imagem</Text>
+                </Pressable>
+              ) : null}
             </View>
           </ScrollView>
         </View>
@@ -728,6 +750,36 @@ export default function Leitura() {
               <View className="flex-1 p-1 items-center justify-center border border-cor-borda dark:border-cor-borda-dark rounded-xl">
                 <BotaoTema />
               </View>
+            </View>
+          </Pressable>
+        </Pressable>
+      </Modal>
+
+      <Modal visible={!!imagemVersiculo} transparent animationType="fade">
+        <Pressable className="flex-1 bg-black/70 items-center justify-center p-6" onPress={() => setImagemVersiculo(null)}>
+          <Pressable onPress={(e) => e.stopPropagation()} className="items-center max-w-[420px] w-full">
+            {imagemVersiculo ? (
+              <Image source={{ uri: imagemVersiculo }} className="w-full aspect-square rounded-2xl mb-4" resizeMode="contain" />
+            ) : null}
+            <View className="flex-row gap-3">
+              <Pressable
+                onPress={() => {
+                  if (Platform.OS === "web" && imagemVersiculo) {
+                    const link = document.createElement("a");
+                    link.href = imagemVersiculo;
+                    link.download = `${livro?.slug ?? "versiculo"}-${capitulo}.png`;
+                    link.click();
+                  }
+                  mostrarToast("Imagem baixada!");
+                }}
+                className="flex-row items-center gap-1.5 bg-cor-destaque dark:bg-cor-destaque-dark px-5 py-2.5 rounded-full"
+              >
+                <MaterialIcons name="download" size={18} color="white" />
+                <Text className="text-white font-semibold text-sm">Baixar</Text>
+              </Pressable>
+              <Pressable onPress={() => setImagemVersiculo(null)} className="px-5 py-2.5 rounded-full border border-white/30">
+                <Text className="text-white font-semibold text-sm">Fechar</Text>
+              </Pressable>
             </View>
           </Pressable>
         </Pressable>

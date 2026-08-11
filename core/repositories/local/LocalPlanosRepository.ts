@@ -46,4 +46,11 @@ export const localPlanosRepository: PlanosRepository = {
       .map((i) => i.diaConcluido)
       .sort((a, b) => a - b);
   },
+
+  async obterUltimaConclusao(ownerId, planoId) {
+    const todos = await lerLocal();
+    const doPlano = todos.filter((i) => i.planoId === planoId);
+    if (doPlano.length === 0) return null;
+    return doPlano.reduce((maisRecente, atual) => (atual.concluidoEm > maisRecente ? atual.concluidoEm : maisRecente), doPlano[0].concluidoEm);
+  },
 };

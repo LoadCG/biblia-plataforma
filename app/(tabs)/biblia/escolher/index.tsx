@@ -6,16 +6,31 @@ import { EstadoVazio } from "../../../../components/EstadoVazio";
 import { livros } from "../../../../core/content/livros";
 import type { Livro } from "../../../../core/content/tipos";
 import { carregarUltimaLeitura } from "../../../../core/leitura/ultimaLeitura";
+import { progressoRepository } from "../../../../core/repositories";
+import { useOwnerId } from "../../../../core/useOwnerId";
 
 export default function EscolherLivro() {
   const [termo, setTermo] = useState("");
   const [livroExpandido, setLivroExpandido] = useState<string | null>(null);
+  const ownerId = useOwnerId();
+  const [lidosPorLivro, setLidosPorLivro] = useState<Record<string, number>>({});
 
   useEffect(() => {
     carregarUltimaLeitura().then((ultima) => {
       if (ultima) setLivroExpandido(ultima.livroSlug);
     });
   }, []);
+
+  useEffect(() => {
+    if (!ownerId) return;
+    progressoRepository.listarTodos(ownerId).then((itens) => {
+      const contagem: Record<string, number> = {};
+      for (const item of itens) {
+        contagem[item.livroSlug] = (contagem[item.livroSlug] ?? 0) + 1;
+      }
+      setLidosPorLivro(contagem);
+    });
+  }, [ownerId]);
 
   const listaFiltrada = useMemo(() => {
     const termoNormalizado = termo.trim().toLowerCase();
@@ -33,6 +48,9 @@ export default function EscolherLivro() {
           className={`flex-row items-center justify-between px-4 py-4 rounded-xl ${expandido ? 'bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark' : ''}`}
         >
           <Text className="text-cor-texto dark:text-cor-texto-dark text-lg font-semibold">{item.nome}</Text>
+          <Text className="text-xs text-cor-texto-suave dark:text-cor-texto-suave-dark">
+            {lidosPorLivro[item.slug] ?? 0} de {item.capitulos}
+          </Text>
         </Pressable>
 
         {expandido && (

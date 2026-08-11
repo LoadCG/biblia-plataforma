@@ -27,6 +27,8 @@ import {
 } from "../../../../core/leitura/preferenciaFonte";
 import { salvarUltimaLeitura } from "../../../../core/leitura/ultimaLeitura";
 import { grifosRepository, notasRepository, progressoRepository, versiculosSalvosRepository } from "../../../../core/repositories";
+import { alternarTema } from "../../../../core/theme";
+import { linkVersiculo } from "../../../../core/util/linkVersiculo";
 import { useOwnerId } from "../../../../core/useOwnerId";
 
 export default function Leitura() {
@@ -103,10 +105,14 @@ export default function Leitura() {
   useEffect(() => {
     if (typeof window === "undefined") return;
     function onKeyDown(e: KeyboardEvent) {
+      const alvo = e.target as HTMLElement | null;
+      if (alvo && ["INPUT", "TEXTAREA"].includes(alvo.tagName)) return;
       if (e.key === "ArrowLeft" && anterior) {
         router.replace(`/biblia/${anterior.slug}/${anterior.capitulo}`);
       } else if (e.key === "ArrowRight" && proximo) {
         router.replace(`/biblia/${proximo.slug}/${proximo.capitulo}`);
+      } else if (e.key === "t" || e.key === "T") {
+        alternarTema();
       }
     }
     window.addEventListener("keydown", onKeyDown);
@@ -293,21 +299,26 @@ export default function Leitura() {
     setVersiculosSelecionados(new Set());
   }
 
-  async function copiarVersiculos() {
-    if (!dados?.versiculos || versiculosSelecionados.size === 0) return;
+  function textoDosVersiculosSelecionados(): string | null {
+    if (!dados?.versiculos || versiculosSelecionados.size === 0 || !livro) return null;
     const array = Array.from(versiculosSelecionados).sort((a, b) => a - b);
     const textos = array.map(v => `${v}. ${dados.versiculos!.find(x => x.numero === v)?.texto || ""}`);
-    const textoCopiado = `${textos.join("\n")}\n\n${livro?.nome} ${capitulo}:${array[0]}${array.length > 1 ? `-${array[array.length-1]}` : ""}`;
-    await Clipboard.setStringAsync(textoCopiado);
+    const referencia = `${livro.nome} ${capitulo}:${array[0]}${array.length > 1 ? `-${array[array.length-1]}` : ""}`;
+    const link = linkVersiculo(livro.slug, capitulo, array[0]);
+    return `${textos.join("\n")}\n\n${referencia}${link ? `\n${link}` : ""}`;
+  }
+
+  async function copiarVersiculos() {
+    const texto = textoDosVersiculosSelecionados();
+    if (!texto) return;
+    await Clipboard.setStringAsync(texto);
     setVersiculosSelecionados(new Set());
   }
 
   async function compartilharVersiculos() {
-    if (!dados?.versiculos || versiculosSelecionados.size === 0) return;
-    const array = Array.from(versiculosSelecionados).sort((a, b) => a - b);
-    const textos = array.map(v => `${v}. ${dados.versiculos!.find(x => x.numero === v)?.texto || ""}`);
-    const textoCompartilhado = `${textos.join("\n")}\n\n${livro?.nome} ${capitulo}:${array[0]}${array.length > 1 ? `-${array[array.length-1]}` : ""}`;
-    await Share.share({ message: textoCompartilhado });
+    const texto = textoDosVersiculosSelecionados();
+    if (!texto) return;
+    await Share.share({ message: texto });
     setVersiculosSelecionados(new Set());
   }
 
@@ -343,7 +354,7 @@ export default function Leitura() {
       {!focoAtivo && (
       <View className="bg-cor-fundo dark:bg-cor-fundo-dark">
         <View className="px-3 py-2 flex-row items-center justify-between">
-          <Pressable onPress={() => router.back()} className="w-10 h-10 items-center justify-center">
+          <Pressable onPress={() => router.back()} accessibilityLabel="Voltar" className="w-10 h-10 items-center justify-center">
             <MaterialIcons name="arrow-back" size={24} className="text-cor-texto dark:text-cor-texto-dark" />
           </Pressable>
 
@@ -356,7 +367,7 @@ export default function Leitura() {
             </Pressable>
           </View>
 
-          <Pressable onPress={() => setModalAjustesAberto(true)} className="w-10 h-10 items-center justify-center">
+          <Pressable onPress={() => setModalAjustesAberto(true)} accessibilityLabel="Ajustes de leitura" className="w-10 h-10 items-center justify-center">
             <Text style={{ fontFamily: FAMILIA_SERIFADA }} className="text-lg font-bold text-cor-texto dark:text-cor-texto-dark">Aa</Text>
           </Pressable>
         </View>
@@ -496,7 +507,7 @@ export default function Leitura() {
               {livro.nome} {capitulo}:{Math.min(...Array.from(versiculosSelecionados))}
               {versiculosSelecionados.size > 1 ? `-${Math.max(...Array.from(versiculosSelecionados))}` : ""}
             </Text>
-            <Pressable onPress={() => setVersiculosSelecionados(new Set())}>
+            <Pressable onPress={() => setVersiculosSelecionados(new Set())} accessibilityLabel="Cancelar seleção">
               <MaterialIcons name="close" size={24} className="text-cor-texto-suave dark:text-cor-texto-suave-dark" />
             </Pressable>
           </View>
@@ -522,6 +533,7 @@ export default function Leitura() {
                       <Pressable
                         key={i}
                         onPress={() => aplicarCorGrifo(cor)}
+                        accessibilityLabel={isDesfazer ? "Remover grifo" : `Grifar com esta cor`}
                         className={`w-8 h-8 rounded-full ${corBolinha} shadow-sm items-center justify-center`}
                       >
                         {isDesfazer && <MaterialIcons name="close" size={18} color="rgba(0,0,0,0.5)" />}
@@ -532,6 +544,7 @@ export default function Leitura() {
                 {!mostrarTodasCores && (
                   <Pressable
                     onPress={() => setMostrarTodasCores(true)}
+                    accessibilityLabel="Ver todas as cores de grifo"
                     className="w-8 h-8 rounded-full bg-cor-borda dark:bg-cor-borda-dark items-center justify-center"
                   >
                     <MaterialIcons name="more-horiz" size={20} className="text-cor-texto dark:text-cor-texto-dark" />
@@ -581,8 +594,11 @@ export default function Leitura() {
       {/* Barra fixa de navegação (Estilo Pílula Flutuante) */}
       {!focoAtivo && (
       <View className="absolute bottom-6 left-0 right-0 items-center justify-center pointer-events-box-none">
-        <View className="bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark shadow-md rounded-full px-2 py-1.5 flex-row items-center max-w-[280px] pointer-events-auto border border-cor-borda dark:border-cor-borda-dark">
-          
+        <View
+          {...(Platform.OS === "web" ? { title: "Atalhos: ← → troca de capítulo, T alterna o tema" } : {})}
+          className="bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark shadow-md rounded-full px-2 py-1.5 flex-row items-center max-w-[280px] pointer-events-auto border border-cor-borda dark:border-cor-borda-dark"
+        >
+
           <Pressable
               onPress={() => anterior && router.replace(`/biblia/${anterior.slug}/${anterior.capitulo}`)}
               disabled={!anterior}
@@ -631,11 +647,11 @@ export default function Leitura() {
             <Text className="text-lg font-bold text-cor-texto dark:text-cor-texto-dark mb-6 text-center">Configurações de Leitura</Text>
             
             <View className="flex-row items-center justify-between bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark rounded-xl p-2 mb-4 border border-cor-borda dark:border-cor-borda-dark">
-              <Pressable onPress={() => ajustarFonte(-1)} className="flex-1 py-3 items-center" disabled={indiceFonte === 0}>
+              <Pressable onPress={() => ajustarFonte(-1)} accessibilityLabel="Diminuir tamanho da fonte" className="flex-1 py-3 items-center" disabled={indiceFonte === 0}>
                 <Text className={`font-bold text-sm ${indiceFonte === 0 ? "text-cor-texto-suave dark:text-cor-texto-suave-dark opacity-40" : "text-cor-texto dark:text-cor-texto-dark"}`}>A-</Text>
               </Pressable>
               <View className="w-px h-8 bg-cor-borda dark:bg-cor-borda-dark" />
-              <Pressable onPress={() => ajustarFonte(1)} className="flex-1 py-3 items-center" disabled={indiceFonte === TAMANHOS_FONTE.length - 1}>
+              <Pressable onPress={() => ajustarFonte(1)} accessibilityLabel="Aumentar tamanho da fonte" className="flex-1 py-3 items-center" disabled={indiceFonte === TAMANHOS_FONTE.length - 1}>
                 <Text className={`font-bold text-lg ${indiceFonte === TAMANHOS_FONTE.length - 1 ? "text-cor-texto-suave dark:text-cor-texto-suave-dark opacity-40" : "text-cor-texto dark:text-cor-texto-dark"}`}>A+</Text>
               </Pressable>
             </View>

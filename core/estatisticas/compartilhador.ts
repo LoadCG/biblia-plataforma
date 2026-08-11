@@ -16,6 +16,8 @@ export async function compartilhar(texto: string): Promise<void> {
       // não é crítico o suficiente pra travar a ação com um alerta.
     }
   } else {
+    // No nativo o próprio sheet de compartilhamento do sistema (Share.share)
+    // já serve de confirmação visual — não precisa de toast extra.
     await Share.share({ message: texto }).catch(() => {});
   }
   await registrarCompartilhamento();

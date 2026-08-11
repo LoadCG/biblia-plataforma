@@ -186,13 +186,13 @@ quantos já foram lidos (ver 2.4b).
 **UX/UI:** feedback imediato ao marcar (o botão já muda no mesmo toque,
 sem esperar round-trip perceptível).
 
-### 2.4b Progresso por livro na lista de leitura bíblica `⬜`
-**Funcionalidade:** mostrar "X de Y capítulos lidos" em cada card da
-lista de livros (`app/biblia/index.tsx`), do mesmo jeito que a lista de
-resumos mostra o selo de "livro lido" — hoje essa lista só mostra o
-total de capítulos, sem nenhum sinal de progresso.
-**UX/UI:** mesmo padrão visual do selo de progresso já usado em outras
-listas do app, pra manter consistência.
+### 2.4b Progresso por livro na lista de leitura bíblica `✅`
+**Funcionalidade:** cada card da lista de livros
+(`app/(tabs)/biblia/escolher/index.tsx`) agora mostra "X de Y" capítulos
+lidos, calculado com uma única chamada a `progressoRepository.listarTodos`
+(agrupada por `livroSlug` em memória, sem N chamadas por livro).
+**UX/UI:** contagem discreta ao lado do nome do livro, mesmo texto
+suave usado em outros indicadores de progresso do app.
 
 ### 2.5 Navegar entre capítulos `✅`
 **Funcionalidade:** anterior/próximo, cruzando de um livro pro outro nas
@@ -217,20 +217,16 @@ mostra a referência e o trecho, link direto pro versículo
 (`?versiculo=`).
 
 ### 2.7 Favoritar/salvar versículo (distinto de grifar) `✅`
-**Funcionalidade:** o "Salvar" em si está pronto — distinto de grifo e
-nota, `VersiculoSalvo`/`versiculosSalvosRepository` (mesmo padrão
-`ownerId` + referência de versículo dos outros repositórios). Acionado
-pela barra de seleção múltipla na leitura do capítulo. **Falta:**
-`core/estatisticas/atividade.ts` (o agregador que alimenta o card
-"Salvo" e a tela `/salvo`) ainda só junta grifo/nota/pesquisa —
-**não inclui `versiculosSalvosRepository`**. Resultado: um versículo
-salvo não aparece em nenhum lugar da UI hoje, nem no botão "Salvos" da
-aba Você (adicionado nesta sessão como atalho pra `/salvo`, que hoje
-não mostra salvos). Precisa de um 4º tipo em `ItemAtividade` (`"salvo"`)
-e um filtro correspondente em `app/salvo.tsx`.
+**Funcionalidade:** distinto de grifo e nota, `VersiculoSalvo`/
+`versiculosSalvosRepository` (mesmo padrão `ownerId` + referência de
+versículo dos outros repositórios). Acionado pela barra de seleção
+múltipla na leitura do capítulo. `core/estatisticas/atividade.ts` agora
+inclui um 4º tipo em `ItemAtividade` (`"salvo"`), com filtro
+correspondente em `app/salvo.tsx` ("Salvos") e ação de excluir no
+`CardAtividade`.
 **UX/UI:** ícone de marcador (🔖/`bookmark`) distinto do grifo (cor) e
-da nota (📝) já usado no botão/na leitura — só falta a tela de listagem
-reconhecer o dado.
+da nota (📝); tela `/salvo` e o botão "Salvos" da aba Você agora
+mostram os versículos salvos de verdade.
 
 ### 2.8 Notas pessoais por versículo `✅`
 **Funcionalidade:** campo de texto livre por versículo, editável e
@@ -323,35 +319,57 @@ comparação com outras pessoas.
 
 ## 4. Planos de leitura
 
-### 4.1 Planos temáticos prontos `⬜`
-**Funcionalidade:** conteúdo dos planos (ex.: "Bíblia em 90 dias",
-"Novo Testamento em 30 dias") precisa ser definido e estruturado como
-dado (lista de referências por dia) — decisão de conteúdo antes de
-decisão técnica.
-**UX/UI:** apresentação dos planos disponíveis, com descrição clara do
-que cada um cobre e quanto tempo leva.
+### 4.1 Planos temáticos prontos `✅`
+**Funcionalidade:** planos definidos em `core/content/dados/planos.json`
+(lista de referências por dia), expostos via `core/content/planos.ts`
+(`planosLeitura`, `obterPlano`). Tela de listagem em `app/planos/index.tsx`.
+**UX/UI:** cada card mostra título, descrição e progresso; tela de
+detalhe (`app/planos/[id].tsx`) lista os dias com as referências
+tocáveis, linkando direto pro capítulo.
 
-### 4.2 Progresso do plano `⬜`
+### 4.2 Progresso do plano `✅`
 **Funcionalidade:** separado do progresso geral de livros/capítulos —
-"dia 12 de 90", marcando cada entrega do plano como concluída.
-**UX/UI:** barra de progresso própria do plano, visível sem precisar
-entrar em uma tela separada toda vez.
+`PlanosRepository.alternarDiaConcluido`/`listarDiasConcluidos`
+(`progresso_planos` no SQLite), independente de `ProgressoRepository`.
+**UX/UI:** barra de progresso própria em cada card da listagem e no
+topo da tela de detalhe do plano ("X de Y dias"), sem precisar entrar
+numa tela separada pra ver o número.
 
-### 4.3 Lembrete de plano atrasado `⬜`
+### 4.3 Lembrete de plano atrasado `✅`
 **Funcionalidade:** sem notificação push de verdade (exigiria conta +
-backend), só um aviso visual na home quando a pessoa abrir o app.
-**UX/UI:** tom de convite, não de cobrança — combina com o resto do tom
-do projeto.
+backend) — aviso visual na Início (`core/leitura/lembretePlanos.ts`,
+`obterLembretePlano`), calculado a partir da conclusão mais recente
+registrada por plano (`PlanosRepository.obterUltimaConclusao`, novo
+método). Só considera planos já iniciados (≥1 dia concluído), não
+terminados, e parados há pelo menos 1 dia; escolhe o mais parado entre
+vários candidatos. Um plano nunca iniciado não gera lembrete — fica só
+na descoberta da tela de Planos.
+**UX/UI:** card discreto na Início, tom de convite ("Que tal continuar
+o [...]? sem pressa, retome quando quiser"), não de cobrança — sem
+número de atraso nem alarme visual.
 
 ---
 
 ## 5. Compartilhamento
 
-### 5.1 Compartilhar link de um livro/capítulo/versículo `⬜`
-**Funcionalidade:** Web Share API nativa (já validada no site antigo)
-com fallback pra copiar link.
-**UX/UI:** mensagem de confirmação clara ("copiado!") quando cair no
-fallback.
+### 5.1 Compartilhar link de um livro/capítulo/versículo `🔶`
+**Funcionalidade:** `core/util/linkVersiculo.ts` monta o link
+(`origin + /biblia/[livro]/[capitulo]?versiculo=N`) usando
+`window.location.origin` — funciona em qualquer domínio, não depende
+da decisão final de domínio (`PLANO-PLATAFORMA.md`). Só funciona na
+versão *web*: o app nativo não tem esquema de URL customizado
+configurado, então lá o compartilhamento continua sendo só texto/
+referência, sem link (registrado como limitação conhecida, não
+bloqueante). Aplicado em `compartilharVersiculos`/`copiarVersiculos`
+na leitura do capítulo e na ação "Compartilhar" do `CardAtividade`
+(grifo/nota/salvo). Usa `Share.share` do React Native no nativo
+(sheet do sistema) e a Clipboard API no web (`core/estatisticas/
+compartilhador.ts`), já existentes.
+**UX/UI:** **falta** a mensagem de confirmação ("copiado!") no
+fallback web — o app não tem nenhum sistema de toast hoje; a Clipboard
+API copia silenciosamente. Precisa de um componente de toast/snackbar
+antes de resolver isso direito (não implementado agora pra não intro-
+duzir um sistema novo só pra isso).
 
 ### 5.2 Gerar imagem de versículo pra compartilhar `⬜`
 **Funcionalidade:** cartão de imagem gerado a partir do texto + referência
@@ -407,12 +425,23 @@ por rota de conteúdo.
 pessoas novas chegam pelo Google — priorizar antes de investir em
 divulgação.
 
-### 7.2 Navegação só por teclado / leitor de tela `⬜`
-**Funcionalidade:** testar de verdade com um leitor de tela (não só
-assumir que os componentes nativos já resolvem isso), nomes acessíveis
-em todos os botões de ícone (grifar, tema, marcar como lido).
+### 7.2 Navegação só por teclado / leitor de tela `🔶`
+**Funcionalidade:** varredura de todos os `Pressable` com ícone e sem
+texto visível ao lado (screen reader não tem o que ler) — corrigido em
+`app/(tabs)/biblia/[livro]/[capitulo].tsx` (voltar, abrir ajustes de
+leitura, cancelar seleção, cada bolinha de cor de grifo, expandir mais
+cores, A-/A+) e no sino de notificação da Início (também estava
+focável sem rótulo e sem ação — marcado `disabled` com label "em
+breve", mesmo padrão já usado no botão de notificação diária do card
+de versículo do dia). Os demais ícones do app já tinham texto visível
+ao lado (ex.: "Salvos", "Configurações") ou eram só decorativos dentro
+de blocos não interativos — não precisavam de label. **Faltou:** teste
+de verdade com leitor de tela (VoiceOver/NVDA), não só a varredura de
+código; e foco visível consistente em navegação por teclado (Tab) —
+nenhum dos dois foi verificado ainda.
 **UX/UI:** foco visível consistente em qualquer elemento navegável via
-teclado (o site antigo tinha isso resolvido — reaproveitar o padrão).
+teclado (o site antigo tinha isso resolvido — reaproveitar o padrão) —
+ainda pendente.
 
 ### 7.3 Leitura offline de verdade `🔶`
 **Funcionalidade:** no app nativo instalado, o conteúdo dos resumos já
@@ -426,12 +455,21 @@ divulgar a instalação do app).
 offline (ex.: "sem conexão — grifos serão sincronizados quando voltar",
 não um erro genérico).
 
-### 7.4 Auditoria de performance `⬜`
-**Funcionalidade:** o bundle web já passou de 1MB no export atual — vale
-medir antes de crescer mais (tempo de carregamento inicial é o que mais
-afeta quem chega pela primeira vez via link/busca).
+### 7.4 Auditoria de performance `🔶`
+**Funcionalidade:** medido com `npx expo export --platform web`
+(2026-08-10): bundle JS único de 1.8MB (~470KB gzip), CSS 19KB. Acima do
+alvo comum de referência (~200KB gzip pra "bom" segundo o Lighthouse),
+mas ainda numa faixa razoável pra um app com todo o texto da Bíblia
+embutido (`assets/biblia.json`, ver 2.6) — a maior parte do peso
+provavelmente é dado, não código. **Faltou:** medir separadamente
+quanto do bundle é `assets/biblia.json` vs. código de verdade (ex.:
+`source-map-explorer` ou `expo export` com `--dump-sourcemap`) antes de
+decidir se otimizar (code splitting por rota, lazy load do índice
+FTS5) vale o esforço — item de otimização em si continua não
+iniciado, isto é só a medição pedida no funcionalidade original.
 **UX/UI:** tela de carregamento/skeleton em vez de tela branca enquanto
-o app inicializa, se o tempo de carga não puder cair o suficiente.
+o app inicializa, se o tempo de carga não puder cair o suficiente —
+ainda não avaliado.
 
 ### 7.6 Fundo consistente no "bounce" de rolagem mobile `✅`
 **Funcionalidade:** `html`/`body` não tinham `background-color` definido
@@ -445,11 +483,16 @@ valores hex repetem `cor-fundo`/`cor-fundo-dark` do `tailwind.config.js`).
 imersão do tema escuro no primeiro/último scroll — agora o fundo é
 contínuo em qualquer ponto da rolagem, nos dois temas.
 
-### 7.5 Atalhos de teclado (versão web) `⬜`
-**Funcionalidade:** navegação entre capítulos/livros por seta, alternar
-tema — já validado como boa ideia no site antigo.
-**UX/UI:** dica discreita de que os atalhos existem, sem poluir a tela
-principal.
+### 7.5 Atalhos de teclado (versão web) `✅`
+**Funcionalidade:** na tela de leitura de capítulo
+(`app/(tabs)/biblia/[livro]/[capitulo].tsx`), seta esquerda/direita
+navega pro capítulo anterior/próximo (já existia) e `T` alterna o tema
+(`core/theme.ts`, `alternarTema`, novo). Ignora as teclas quando o foco
+está num `INPUT`/`TEXTAREA` (ex.: campo de nota ou busca), pra não
+capturar digitação normal.
+**UX/UI:** dica discreta via `title` (tooltip nativo do navegador, só
+aparece web) na barra fixa de navegação de capítulo — não polui a tela
+principal com texto visível.
 
 ---
 

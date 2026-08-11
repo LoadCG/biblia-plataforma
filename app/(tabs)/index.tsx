@@ -8,7 +8,9 @@ import { CardVersiculoDia } from "../../components/CardVersiculoDia";
 import { BotaoTema } from "../../components/BotaoTema";
 import { calcularConquistas } from "../../core/content/conquistas";
 import { livros, obterLivro } from "../../core/content/livros";
+import { planosLeitura } from "../../core/content/planos";
 import { calcularSequenciaAtual } from "../../core/estatisticas/streak";
+import { obterLembretePlano, type LembretePlano } from "../../core/leitura/lembretePlanos";
 import { livrosLidosRepository, progressoRepository } from "../../core/repositories";
 import { useColorScheme } from "../../core/theme";
 import { useOwnerId } from "../../core/useOwnerId";
@@ -66,6 +68,7 @@ export default function Inicio() {
   const [lidos, setLidos] = useState<string[]>([]);
   const [sequencia, setSequencia] = useState(0);
   const [recentes, setRecentes] = useState<CapituloLido[]>([]);
+  const [lembretePlano, setLembretePlano] = useState<LembretePlano | null>(null);
   const { colorScheme } = useColorScheme();
   const escuro = colorScheme === "dark";
 
@@ -76,6 +79,7 @@ export default function Inicio() {
       setSequencia(calcularSequenciaAtual(itens.map((i) => i.lidoEm)));
       setRecentes(capitulosRecentes(itens, 10));
     });
+    obterLembretePlano(ownerId, planosLeitura).then(setLembretePlano);
   }, [ownerId]);
 
   const lidosSet = useMemo(() => new Set(lidos), [lidos]);
@@ -93,7 +97,11 @@ export default function Inicio() {
           </Text>
           <View className="flex-row items-center gap-3">
             <BotaoTema />
-            <Pressable className="w-8 h-8 items-center justify-center">
+            <Pressable
+              disabled
+              accessibilityLabel="Notificações (em breve)"
+              className="w-8 h-8 items-center justify-center"
+            >
               <MaterialIcons name="notifications-none" size={24} className="text-cor-texto dark:text-cor-texto-dark" />
             </Pressable>
           </View>
@@ -110,6 +118,22 @@ export default function Inicio() {
               ))}
             </ScrollView>
           </View>
+        ) : null}
+
+        {lembretePlano ? (
+          <Link href={`/planos/${lembretePlano.plano.id}`} asChild>
+            <Pressable className="flex-row items-center justify-between rounded-2xl bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark border border-cor-borda dark:border-cor-borda-dark px-4 py-3.5 mb-4">
+              <View className="flex-1 pr-3">
+                <Text className="text-sm font-bold text-cor-texto dark:text-cor-texto-dark mb-0.5">
+                  Que tal continuar o "{lembretePlano.plano.titulo}"?
+                </Text>
+                <Text className="text-xs text-cor-texto-suave dark:text-cor-texto-suave-dark">
+                  {lembretePlano.diasConcluidos} de {lembretePlano.plano.duracaoDias} dias — sem pressa, retome quando quiser.
+                </Text>
+              </View>
+              <MaterialIcons name="chevron-right" size={20} color={escuro ? "#c9bfa8" : "#6b6153"} />
+            </Pressable>
+          </Link>
         ) : null}
 
         {/* Resumos Div — no claro o fundo é escuro (cor-destaque) com

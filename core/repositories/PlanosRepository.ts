@@ -16,4 +16,11 @@ export interface PlanosRepository {
    * Retorna a lista de dias concluídos de um plano para o usuário.
    */
   listarDiasConcluidos(ownerId: string, planoId: string): Promise<number[]>;
+
+  /**
+   * Data (ISO) da conclusão mais recente de qualquer dia do plano, ou
+   * null se nenhum dia foi concluído ainda. Usada para saber há quanto
+   * tempo o usuário não avança num plano em andamento.
+   */
+  obterUltimaConclusao(ownerId: string, planoId: string): Promise<string | null>;
 }

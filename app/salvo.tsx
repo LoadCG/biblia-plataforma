@@ -7,10 +7,11 @@ import { EstadoVazio } from "../components/EstadoVazio";
 import { carregarAtividade, chaveAtividade, type ItemAtividade } from "../core/estatisticas/atividade";
 import { useOwnerId } from "../core/useOwnerId";
 
-type Filtro = "todos" | "grifo" | "nota" | "pesquisa";
+type Filtro = "todos" | "grifo" | "nota" | "pesquisa" | "salvo";
 
 const FILTROS: { chave: Filtro; rotulo: string }[] = [
   { chave: "todos", rotulo: "Todos" },
+  { chave: "salvo", rotulo: "Salvos" },
   { chave: "nota", rotulo: "Anotações" },
   { chave: "grifo", rotulo: "Grifados" },
   { chave: "pesquisa", rotulo: "Pesquisas" },

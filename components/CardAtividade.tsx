@@ -4,7 +4,8 @@ import { Platform, Pressable, Text, View } from "react-native";
 import { obterLivro } from "../core/content/livros";
 import { compartilhar } from "../core/estatisticas/compartilhador";
 import type { ItemAtividade } from "../core/estatisticas/atividade";
-import { grifosRepository, notasRepository, pesquisasFavoritasRepository } from "../core/repositories";
+import { grifosRepository, notasRepository, pesquisasFavoritasRepository, versiculosSalvosRepository } from "../core/repositories";
+import { linkVersiculo } from "../core/util/linkVersiculo";
 import { tempoRelativo } from "../core/util/tempoRelativo";
 import { useOwnerId } from "../core/useOwnerId";
 import { MenuAcoes, type AcaoMenu } from "./MenuAcoes";
@@ -27,6 +28,8 @@ export function CardAtividade({ item, onMudou }: Props) {
 
   const livro = item.tipo !== "pesquisa" ? obterLivro(item.livroSlug) : null;
   const referencia = livro && item.tipo !== "pesquisa" ? `${livro.nome} ${item.capitulo}:${item.versiculo}` : null;
+  const link = livro && item.tipo !== "pesquisa" ? linkVersiculo(livro.slug, item.capitulo, item.versiculo) : null;
+  const referenciaComLink = referencia ? `${referencia}${link ? `\n${link}` : ""}` : null;
 
   async function excluir() {
     if (!ownerId) return;
@@ -34,6 +37,8 @@ export function CardAtividade({ item, onMudou }: Props) {
       await grifosRepository.alternar(ownerId, { livroSlug: item.livroSlug, capitulo: item.capitulo, versiculo: item.versiculo });
     } else if (item.tipo === "nota") {
       await notasRepository.remover(ownerId, { livroSlug: item.livroSlug, capitulo: item.capitulo, versiculo: item.versiculo });
+    } else if (item.tipo === "salvo") {
+      await versiculosSalvosRepository.alternar(ownerId, { livroSlug: item.livroSlug, capitulo: item.capitulo, versiculo: item.versiculo });
     } else {
       await pesquisasFavoritasRepository.alternar(ownerId, item.termo);
     }
@@ -51,7 +56,7 @@ export function CardAtividade({ item, onMudou }: Props) {
             label: "Ler",
             onPress: () => router.push(`/biblia/${item.livroSlug}/${item.capitulo}?versiculo=${item.versiculo}`),
           },
-          { label: "Compartilhar", onPress: () => compartilhar(referencia ?? "") },
+          { label: "Compartilhar", onPress: () => compartilhar(referenciaComLink ?? "") },
           { label: "Resumo do livro", onPress: () => router.push(`/resumos/${item.livroSlug}`) },
           { label: "Copiar", onPress: () => compartilhar(item.tipo === "nota" ? item.texto : (referencia ?? "")) },
           ...(item.tipo === "nota" ? [{ label: "Editar", onPress: () => setEditando(true) }] : []),
@@ -72,7 +77,9 @@ export function CardAtividade({ item, onMudou }: Props) {
             ? `Você grifou ${referencia}`
             : item.tipo === "nota"
               ? `Nota em ${referencia}`
-              : `Busca favorita: "${item.termo}"`}
+              : item.tipo === "salvo"
+                ? `Você salvou ${referencia}`
+                : `Busca favorita: "${item.termo}"`}
         </Text>
         {item.tipo === "nota" ? (
           <Text numberOfLines={2} className="text-xs text-cor-texto-suave dark:text-cor-texto-suave-dark mt-0.5 italic">

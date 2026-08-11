@@ -31,4 +31,12 @@ export const sqlitePlanosRepository: PlanosRepository = {
     );
     return resultados.map((r) => r.diaConcluido);
   },
+
+  async obterUltimaConclusao(ownerId, planoId) {
+    const resultado = await db.getFirstAsync<{ concluidoEm: string }>(
+      `SELECT concluidoEm FROM progresso_planos WHERE ownerId = ? AND planoId = ? ORDER BY concluidoEm DESC LIMIT 1`,
+      [ownerId, planoId]
+    );
+    return resultado?.concluidoEm ?? null;
+  },
 };

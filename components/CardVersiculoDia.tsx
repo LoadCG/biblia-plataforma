@@ -1,10 +1,18 @@
+import { router } from "expo-router";
 import { useEffect, useState } from "react";
 import { ActivityIndicator, ImageBackground, Pressable, Text, View } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { buscarReferencia } from "../core/biblia/BibliaAPI";
+import { parseReferenciaVersiculo } from "../core/biblia/parseReferencia";
 import { referenciaDoDia } from "../core/biblia/versiculoDoDia";
 import type { CapituloTexto } from "../core/biblia/tipos";
+import { compartilhar } from "../core/estatisticas/compartilhador";
+import { notasRepository, versiculosSalvosRepository } from "../core/repositories";
+import { linkVersiculo } from "../core/util/linkVersiculo";
+import { useOwnerId } from "../core/useOwnerId";
+import { MenuAcoes, type AcaoMenu } from "./MenuAcoes";
+import { ModalNota } from "./ModalNota";
 
 // Função simples para gerar um hash do texto pra usar como seed
 function stringToSeed(str: string) {
@@ -20,6 +28,12 @@ export function CardVersiculoDia() {
   const [dados, setDados] = useState<CapituloTexto | null>(null);
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState(false);
+  const ownerId = useOwnerId();
+  const ref = parseReferenciaVersiculo(referencia);
+  const [salvo, setSalvo] = useState(false);
+  const [notaAberta, setNotaAberta] = useState(false);
+  const [notaTexto, setNotaTexto] = useState("");
+  const [menuAberto, setMenuAberto] = useState(false);
 
   useEffect(() => {
     setCarregando(true);
@@ -29,6 +43,28 @@ export function CardVersiculoDia() {
       .catch(() => setErro(true))
       .finally(() => setCarregando(false));
   }, [referencia]);
+
+  useEffect(() => {
+    if (!ownerId || !ref) return;
+    versiculosSalvosRepository.estaSalvo(ownerId, ref).then(setSalvo);
+    notasRepository.buscar(ownerId, ref).then((nota) => setNotaTexto(nota?.texto ?? ""));
+  }, [ownerId, ref?.livroSlug, ref?.capitulo, ref?.versiculo]);
+
+  async function alternarAmem() {
+    if (!ownerId || !ref) return;
+    setSalvo(await versiculosSalvosRepository.alternar(ownerId, ref));
+  }
+
+  function textoParaCompartilhar(): string {
+    const link = ref ? linkVersiculo(ref.livroSlug, ref.capitulo, ref.versiculo) : null;
+    return `"${dados?.texto ?? ""}"\n\n${dados?.referencia ?? referencia}${link ? `\n${link}` : ""}`;
+  }
+
+  const acoesMais: AcaoMenu[] = [
+    { label: "Copiar", onPress: () => compartilhar(textoParaCompartilhar()) },
+    ...(ref ? [{ label: "Ver capítulo inteiro", onPress: () => router.push(`/biblia/${ref.livroSlug}/${ref.capitulo}?versiculo=${ref.versiculo}`) }] : []),
+    ...(ref ? [{ label: "Resumo do livro", onPress: () => router.push(`/resumos/${ref.livroSlug}`) }] : []),
+  ];
 
   if (erro) return null;
 
@@ -85,22 +121,36 @@ export function CardVersiculoDia() {
           {/* Actions & Footer */}
           <View>
             <View className="flex-row items-center justify-between mb-5 px-2">
-              <View className="items-center">
-                <MaterialIcons name="favorite-border" size={24} color="white" />
+              <Pressable
+                onPress={alternarAmem}
+                disabled={!ref}
+                accessibilityLabel={salvo ? "Remover dos salvos" : "Salvar este versículo"}
+                className="items-center"
+              >
+                <MaterialIcons name={salvo ? "favorite" : "favorite-border"} size={24} color={salvo ? "#e0a75e" : "white"} />
                 <Text className="text-white/80 text-xs mt-1">Amém</Text>
-              </View>
-              <View className="items-center">
-                <MaterialIcons name="chat-bubble-outline" size={24} color="white" />
+              </Pressable>
+              <Pressable
+                onPress={() => setNotaAberta(true)}
+                disabled={!ref}
+                accessibilityLabel="Anotar sobre este versículo"
+                className="items-center"
+              >
+                <MaterialIcons name={notaTexto ? "chat-bubble" : "chat-bubble-outline"} size={24} color={notaTexto ? "#e0a75e" : "white"} />
                 <Text className="text-white/80 text-xs mt-1">Anotar</Text>
-              </View>
-              <View className="items-center">
+              </Pressable>
+              <Pressable
+                onPress={() => compartilhar(textoParaCompartilhar())}
+                accessibilityLabel="Enviar este versículo"
+                className="items-center"
+              >
                 <MaterialIcons name="share" size={24} color="white" />
                 <Text className="text-white/80 text-xs mt-1">Enviar</Text>
-              </View>
-              <View className="items-center">
+              </Pressable>
+              <Pressable onPress={() => setMenuAberto(true)} accessibilityLabel="Mais opções" className="items-center">
                 <MaterialIcons name="more-horiz" size={24} color="white" />
                 <Text className="text-white/80 text-xs mt-1">Mais</Text>
-              </View>
+              </Pressable>
             </View>
 
             <Pressable
@@ -113,6 +163,34 @@ export function CardVersiculoDia() {
           </View>
         </View>
       </ImageBackground>
+
+      <MenuAcoes acoes={acoesMais} aberto={menuAberto} onFechar={() => setMenuAberto(false)} />
+
+      {ref ? (
+        <ModalNota
+          visivel={notaAberta}
+          versiculo={ref.versiculo}
+          textoInicial={notaTexto}
+          onFechar={() => setNotaAberta(false)}
+          onSalvar={async (texto) => {
+            if (!ownerId) return;
+            if (texto) {
+              await notasRepository.salvar(ownerId, ref, texto);
+              setNotaTexto(texto);
+            } else {
+              await notasRepository.remover(ownerId, ref);
+              setNotaTexto("");
+            }
+            setNotaAberta(false);
+          }}
+          onRemover={async () => {
+            if (!ownerId) return;
+            await notasRepository.remover(ownerId, ref);
+            setNotaTexto("");
+            setNotaAberta(false);
+          }}
+        />
+      ) : null}
     </View>
   );
 }

@@ -279,12 +279,27 @@ automaticamente, reaproveitando as posições já medidas via `onLayout`.
 **Funcionalidade:** lista curada de 40 versículos (`core/biblia/versiculoDoDia.ts`),
 escolha determinística pelo dia do ano, busca o texto real via
 `BibliaAPI` (reaproveitando o cache já existente). Se a API estiver fora
-do ar, o card simplesmente não aparece, sem quebrar a home.
-**UX/UI:** card de destaque no topo da home, com botão de dado pra
-sortear outro (nunca repete o mesmo que já estava na tela). Achado
-durante o teste manual: o clique só falhou na primeira tentativa por
-causa de coordenadas desatualizadas da própria ferramenta de teste, não
-do app — confirmado clicando na posição visual real, funciona.
+do ar, o card simplesmente não aparece, sem quebrar a home. As 4 ações
+do rodapé do card (Amém/Anotar/Enviar/Mais), que antes eram só
+decoração sem `onPress` nenhum (achado numa auditoria de UI —
+pareciam totalmente funcionais e não faziam nada), agora são reais:
+Amém alterna salvo (`versiculosSalvosRepository`), Anotar abre o mesmo
+`ModalNota` da leitura de capítulo, Enviar chama `compartilhar()`
+(mesmo padrão de toast "Copiado!"), Mais abre um `MenuAcoes` com
+Copiar/Ver capítulo inteiro/Resumo do livro. A referência (formato
+"Livro Capítulo:Versículo") é resolvida pro trio `livroSlug`/
+`capitulo`/`versiculo` via novo `core/biblia/parseReferencia.ts`.
+Testado ao vivo: salvar reflete em `/salvo`, nota persiste entre
+navegações, ícones de coração/balão preenchem quando salvo/anotado.
+**Achado à parte, não corrigido nesta rodada:** `referenciaAleatoria()`
+existe em `versiculoDoDia.ts` mas não é chamada por nenhum componente
+— o botão de "sortear outro versículo" mencionado numa versão anterior
+deste documento não existe na UI atual (removido num redesenho do
+card sem atualizar a documentação, aparentemente). Função órfã, sem
+consumidor.
+**UX/UI:** card de destaque no topo da home; ações do rodapé com
+ícone preenchido/cor de destaque quando o estado é verdadeiro (salvo,
+tem nota) — mesmo padrão visual já usado na leitura de capítulo.
 
 ### 3.3 Conquistas de progresso `✅`
 **Funcionalidade:** 6 marcos ligados à estrutura do cânon
@@ -293,7 +308,15 @@ do app — confirmado clicando na posição visual real, funciona.
 66 livros — calculados em cima de `livrosLidosRepository`, sem tabela
 própria de progresso. Testado marcando o Pentateuco como lido: os selos
 "Primeiro livro" e "Pentateuco completo" acendem, os outros 4 continuam
-apagados.
+apagados. No card resumido da Início (`CardConquistas.tsx`), "Saiba
+mais" (por medalha) e "Ver Todos" eram `Pressable`s sem `onPress`
+nenhum (achado na mesma auditoria de UI do item 3.2) — agora "Saiba
+mais" abre um modal com a descrição real da conquista
+(`conquista.descricao`, já existia no tipo, só não era mostrada em
+lugar nenhum) e o progresso atual; "Ver Todos" leva pra `/voce`, que
+já tem o carrossel completo das 6 medalhas com barra de progresso.
+Testado ao vivo: modal mostra "Leia os 5 livros do Pentateuco... 0 de
+5" corretamente; "Ver Todos" navega e mostra as 6 medalhas.
 **UX/UI:** selos discretos (círculos pequenos, opacos quando bloqueados,
 cheios quando conquistados) na home, sem número nem pontuação — só
 reconhecimento silencioso.

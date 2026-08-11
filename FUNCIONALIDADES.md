@@ -248,12 +248,23 @@ jurídica do `PLANO-PLATAFORMA.md` antes de expandir isso).
 **UX/UI:** seletor de tradução visível mas não intrusivo; persistir a
 escolha por dispositivo.
 
-### 2.10 Áudio da leitura `⬜`
-**Funcionalidade:** via Web Speech API / síntese de voz nativa do
-dispositivo (gratuito, sem servidor) — qualidade inferior a um áudio
-gravado profissionalmente, mas viável sem custo de infraestrutura.
-**UX/UI:** controles de reprodução padrão (play/pause), destaque visual
-acompanhando o versículo sendo lido em voz alta.
+### 2.10 Áudio da leitura `✅`
+**Funcionalidade:** `core/leitura/audio.ts` — Web Speech API
+(`SpeechSynthesisUtterance`) no web, `expo-speech` (novo, embrulha
+`AVSpeechSynthesizer`/`TextToSpeech` nativos) no app nativo. Fala um
+versículo por vez, não o capítulo inteiro numa string só — permite
+saber exatamente qual versículo está sendo lido em cada instante (sem
+isso, sincronizar destaque com fala exigiria estimar tempo por
+caractere, impreciso). Áudio para automaticamente ao trocar de
+capítulo/sair da tela (`useEffect` de cleanup), senão continuaria
+falando em segundo plano um capítulo que a pessoa não vê mais.
+**UX/UI:** botão de play/pause (`volume-up`/`pause-circle-outline`) no
+cabeçalho da leitura, ao lado do botão de ajustes — só aparece se
+`suportaAudio()` (evita mostrar num navegador sem Web Speech API) e só
+na aba "Texto Bíblico" (não faz sentido narrar o resumo aqui, isso é
+outra tela). O versículo sendo lido ganha o mesmo destaque visual do
+auto-scroll (`bg-cor-destaque-fundo`) e a tela rola até ele
+automaticamente, reaproveitando as posições já medidas via `onLayout`.
 
 ---
 

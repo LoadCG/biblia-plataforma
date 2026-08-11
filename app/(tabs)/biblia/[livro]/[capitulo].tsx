@@ -27,6 +27,7 @@ import {
 } from "../../../../core/leitura/preferenciaFonte";
 import { salvarUltimaLeitura } from "../../../../core/leitura/ultimaLeitura";
 import { grifosRepository, notasRepository, progressoRepository, versiculosSalvosRepository } from "../../../../core/repositories";
+import { falarCapitulo, pararAudio, suportaAudio } from "../../../../core/leitura/audio";
 import { alternarTema } from "../../../../core/theme";
 import { linkVersiculo } from "../../../../core/util/linkVersiculo";
 import { mostrarToast } from "../../../../core/util/toast";
@@ -92,6 +93,8 @@ export default function Leitura() {
   const [fonteSerifada, setFonteSerifada] = useState(false);
   const [progresso, setProgresso] = useState(0);
   const [versiculoRealcado, setVersiculoRealcado] = useState<number | null>(null);
+  const [audioTocando, setAudioTocando] = useState(false);
+  const [versiculoFalando, setVersiculoFalando] = useState<number | null>(null);
 
   const { setOculta } = useNavbar();
 
@@ -309,6 +312,43 @@ export default function Leitura() {
     return `${textos.join("\n")}\n\n${referencia}${link ? `\n${link}` : ""}`;
   }
 
+  function alternarAudio() {
+    if (audioTocando) {
+      pararAudio();
+      setAudioTocando(false);
+      setVersiculoFalando(null);
+      return;
+    }
+    if (!dados?.versiculos?.length) return;
+    setAudioTocando(true);
+    falarCapitulo(
+      dados.versiculos,
+      (numero) => setVersiculoFalando(numero),
+      () => {
+        setAudioTocando(false);
+        setVersiculoFalando(null);
+      }
+    );
+  }
+
+  // Para o áudio ao sair da tela ou trocar de capítulo — sem isso a
+  // fala continuaria em segundo plano falando um capítulo que a
+  // pessoa já não está mais vendo.
+  useEffect(() => {
+    return () => pararAudio();
+  }, [params.livro, params.capitulo]);
+
+  // Acompanha o versículo sendo lido em voz alta, rolando a tela até
+  // ele — as posições já foram medidas via onLayout na primeira
+  // renderização do capítulo.
+  useEffect(() => {
+    if (versiculoFalando === null) return;
+    const y = posicoes.current[versiculoFalando];
+    if (y !== undefined) {
+      scrollRef.current?.scrollTo({ y: Math.max(0, y - 100), animated: true });
+    }
+  }, [versiculoFalando]);
+
   async function copiarVersiculos() {
     const texto = textoDosVersiculosSelecionados();
     if (!texto) return;
@@ -369,9 +409,24 @@ export default function Leitura() {
             </Pressable>
           </View>
 
-          <Pressable onPress={() => setModalAjustesAberto(true)} accessibilityLabel="Ajustes de leitura" className="w-10 h-10 items-center justify-center">
-            <Text style={{ fontFamily: FAMILIA_SERIFADA }} className="text-lg font-bold text-cor-texto dark:text-cor-texto-dark">Aa</Text>
-          </Pressable>
+          <View className="flex-row items-center">
+            {suportaAudio() && abaAtual === "texto" ? (
+              <Pressable
+                onPress={alternarAudio}
+                accessibilityLabel={audioTocando ? "Pausar leitura em voz alta" : "Ouvir capítulo em voz alta"}
+                className="w-10 h-10 items-center justify-center"
+              >
+                <MaterialIcons
+                  name={audioTocando ? "pause-circle-outline" : "volume-up"}
+                  size={22}
+                  className="text-cor-texto dark:text-cor-texto-dark"
+                />
+              </Pressable>
+            ) : null}
+            <Pressable onPress={() => setModalAjustesAberto(true)} accessibilityLabel="Ajustes de leitura" className="w-10 h-10 items-center justify-center">
+              <Text style={{ fontFamily: FAMILIA_SERIFADA }} className="text-lg font-bold text-cor-texto dark:text-cor-texto-dark">Aa</Text>
+            </Pressable>
+          </View>
         </View>
       </View>
       )}
@@ -415,7 +470,11 @@ export default function Leitura() {
                   <Pressable
                     onPress={() => selecionarVersiculo(v.numero)}
                     className={`rounded-lg px-2 py-1.5 ${
-                      grifado ? (corGrifo ? corGrifo : "bg-cor-grifo dark:bg-cor-grifo-dark") : v.numero === versiculoRealcado ? "bg-cor-destaque-fundo dark:bg-cor-destaque-fundo-dark" : ""
+                      grifado
+                        ? corGrifo ? corGrifo : "bg-cor-grifo dark:bg-cor-grifo-dark"
+                        : v.numero === versiculoFalando || v.numero === versiculoRealcado
+                          ? "bg-cor-destaque-fundo dark:bg-cor-destaque-fundo-dark"
+                          : ""
                     } ${selecionado ? "bg-cor-destaque-fundo dark:bg-cor-destaque-fundo-dark" : ""} ${
                       v.numero === versiculoAlvo ? "border-l-4 border-cor-destaque dark:border-cor-destaque-dark" : ""
                     }`}

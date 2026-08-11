@@ -1,6 +1,6 @@
 import { router } from "expo-router";
 import { useEffect, useState } from "react";
-import { ActivityIndicator, ImageBackground, Pressable, Text, View } from "react-native";
+import { ActivityIndicator, Pressable, Text, View } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { buscarReferencia } from "../core/biblia/BibliaAPI";
@@ -13,15 +13,6 @@ import { linkVersiculo } from "../core/util/linkVersiculo";
 import { useOwnerId } from "../core/useOwnerId";
 import { MenuAcoes, type AcaoMenu } from "./MenuAcoes";
 import { ModalNota } from "./ModalNota";
-
-// Função simples para gerar um hash do texto pra usar como seed
-function stringToSeed(str: string) {
-  let hash = 0;
-  for (let i = 0; i < str.length; i++) {
-    hash = str.charCodeAt(i) + ((hash << 5) - hash);
-  }
-  return Math.abs(hash);
-}
 
 export function CardVersiculoDia() {
   const [referencia] = useState(() => referenciaDoDia());
@@ -68,19 +59,21 @@ export function CardVersiculoDia() {
 
   if (erro) return null;
 
-  const imageUrl = `https://picsum.photos/seed/${stringToSeed(referencia)}/600/800`;
-
   return (
     <View className="rounded-3xl overflow-hidden mb-4 shadow-sm bg-black">
-      <ImageBackground source={{ uri: imageUrl }} className="w-full h-[450px]">
-        {/* Escurece a foto de fundo de verdade (não só a sombra do texto) —
-            overlay bem mais escuro mesmo no topo do card, onde antes a
-            foto ainda aparecia clara demais atrás do rótulo. */}
-        <LinearGradient
-          colors={['rgba(0,0,0,0.78)', 'rgba(0,0,0,0.9)', 'rgba(0,0,0,0.98)']}
-          style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0 }}
-        />
-        
+      {/* Fundo em gradiente de marca (mesma paleta "metalizada" dos
+          cards de gamificação em /voce) — antes era uma foto aleatória
+          via picsum.photos/Unsplash Source, que podia trazer qualquer
+          imagem indexada (inclusive imprópria pro público do app, como
+          reportado por um usuário). Sem fonte externa não curada,
+          zero risco de conteúdo indevido aparecer aqui. */}
+      <LinearGradient
+        colors={["#332920", "#241d16", "#1b1712"]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        className="w-full h-[450px]"
+      >
+
         <View className="p-5 flex-1 justify-between">
           {/* Header do Card */}
           <View>
@@ -162,7 +155,7 @@ export function CardVersiculoDia() {
             </Pressable>
           </View>
         </View>
-      </ImageBackground>
+      </LinearGradient>
 
       <MenuAcoes acoes={acoesMais} aberto={menuAberto} onFechar={() => setMenuAberto(false)} />
 

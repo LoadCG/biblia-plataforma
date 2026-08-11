@@ -133,6 +133,28 @@ rolagem, barra fina de progresso de leitura no topo, e tipografia
 revista (número de versículo pequeno/discreto, `lineHeight` maior) —
 inspirado no padrão do YouVersion/Bible Gateway.
 
+**Bug real reportado por usuário (2026-08-11):** "erro ao carregar
+versículos, leitura bíblica não funcionando". Investigado: a
+`bible-api.com` (usada na versão *web*, ver 2.6/Decisão 11) é uma API
+pública gratuita, sem SLA — uma falha isolada (timeout, 5xx) hoje
+derrubava a leitura direto pro estado de erro, sem nenhuma segunda
+chance. Corrigido em `core/biblia/BibliaAPI.ts`: até 3 tentativas com
+timeout de 10s cada (via `AbortController`) e um pequeno intervalo
+entre elas, antes de desistir — cobre exatamente esse tipo de falha
+transitória. Testado com `fetch` mockado (`BibliaAPI.web.test.ts`,
+novo): confirma que uma falha isolada não impede o sucesso na
+tentativa seguinte, e que falhas persistentes ainda propagam o erro
+depois de esgotar as tentativas. Também adicionado um botão "Tentar
+novamente" na tela de leitura (antes só existia o texto de erro, sem
+nenhuma ação — a pessoa precisava sair e voltar pra tentar de novo).
+**Não foi possível reproduzir a falha original** (a API respondeu
+normalmente em todos os testes feitos); a causa mais provável é
+instabilidade pontual do lado da `bible-api.com`, que esta correção
+absorve automaticamente na maioria dos casos daqui pra frente — mas
+fica registrado que o app depende de uma API de terceiros sem SLA pra
+essa funcionalidade central, e o proxy/cache de servidor planejado
+(Decisão 4 do `PLANO-PLATAFORMA.md`) resolveria isso de vez.
+
 ### 2.2c Tamanho de fonte na leitura do capítulo `✅`
 **Funcionalidade:** controle A-/A+ no cabeçalho da leitura, 3 passos
 (15/17/19px), aplicado ao texto do capítulo inteiro. Persistido por
@@ -300,6 +322,21 @@ consumidor.
 **UX/UI:** card de destaque no topo da home; ações do rodapé com
 ícone preenchido/cor de destaque quando o estado é verdadeiro (salvo,
 tem nota) — mesmo padrão visual já usado na leitura de capítulo.
+
+**Problema de segurança de conteúdo corrigido (reportado por usuário,
+2026-08-11):** o fundo do card usava `picsum.photos/seed/…`, que serve
+fotos de banco aleatório (Unsplash Source por trás) indexadas por um
+hash da referência do dia — sem curadoria nenhuma, podendo mostrar
+qualquer imagem, incluindo conteúdo impróprio pro público jovem do
+app (relatado: uma foto de casal com pouca roupa apareceu no card).
+Removida a dependência de imagem externa por completo — sem fonte não
+curada, zero risco de recorrência. Substituída por um gradiente sólido
+nas cores de marca do app (`#332920 → #241d16 → #1b1712`, a mesma
+paleta "metalizada" já usada nos cards de gamificação em `/voce`), sem
+nenhuma chamada de rede pra imagem. Se no futuro quiser voltar a ter
+uma imagem de fundo, precisa ser um conjunto pequeno e curado de
+paisagens específicas (bundladas no app ou de uma fonte com controle
+editorial de verdade), nunca uma API de foto aleatória.
 
 ### 3.3 Conquistas de progresso `✅`
 **Funcionalidade:** 6 marcos ligados à estrutura do cânon

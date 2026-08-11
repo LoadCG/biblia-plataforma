@@ -146,14 +146,16 @@ export default function Leitura() {
     });
   }
 
-  useEffect(() => {
+  function carregarCapitulo() {
     if (!valido || !livro) return;
     setDados(null);
     setErro(false);
     buscarReferencia(`${livro.nome} ${capitulo}`)
       .then(setDados)
       .catch(() => setErro(true));
-  }, [valido, livro, capitulo]);
+  }
+
+  useEffect(carregarCapitulo, [valido, livro, capitulo]);
 
   useEffect(() => {
     if (!valido || !livro) return;
@@ -461,9 +463,17 @@ export default function Leitura() {
           </Pressable>
 
           {erro ? (
-            <Text className="text-cor-texto-suave dark:text-cor-texto-suave-dark">
-              Não foi possível carregar este capítulo agora. Tente de novo em instantes.
-            </Text>
+            <View className="items-start gap-3">
+              <Text className="text-cor-texto-suave dark:text-cor-texto-suave-dark">
+                Não foi possível carregar este capítulo agora. Verifique sua conexão e tente de novo.
+              </Text>
+              <Pressable
+                onPress={carregarCapitulo}
+                className="px-4 py-2 rounded-full bg-cor-destaque dark:bg-cor-destaque-dark"
+              >
+                <Text className="text-white font-semibold text-sm">Tentar novamente</Text>
+              </Pressable>
+            </View>
           ) : !dados ? (
             <View className="mt-4 gap-4 opacity-50">
               <View className="h-4 bg-cor-borda dark:bg-cor-borda-dark rounded w-3/4" />

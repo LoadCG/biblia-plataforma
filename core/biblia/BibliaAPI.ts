@@ -19,36 +19,67 @@ async function lerCache(): Promise<Record<string, CapituloTexto>> {
   }
 }
 
+const TIMEOUT_MS = 10000;
+const TENTATIVAS = 3;
+
+function aguardar(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+async function buscarComTimeout(url: string): Promise<Response> {
+  const controlador = new AbortController();
+  const timeoutId = setTimeout(() => controlador.abort(), TIMEOUT_MS);
+  try {
+    return await fetch(url, { signal: controlador.signal });
+  } finally {
+    clearTimeout(timeoutId);
+  }
+}
+
+// A bible-api.com é uma API pública gratuita, sem SLA — falhas
+// transitórias (timeout, 5xx) acontecem. Poucas tentativas com um
+// pequeno intervalo (não é um backoff exponencial elaborado, só o
+// suficiente pra absorver uma falha isolada) evitam que a pessoa veja
+// "erro ao carregar" por uma instabilidade de meio segundo da API.
 async function buscarWeb(ref: string): Promise<CapituloTexto> {
   const chave = ref.trim().toLowerCase();
   const cache = await lerCache();
   if (cache[chave]) return cache[chave];
 
-  const resposta = await fetch(`${BASE_URL}${encodeURIComponent(chave)}?translation=almeida`);
-  if (!resposta.ok) throw new Error(`Falha ao buscar ${chave}`);
-  const dados = await resposta.json();
-  if (dados.error) throw new Error(dados.error);
+  let ultimoErro: unknown;
+  for (let tentativa = 1; tentativa <= TENTATIVAS; tentativa++) {
+    try {
+      const resposta = await buscarComTimeout(`${BASE_URL}${encodeURIComponent(chave)}?translation=almeida`);
+      if (!resposta.ok) throw new Error(`Falha ao buscar ${chave} (status ${resposta.status})`);
+      const dados = await resposta.json();
+      if (dados.error) throw new Error(dados.error);
 
-  const resultado: CapituloTexto = {
-    referencia: dados.reference,
-    texto: String(dados.text).trim().replace(/\s+/g, " "),
-    versiculos: Array.isArray(dados.verses)
-      ? dados.verses.map((v: { verse: number; text: string }) => ({
-          numero: v.verse,
-          texto: v.text.trim().replace(/\s+/g, " "),
-        }))
-      : null,
-  };
+      const resultado: CapituloTexto = {
+        referencia: dados.reference,
+        texto: String(dados.text).trim().replace(/\s+/g, " "),
+        versiculos: Array.isArray(dados.verses)
+          ? dados.verses.map((v: { verse: number; text: string }) => ({
+              numero: v.verse,
+              texto: v.text.trim().replace(/\s+/g, " "),
+            }))
+          : null,
+      };
 
-  await comFila(CHAVE_CACHE, async () => {
-    const atual = await lerCache();
-    atual[chave] = resultado;
-    const chaves = Object.keys(atual);
-    if (chaves.length > MAX_CACHE) delete atual[chaves[0]];
-    await AsyncStorage.setItem(CHAVE_CACHE, JSON.stringify(atual));
-  });
+      await comFila(CHAVE_CACHE, async () => {
+        const atual = await lerCache();
+        atual[chave] = resultado;
+        const chaves = Object.keys(atual);
+        if (chaves.length > MAX_CACHE) delete atual[chaves[0]];
+        await AsyncStorage.setItem(CHAVE_CACHE, JSON.stringify(atual));
+      });
 
-  return resultado;
+      return resultado;
+    } catch (erro) {
+      ultimoErro = erro;
+      if (tentativa < TENTATIVAS) await aguardar(600 * tentativa);
+    }
+  }
+  throw ultimoErro;
 }
 
 import { livros } from "../content/livros";

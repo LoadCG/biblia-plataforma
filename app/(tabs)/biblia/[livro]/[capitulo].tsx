@@ -29,6 +29,7 @@ import { salvarUltimaLeitura } from "../../../../core/leitura/ultimaLeitura";
 import { grifosRepository, notasRepository, progressoRepository, versiculosSalvosRepository } from "../../../../core/repositories";
 import { alternarTema } from "../../../../core/theme";
 import { linkVersiculo } from "../../../../core/util/linkVersiculo";
+import { mostrarToast } from "../../../../core/util/toast";
 import { useOwnerId } from "../../../../core/useOwnerId";
 
 export default function Leitura() {
@@ -312,6 +313,7 @@ export default function Leitura() {
     const texto = textoDosVersiculosSelecionados();
     if (!texto) return;
     await Clipboard.setStringAsync(texto);
+    mostrarToast("Copiado!");
     setVersiculosSelecionados(new Set());
   }
 

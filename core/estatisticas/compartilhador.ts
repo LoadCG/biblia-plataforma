@@ -5,12 +5,14 @@
 // nova: no web usa a Clipboard API do navegador; no nativo usa o Share
 // do próprio React Native (sempre disponível, sem instalar nada).
 import { Platform, Share } from "react-native";
+import { mostrarToast } from "../util/toast";
 import { registrarCompartilhamento } from "./compartilhamentos";
 
 export async function compartilhar(texto: string): Promise<void> {
   if (Platform.OS === "web") {
     try {
       await navigator.clipboard.writeText(texto);
+      mostrarToast("Copiado!");
     } catch {
       // Permissão de clipboard pode falhar (ex. contexto não seguro) —
       // não é crítico o suficiente pra travar a ação com um alerta.

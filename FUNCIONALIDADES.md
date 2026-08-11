@@ -352,7 +352,7 @@ número de atraso nem alarme visual.
 
 ## 5. Compartilhamento
 
-### 5.1 Compartilhar link de um livro/capítulo/versículo `🔶`
+### 5.1 Compartilhar link de um livro/capítulo/versículo `✅`
 **Funcionalidade:** `core/util/linkVersiculo.ts` monta o link
 (`origin + /biblia/[livro]/[capitulo]?versiculo=N`) usando
 `window.location.origin` — funciona em qualquer domínio, não depende
@@ -365,11 +365,12 @@ na leitura do capítulo e na ação "Compartilhar" do `CardAtividade`
 (grifo/nota/salvo). Usa `Share.share` do React Native no nativo
 (sheet do sistema) e a Clipboard API no web (`core/estatisticas/
 compartilhador.ts`), já existentes.
-**UX/UI:** **falta** a mensagem de confirmação ("copiado!") no
-fallback web — o app não tem nenhum sistema de toast hoje; a Clipboard
-API copia silenciosamente. Precisa de um componente de toast/snackbar
-antes de resolver isso direito (não implementado agora pra não intro-
-duzir um sistema novo só pra isso).
+**UX/UI:** confirmação visual "Copiado!" no fallback web via um toast
+global mínimo (`core/util/toast.ts` + `components/Toast.tsx`, montado
+uma vez em `app/_layout.tsx`, pub-sub simples sem Context — qualquer
+lugar do app chama `mostrarToast(mensagem)`, mesmo fora da árvore de
+componentes). No nativo o próprio sheet do sistema (`Share.share`) já
+serve de confirmação, sem precisar do toast.
 
 ### 5.2 Gerar imagem de versículo pra compartilhar `⬜`
 **Funcionalidade:** cartão de imagem gerado a partir do texto + referência

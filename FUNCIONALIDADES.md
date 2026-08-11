@@ -228,15 +228,45 @@ de capítulo (ver 9.3).
 
 ### 2.6 Buscar por palavra-chave no texto bíblico inteiro `✅`
 **Funcionalidade:** resolvido com a migração pra `expo-sqlite` (ver
-`backend-log.md`): a Bíblia inteira (31.102 versículos, Almeida ACF)
+`backend-log.md`): a Bíblia inteira (31.106 versículos, Almeida ACF)
 foi embutida em `assets/biblia.json` e injetada numa tabela virtual
 FTS5 do SQLite na primeira execução (`garantirBaseBiblia()`). A busca
 roda 100% local via `buscarGlobal(termo)` em
 `core/biblia/BibliaAPI.ts` — nada de rate limit de API externa.
+Só nativo (iOS/Android); no web `buscarGlobal` retorna vazio de
+propósito (ver 7.3) pra evitar instabilidade do SQLite WASM.
 **UX/UI:** aba "Na Bíblia" dentro da tela Descubra
 (`app/(tabs)/pesquisa.tsx`), com debounce de 500ms; cada resultado
 mostra a referência e o trecho, link direto pro versículo
 (`?versiculo=`).
+
+**Bug grave real, reportado por usuário (2026-08-11): "só dá pra ler
+Gênesis"** — no app nativo, `garantirBaseBiblia()` (`core/db/
+database.ts`) inseria os ~31 mil versículos um por um (2 `INSERT`s
+`await`ados por versículo, mais de 60 mil idas e vindas sequenciais ao
+SQLite, tudo numa única transação) e considerava a base "já populada"
+bastando existir **qualquer** registro. Gênesis é o primeiro livro do
+JSON — se o app fechasse, travasse ou ficasse sem memória no meio
+dessa população longa (bem provável dado o volume), só Gênesis
+existia, e a checagem seguinte não detectava a população incompleta:
+o app ficava travado nesse estado pra sempre, sem nunca tentar
+repopular. Corrigido: (1) a checagem agora compara a contagem contra o
+total real de versículos do JSON, não só "> 0" — população incompleta
+é apagada e refeita do zero; (2) inserção em lotes de 150 linhas por
+`INSERT` (750 parâmetros, dentro do limite conservador de 999 do
+SQLite) em vez de um por um, com o índice FTS5 sincronizado de uma vez
+ao final via `INSERT INTO biblia_fts(biblia_fts) VALUES ('rebuild')`
+(padrão recomendado pra tabelas FTS5 de "external content"). Validado
+fora do app com `node:sqlite` (Node 22+) rodando a mesma lógica contra
+o `assets/biblia.json` real: 31.106 versículos inseridos corretamente
+em ~190ms (era impossível medir o método antigo sem rodar no
+dispositivo de verdade, mas a diferença de mais de 300x menos idas ao
+banco é esperada ser decisiva); Gênesis e Mateus (livro do meio do
+JSON) consultáveis, busca FTS funcionando. **Não testado no
+dispositivo/simulador nativo de verdade** — este ambiente só tem
+acesso ao navegador, não a um simulador iOS/Android; a validação via
+`node:sqlite` cobre a lógica SQL, não o comportamento do `expo-sqlite`
+em produção.
 
 ### 2.7 Favoritar/salvar versículo (distinto de grifar) `✅`
 **Funcionalidade:** distinto de grifo e nota, `VersiculoSalvo`/

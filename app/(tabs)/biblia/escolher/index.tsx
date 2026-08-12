@@ -3,17 +3,20 @@ import { useEffect, useMemo, useState } from "react";
 import { FlatList, Pressable, Text, TextInput, View } from "react-native";
 import { BotaoTema } from "../../../../components/BotaoTema";
 import { EstadoVazio } from "../../../../components/EstadoVazio";
+import { GradeCapitulos } from "../../../../components/GradeCapitulos";
 import { livros } from "../../../../core/content/livros";
 import type { Livro } from "../../../../core/content/tipos";
 import { carregarUltimaLeitura } from "../../../../core/leitura/ultimaLeitura";
 import { progressoRepository } from "../../../../core/repositories";
 import { useOwnerId } from "../../../../core/useOwnerId";
 
+const SET_VAZIO = new Set<number>();
+
 export default function EscolherLivro() {
   const [termo, setTermo] = useState("");
   const [livroExpandido, setLivroExpandido] = useState<string | null>(null);
   const ownerId = useOwnerId();
-  const [lidosPorLivro, setLidosPorLivro] = useState<Record<string, number>>({});
+  const [lidosPorLivro, setLidosPorLivro] = useState<Record<string, Set<number>>>({});
 
   useEffect(() => {
     carregarUltimaLeitura().then((ultima) => {
@@ -24,11 +27,12 @@ export default function EscolherLivro() {
   useEffect(() => {
     if (!ownerId) return;
     progressoRepository.listarTodos(ownerId).then((itens) => {
-      const contagem: Record<string, number> = {};
+      const porLivro: Record<string, Set<number>> = {};
       for (const item of itens) {
-        contagem[item.livroSlug] = (contagem[item.livroSlug] ?? 0) + 1;
+        if (!porLivro[item.livroSlug]) porLivro[item.livroSlug] = new Set();
+        porLivro[item.livroSlug].add(item.capitulo);
       }
-      setLidosPorLivro(contagem);
+      setLidosPorLivro(porLivro);
     });
   }, [ownerId]);
 
@@ -40,7 +44,8 @@ export default function EscolherLivro() {
 
   const renderItem = ({ item }: { item: Livro }) => {
     const expandido = livroExpandido === item.slug;
-    
+    const lidos = lidosPorLivro[item.slug] ?? SET_VAZIO;
+
     return (
       <View className="mb-2">
         <Pressable
@@ -49,24 +54,17 @@ export default function EscolherLivro() {
         >
           <Text className="text-cor-texto dark:text-cor-texto-dark text-lg font-semibold">{item.nome}</Text>
           <Text className="text-xs text-cor-texto-suave dark:text-cor-texto-suave-dark">
-            {lidosPorLivro[item.slug] ?? 0} de {item.capitulos}
+            {lidos.size} de {item.capitulos}
           </Text>
         </Pressable>
 
         {expandido && (
-          <View className="flex-row flex-wrap gap-2 px-2 py-4 bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark rounded-b-xl -mt-2 pt-6">
-            {Array.from({ length: item.capitulos }).map((_, i) => {
-              const cap = i + 1;
-              return (
-                <Pressable
-                  key={cap}
-                  onPress={() => router.push(`/biblia/${item.slug}/${cap}`)}
-                  className="w-[18%] aspect-square rounded-xl bg-cor-fundo dark:bg-cor-fundo-dark border border-cor-borda dark:border-cor-borda-dark items-center justify-center"
-                >
-                  <Text className="text-base font-bold text-cor-texto dark:text-cor-texto-dark">{cap}</Text>
-                </Pressable>
-              );
-            })}
+          <View className="px-2 py-4 bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark rounded-b-xl -mt-2 pt-6">
+            <GradeCapitulos
+              totalCapitulos={item.capitulos}
+              lidos={lidos}
+              onSelecionar={(cap) => router.push(`/biblia/${item.slug}/${cap}`)}
+            />
           </View>
         )}
       </View>

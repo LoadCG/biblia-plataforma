@@ -3,6 +3,14 @@
 Todas as mudanças notáveis feitas no projeto serão documentadas neste arquivo.
 O formato é baseado no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/).
 
+## [Unreleased] - 2026-08-11 (continuação 2)
+
+### Adicionado
+- **Tooltip de gênero literário**: selo colorido no resumo do livro (ex. "EVANGELHO") agora é tocável e abre uma explicação curta do gênero. Novo `components/Tooltip.tsx` (reutilizável) + `DESCRICAO_GENERO` em `core/content/genero.ts`.
+
+### Modificado
+- **Grade de capítulos responsiva**: novo `components/GradeCapitulos.tsx` reutilizado no acordeão de livros e na tela dedicada de capítulos — antes cada tela tinha sua própria versão, com células grandes e número de colunas fixo (~5-6) não importa a largura da tela. Agora o número de colunas varia por faixa de largura (6/8/10/12), sempre limitado ao total de capítulos do livro. Acordeão passou a destacar capítulos individualmente lidos (antes só mostrava a contagem no cabeçalho).
+
 ## [Unreleased] - 2026-08-11 (continuação)
 
 ### Corrigido

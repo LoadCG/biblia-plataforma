@@ -15,3 +15,21 @@ export const CORES_GENERO: Record<string, { bg: string; texto: string }> = {
 export function coresDoGenero(genero: string) {
   return CORES_GENERO[genero] ?? CORES_GENERO.Carta;
 }
+
+// Explicações curtas por gênero literário, pro Tooltip do selo
+// colorido (ver components/Tooltip.tsx) — tom simples, pro público
+// jovem/adolescente do projeto (mesma diretriz de conteúdo do resto
+// do app), sem entrar em debate acadêmico de classificação.
+export const DESCRICAO_GENERO: Record<string, string> = {
+  Lei: "Os 5 primeiros livros da Bíblia (o Pentateuco) — contam a criação, as origens do povo de Israel e as leis dadas por Deus.",
+  Histórico: "Narra fatos e acontecimentos reais da história do povo de Israel, como conquistas, reinados e reconstruções.",
+  Poético: "Escrito em forma de poesia — louvor, lamento, sabedoria e reflexão, cheio de imagens e sentimento.",
+  Profético: "Mensagens de profetas enviados por Deus, com avisos, correções e promessas para o povo.",
+  Evangelho: "Conta a vida, os ensinamentos, a morte e a ressurreição de Jesus, cada um sob uma perspectiva.",
+  Carta: "Cartas (epístolas) escritas pelos apóstolos para orientar e encorajar as primeiras igrejas cristãs.",
+  Apocalíptico: "Usa visões e símbolos para revelar o plano de Deus, especialmente sobre o fim dos tempos.",
+};
+
+export function descricaoDoGenero(genero: string): string {
+  return DESCRICAO_GENERO[genero] ?? "";
+}

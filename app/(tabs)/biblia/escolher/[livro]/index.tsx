@@ -1,6 +1,7 @@
-import { Link, useLocalSearchParams } from "expo-router";
+import { Link, router, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
-import { Pressable, ScrollView, Text, View } from "react-native";
+import { ScrollView, Text, View } from "react-native";
+import { GradeCapitulos } from "../../../../../components/GradeCapitulos";
 import { obterLivro } from "../../../../../core/content/livros";
 import { progressoRepository } from "../../../../../core/repositories";
 import { useOwnerId } from "../../../../../core/useOwnerId";
@@ -26,11 +27,9 @@ export default function EscolherCapitulo() {
     );
   }
 
-  const capitulos = Array.from({ length: livro.capitulos }, (_, i) => i + 1);
-
   return (
     <ScrollView className="flex-1 bg-cor-fundo dark:bg-cor-fundo-dark">
-      <View className="px-5 pt-6 pb-10 max-w-2xl w-full mx-auto">
+      <View className="px-5 pt-6 pb-10 max-w-3xl w-full mx-auto">
         <Link href="/biblia/escolher" className="text-cor-destaque dark:text-cor-destaque-dark text-sm mb-2">
           ← Trocar de livro
         </Link>
@@ -39,27 +38,11 @@ export default function EscolherCapitulo() {
           Selecione o capítulo · {lidos.size} de {livro.capitulos} lidos
         </Text>
 
-        <View className="flex-row flex-wrap gap-2">
-          {capitulos.map((n) => (
-            <Link key={n} href={`/biblia/${livro.slug}/${n}`} asChild>
-              <Pressable
-                className={`w-14 h-14 items-center justify-center rounded-xl border ${
-                  lidos.has(n)
-                    ? "border-green-600 bg-green-600"
-                    : "border-cor-borda dark:border-cor-borda-dark bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark"
-                }`}
-              >
-                <Text
-                  className={`font-semibold ${
-                    lidos.has(n) ? "text-white" : "text-cor-texto dark:text-cor-texto-dark"
-                  }`}
-                >
-                  {n}
-                </Text>
-              </Pressable>
-            </Link>
-          ))}
-        </View>
+        <GradeCapitulos
+          totalCapitulos={livro.capitulos}
+          lidos={lidos}
+          onSelecionar={(n) => router.push(`/biblia/${livro.slug}/${n}`)}
+        />
       </View>
     </ScrollView>
   );

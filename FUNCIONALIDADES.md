@@ -19,7 +19,15 @@ conexão com o livro anterior) + 6 seções de conteúdo, para os 66 livros,
 gerado a partir do Markdown fonte.
 **UX/UI:** ficha rápida com hierarquia visual clara, selo de gênero
 literário colorido, tempo estimado de leitura visível antes de rolar a
-página.
+página. Selo agora é tocável (ícone ⓘ) e abre um `Tooltip`
+(`components/Tooltip.tsx`, novo) com explicação curta do gênero (ex.:
+"Evangelho — Conta a vida, os ensinamentos, a morte e a ressurreição
+de Jesus..."), num tom simples pro público jovem do app — texto vem de
+`DESCRICAO_GENERO` em `core/content/genero.ts`. No web também usa o
+`title` nativo do navegador (tooltip de hover) de graça, sem duplicar
+lógica. Mesmo componente reutilizável pra qualquer "explicação sob
+demanda" futura no app. Testado ao vivo: toque no selo "EVANGELHO" do
+resumo de Mateus abre o modal com o texto certo.
 
 ### 1.2 Navegar entre livros `✅`
 **Funcionalidade:** anterior/próximo a partir de qualquer resumo, sem
@@ -121,7 +129,30 @@ parâmetro de URL (`?versiculo=N`) direto na tela de leitura (ver 2.2),
 nunca por uma grade navegável de versículos.
 **UX/UI:** grade de números clara, tocável com o polegar (alvo de toque
 adequado), estado visual de "já lido" visível na grade de capítulos
-antes de entrar num deles.
+antes de entrar num deles. Novo `components/GradeCapitulos.tsx`
+(2026-08-11) reúne a grade num só componente reutilizado nas duas
+telas (acordeão expandido e a tela dedicada de capítulos) — antes cada
+uma tinha sua própria versão, com tamanhos diferentes entre si e
+células grandes demais em telas largas (a do acordeão usava `w-[18%]`
+fixo, sempre ~5-6 colunas não importa a largura da tela; a dedicada
+usava `w-14 h-14` fixo em pixels). Agora o número de colunas é
+calculado por faixa de largura (`useWindowDimensions`) — 6 colunas
+abaixo de 400px, 8 abaixo de 640px, 10 abaixo de 900px, 12 acima disso
+— sempre limitado ao total de capítulos do livro (um livro de 1
+capítulo não abre 12 colunas quase vazias). A largura da célula usa
+`style` inline com porcentagem calculada, não uma classe Tailwind
+interpolada dinamicamente — o NativeWind só reconhece classes escritas
+como texto literal no código (mesma pegadinha da Decisão 10 do
+PLANO-PLATAFORMA.md), então uma largura dinâmica via className não
+funcionaria. Testado ao vivo: 6 colunas em 375px, 12 colunas em
+1280px (carregamento fresco — redimensionar a janela com o app já
+aberto não foi possível confirmar no ambiente de teste, limitação da
+ferramenta de automação, não bug conhecido do app), 1 coluna pra
+Obadias (1 capítulo, sem grade vazia), grade de 150 capítulos de
+Salmos renderiza e navega bem, destaque verde de "lido" preservado.
+O acordeão agora também destaca capítulos individualmente lidos (antes
+só mostrava a contagem "X de Y" no cabeçalho do livro, a grade em si
+não tinha nenhum destaque por capítulo).
 
 **Bug grave real, reportado por usuário em produção (2026-08-11):**
 "a rota certa é `/biblia/05-deuteronomio/2`, mas ao escolher leva para

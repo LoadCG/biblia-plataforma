@@ -1,7 +1,7 @@
 import { Link, Stack, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import { NativeScrollEvent, NativeSyntheticEvent, Pressable, ScrollView, Text, View } from "react-native";
-import { coresDoGenero } from "../../core/content/genero";
+import { coresDoGenero, descricaoDoGenero } from "../../core/content/genero";
 import { livros, obterResumo } from "../../core/content/livros";
 import {
   carregarFonteSerifada,
@@ -16,6 +16,7 @@ import { livrosLidosRepository } from "../../core/repositories";
 import { useOwnerId } from "../../core/useOwnerId";
 import { BotaoTema } from "../../components/BotaoTema";
 import { TextoComReferencias } from "../../components/TextoComReferencias";
+import { Tooltip } from "../../components/Tooltip";
 
 export default function ResumoLivro() {
   const { livro: slug } = useLocalSearchParams<{ livro: string }>();
@@ -139,9 +140,12 @@ export default function ResumoLivro() {
           </View>
         </View>
 
-        <View className={`self-start px-3 py-1 rounded-full mb-3 ${cores.bg}`}>
-          <Text className={`text-xs font-semibold uppercase tracking-wide ${cores.texto}`}>{resumo.genero}</Text>
-        </View>
+        <Tooltip titulo={resumo.genero} descricao={descricaoDoGenero(resumo.genero)}>
+          <View className={`self-start flex-row items-center gap-1 px-3 py-1 rounded-full mb-3 ${cores.bg}`}>
+            <Text className={`text-xs font-semibold uppercase tracking-wide ${cores.texto}`}>{resumo.genero}</Text>
+            <Text className={`text-[10px] ${cores.texto}`}>ⓘ</Text>
+          </View>
+        </Tooltip>
         <Text className="text-4xl font-extrabold text-cor-texto dark:text-cor-texto-dark mb-2 leading-tight">
           {resumo.nome}
         </Text>

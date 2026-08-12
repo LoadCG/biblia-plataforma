@@ -10,12 +10,13 @@ if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { BotaoTema } from "../../../../components/BotaoTema";
 import { ModalNota } from "../../../../components/ModalNota";
+import { Tooltip } from "../../../../components/Tooltip";
 import { Modal } from "react-native";
 import { buscarReferencia } from "../../../../core/biblia/BibliaAPI";
 import type { CapituloTexto } from "../../../../core/biblia/tipos";
 import { livros, obterLivro, obterResumo } from "../../../../core/content/livros";
 import { TextoComReferencias } from "../../../../components/TextoComReferencias";
-import { coresDoGenero } from "../../../../core/content/genero";
+import { coresDoGenero, descricaoDoGenero } from "../../../../core/content/genero";
 import {
   carregarFonteSerifada,
   carregarIndiceFonte,
@@ -550,9 +551,12 @@ export default function Leitura() {
       {abaAtual === "resumo" && resumo && (
         <ScrollView className="flex-1">
           <View className="px-5 pt-6 pb-32 max-w-2xl w-full mx-auto">
-            <View className={`self-start px-3 py-1 rounded-full mb-3 ${coresDoGenero(resumo.genero).bg}`}>
-              <Text className={`text-xs font-semibold uppercase tracking-wide ${coresDoGenero(resumo.genero).texto}`}>{resumo.genero}</Text>
-            </View>
+            <Tooltip titulo={resumo.genero} descricao={descricaoDoGenero(resumo.genero)}>
+              <View className={`self-start flex-row items-center gap-1 px-3 py-1 rounded-full mb-3 ${coresDoGenero(resumo.genero).bg}`}>
+                <Text className={`text-xs font-semibold uppercase tracking-wide ${coresDoGenero(resumo.genero).texto}`}>{resumo.genero}</Text>
+                <Text className={`text-[10px] ${coresDoGenero(resumo.genero).texto}`}>ⓘ</Text>
+              </View>
+            </Tooltip>
             <Text className="text-4xl font-extrabold text-cor-texto dark:text-cor-texto-dark mb-2 leading-tight">
               {resumo.nome}
             </Text>

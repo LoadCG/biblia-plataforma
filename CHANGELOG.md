@@ -3,6 +3,11 @@
 Todas as mudanças notáveis feitas no projeto serão documentadas neste arquivo.
 O formato é baseado no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/).
 
+## [Unreleased] - 2026-08-11 (continuação 3)
+
+### Adicionado
+- **Mensagens de erro amigáveis** (pedido do usuário): novo `ErroBusca` classifica falhas de busca bíblica em `limite`/`rede`/`timeout`/`invalido`/`desconhecido`, e `core/util/erroAmigavel.ts` traduz cada um numa frase sem jargão técnico. Confirmado na prática que a bible-api.com bloqueia com HTTP 429 acima de ~13-15 requisições rápidas (bate com a estimativa do usuário). Mensagem específica pro limite: "Devagar aí! Muitos capítulos em pouco tempo — espera meio minuto e tenta de novo." `limite` e `invalido` não acionam retry automático (insistir não ajuda nesses casos). Aplicado na leitura de capítulo, cards de tema (Descubra) e popover de referências do resumo. Testado ao vivo simulando cada tipo de falha via `fetch` mockado; testes automatizados novos cobrem a classificação.
+
 ## [Unreleased] - 2026-08-11 (continuação 2)
 
 ### Adicionado

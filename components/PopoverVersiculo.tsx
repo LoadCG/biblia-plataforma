@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { ActivityIndicator, Modal, Pressable, ScrollView, Text, View } from "react-native";
 import { buscarReferencia } from "../core/biblia/BibliaAPI";
 import type { CapituloTexto } from "../core/biblia/tipos";
+import { mensagemErroAmigavel } from "../core/util/erroAmigavel";
 
 type Props = {
   referencia: string;
@@ -19,7 +20,7 @@ type Props = {
 export function PopoverVersiculo({ referencia, refCapitulo, onFechar }: Props) {
   const [refAtual, setRefAtual] = useState(referencia);
   const [dados, setDados] = useState<CapituloTexto | null>(null);
-  const [erro, setErro] = useState(false);
+  const [erro, setErro] = useState<string | null>(null);
 
   useEffect(() => {
     setRefAtual(referencia);
@@ -27,10 +28,10 @@ export function PopoverVersiculo({ referencia, refCapitulo, onFechar }: Props) {
 
   useEffect(() => {
     setDados(null);
-    setErro(false);
+    setErro(null);
     buscarReferencia(refAtual)
       .then(setDados)
-      .catch(() => setErro(true));
+      .catch((e) => setErro(mensagemErroAmigavel(e)));
   }, [refAtual]);
 
   return (
@@ -50,9 +51,7 @@ export function PopoverVersiculo({ referencia, refCapitulo, onFechar }: Props) {
           </View>
 
           {erro ? (
-            <Text className="text-cor-texto-suave dark:text-cor-texto-suave-dark">
-              Não foi possível carregar este trecho agora. Tente de novo em instantes.
-            </Text>
+            <Text className="text-cor-texto-suave dark:text-cor-texto-suave-dark">{erro}</Text>
           ) : !dados ? (
             <ActivityIndicator />
           ) : (

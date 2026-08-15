@@ -36,6 +36,21 @@ async function buscarComTimeout(url: string): Promise<Response> {
   }
 }
 
+// Erro classificado pra poder mostrar uma mensagem amigável na tela
+// (ver core/util/erroAmigavel.ts) em vez de um texto genérico de
+// "algo deu errado" pra qualquer causa. "limite" e "invalido" não são
+// transitórios — tentar de novo imediatamente não ajuda (a
+// bible-api.com bloqueia por ~30s acima de ~15 requisições, então
+// insistir só piora) — só "rede"/"timeout"/"desconhecido" são
+// re-tentados automaticamente em buscarWeb.
+export class ErroBusca extends Error {
+  tipo: "limite" | "rede" | "timeout" | "invalido" | "desconhecido";
+  constructor(tipo: ErroBusca["tipo"], mensagem: string) {
+    super(mensagem);
+    this.tipo = tipo;
+  }
+}
+
 // A bible-api.com é uma API pública gratuita, sem SLA — falhas
 // transitórias (timeout, 5xx) acontecem. Poucas tentativas com um
 // pequeno intervalo (não é um backoff exponencial elaborado, só o
@@ -49,10 +64,24 @@ async function buscarWeb(ref: string): Promise<CapituloTexto> {
   let ultimoErro: unknown;
   for (let tentativa = 1; tentativa <= TENTATIVAS; tentativa++) {
     try {
-      const resposta = await buscarComTimeout(`${BASE_URL}${encodeURIComponent(chave)}?translation=almeida`);
-      if (!resposta.ok) throw new Error(`Falha ao buscar ${chave} (status ${resposta.status})`);
+      let resposta: Response;
+      try {
+        resposta = await buscarComTimeout(`${BASE_URL}${encodeURIComponent(chave)}?translation=almeida`);
+      } catch (erroFetch) {
+        if (erroFetch instanceof DOMException && erroFetch.name === "AbortError") {
+          throw new ErroBusca("timeout", `Tempo esgotado ao buscar ${chave}`);
+        }
+        throw new ErroBusca("rede", `Falha de rede ao buscar ${chave}`);
+      }
+
+      if (resposta.status === 429) {
+        throw new ErroBusca("limite", "Muitas requisições em pouco tempo (rate limit da bible-api.com)");
+      }
+      if (!resposta.ok) {
+        throw new ErroBusca("desconhecido", `Falha ao buscar ${chave} (status ${resposta.status})`);
+      }
       const dados = await resposta.json();
-      if (dados.error) throw new Error(dados.error);
+      if (dados.error) throw new ErroBusca("invalido", dados.error);
 
       const resultado: CapituloTexto = {
         referencia: dados.reference,
@@ -76,7 +105,10 @@ async function buscarWeb(ref: string): Promise<CapituloTexto> {
       return resultado;
     } catch (erro) {
       ultimoErro = erro;
-      if (tentativa < TENTATIVAS) await aguardar(600 * tentativa);
+      const tipo = erro instanceof ErroBusca ? erro.tipo : "desconhecido";
+      const transitorio = tipo === "rede" || tipo === "timeout" || tipo === "desconhecido";
+      if (!transitorio || tentativa === TENTATIVAS) break;
+      await aguardar(600 * tentativa);
     }
   }
   throw ultimoErro;
@@ -94,7 +126,7 @@ export async function buscarReferencia(ref: string): Promise<CapituloTexto> {
   
   // Parse da referência com regex para suportar nomes com espaços (ex: "1 Samuel 1:5" ou "Cântico dos Cânticos 2:1-3")
   const match = chave.match(/(.+?)\s+(\d+)(?::(\d+)(?:-(\d+))?)?$/);
-  if (!match) throw new Error(`Referência inválida: ${chave}`);
+  if (!match) throw new ErroBusca("invalido", `Referência inválida: ${chave}`);
   
   const nomeLivroRaw = match[1].trim();
   const capituloNum = parseInt(match[2], 10);
@@ -108,7 +140,7 @@ export async function buscarReferencia(ref: string): Promise<CapituloTexto> {
   );
   
   if (!livroEncontrado || !livroEncontrado.abreviacao) {
-    throw new Error(`Livro não encontrado para a referência: ${chave}`);
+    throw new ErroBusca("invalido", `Livro não encontrado para a referência: ${chave}`);
   }
   
   const livroSlug = livroEncontrado.abreviacao; // ex: "gn", "1sm"
@@ -120,7 +152,7 @@ export async function buscarReferencia(ref: string): Promise<CapituloTexto> {
       [livroSlug, capituloNum, versiculoInicial, versiculoFinal]
     );
 
-    if (resultado.length === 0) throw new Error(`Falha ao buscar ${chave}`);
+    if (resultado.length === 0) throw new ErroBusca("invalido", `Falha ao buscar ${chave}`);
     
     const textoCompleto = resultado.map(r => r.texto).join(" ");
     const sufixoRef = versiculoInicial === versiculoFinal ? `${versiculoInicial}` : `${versiculoInicial}-${versiculoFinal}`;
@@ -137,7 +169,7 @@ export async function buscarReferencia(ref: string): Promise<CapituloTexto> {
       [livroSlug, capituloNum]
     );
 
-    if (resultados.length === 0) throw new Error(`Falha ao buscar ${chave}`);
+    if (resultados.length === 0) throw new ErroBusca("invalido", `Falha ao buscar ${chave}`);
 
     const textoCompleto = resultados.map(r => r.texto).join(" ");
     

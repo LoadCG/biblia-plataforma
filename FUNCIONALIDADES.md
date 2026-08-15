@@ -219,6 +219,43 @@ fica registrado que o app depende de uma API de terceiros sem SLA pra
 essa funcionalidade central, e o proxy/cache de servidor planejado
 (Decisão 4 do `PLANO-PLATAFORMA.md`) resolveria isso de vez.
 
+**Mensagens de erro amigáveis (2026-08-11, pedido do usuário):** a
+causa exata da instabilidade acima ficou clara depois — a
+`bible-api.com` bloqueia com HTTP 429 acima de ~13-15 requisições em
+poucos segundos (confirmado na prática: 20 requisições em sequência
+via `curl` retornaram 200 até a 13ª, 429 dali em diante — bate com a
+estimativa do usuário de "15 a cada 30 segundos"). Novo `ErroBusca`
+(`core/biblia/BibliaAPI.ts`) classifica todo erro de busca em 5 tipos
+— `limite` (429), `rede` (falha de conexão), `timeout` (nossos
+próprios 10s esgotados), `invalido` (referência/livro não encontrado)
+e `desconhecido` — e `core/util/erroAmigavel.ts` (novo) traduz cada
+um pra uma frase em tom de conversa, sem jargão técnico:
+- **Limite:** "Devagar aí! Muitos capítulos em pouco tempo — espera
+  meio minuto e tenta de novo." (pedido específico do usuário)
+- **Rede:** "Sem conexão com a internet agora. Verifique sua rede e
+  tente de novo."
+- **Timeout:** "A conexão está lenta no momento. Tente de novo em
+  instantes."
+- **Referência inválida:** "Não encontramos esse texto bíblico. Tente
+  novamente ou volte e escolha outro capítulo."
+- **Desconhecido:** "Algo deu errado ao carregar. Tente de novo em
+  instantes."
+
+Importante: só `rede`/`timeout`/`desconhecido` acionam o retry
+automático de 3 tentativas (ver acima) — `limite` e `invalido` **não**
+são tentados de novo automaticamente, porque insistir não ajuda
+(bater de novo durante um bloqueio de rate limit só piora, e uma
+referência inválida vai continuar inválida). Aplicado nas três telas
+que buscam texto bíblico e mostram erro pro usuário: leitura de
+capítulo, `CardVersiculoTema.tsx` (cards de tema no Descubra — o ponto
+de maior risco de rate limit, já que abre vários versículos de uma
+vez) e `PopoverVersiculo.tsx` (referências clicáveis no resumo).
+Testado ao vivo simulando cada tipo de falha via `fetch` mockado no
+navegador: as 4 mensagens (limite, rede, timeout, recuperação normal)
+apareceram corretas na tela de leitura. Testes automatizados novos
+(`BibliaAPI.web.test.ts`, `erroAmigavel.test.ts`) cobrem a
+classificação e a ausência de retry em `limite`/`invalido`.
+
 ### 2.2c Tamanho de fonte na leitura do capítulo `✅`
 **Funcionalidade:** controle A-/A+ no cabeçalho da leitura, 3 passos
 (15/17/19px), aplicado ao texto do capítulo inteiro. Persistido por

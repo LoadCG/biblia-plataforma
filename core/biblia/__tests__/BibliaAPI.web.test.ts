@@ -1,4 +1,4 @@
-import { buscarReferencia } from "../BibliaAPI";
+import { buscarReferencia, ErroBusca } from "../BibliaAPI";
 
 jest.mock("react-native", () => ({
   Platform: { OS: "web" },
@@ -46,5 +46,37 @@ describe("BibliaAPI (web) - retry em falha transitória", () => {
 
     await expect(buscarReferencia("Gênesis 99")).rejects.toThrow();
     expect(fetchMock).toHaveBeenCalledTimes(3);
+  }, 10000);
+
+  it("classifica 429 como limite e NÃO tenta de novo (evita piorar o rate limit)", async () => {
+    const fetchMock = jest.fn().mockResolvedValue({ ok: false, status: 429, json: async () => ({}) } as unknown as Response);
+    globalThis.fetch = fetchMock as unknown as typeof fetch;
+
+    let erroCapturado: unknown;
+    try {
+      await buscarReferencia("Êxodo 1");
+    } catch (e) {
+      erroCapturado = e;
+    }
+
+    expect(erroCapturado).toBeInstanceOf(ErroBusca);
+    expect((erroCapturado as ErroBusca).tipo).toBe("limite");
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+  }, 10000);
+
+  it("classifica referência inexistente (dados.error da API) como inválido, sem repetir", async () => {
+    const fetchMock = jest.fn().mockResolvedValue({ ok: true, json: async () => ({ error: "not found" }) } as unknown as Response);
+    globalThis.fetch = fetchMock as unknown as typeof fetch;
+
+    let erroCapturado: unknown;
+    try {
+      await buscarReferencia("LivroFalso 1");
+    } catch (e) {
+      erroCapturado = e;
+    }
+
+    expect(erroCapturado).toBeInstanceOf(ErroBusca);
+    expect((erroCapturado as ErroBusca).tipo).toBe("invalido");
+    expect(fetchMock).toHaveBeenCalledTimes(1);
   }, 10000);
 });

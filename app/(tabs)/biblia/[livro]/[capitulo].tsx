@@ -31,6 +31,7 @@ import { grifosRepository, notasRepository, progressoRepository, versiculosSalvo
 import { falarCapitulo, pararAudio, suportaAudio } from "../../../../core/leitura/audio";
 import { alternarTema } from "../../../../core/theme";
 import { gerarImagemVersiculo, suportaImagemVersiculo } from "../../../../core/util/gerarImagemVersiculo";
+import { mensagemErroAmigavel } from "../../../../core/util/erroAmigavel";
 import { linkVersiculo } from "../../../../core/util/linkVersiculo";
 import { mostrarToast } from "../../../../core/util/toast";
 import { useOwnerId } from "../../../../core/useOwnerId";
@@ -60,7 +61,7 @@ export default function Leitura() {
         : null;
 
   const [dados, setDados] = useState<CapituloTexto | null>(null);
-  const [erro, setErro] = useState(false);
+  const [erro, setErro] = useState<string | null>(null);
   const [grifos, setGrifos] = useState<Map<number, string | undefined>>(new Map());
   const [salvos, setSalvos] = useState<Set<number>>(new Set());
   const [focoAtivo, setFocoAtivo] = useState(false);
@@ -150,10 +151,10 @@ export default function Leitura() {
   function carregarCapitulo() {
     if (!valido || !livro) return;
     setDados(null);
-    setErro(false);
+    setErro(null);
     buscarReferencia(`${livro.nome} ${capitulo}`)
       .then(setDados)
-      .catch(() => setErro(true));
+      .catch((e) => setErro(mensagemErroAmigavel(e)));
   }
 
   useEffect(carregarCapitulo, [valido, livro, capitulo]);
@@ -465,9 +466,7 @@ export default function Leitura() {
 
           {erro ? (
             <View className="items-start gap-3">
-              <Text className="text-cor-texto-suave dark:text-cor-texto-suave-dark">
-                Não foi possível carregar este capítulo agora. Verifique sua conexão e tente de novo.
-              </Text>
+              <Text className="text-cor-texto-suave dark:text-cor-texto-suave-dark">{erro}</Text>
               <Pressable
                 onPress={carregarCapitulo}
                 className="px-4 py-2 rounded-full bg-cor-destaque dark:bg-cor-destaque-dark"

@@ -4,6 +4,7 @@ import { Link } from "expo-router";
 import { buscarReferencia } from "../core/biblia/BibliaAPI";
 import type { CapituloTexto } from "../core/biblia/tipos";
 import { livros } from "../core/content/livros";
+import { mensagemErroAmigavel } from "../core/util/erroAmigavel";
 
 function getLinkHref(ref: string): any {
   const match = ref.match(/(.+?)\s+(\d+):(\d+)/);
@@ -25,14 +26,14 @@ function getLinkHref(ref: string): any {
 
 export function CardVersiculoTema({ referencia }: { referencia: string }) {
   const [dados, setDados] = useState<CapituloTexto | null>(null);
-  const [erro, setErro] = useState(false);
+  const [erro, setErro] = useState<string | null>(null);
 
   useEffect(() => {
     setDados(null);
-    setErro(false);
+    setErro(null);
     buscarReferencia(referencia)
       .then(setDados)
-      .catch(() => setErro(true));
+      .catch((e) => setErro(mensagemErroAmigavel(e)));
   }, [referencia]);
 
   const href = getLinkHref(referencia);
@@ -43,9 +44,7 @@ export function CardVersiculoTema({ referencia }: { referencia: string }) {
       style={{ shadowColor: "#000", shadowOpacity: 0.06, shadowRadius: 4, shadowOffset: { width: 0, height: 1 } }}
     >
       {erro ? (
-        <Text className="text-cor-texto-suave dark:text-cor-texto-suave-dark">
-          Não foi possível carregar {referencia} agora.
-        </Text>
+        <Text className="text-cor-texto-suave dark:text-cor-texto-suave-dark">{erro}</Text>
       ) : !dados ? (
         <ActivityIndicator />
       ) : (

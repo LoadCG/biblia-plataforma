@@ -438,8 +438,18 @@ automaticamente, reaproveitando as posições já medidas via `onLayout`.
 ### 3.2 Versículo do dia `✅`
 **Funcionalidade:** lista curada de 40 versículos (`core/biblia/versiculoDoDia.ts`),
 escolha determinística pelo dia do ano, busca o texto real via
-`BibliaAPI` (reaproveitando o cache já existente). Se a API estiver fora
-do ar, o card simplesmente não aparece, sem quebrar a home. As 4 ações
+`BibliaAPI` (reaproveitando o cache já existente). Se a busca falhar, o
+card agora mostra a mensagem de erro amigável (ver 2.2 —
+`mensagemErroAmigavel`) com botão "Tentar novamente", em vez de somir
+da tela sem explicação (comportamento anterior). **Não testado ao vivo
+no navegador** — o tab navigator do Expo Router mantém a Início
+montada em segundo plano ao trocar de aba, então simular a falha via
+`fetch` mockado e trocar de aba pra forçar remontagem não funcionou
+neste ambiente de teste (o componente não desmonta). A lógica
+compartilhada (`buscarReferencia` + `mensagemErroAmigavel`) já foi
+validada por testes automatizados e ao vivo na tela de leitura
+(mesmo pipeline, idêntico) — confiança alta, mas fica registrado que
+este componente específico não foi confirmado visualmente. As 4 ações
 do rodapé do card (Amém/Anotar/Enviar/Mais), que antes eram só
 decoração sem `onPress` nenhum (achado numa auditoria de UI —
 pareciam totalmente funcionais e não faziam nada), agora são reais:

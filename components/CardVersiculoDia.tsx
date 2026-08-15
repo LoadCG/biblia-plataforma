@@ -9,6 +9,7 @@ import { referenciaDoDia } from "../core/biblia/versiculoDoDia";
 import type { CapituloTexto } from "../core/biblia/tipos";
 import { compartilhar } from "../core/estatisticas/compartilhador";
 import { notasRepository, versiculosSalvosRepository } from "../core/repositories";
+import { mensagemErroAmigavel } from "../core/util/erroAmigavel";
 import { linkVersiculo } from "../core/util/linkVersiculo";
 import { useOwnerId } from "../core/useOwnerId";
 import { MenuAcoes, type AcaoMenu } from "./MenuAcoes";
@@ -18,7 +19,7 @@ export function CardVersiculoDia() {
   const [referencia] = useState(() => referenciaDoDia());
   const [dados, setDados] = useState<CapituloTexto | null>(null);
   const [carregando, setCarregando] = useState(true);
-  const [erro, setErro] = useState(false);
+  const [erro, setErro] = useState<string | null>(null);
   const ownerId = useOwnerId();
   const ref = parseReferenciaVersiculo(referencia);
   const [salvo, setSalvo] = useState(false);
@@ -26,14 +27,16 @@ export function CardVersiculoDia() {
   const [notaTexto, setNotaTexto] = useState("");
   const [menuAberto, setMenuAberto] = useState(false);
 
-  useEffect(() => {
+  function carregarVersiculo() {
     setCarregando(true);
-    setErro(false);
+    setErro(null);
     buscarReferencia(referencia)
       .then(setDados)
-      .catch(() => setErro(true))
+      .catch((e) => setErro(mensagemErroAmigavel(e)))
       .finally(() => setCarregando(false));
-  }, [referencia]);
+  }
+
+  useEffect(carregarVersiculo, [referencia]);
 
   useEffect(() => {
     if (!ownerId || !ref) return;
@@ -57,7 +60,24 @@ export function CardVersiculoDia() {
     ...(ref ? [{ label: "Resumo do livro", onPress: () => router.push(`/resumos/${ref.livroSlug}`) }] : []),
   ];
 
-  if (erro) return null;
+  if (erro) {
+    return (
+      <View className="rounded-3xl overflow-hidden mb-4 shadow-sm bg-black">
+        <LinearGradient
+          colors={["#332920", "#241d16", "#1b1712"]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          className="w-full p-5 items-start gap-3"
+        >
+          <Text className="text-white/90 text-xs font-semibold uppercase tracking-widest">Versículo do Dia</Text>
+          <Text className="text-white/80 text-sm">{erro}</Text>
+          <Pressable onPress={carregarVersiculo} className="px-4 py-2 rounded-full bg-white/10">
+            <Text className="text-white font-semibold text-sm">Tentar novamente</Text>
+          </Pressable>
+        </LinearGradient>
+      </View>
+    );
+  }
 
   return (
     <View className="rounded-3xl overflow-hidden mb-4 shadow-sm bg-black">

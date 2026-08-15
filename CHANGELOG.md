@@ -3,6 +3,11 @@
 Todas as mudanças notáveis feitas no projeto serão documentadas neste arquivo.
 O formato é baseado no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/).
 
+## [Unreleased] - 2026-08-11 (continuação 4)
+
+### Modificado
+- **Erro amigável no card do Versículo do Dia**: em vez de somir da tela sem explicação quando a busca falha, agora mostra a mensagem de erro amigável com botão "Tentar novamente" — mesmo padrão já aplicado na leitura de capítulo. Lógica validada por testes automatizados; não confirmado ao vivo neste componente específico (limitação do ambiente de teste, ver FUNCIONALIDADES.md 3.2).
+
 ## [Unreleased] - 2026-08-11 (continuação 3)
 
 ### Adicionado

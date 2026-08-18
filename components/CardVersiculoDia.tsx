@@ -55,9 +55,9 @@ export function CardVersiculoDia() {
   }
 
   const acoesMais: AcaoMenu[] = [
-    { label: "Copiar", onPress: () => compartilhar(textoParaCompartilhar()) },
-    ...(ref ? [{ label: "Ver capítulo inteiro", onPress: () => router.push(`/biblia/${ref.livroSlug}/${ref.capitulo}?versiculo=${ref.versiculo}`) }] : []),
-    ...(ref ? [{ label: "Resumo do livro", onPress: () => router.push(`/resumos/${ref.livroSlug}`) }] : []),
+    { label: "Copiar", icone: "content-copy", onPress: () => compartilhar(textoParaCompartilhar()) },
+    ...(ref ? [{ label: "Ver capítulo inteiro", icone: "menu-book" as const, onPress: () => router.push(`/biblia/${ref.livroSlug}/${ref.capitulo}?versiculo=${ref.versiculo}`) }] : []),
+    ...(ref ? [{ label: "Resumo do livro", icone: "auto-stories" as const, onPress: () => router.push(`/resumos/${ref.livroSlug}`) }] : []),
   ];
 
   if (erro) {
@@ -88,25 +88,19 @@ export function CardVersiculoDia() {
           reportado por um usuário). Sem fonte externa não curada,
           zero risco de conteúdo indevido aparecer aqui. */}
       <LinearGradient
-        colors={["#332920", "#241d16", "#1b1712"]}
+        colors={["#40331f", "#241d16", "#141210"]}
         start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
+        end={{ x: 0.3, y: 1 }}
         className="w-full h-[450px]"
       >
 
         <View className="p-5 flex-1 justify-between">
           {/* Header do Card */}
           <View>
-            <Text 
-              className="text-white/90 text-xs font-semibold uppercase tracking-widest mb-1"
-              style={{ textShadowColor: 'rgba(0,0,0,0.8)', textShadowOffset: { width: 0, height: 1 }, textShadowRadius: 3 }}
-            >
+            <Text className="text-white/90 text-xs font-semibold uppercase tracking-widest mb-1">
               Versículo do Dia
             </Text>
-            <Text 
-              className="text-white font-bold text-sm"
-              style={{ textShadowColor: 'rgba(0,0,0,0.8)', textShadowOffset: { width: 0, height: 1 }, textShadowRadius: 3 }}
-            >
+            <Text className="text-white font-bold text-sm">
               {carregando ? "Carregando..." : dados?.referencia}
             </Text>
           </View>
@@ -121,9 +115,9 @@ export function CardVersiculoDia() {
                 style={{
                   fontFamily: "serif",
                   lineHeight: 29,
-                  textShadowColor: 'rgba(0, 0, 0, 0.9)',
-                  textShadowOffset: { width: 0, height: 2 },
-                  textShadowRadius: 8
+                  textShadowColor: 'rgba(0, 0, 0, 0.4)',
+                  textShadowOffset: { width: 0, height: 1 },
+                  textShadowRadius: 2
                 }}
               >
                 {dados?.texto}
@@ -169,10 +163,10 @@ export function CardVersiculoDia() {
             <Pressable
               disabled
               accessibilityLabel="Enviar versículo diariamente (em breve)"
-              className="w-full bg-white/10 rounded-full py-3 items-center justify-center flex-row gap-2 opacity-40"
+              className="self-end bg-white/10 rounded-full px-3.5 py-1.5 items-center justify-center flex-row gap-1.5 opacity-40"
             >
-              <MaterialIcons name="notifications-none" size={18} color="white" />
-              <Text className="text-white text-sm font-semibold">Envie-me Diariamente (em breve)</Text>
+              <MaterialIcons name="notifications-none" size={14} color="white" />
+              <Text className="text-white text-xs font-semibold">Envie-me diariamente (em breve)</Text>
             </Pressable>
           </View>
         </View>

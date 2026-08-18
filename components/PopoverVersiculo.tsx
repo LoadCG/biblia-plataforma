@@ -45,8 +45,12 @@ export function PopoverVersiculo({ referencia, refCapitulo, onFechar }: Props) {
             <Text className="text-base font-bold text-cor-texto dark:text-cor-texto-dark flex-1 mr-3">
               {dados?.referencia ?? refAtual}
             </Text>
-            <Pressable onPress={onFechar} hitSlop={8} className="active:opacity-60">
-              <Text className="text-cor-texto-suave dark:text-cor-texto-suave-dark text-lg">✕</Text>
+            <Pressable
+              onPress={onFechar}
+              accessibilityLabel="Fechar"
+              className="w-8 h-8 items-center justify-center rounded-full bg-cor-borda dark:bg-cor-borda-dark active:opacity-70"
+            >
+              <Text className="text-cor-texto-suave dark:text-cor-texto-suave-dark text-sm">✕</Text>
             </Pressable>
           </View>
 

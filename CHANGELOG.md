@@ -3,6 +3,33 @@
 Todas as mudanças notáveis feitas no projeto serão documentadas neste arquivo.
 O formato é baseado no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/).
 
+## [Unreleased] - 2026-08-18 (continuação 2)
+
+### Corrigido
+Auditoria de UI componente por componente (ver `PLANO-UI-COMPONENTES.md`
+pra lista completa e itens que ficaram em aberto), itens 🔴/🟡 já
+implementados e testados ao vivo:
+- **`CardVersiculoDia`**: sombra de texto excessiva (resquício de quando
+  o fundo era foto variável, hoje é ruído sobre gradiente já escuro)
+  reduzida a uma sombra sutil só no texto do versículo; gradiente com
+  mais contraste de luminosidade (era quase cor sólida); botão "Envie-me
+  Diariamente" (feature que não existe ainda) virou um chip pequeno
+  alinhado à direita em vez de uma barra full-width competindo
+  visualmente com as ações reais (Amém/Anotar/Enviar/Mais).
+- **`CardConquistas`**: badge de progresso das medalhas não-conquistadas
+  usava `bg-black/60` fixo (contraste garantido só por coincidência) —
+  trocado por tokens do tema; anel dos círculos de medalha de `border-4`
+  pra `border-2` (proporção mais fina pro tamanho de 80px); "Saiba mais"
+  ganhou sublinhado pontilhado (mesma linguagem visual de referência
+  tocável já usada em `TextoComReferencias`).
+- **`MenuAcoes`**: bottom sheet de ações (usado por `CardVersiculoDia` e
+  `CardAtividade`) ganhou ícone opcional (`MaterialIcons`) ao lado de
+  cada label — "Copiar", "Ler", "Compartilhar" etc. agora têm ícone,
+  facilitando o scan rápido.
+- **`PopoverVersiculo`**: botão fechar "✕" (só texto solto no canto)
+  virou um botão circular com fundo sutil, padronizado com o resto do
+  app.
+
 ## [Unreleased] - 2026-08-18 (continuação)
 
 ### Corrigido

@@ -21,7 +21,7 @@ export function CardConquistas({ conquistas }: { conquistas: Conquista[] }) {
           return (
             <Pressable key={c.id} onPress={() => setConquistaAberta(c)} className="items-center flex-1 active:opacity-70">
               <View
-                className={`w-20 h-20 rounded-full items-center justify-center mb-3 border-4 ${
+                className={`w-20 h-20 rounded-full items-center justify-center mb-3 border-2 ${
                   completa
                     ? 'bg-cor-destaque/20 border-cor-destaque dark:border-cor-destaque-dark'
                     : 'bg-cor-borda dark:bg-cor-borda-dark border-transparent'
@@ -33,15 +33,15 @@ export function CardConquistas({ conquistas }: { conquistas: Conquista[] }) {
                   color={completa ? '#e0a75e' : '#9ca3af'}
                 />
                 {!completa && (
-                  <View className="absolute bottom-1 bg-black/60 px-2 rounded-full">
-                    <Text className="text-[10px] text-white font-bold">{c.progressoAtual}</Text>
+                  <View className="absolute bottom-1 bg-cor-fundo/80 dark:bg-cor-fundo-dark/80 px-2 rounded-full">
+                    <Text className="text-[10px] text-cor-texto dark:text-cor-texto-dark font-bold">{c.progressoAtual}</Text>
                   </View>
                 )}
               </View>
               <Text className="text-xs font-semibold text-cor-texto dark:text-cor-texto-dark text-center leading-tight mb-1">
                 {c.titulo}
               </Text>
-              <Text className="text-[10px] text-cor-destaque dark:text-cor-destaque-dark text-center">
+              <Text className="text-[10px] text-cor-destaque dark:text-cor-destaque-dark text-center underline decoration-dotted">
                 Saiba mais
               </Text>
             </Pressable>

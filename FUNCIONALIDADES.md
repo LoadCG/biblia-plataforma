@@ -118,12 +118,16 @@ fica presa sem controles de navegação.
 ## 2. Leitura bíblica
 
 ### 2.1 Escolher livro → capítulo `✅`
-**Funcionalidade:** dois passos reais de seleção, hoje em
-`app/(tabs)/biblia/escolher/index.tsx` → `escolher/[livro]/index.tsx`
-(movidos da raiz da aba Bíblia na Fase 3 do plano de navegação — a aba
-em si abre direto na última leitura, o seletor é alcançado tocando no
-nome do livro durante a leitura, ver 9.3), com contagem de capítulos
-correta por livro (tabela fixa). Não existe uma terceira tela de
+**Funcionalidade:** uma tela só, `app/(tabs)/biblia/escolher/index.tsx`
+— lista de livros em acordeão, cada um expandindo a grade de capítulos
+inline (a tela separada `escolher/[livro]/index.tsx`, que mostrava um
+único livro já expandido, foi **removida em 2026-08-18** por ter ficado
+redundante e ser a "rota antiga" que os links de troca de livro durante
+a leitura ainda apontavam por engano — ver bug abaixo). O acordeão
+abre com o último livro lido já expandido, ou com o livro passado via
+`?livro=slug` na URL, usado por quem chega vindo da tela de leitura
+(ver 9.3). Contagem de capítulos correta por livro (tabela fixa). Não
+existe uma terceira tela de
 "escolher versículo" — o foco num versículo específico só acontece via
 parâmetro de URL (`?versiculo=N`) direto na tela de leitura (ver 2.2),
 nunca por uma grade navegável de versículos.
@@ -959,14 +963,35 @@ registrado como padrão a seguir em `PLANO-NAVEGACAO.md`.
 fixa no rodapé `← Livro Capítulo →` substitui os cards
 "Anterior/Próximo" do fim da página antiga — setas usam `router.replace`
 (decisão de não empilhar histórico por capítulo, ver PLANO-NAVEGACAO.md
-item 1.4); tocar no nome do livro abre `/biblia/escolher/[livro]` como
-modal. Testado com dado real: navegar até Gênesis 6 e reabrir a aba
-Bíblia depois confirma que volta direto pra Gênesis 6.
+item 1.4); tocar no nome do livro abre `/biblia/escolher?livro=slug`
+como modal — a lista completa de livros, já com o livro atual expandido
+na grade de capítulos (ver 2.1). Testado com dado real: navegar até
+Gênesis 6 e reabrir a aba Bíblia depois confirma que volta direto pra
+Gênesis 6.
 **UX/UI:** barra sempre visível, sem precisar rolar até o fim pra
 trocar de capítulo. **Limitação conhecida:** a apresentação modal do
 seletor não cobre visualmente a barra de abas no web (cobre no
 nativo/iOS/Android) — funcional nos dois casos, só o efeito visual não
 é idêntico entre plataformas; registrado como ajuste fino pendente.
+
+**Bug real, reportado várias vezes por usuário até ser corrigido
+(2026-08-18):** tocar no nome do livro na barra `← Livro Capítulo →`
+levava para `/biblia/escolher/[slug]` — rota que renderiza
+`escolher/[livro]/index.tsx`, uma tela modal de um único livro que já
+deveria ter sido removida numa correção anterior (só o link *de dentro*
+dela — "← Trocar de livro" — tinha sido corrigido antes, não os dois
+links que apontavam *para* ela a partir da tela de leitura). Corrigido:
+os dois links (barra de navegação e tela de "capítulo não encontrado")
+agora vão para `/biblia/escolher?livro=slug`, e `escolher/index.tsx`
+passou a ler esse parâmetro pra decidir qual livro expandir (antes só
+expandia o último lido, via `carregarUltimaLeitura()` — o que é
+diferente do livro que o usuário está lendo no momento, se ele navegou
+por capítulos antigos). A tela `escolher/[livro]/index.tsx` e seu
+registro no `Stack` (`app/(tabs)/biblia/_layout.tsx`) foram removidos
+por não ter mais nenhum link apontando pra ela. Testado ao vivo: em
+Deuteronômio 3, tocar no nome do livro leva a
+`/biblia/escolher?livro=05-deuteronomio`, mostrando a lista completa de
+livros com Deuteronômio já expandido na grade 1-34.
 
 ### 9.4 Pesquisa: temas pré-definidos `✅`
 **Funcionalidade:** barra de busca reaproveitando `buscarLivros` de

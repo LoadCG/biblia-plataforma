@@ -15,7 +15,6 @@ export default function BibliaLayout() {
     <Stack screenOptions={{ headerShown: false }}>
       <Stack.Screen name="index" />
       <Stack.Screen name="escolher/index" options={{ presentation: "modal" }} />
-      <Stack.Screen name="escolher/[livro]/index" options={{ presentation: "modal" }} />
       <Stack.Screen name="[livro]/[capitulo]" />
     </Stack>
   );

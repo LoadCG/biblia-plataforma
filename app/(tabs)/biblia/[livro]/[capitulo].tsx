@@ -231,7 +231,7 @@ export default function Leitura() {
         <MaterialIcons name="error-outline" size={48} className="text-cor-texto-suave dark:text-cor-texto-suave-dark mb-4" />
         <Text className="text-xl font-bold text-cor-texto dark:text-cor-texto-dark mb-2 text-center">Capítulo não encontrado</Text>
         <Text className="text-cor-texto-suave dark:text-cor-texto-suave-dark mb-6 text-center">Parece que você tentou acessar um capítulo que não existe neste livro.</Text>
-        <Link href={livro ? `/biblia/escolher/${livro.slug}` : "/"} asChild>
+        <Link href={livro ? { pathname: "/biblia/escolher", params: { livro: livro.slug } } : "/"} asChild>
           <Pressable className="bg-cor-borda dark:bg-cor-borda-dark px-6 py-3 rounded-full active:opacity-70">
             <Text className="text-cor-texto dark:text-cor-texto-dark font-bold">Voltar para {livro ? livro.nome : "Início"}</Text>
           </Pressable>
@@ -715,7 +715,7 @@ export default function Leitura() {
               <Text className="text-lg text-cor-texto dark:text-cor-texto-dark">←</Text>
             </Pressable>
 
-          <Link href={`/biblia/escolher/${livro.slug}`} asChild>
+          <Link href={{ pathname: "/biblia/escolher", params: { livro: livro.slug } }} asChild>
             <Pressable className="flex-1 items-center px-4 py-1.5 active:opacity-60">
               <Text className="text-sm font-bold text-cor-texto dark:text-cor-texto-dark" numberOfLines={1}>
                 {livro.nome} {capitulo}

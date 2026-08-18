@@ -1,4 +1,4 @@
-import { Link, router } from "expo-router";
+import { Link, router, useLocalSearchParams } from "expo-router";
 import { useEffect, useMemo, useState } from "react";
 import { FlatList, Pressable, Text, TextInput, View } from "react-native";
 import { BotaoTema } from "../../../../components/BotaoTema";
@@ -13,16 +13,21 @@ import { useOwnerId } from "../../../../core/useOwnerId";
 const SET_VAZIO = new Set<number>();
 
 export default function EscolherLivro() {
+  const { livro: livroParaAbrir } = useLocalSearchParams<{ livro?: string }>();
   const [termo, setTermo] = useState("");
-  const [livroExpandido, setLivroExpandido] = useState<string | null>(null);
+  const [livroExpandido, setLivroExpandido] = useState<string | null>(livroParaAbrir ?? null);
   const ownerId = useOwnerId();
   const [lidosPorLivro, setLidosPorLivro] = useState<Record<string, Set<number>>>({});
 
   useEffect(() => {
+    // Se veio de "trocar livro" durante a leitura (com o slug do livro atual
+    // na URL), abre esse livro direto — não o último lido, que pode ser
+    // outro (ex.: usuário navegando por capítulos antigos).
+    if (livroParaAbrir) return;
     carregarUltimaLeitura().then((ultima) => {
       if (ultima) setLivroExpandido(ultima.livroSlug);
     });
-  }, []);
+  }, [livroParaAbrir]);
 
   useEffect(() => {
     if (!ownerId) return;

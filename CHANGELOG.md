@@ -3,6 +3,11 @@
 Todas as mudanças notáveis feitas no projeto serão documentadas neste arquivo.
 O formato é baseado no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/).
 
+## [Unreleased] - 2026-08-18
+
+### Corrigido
+- **Nome do capítulo na leitura levava pra rota antiga abolida** (reportado várias vezes pelo usuário até ser corrigido de fato): a faixa `← Livro Capítulo →` da leitura bíblica linkava o nome do livro para `/biblia/escolher/${slug}`, uma rota que renderiza `escolher/[livro]/index.tsx` — tela modal de escolha de capítulo de um único livro que já deveria ter sido abolida numa correção anterior (só o link de dentro dela tinha sido trocado, não os dois links *para* ela). Corrigido: agora os dois links (na faixa de navegação e na tela de "capítulo não encontrado") vão para `/biblia/escolher?livro=${slug}` — a lista completa de livros (`escolher/index.tsx`), já com o livro atual expandido na grade de capítulos, exatamente como as demais entradas de "trocar de livro" do app. A tela antiga `escolher/[livro]/index.tsx` e seu registro no `Stack` foram removidos por não ter mais nenhum link apontando pra ela. Testado ao vivo: clicar em "Deuteronômio 3" durante a leitura leva a `/biblia/escolher?livro=05-deuteronomio`, mostrando a lista de livros com Deuteronômio já expandido na grade 1-34.
+
 ## [Unreleased] - 2026-08-12 (continuação 2)
 
 ### Corrigido

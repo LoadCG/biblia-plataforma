@@ -102,7 +102,7 @@ export default function Inicio() {
             <Pressable
               disabled
               accessibilityLabel="Notificações (em breve)"
-              className="w-8 h-8 items-center justify-center"
+              className="w-8 h-8 items-center justify-center opacity-40"
             >
               <MaterialIcons name="notifications-none" size={24} className="text-cor-texto dark:text-cor-texto-dark" />
             </Pressable>

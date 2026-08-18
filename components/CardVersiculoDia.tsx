@@ -168,10 +168,11 @@ export function CardVersiculoDia() {
 
             <Pressable
               disabled
-              className="w-full bg-white/10 rounded-full py-3 items-center justify-center flex-row gap-2"
+              accessibilityLabel="Enviar versículo diariamente (em breve)"
+              className="w-full bg-white/10 rounded-full py-3 items-center justify-center flex-row gap-2 opacity-40"
             >
               <MaterialIcons name="notifications-none" size={18} color="white" />
-              <Text className="text-white text-sm font-semibold">Envie-me Diariamente</Text>
+              <Text className="text-white text-sm font-semibold">Envie-me Diariamente (em breve)</Text>
             </Pressable>
           </View>
         </View>

@@ -3,6 +3,11 @@
 Todas as mudanças notáveis feitas no projeto serão documentadas neste arquivo.
 O formato é baseado no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/).
 
+## [Unreleased] - 2026-08-18 (continuação)
+
+### Corrigido
+- **Botões "em breve" sem indicação visual de desabilitado**: o botão "Envie-me Diariamente" do card do Versículo do Dia e o sino de notificações do Início eram `disabled` mas continuavam com aparência 100% normal — nada indicava que não faziam nada ao tocar (heurística de Nielsen "visibilidade do estado do sistema"). Adicionado `opacity-40` aos dois, `accessibilityLabel` com "(em breve)" no sino (já existia) e no botão do card (não tinha), e o próprio texto do botão do card passou a dizer "(em breve)" explicitamente.
+
 ## [Unreleased] - 2026-08-18
 
 ### Corrigido

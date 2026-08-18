@@ -874,6 +874,18 @@ o problema de tempo de vez.
 77 (máximo, batendo com `scrollWidth - clientWidth`) durante o
 arraste, cursor virou `grabbing`, e ficou na posição depois de soltar.
 Confirmado nas três: Início, Você, e a barra de seleção da leitura.
+
+### 7.10 Botões "em breve" sem indicação visual de desabilitado `✅`
+**Funcionalidade:** auditoria componente por componente (Início →
+`components/CardVersiculoDia.tsx`) achou dois `Pressable disabled` com
+aparência idêntica a um botão normal e ativo: o sino de notificações do
+cabeçalho e "Envie-me Diariamente" no card do Versículo do Dia. Nenhum
+dos dois tinha pista visual (heurística de Nielsen "visibilidade do
+estado do sistema") — só o `accessibilityLabel` do sino mencionava "em
+breve", e nem isso existia no botão do card. Corrigido: `opacity-40`
+nos dois, `accessibilityLabel` no botão do card, e o próprio texto
+visível passou a dizer "(em breve)" explicitamente. Confirmado ao vivo
+via `getComputedStyle` (`opacity: 0.4`) e leitura do texto renderizado.
 **UX/UI:** cursor `grab` (mão aberta) ao passar o mouse sobre a área
 rolável, `grabbing` (mão fechada) durante o arraste — mesma
 convenção visual já esperada de qualquer carrossel/galeria horizontal

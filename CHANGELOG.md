@@ -3,6 +3,11 @@
 Todas as mudanças notáveis feitas no projeto serão documentadas neste arquivo.
 O formato é baseado no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/).
 
+## [Unreleased] - 2026-08-12 (continuação 2)
+
+### Corrigido
+- **Carrosséis horizontais não arrastáveis com mouse** (reportado por usuário: "o Continue lendo parece um carrossel mas não desliza no PC"): as três `ScrollView horizontal` do app (Início, Você/Medalhas, barra de seleção da leitura) só rolavam via trackpad/touch, não com mouse comum. Novo `core/util/useArrastarParaRolar.ts` implementa arrastar-com-o-mouse (estilo Twitter/Instagram web), cursor `grab`/`grabbing`. Achado durante a implementação: a primeira versão com `useRef`+`useEffect` não funcionava porque as `ScrollView`s montam depois que os dados carregam de forma assíncrona — corrigido usando callback ref. Testado ao vivo simulando o arraste completo nas três telas.
+
 ## [Unreleased] - 2026-08-12 (continuação)
 
 ### Corrigido

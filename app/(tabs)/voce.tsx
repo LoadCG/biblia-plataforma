@@ -13,6 +13,7 @@ import { carregarCompartilhamentos } from "../../core/estatisticas/compartilhame
 import { calcularSequenciaAtual } from "../../core/estatisticas/streak";
 import { mensagemStreak } from "../../core/estatisticas/mensagemStreak";
 import { livrosLidosRepository, progressoRepository } from "../../core/repositories";
+import { useArrastarParaRolar } from "../../core/util/useArrastarParaRolar";
 import { useOwnerId } from "../../core/useOwnerId";
 
 const SOMBRA = { shadowColor: "#000", shadowOpacity: 0.06, shadowRadius: 4, shadowOffset: { width: 0, height: 1 } };
@@ -55,6 +56,7 @@ export default function Voce() {
   const [compartilhamentos, setCompartilhamentos] = useState(0);
   const [conquistas, setConquistas] = useState<Conquista[]>([]);
   const [atividade, setAtividade] = useState<ItemAtividade[]>([]);
+  const refMedalhas = useArrastarParaRolar();
 
   const carregarTudo = useCallback(async () => {
     if (!ownerId) return;
@@ -178,7 +180,7 @@ export default function Voce() {
               {conquistas.filter((c) => c.conquistada).length}/{conquistas.length}
             </Text>
           </View>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+          <ScrollView ref={refMedalhas} horizontal showsHorizontalScrollIndicator={false}>
             {conquistas.map((c) => (
               <MedalhaCarrossel key={c.id} conquista={c} />
             ))}

@@ -14,6 +14,7 @@ import { obterLembretePlano, type LembretePlano } from "../../core/leitura/lembr
 import { livrosLidosRepository, progressoRepository } from "../../core/repositories";
 import { useColorScheme } from "../../core/theme";
 import { useOwnerId } from "../../core/useOwnerId";
+import { useArrastarParaRolar } from "../../core/util/useArrastarParaRolar";
 import type { CapituloLido } from "../../core/types/leitura";
 
 function obterSaudacao() {
@@ -71,6 +72,7 @@ export default function Inicio() {
   const [lembretePlano, setLembretePlano] = useState<LembretePlano | null>(null);
   const { colorScheme } = useColorScheme();
   const escuro = colorScheme === "dark";
+  const refContinueLendo = useArrastarParaRolar();
 
   useEffect(() => {
     if (!ownerId) return;
@@ -112,7 +114,7 @@ export default function Inicio() {
         {recentes.length > 0 ? (
           <View className="mb-4 -mx-4 px-4">
             <Text className="text-sm font-bold text-cor-texto dark:text-cor-texto-dark mb-2.5">Continue lendo</Text>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+            <ScrollView ref={refContinueLendo} horizontal showsHorizontalScrollIndicator={false}>
               {recentes.map((item) => (
                 <CardContinueLendo key={`${item.livroSlug}-${item.capitulo}`} item={item} />
               ))}

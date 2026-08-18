@@ -34,6 +34,7 @@ import { gerarImagemVersiculo, suportaImagemVersiculo } from "../../../../core/u
 import { mensagemErroAmigavel } from "../../../../core/util/erroAmigavel";
 import { linkVersiculo } from "../../../../core/util/linkVersiculo";
 import { mostrarToast } from "../../../../core/util/toast";
+import { useArrastarParaRolar } from "../../../../core/util/useArrastarParaRolar";
 import { useOwnerId } from "../../../../core/useOwnerId";
 
 export default function Leitura() {
@@ -99,6 +100,7 @@ export default function Leitura() {
   const [audioTocando, setAudioTocando] = useState(false);
   const [versiculoFalando, setVersiculoFalando] = useState<number | null>(null);
   const [imagemVersiculo, setImagemVersiculo] = useState<string | null>(null);
+  const refBarraSelecao = useArrastarParaRolar();
 
   const { setOculta } = useNavbar();
 
@@ -605,7 +607,7 @@ export default function Leitura() {
               <MaterialIcons name="close" size={24} className="text-cor-texto-suave dark:text-cor-texto-suave-dark" />
             </Pressable>
           </View>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} className="px-5 py-3">
+          <ScrollView ref={refBarraSelecao} horizontal showsHorizontalScrollIndicator={false} className="px-5 py-3">
             <View className="flex-row items-center gap-4">
               {/* Cores */}
               <View className="flex-row items-center gap-2 mr-2">

@@ -832,6 +832,49 @@ invisível cresceu. Configurações e os botões do Versículo do Dia
 tiveram um crescimento visual sutil, aceitável dado o ganho de
 usabilidade.
 
+### 7.9 Carrosséis horizontais não arrastáveis com mouse `✅`
+**Funcionalidade:** reportado por usuário: "o Continue lendo da
+página inicial parece um carrossel mas não é" — esclarecido por ele
+mesmo como "não desliza no PC". Causa real: as três `ScrollView
+horizontal` do app (Início "Continue lendo", Você "Medalhas", barra
+de seleção múltipla da leitura) tinham `showsHorizontalScrollIndicator=
+{false}` (escondendo a única forma nativa de um mouse comum rolar
+horizontalmente no navegador) e nenhum suporte a arrastar-com-o-mouse
+— só funcionavam via trackpad, touch, ou scroll+shift, nenhum dos
+quais um desktop com mouse simples tem. Confirmado ao vivo antes da
+correção: `scrollLeft` mudava só via manipulação programática, não
+por gesto de mouse nenhum.
+Novo `core/util/useArrastarParaRolar.ts` — hook reutilizável que, só
+no web, prende `mousedown`/`mousemove`/`mouseup` no nó real de scroll
+(via `getScrollableNode()` do `react-native-web`) e move `scrollLeft`
+proporcionalmente ao arraste, com cursor `grab`/`grabbing` (mesmo
+padrão visual do Twitter/Instagram web). Depois de um arraste de
+verdade, suprime o `click` seguinte — sem isso, soltar o mouse em
+cima de um card dispararia a navegação dele junto com o fim do
+arraste, mesmo quando a intenção da pessoa era só rolar.
+**Armadilha real encontrada durante a implementação:** a primeira
+versão usava `useRef` + `useEffect` de montagem única — não
+funcionava, porque nas três telas a `ScrollView` só monta depois que
+os dados carregam de forma assíncrona (`recentes.length > 0` etc.), e
+o efeito de montagem única do componente roda *antes* desse elemento
+existir, então nunca prendia o listener em nada (`ref.current` vinha
+`null`). Só descobri isso instrumentando o próprio hook com um
+atributo de depuração e vendo que ele nunca aparecia no DOM, apesar
+de um log anterior sugerir (enganosamente) que tinha funcionado.
+Corrigido trocando pra **callback ref** (`useCallback` retornando a
+função em vez de `useRef`) — React chama isso exatamente quando o nó
+real monta ou desmonta, não importa quando isso aconteça, resolvendo
+o problema de tempo de vez.
+**Testado ao vivo, ponta a ponta:** simulei `mousedown` → `mousemove`
+→ `mouseup` de verdade nas três telas — `scrollLeft` mudou de 0 pra
+77 (máximo, batendo com `scrollWidth - clientWidth`) durante o
+arraste, cursor virou `grabbing`, e ficou na posição depois de soltar.
+Confirmado nas três: Início, Você, e a barra de seleção da leitura.
+**UX/UI:** cursor `grab` (mão aberta) ao passar o mouse sobre a área
+rolável, `grabbing` (mão fechada) durante o arraste — mesma
+convenção visual já esperada de qualquer carrossel/galeria horizontal
+na web.
+
 ---
 
 ## 8. Infraestrutura de plataforma

@@ -35,7 +35,7 @@ export function MenuAcoes({ acoes, aberto, onFechar }: Props) {
                 onFechar();
                 acao.onPress();
               }}
-              className="px-5 py-3.5"
+              className="px-5 py-3.5 active:bg-cor-borda dark:active:bg-cor-borda-dark"
             >
               <Text className={`text-base ${acao.destrutiva ? "text-red-600" : "text-cor-texto dark:text-cor-texto-dark"}`}>
                 {acao.label}

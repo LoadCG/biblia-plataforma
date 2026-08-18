@@ -15,7 +15,7 @@ function CardPlano({ plano, diasConcluidos }: { plano: PlanoLeitura; diasConclui
 
   return (
     <Link href={`/planos/${plano.id}`} asChild>
-      <Pressable className="rounded-2xl bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark px-4 py-4 mb-3 shadow-sm" style={SOMBRA}>
+      <Pressable className="rounded-2xl bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark px-4 py-4 mb-3 shadow-sm active:opacity-80" style={SOMBRA}>
         <View className="flex-row items-start justify-between mb-1">
           <Text className="text-base font-bold text-cor-texto dark:text-cor-texto-dark flex-1 pr-2">{plano.titulo}</Text>
           {concluido ? <MaterialIcons name="check-circle" size={20} color="#287a45" /> : null}

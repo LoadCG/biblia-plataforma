@@ -3,6 +3,11 @@
 Todas as mudanças notáveis feitas no projeto serão documentadas neste arquivo.
 O formato é baseado no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/).
 
+## [Unreleased] - 2026-08-12
+
+### Adicionado
+- **Feedback visual de toque em todos os botões** (pedido do usuário, citando as heurísticas de Nielsen): nenhum `Pressable` do app tinha qualquer resposta visual ao toque. Adicionado `active:opacity-*`/`active:bg-*` do NativeWind v4 em 84 dos 95 botões do app (os 11 restantes são backdrops de modal ou botões já desabilitados). Cobertura completa da leitura de capítulo (29 botões), componentes compartilhados (grade de capítulos, menu de ações, modal de nota, tooltip) e todas as telas principais. Confirmado ao vivo que a regra CSS `:active` foi gerada corretamente; não foi possível simular visualmente o estado pressionado via automação (limitação do ambiente headless, não do app).
+
 ## [Unreleased] - 2026-08-11 (continuação 4)
 
 ### Modificado

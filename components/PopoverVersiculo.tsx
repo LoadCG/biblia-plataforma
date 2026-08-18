@@ -45,7 +45,7 @@ export function PopoverVersiculo({ referencia, refCapitulo, onFechar }: Props) {
             <Text className="text-base font-bold text-cor-texto dark:text-cor-texto-dark flex-1 mr-3">
               {dados?.referencia ?? refAtual}
             </Text>
-            <Pressable onPress={onFechar} hitSlop={8}>
+            <Pressable onPress={onFechar} hitSlop={8} className="active:opacity-60">
               <Text className="text-cor-texto-suave dark:text-cor-texto-suave-dark text-lg">✕</Text>
             </Pressable>
           </View>
@@ -74,7 +74,7 @@ export function PopoverVersiculo({ referencia, refCapitulo, onFechar }: Props) {
           {refAtual !== refCapitulo ? (
             <Pressable
               onPress={() => setRefAtual(refCapitulo)}
-              className="self-start mt-4 px-4 py-2 rounded-full border border-cor-borda dark:border-cor-borda-dark"
+              className="self-start mt-4 px-4 py-2 rounded-full border border-cor-borda dark:border-cor-borda-dark active:opacity-70"
             >
               <Text className="text-sm font-semibold text-cor-texto dark:text-cor-texto-dark">
                 Ver capítulo inteiro

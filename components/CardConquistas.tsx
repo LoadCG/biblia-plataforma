@@ -19,7 +19,7 @@ export function CardConquistas({ conquistas }: { conquistas: Conquista[] }) {
         {topConquistas.map((c, index) => {
           const completa = c.conquistada;
           return (
-            <Pressable key={c.id} onPress={() => setConquistaAberta(c)} className="items-center flex-1">
+            <Pressable key={c.id} onPress={() => setConquistaAberta(c)} className="items-center flex-1 active:opacity-70">
               <View
                 className={`w-20 h-20 rounded-full items-center justify-center mb-3 border-4 ${
                   completa
@@ -49,7 +49,7 @@ export function CardConquistas({ conquistas }: { conquistas: Conquista[] }) {
         })}
       </View>
 
-      <Pressable onPress={() => router.push("/voce")} className="bg-cor-borda dark:bg-cor-borda-dark self-start px-5 py-2 rounded-full">
+      <Pressable onPress={() => router.push("/voce")} className="bg-cor-borda dark:bg-cor-borda-dark self-start px-5 py-2 rounded-full active:opacity-70">
         <Text className="text-xs font-semibold text-cor-texto dark:text-cor-texto-dark">Ver Todos</Text>
       </Pressable>
 
@@ -63,7 +63,7 @@ export function CardConquistas({ conquistas }: { conquistas: Conquista[] }) {
                 <Text className="text-xs font-semibold text-cor-destaque dark:text-cor-destaque-dark mb-4">
                   {conquistaAberta.conquistada ? "Conquistada ✓" : `${conquistaAberta.progressoAtual} de ${conquistaAberta.progressoTotal}`}
                 </Text>
-                <Pressable onPress={() => setConquistaAberta(null)} className="self-end px-4 py-2 rounded-full bg-cor-destaque dark:bg-cor-destaque-dark">
+                <Pressable onPress={() => setConquistaAberta(null)} className="self-end px-4 py-2 rounded-full bg-cor-destaque dark:bg-cor-destaque-dark active:opacity-70">
                   <Text className="text-white font-semibold text-sm">Fechar</Text>
                 </Pressable>
               </>

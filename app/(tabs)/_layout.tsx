@@ -60,10 +60,10 @@ const BotaoAba = forwardRef<View, BotaoAbaProps>(({ rotulo, icone, sidebar, isFo
       {...props}
       className={
         sidebar
-          ? `flex-row items-center gap-3 rounded-xl px-3.5 py-2.5 mb-1 ${
+          ? `flex-row items-center gap-3 rounded-xl px-3.5 py-2.5 mb-1 active:opacity-70 ${
               isFocused ? "bg-cor-destaque-fundo dark:bg-cor-destaque-fundo-dark" : ""
             }`
-          : "flex-1 flex-col items-center justify-center py-1.5"
+          : "flex-1 flex-col items-center justify-center py-1.5 active:opacity-60"
       }
     >
       <MaterialIcons name={icone} size={sidebar ? 22 : 26} color={isFocused ? cores.ativo : cores.inativo} />

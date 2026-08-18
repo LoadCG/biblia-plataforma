@@ -102,7 +102,7 @@ export default function Configuracoes() {
                 onPress={() => ajustarFonte(-1)}
                 disabled={indiceFonte === 0}
                 accessibilityLabel="Diminuir tamanho da fonte"
-                className="w-10 h-10 items-center justify-center rounded-full border border-cor-borda dark:border-cor-borda-dark"
+                className="w-10 h-10 items-center justify-center rounded-full border border-cor-borda dark:border-cor-borda-dark active:opacity-60"
               >
                 <Text
                   className={`text-xs font-bold ${indiceFonte === 0 ? "text-cor-texto-suave dark:text-cor-texto-suave-dark opacity-40" : "text-cor-texto dark:text-cor-texto-dark"}`}
@@ -114,7 +114,7 @@ export default function Configuracoes() {
                 onPress={() => ajustarFonte(1)}
                 disabled={indiceFonte === TAMANHOS_FONTE.length - 1}
                 accessibilityLabel="Aumentar tamanho da fonte"
-                className="w-10 h-10 items-center justify-center rounded-full border border-cor-borda dark:border-cor-borda-dark"
+                className="w-10 h-10 items-center justify-center rounded-full border border-cor-borda dark:border-cor-borda-dark active:opacity-60"
               >
                 <Text
                   className={`text-xs font-bold ${
@@ -132,7 +132,7 @@ export default function Configuracoes() {
             </View>
           </Linha>
           <Linha ultima>
-            <Pressable onPress={alternarFonteSerifada} className="flex-row items-center justify-between">
+            <Pressable onPress={alternarFonteSerifada} className="flex-row items-center justify-between active:opacity-70">
               <View>
                 <Text className="text-cor-texto dark:text-cor-texto-dark font-semibold">Fonte serifada</Text>
                 <Text style={{ fontFamily: FAMILIA_SERIFADA }} className="text-xs text-cor-texto-suave dark:text-cor-texto-suave-dark mt-0.5">
@@ -152,7 +152,7 @@ export default function Configuracoes() {
 
         <Secao titulo="Aparência">
           <Linha ultima>
-            <Pressable onPress={alternarTema} className="flex-row items-center justify-between">
+            <Pressable onPress={alternarTema} className="flex-row items-center justify-between active:opacity-70">
               <Text className="text-cor-texto dark:text-cor-texto-dark font-semibold">Tema</Text>
               <Text className="text-sm text-cor-texto-suave dark:text-cor-texto-suave-dark">
                 {escuro ? "☾ Escuro" : "☀ Claro"} · toque pra trocar
@@ -163,7 +163,7 @@ export default function Configuracoes() {
 
         <Secao titulo="Notificações">
           <Linha ultima>
-            <Pressable onPress={alternarLembreteDiario} className="flex-row items-center justify-between">
+            <Pressable onPress={alternarLembreteDiario} className="flex-row items-center justify-between active:opacity-70">
               <View className="flex-1 pr-3">
                 <Text className="text-cor-texto dark:text-cor-texto-dark font-semibold">Lembrete diário</Text>
                 <Text className="text-xs text-cor-texto-suave dark:text-cor-texto-suave-dark mt-0.5">

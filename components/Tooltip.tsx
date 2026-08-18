@@ -22,6 +22,7 @@ export function Tooltip({ titulo, descricao, children }: Props) {
       <Pressable
         onPress={() => setAberto(true)}
         accessibilityLabel={`O que é ${titulo}?`}
+        className="active:opacity-60"
         {...(Platform.OS === "web" ? { title: descricao } : {})}
       >
         {children}
@@ -32,7 +33,7 @@ export function Tooltip({ titulo, descricao, children }: Props) {
           <Pressable onPress={(e) => e.stopPropagation()} className="w-full max-w-sm rounded-2xl bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark p-5">
             <Text className="text-base font-bold text-cor-texto dark:text-cor-texto-dark mb-1.5">{titulo}</Text>
             <Text className="text-sm text-cor-texto-suave dark:text-cor-texto-suave-dark mb-4">{descricao}</Text>
-            <Pressable onPress={() => setAberto(false)} className="self-end px-4 py-2 rounded-full bg-cor-destaque dark:bg-cor-destaque-dark">
+            <Pressable onPress={() => setAberto(false)} className="self-end px-4 py-2 rounded-full bg-cor-destaque dark:bg-cor-destaque-dark active:opacity-70">
               <Text className="text-white font-semibold text-sm">Entendi</Text>
             </Pressable>
           </Pressable>

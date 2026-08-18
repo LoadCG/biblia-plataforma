@@ -230,7 +230,7 @@ export default function Leitura() {
         <Text className="text-xl font-bold text-cor-texto dark:text-cor-texto-dark mb-2 text-center">Capítulo não encontrado</Text>
         <Text className="text-cor-texto-suave dark:text-cor-texto-suave-dark mb-6 text-center">Parece que você tentou acessar um capítulo que não existe neste livro.</Text>
         <Link href={livro ? `/biblia/escolher/${livro.slug}` : "/"} asChild>
-          <Pressable className="bg-cor-borda dark:bg-cor-borda-dark px-6 py-3 rounded-full">
+          <Pressable className="bg-cor-borda dark:bg-cor-borda-dark px-6 py-3 rounded-full active:opacity-70">
             <Text className="text-cor-texto dark:text-cor-texto-dark font-bold">Voltar para {livro ? livro.nome : "Início"}</Text>
           </Pressable>
         </Link>
@@ -415,15 +415,15 @@ export default function Leitura() {
       {!focoAtivo && (
       <View className="bg-cor-fundo dark:bg-cor-fundo-dark">
         <View className="px-3 py-2 flex-row items-center justify-between">
-          <Pressable onPress={() => router.back()} accessibilityLabel="Voltar" className="w-10 h-10 items-center justify-center">
+          <Pressable onPress={() => router.back()} accessibilityLabel="Voltar" className="w-10 h-10 items-center justify-center active:opacity-60">
             <MaterialIcons name="arrow-back" size={24} className="text-cor-texto dark:text-cor-texto-dark" />
           </Pressable>
 
           <View className="flex-row rounded-full bg-cor-borda dark:bg-cor-borda-dark p-1">
-            <Pressable onPress={() => setAbaAtual("texto")} className={`px-4 py-1.5 rounded-full ${abaAtual === "texto" ? "bg-cor-fundo dark:bg-cor-fundo-dark shadow-sm" : ""}`}>
+            <Pressable onPress={() => setAbaAtual("texto")} className={`px-4 py-1.5 rounded-full active:opacity-60 ${abaAtual === "texto" ? "bg-cor-fundo dark:bg-cor-fundo-dark shadow-sm" : ""}`}>
               <Text className={`text-xs font-bold ${abaAtual === "texto" ? "text-cor-texto dark:text-cor-texto-dark" : "text-cor-texto-suave dark:text-cor-texto-suave-dark"}`}>Texto Bíblico</Text>
             </Pressable>
-            <Pressable onPress={() => setAbaAtual("resumo")} className={`px-4 py-1.5 rounded-full ${abaAtual === "resumo" ? "bg-cor-fundo dark:bg-cor-fundo-dark shadow-sm" : ""}`}>
+            <Pressable onPress={() => setAbaAtual("resumo")} className={`px-4 py-1.5 rounded-full active:opacity-60 ${abaAtual === "resumo" ? "bg-cor-fundo dark:bg-cor-fundo-dark shadow-sm" : ""}`}>
               <Text className={`text-xs font-bold ${abaAtual === "resumo" ? "text-cor-texto dark:text-cor-texto-dark" : "text-cor-texto-suave dark:text-cor-texto-suave-dark"}`}>Resumo</Text>
             </Pressable>
           </View>
@@ -433,7 +433,7 @@ export default function Leitura() {
               <Pressable
                 onPress={alternarAudio}
                 accessibilityLabel={audioTocando ? "Pausar leitura em voz alta" : "Ouvir capítulo em voz alta"}
-                className="w-10 h-10 items-center justify-center"
+                className="w-10 h-10 items-center justify-center active:opacity-60"
               >
                 <MaterialIcons
                   name={audioTocando ? "pause-circle-outline" : "volume-up"}
@@ -442,7 +442,7 @@ export default function Leitura() {
                 />
               </Pressable>
             ) : null}
-            <Pressable onPress={() => setModalAjustesAberto(true)} accessibilityLabel="Ajustes de leitura" className="w-10 h-10 items-center justify-center">
+            <Pressable onPress={() => setModalAjustesAberto(true)} accessibilityLabel="Ajustes de leitura" className="w-10 h-10 items-center justify-center active:opacity-60">
               <Text style={{ fontFamily: FAMILIA_SERIFADA }} className="text-lg font-bold text-cor-texto dark:text-cor-texto-dark">Aa</Text>
             </Pressable>
           </View>
@@ -453,7 +453,7 @@ export default function Leitura() {
         <View className="px-5 pt-6 pb-32 max-w-2xl w-full mx-auto">
           <Pressable
             onPress={alternarCapituloLido}
-            className={`self-start px-4 py-2.5 rounded-full mb-6 ${
+            className={`self-start px-4 py-2.5 rounded-full mb-6 active:opacity-70 ${
               capituloLido
                 ? "bg-green-600"
                 : "border border-cor-borda dark:border-cor-borda-dark bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark"
@@ -469,7 +469,7 @@ export default function Leitura() {
               <Text className="text-cor-texto-suave dark:text-cor-texto-suave-dark">{erro}</Text>
               <Pressable
                 onPress={carregarCapitulo}
-                className="px-4 py-2 rounded-full bg-cor-destaque dark:bg-cor-destaque-dark"
+                className="px-4 py-2 rounded-full bg-cor-destaque dark:bg-cor-destaque-dark active:opacity-70"
               >
                 <Text className="text-white font-semibold text-sm">Tentar novamente</Text>
               </Pressable>
@@ -494,7 +494,7 @@ export default function Leitura() {
                 <View key={v.numero} onLayout={(e) => aoMedirVersiculo(v.numero, e.nativeEvent.layout.y)} className={`mb-0.5 -mx-2 ${destaqueAlvo && v.numero !== versiculoAlvo ? "opacity-30" : ""}`}>
                   <Pressable
                     onPress={() => selecionarVersiculo(v.numero)}
-                    className={`rounded-lg px-2 py-1.5 ${
+                    className={`rounded-lg px-2 py-1.5 active:opacity-70 ${
                       grifado
                         ? corGrifo ? corGrifo : "bg-cor-grifo dark:bg-cor-grifo-dark"
                         : v.numero === versiculoFalando || v.numero === versiculoRealcado
@@ -596,7 +596,7 @@ export default function Leitura() {
               {livro.nome} {capitulo}:{Math.min(...Array.from(versiculosSelecionados))}
               {versiculosSelecionados.size > 1 ? `-${Math.max(...Array.from(versiculosSelecionados))}` : ""}
             </Text>
-            <Pressable onPress={() => setVersiculosSelecionados(new Set())} accessibilityLabel="Cancelar seleção">
+            <Pressable onPress={() => setVersiculosSelecionados(new Set())} accessibilityLabel="Cancelar seleção" className="active:opacity-60">
               <MaterialIcons name="close" size={24} className="text-cor-texto-suave dark:text-cor-texto-suave-dark" />
             </Pressable>
           </View>
@@ -623,7 +623,7 @@ export default function Leitura() {
                         key={i}
                         onPress={() => aplicarCorGrifo(cor)}
                         accessibilityLabel={isDesfazer ? "Remover grifo" : `Grifar com esta cor`}
-                        className={`w-8 h-8 rounded-full ${corBolinha} shadow-sm items-center justify-center`}
+                        className={`w-8 h-8 rounded-full ${corBolinha} shadow-sm items-center justify-center active:opacity-70`}
                       >
                         {isDesfazer && <MaterialIcons name="close" size={18} color="rgba(0,0,0,0.5)" />}
                       </Pressable>
@@ -634,7 +634,7 @@ export default function Leitura() {
                   <Pressable
                     onPress={() => setMostrarTodasCores(true)}
                     accessibilityLabel="Ver todas as cores de grifo"
-                    className="w-8 h-8 rounded-full bg-cor-borda dark:bg-cor-borda-dark items-center justify-center"
+                    className="w-8 h-8 rounded-full bg-cor-borda dark:bg-cor-borda-dark items-center justify-center active:opacity-70"
                   >
                     <MaterialIcons name="more-horiz" size={20} className="text-cor-texto dark:text-cor-texto-dark" />
                   </Pressable>
@@ -647,7 +647,7 @@ export default function Leitura() {
                 return (
                   <Pressable
                     onPress={alternarSalvosSelecionados}
-                    className="flex-row items-center justify-center gap-1 bg-cor-borda dark:bg-cor-borda-dark px-4 py-2 rounded-lg"
+                    className="flex-row items-center justify-center gap-1 bg-cor-borda dark:bg-cor-borda-dark px-4 py-2 rounded-lg active:opacity-70"
                   >
                     <MaterialIcons name={todosSalvos ? "bookmark" : "bookmark-border"} size={18} className="text-cor-texto dark:text-cor-texto-dark" />
                     <Text className="text-cor-texto dark:text-cor-texto-dark font-semibold text-sm">{todosSalvos ? "Salvo" : "Salvar"}</Text>
@@ -660,24 +660,24 @@ export default function Leitura() {
                   const primeiro = Math.min(...Array.from(versiculosSelecionados));
                   setVersiculoEditandoNota(primeiro);
                 }}
-                className="flex-row items-center justify-center gap-1 bg-cor-borda dark:bg-cor-borda-dark px-4 py-2 rounded-lg"
+                className="flex-row items-center justify-center gap-1 bg-cor-borda dark:bg-cor-borda-dark px-4 py-2 rounded-lg active:opacity-70"
               >
                 <MaterialIcons name="edit" size={18} className="text-cor-texto dark:text-cor-texto-dark" />
                 <Text className="text-cor-texto dark:text-cor-texto-dark font-semibold text-sm">Anotação</Text>
               </Pressable>
-              
-              <Pressable onPress={copiarVersiculos} className="flex-row items-center justify-center gap-1 bg-cor-borda dark:bg-cor-borda-dark px-4 py-2 rounded-lg">
+
+              <Pressable onPress={copiarVersiculos} className="flex-row items-center justify-center gap-1 bg-cor-borda dark:bg-cor-borda-dark px-4 py-2 rounded-lg active:opacity-70">
                 <MaterialIcons name="content-copy" size={18} className="text-cor-texto dark:text-cor-texto-dark" />
                 <Text className="text-cor-texto dark:text-cor-texto-dark font-semibold text-sm">Copiar</Text>
               </Pressable>
 
-              <Pressable onPress={compartilharVersiculos} className={`flex-row items-center justify-center gap-1 bg-cor-borda dark:bg-cor-borda-dark px-4 py-2 rounded-lg ${suportaImagemVersiculo() && versiculosSelecionados.size === 1 ? "" : "mr-6"}`}>
+              <Pressable onPress={compartilharVersiculos} className={`flex-row items-center justify-center gap-1 bg-cor-borda dark:bg-cor-borda-dark px-4 py-2 rounded-lg active:opacity-70 ${suportaImagemVersiculo() && versiculosSelecionados.size === 1 ? "" : "mr-6"}`}>
                 <MaterialIcons name="share" size={18} className="text-cor-texto dark:text-cor-texto-dark" />
                 <Text className="text-cor-texto dark:text-cor-texto-dark font-semibold text-sm">Compartilhar</Text>
               </Pressable>
 
               {suportaImagemVersiculo() && versiculosSelecionados.size === 1 ? (
-                <Pressable onPress={gerarImagemDoVersiculoSelecionado} className="flex-row items-center justify-center gap-1 bg-cor-borda dark:bg-cor-borda-dark px-4 py-2 rounded-lg mr-6">
+                <Pressable onPress={gerarImagemDoVersiculoSelecionado} className="flex-row items-center justify-center gap-1 bg-cor-borda dark:bg-cor-borda-dark px-4 py-2 rounded-lg mr-6 active:opacity-70">
                   <MaterialIcons name="image" size={18} className="text-cor-texto dark:text-cor-texto-dark" />
                   <Text className="text-cor-texto dark:text-cor-texto-dark font-semibold text-sm">Imagem</Text>
                 </Pressable>
@@ -699,13 +699,13 @@ export default function Leitura() {
               onPress={() => anterior && router.replace(`/biblia/${anterior.slug}/${anterior.capitulo}`)}
               disabled={!anterior}
               accessibilityLabel="Capítulo anterior"
-              className={`w-10 h-10 items-center justify-center rounded-full ${anterior ? "" : "opacity-30"}`}
+              className={`w-10 h-10 items-center justify-center rounded-full ${anterior ? "active:opacity-60" : "opacity-30"}`}
             >
               <Text className="text-lg text-cor-texto dark:text-cor-texto-dark">←</Text>
             </Pressable>
 
           <Link href={`/biblia/escolher/${livro.slug}`} asChild>
-            <Pressable className="flex-1 items-center px-4 py-1.5">
+            <Pressable className="flex-1 items-center px-4 py-1.5 active:opacity-60">
               <Text className="text-sm font-bold text-cor-texto dark:text-cor-texto-dark" numberOfLines={1}>
                 {livro.nome} {capitulo}
               </Text>
@@ -716,7 +716,7 @@ export default function Leitura() {
             onPress={() => proximo && router.replace(`/biblia/${proximo.slug}/${proximo.capitulo}`)}
             disabled={!proximo}
             accessibilityLabel="Próximo capítulo"
-            className={`w-10 h-10 items-center justify-center rounded-full ${proximo ? "" : "opacity-30"}`}
+            className={`w-10 h-10 items-center justify-center rounded-full ${proximo ? "active:opacity-60" : "opacity-30"}`}
           >
             <Text className="text-lg text-cor-texto dark:text-cor-texto-dark">→</Text>
           </Pressable>
@@ -743,19 +743,19 @@ export default function Leitura() {
             <Text className="text-lg font-bold text-cor-texto dark:text-cor-texto-dark mb-6 text-center">Configurações de Leitura</Text>
             
             <View className="flex-row items-center justify-between bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark rounded-xl p-2 mb-4 border border-cor-borda dark:border-cor-borda-dark">
-              <Pressable onPress={() => ajustarFonte(-1)} accessibilityLabel="Diminuir tamanho da fonte" className="flex-1 py-3 items-center" disabled={indiceFonte === 0}>
+              <Pressable onPress={() => ajustarFonte(-1)} accessibilityLabel="Diminuir tamanho da fonte" className="flex-1 py-3 items-center active:opacity-60" disabled={indiceFonte === 0}>
                 <Text className={`font-bold text-sm ${indiceFonte === 0 ? "text-cor-texto-suave dark:text-cor-texto-suave-dark opacity-40" : "text-cor-texto dark:text-cor-texto-dark"}`}>A-</Text>
               </Pressable>
               <View className="w-px h-8 bg-cor-borda dark:bg-cor-borda-dark" />
-              <Pressable onPress={() => ajustarFonte(1)} accessibilityLabel="Aumentar tamanho da fonte" className="flex-1 py-3 items-center" disabled={indiceFonte === TAMANHOS_FONTE.length - 1}>
+              <Pressable onPress={() => ajustarFonte(1)} accessibilityLabel="Aumentar tamanho da fonte" className="flex-1 py-3 items-center active:opacity-60" disabled={indiceFonte === TAMANHOS_FONTE.length - 1}>
                 <Text className={`font-bold text-lg ${indiceFonte === TAMANHOS_FONTE.length - 1 ? "text-cor-texto-suave dark:text-cor-texto-suave-dark opacity-40" : "text-cor-texto dark:text-cor-texto-dark"}`}>A+</Text>
               </Pressable>
             </View>
 
             <View className="flex-row gap-4 mb-2">
               <Pressable 
-                onPress={alternarFonteSerifada} 
-                className={`flex-1 p-3 rounded-xl border ${fonteSerifada ? "bg-cor-destaque-fundo dark:bg-cor-destaque-fundo-dark border-cor-destaque dark:border-cor-destaque-dark" : "border-cor-borda dark:border-cor-borda-dark"} items-center justify-center`}
+                onPress={alternarFonteSerifada}
+                className={`flex-1 p-3 rounded-xl border active:opacity-70 ${fonteSerifada ? "bg-cor-destaque-fundo dark:bg-cor-destaque-fundo-dark border-cor-destaque dark:border-cor-destaque-dark" : "border-cor-borda dark:border-cor-borda-dark"} items-center justify-center`}
               >
                 <Text style={{ fontFamily: FAMILIA_SERIFADA }} className="text-cor-texto dark:text-cor-texto-dark font-bold">Fonte Serifada</Text>
               </Pressable>
@@ -785,12 +785,12 @@ export default function Leitura() {
                   }
                   mostrarToast("Imagem baixada!");
                 }}
-                className="flex-row items-center gap-1.5 bg-cor-destaque dark:bg-cor-destaque-dark px-5 py-2.5 rounded-full"
+                className="flex-row items-center gap-1.5 bg-cor-destaque dark:bg-cor-destaque-dark px-5 py-2.5 rounded-full active:opacity-70"
               >
                 <MaterialIcons name="download" size={18} color="white" />
                 <Text className="text-white font-semibold text-sm">Baixar</Text>
               </Pressable>
-              <Pressable onPress={() => setImagemVersiculo(null)} className="px-5 py-2.5 rounded-full border border-white/30">
+              <Pressable onPress={() => setImagemVersiculo(null)} className="px-5 py-2.5 rounded-full border border-white/30 active:opacity-70">
                 <Text className="text-white font-semibold text-sm">Fechar</Text>
               </Pressable>
             </View>

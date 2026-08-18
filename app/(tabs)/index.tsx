@@ -47,7 +47,7 @@ function CardContinueLendo({ item }: { item: CapituloLido }) {
   return (
     <Pressable
       onPress={() => router.push(`/biblia/${livro.slug}/${item.capitulo}`)}
-      className="w-32 mr-3 rounded-2xl bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark px-3.5 py-4 shadow-sm"
+      className="w-32 mr-3 rounded-2xl bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark px-3.5 py-4 shadow-sm active:opacity-80"
       style={{ shadowColor: "#000", shadowOpacity: 0.06, shadowRadius: 4, shadowOffset: { width: 0, height: 1 } }}
     >
       <View className="w-9 h-9 rounded-full bg-cor-destaque-fundo dark:bg-cor-destaque-fundo-dark items-center justify-center mb-2.5">
@@ -122,7 +122,7 @@ export default function Inicio() {
 
         {lembretePlano ? (
           <Link href={`/planos/${lembretePlano.plano.id}`} asChild>
-            <Pressable className="flex-row items-center justify-between rounded-2xl bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark border border-cor-borda dark:border-cor-borda-dark px-4 py-3.5 mb-4">
+            <Pressable className="flex-row items-center justify-between rounded-2xl bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark border border-cor-borda dark:border-cor-borda-dark px-4 py-3.5 mb-4 active:opacity-80">
               <View className="flex-1 pr-3">
                 <Text className="text-sm font-bold text-cor-texto dark:text-cor-texto-dark mb-0.5">
                   Que tal continuar o "{lembretePlano.plano.titulo}"?
@@ -145,7 +145,7 @@ export default function Inicio() {
             (marrom quase preto) só neste card. */}
         <Link href="/resumos" asChild>
           <Pressable
-            className="flex-row items-center justify-between rounded-3xl bg-cor-destaque dark:bg-cor-destaque-dark px-6 py-5 mb-4 shadow-sm"
+            className="flex-row items-center justify-between rounded-3xl bg-cor-destaque dark:bg-cor-destaque-dark px-6 py-5 mb-4 shadow-sm active:opacity-90"
           >
             <View>
               <Text className="text-xl font-bold text-white dark:text-cor-texto mb-1">Estudo por Resumos</Text>

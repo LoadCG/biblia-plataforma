@@ -346,7 +346,10 @@ propósito (ver 7.3) pra evitar instabilidade do SQLite WASM.
 **UX/UI:** aba "Na Bíblia" dentro da tela Descubra
 (`app/(tabs)/pesquisa.tsx`), com debounce de 500ms; cada resultado
 mostra a referência e o trecho, link direto pro versículo
-(`?versiculo=`).
+(`?versiculo=`). Falha de busca agora usa a mesma mensagem de erro
+amigável (`mensagemErroAmigavel`) das outras telas — antes só logava
+no console e mostrava "Nenhum versículo encontrado", indistinguível de
+uma busca que genuinamente não achou nada.
 
 **Bug grave real, reportado por usuário (2026-08-11): "só dá pra ler
 Gênesis"** — no app nativo, `garantirBaseBiblia()` (`core/db/
@@ -754,6 +757,42 @@ capturar digitação normal.
 **UX/UI:** dica discreta via `title` (tooltip nativo do navegador, só
 aparece web) na barra fixa de navegação de capítulo — não polui a tela
 principal com texto visível.
+
+### 7.7 Feedback visual de toque em todos os botões `✅`
+**Funcionalidade:** achado real (pedido do usuário, citando as
+heurísticas de Nielsen — "visibilidade do status do sistema"):
+nenhum `Pressable` do app inteiro tinha qualquer feedback visual de
+toque — nem `active:` do NativeWind, nem a função de estilo
+`({ pressed }) => ...`. Em mobile isso significa tocar um botão e não
+ter nenhuma confirmação visual de que o toque registrou até a ação em
+si terminar (navegação, mudança de estado) — sensação de app travado
+ou sem resposta, mesmo funcionando por baixo. Adicionado `active:` do
+NativeWind v4 (`active:opacity-XX` na maioria dos casos; `active:bg-*`
+nas linhas de lista de largura total, onde escurecer o fundo lê melhor
+que apagar o botão inteiro) em 84 dos 95 `Pressable`s do app — os 11
+restantes são backdrops de modal (tocar fora pra fechar, não é um
+"botão" no sentido da heurística) ou botões já `disabled` (sino de
+notificação, "Envie-me Diariamente", ambos aguardando backend).
+Cobertura completa: leitura de capítulo (a tela mais usada do app —
+29 botões), grade de capítulos, menu de ações, modal de nota, tooltip
+de gênero, e todas as telas principais (Início, Descubra, Você,
+Planos, Resumos, Configurações, Salvo, navegação de abas).
+Confirmado ao vivo no navegador: a classe `active:opacity-70`
+aparece corretamente no DOM de cada botão editado, e a regra CSS
+gerada (`.active\:opacity-70:active { opacity: 0.7; }`) usa o
+pseudo-seletor `:active` nativo do CSS — o mecanismo padrão do
+NativeWind pra isso, funciona em toque/clique real tanto no web
+quanto (via `onPressIn`/`onPressOut`) no nativo. **Não foi possível
+simular visualmente o toque pressionado via automação** (eventos
+sintéticos de mouse não disparam o estado `:active` do navegador de
+forma confiável em ambiente headless) — a corretude foi confirmada
+inspecionando a classe aplicada e a regra CSS gerada, não por um
+screenshot do estado pressionado.
+**UX/UI:** intensidade da opacidade varia por tipo de elemento —
+`opacity-60` pra ícones pequenos (mais sutil, alvo de toque menor),
+`opacity-70` pra botões de texto/pílulas, `opacity-80`/`opacity-90`
+pra cards grandes e botões de destaque com cor sólida (mudança mais
+sutil pra não "piscar" numa área grande).
 
 ---
 

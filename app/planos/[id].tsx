@@ -93,7 +93,7 @@ export default function DetalhePlano() {
                 <Pressable
                   onPress={() => alternarDia(diaPlano.dia)}
                   accessibilityLabel={concluido ? "Desmarcar dia como concluído" : "Marcar dia como concluído"}
-                  className={`flex-row items-center gap-1.5 px-3 py-1.5 rounded-full ${
+                  className={`flex-row items-center gap-1.5 px-3 py-1.5 rounded-full active:opacity-70 ${
                     concluido ? "bg-green-600" : "border border-cor-borda dark:border-cor-borda-dark"
                   }`}
                 >
@@ -114,7 +114,7 @@ export default function DetalhePlano() {
                   );
                   return href ? (
                     <Link key={ref} href={href} asChild>
-                      <Pressable>{conteudo}</Pressable>
+                      <Pressable className="active:opacity-70">{conteudo}</Pressable>
                     </Link>
                   ) : (
                     <View key={ref}>{conteudo}</View>

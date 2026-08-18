@@ -84,7 +84,7 @@ export default function Voce() {
           <Link href="/configuracoes" asChild>
             <Pressable
               accessibilityLabel="Configurações"
-              className="w-9 h-9 rounded-full bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark items-center justify-center"
+              className="w-9 h-9 rounded-full bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark items-center justify-center active:opacity-70"
             >
               <MaterialIcons name="settings" size={18} className="text-cor-texto dark:text-cor-texto-dark" />
             </Pressable>
@@ -108,7 +108,7 @@ export default function Voce() {
         <View className="flex-row gap-3 mb-4">
           <Pressable
             onPress={() => router.push("/salvo")}
-            className="flex-1 items-center gap-1.5 rounded-2xl py-4"
+            className="flex-1 items-center gap-1.5 rounded-2xl py-4 active:opacity-70"
             style={{ backgroundColor: COR_GAMIFICACAO.fundo }}
           >
             <MaterialIcons name="bookmark-border" size={20} color={COR_GAMIFICACAO.destaque} />
@@ -116,7 +116,7 @@ export default function Voce() {
           </Pressable>
           <Pressable
             onPress={() => router.push("/salvo")}
-            className="flex-1 items-center gap-1.5 rounded-2xl py-4"
+            className="flex-1 items-center gap-1.5 rounded-2xl py-4 active:opacity-70"
             style={{ backgroundColor: COR_GAMIFICACAO.fundo }}
           >
             <MaterialIcons name="edit-note" size={20} color={COR_GAMIFICACAO.destaque} />
@@ -125,7 +125,7 @@ export default function Voce() {
         </View>
 
         <Link href="/salvo" asChild>
-          <Pressable className="rounded-2xl bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark px-4 py-3.5 mb-4 shadow-sm" style={SOMBRA}>
+          <Pressable className="rounded-2xl bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark px-4 py-3.5 mb-4 shadow-sm active:opacity-80" style={SOMBRA}>
             <Text className="text-sm font-bold text-cor-texto dark:text-cor-texto-dark mb-2">📌 Salvo</Text>
             {atividade.length === 0 ? (
               <EstadoVazio titulo="Nada salvo ainda" descricao="Toque em ✎ Grifar ou 🗒 Anotar durante a leitura pra ver aqui." />
@@ -199,7 +199,7 @@ export default function Voce() {
 
         <Link href="/configuracoes" asChild>
           <Pressable
-            className="flex-row items-center justify-between rounded-2xl bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark px-4 py-3.5 mt-2 shadow-sm"
+            className="flex-row items-center justify-between rounded-2xl bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark px-4 py-3.5 mt-2 shadow-sm active:opacity-80"
             style={SOMBRA}
           >
             <Text className="text-cor-texto dark:text-cor-texto-dark font-semibold">⚙️ Configurações</Text>

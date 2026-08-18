@@ -32,7 +32,7 @@ export function GradeCapitulos({ totalCapitulos, lidos, onSelecionar }: Props) {
             <Pressable
               onPress={() => onSelecionar(n)}
               accessibilityLabel={`Capítulo ${n}${lido ? ", lido" : ""}`}
-              className={`aspect-square items-center justify-center rounded-lg border ${
+              className={`aspect-square items-center justify-center rounded-lg border active:opacity-60 ${
                 lido
                   ? "border-green-600 bg-green-600"
                   : "border-cor-borda dark:border-cor-borda-dark bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark"

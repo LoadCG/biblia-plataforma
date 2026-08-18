@@ -52,7 +52,7 @@ export default function Salvo() {
             <Pressable
               key={chave}
               onPress={() => setFiltro(chave)}
-              className={`px-3.5 py-1.5 rounded-full border ${
+              className={`px-3.5 py-1.5 rounded-full border active:opacity-70 ${
                 filtro === chave
                   ? "bg-cor-destaque dark:bg-cor-destaque-dark border-cor-destaque dark:border-cor-destaque-dark"
                   : "border-cor-borda dark:border-cor-borda-dark"

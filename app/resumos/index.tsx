@@ -15,7 +15,7 @@ function CardLivro({ livro, lido, trecho }: { livro: Livro; lido: boolean; trech
   return (
     <Link href={`/resumos/${livro.slug}`} asChild>
       <Pressable
-        className={`flex-row items-center gap-3 px-4 py-3 rounded-2xl bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark mb-2 shadow-sm ${
+        className={`flex-row items-center gap-3 px-4 py-3 rounded-2xl bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark mb-2 shadow-sm active:opacity-80 ${
           lido ? "border border-green-600" : ""
         }`}
         style={{ shadowColor: "#000", shadowOpacity: 0.06, shadowRadius: 4, shadowOffset: { width: 0, height: 1 } }}

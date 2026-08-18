@@ -35,19 +35,19 @@ export function ModalNota({ visivel, versiculo, textoInicial, onFechar, onSalvar
           />
           <View className="flex-row justify-between items-center">
             {textoInicial ? (
-              <Pressable onPress={onRemover} className="px-3 py-2">
+              <Pressable onPress={onRemover} className="px-3 py-2 active:opacity-60">
                 <Text className="text-red-600 font-semibold">Remover</Text>
               </Pressable>
             ) : (
               <View />
             )}
             <View className="flex-row gap-2">
-              <Pressable onPress={onFechar} className="px-4 py-2 rounded-full border border-cor-borda dark:border-cor-borda-dark">
+              <Pressable onPress={onFechar} className="px-4 py-2 rounded-full border border-cor-borda dark:border-cor-borda-dark active:opacity-70">
                 <Text className="text-cor-texto dark:text-cor-texto-dark">Cancelar</Text>
               </Pressable>
               <Pressable
                 onPress={() => onSalvar(texto.trim())}
-                className="px-4 py-2 rounded-full bg-cor-destaque dark:bg-cor-destaque-dark"
+                className="px-4 py-2 rounded-full bg-cor-destaque dark:bg-cor-destaque-dark active:opacity-70"
               >
                 <Text className="text-white font-semibold">Salvar</Text>
               </Pressable>

@@ -50,7 +50,7 @@ export default function EscolherLivro() {
       <View className="mb-2">
         <Pressable
           onPress={() => setLivroExpandido(expandido ? null : item.slug)}
-          className={`flex-row items-center justify-between px-4 py-4 rounded-xl ${expandido ? 'bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark' : ''}`}
+          className={`flex-row items-center justify-between px-4 py-4 rounded-xl active:bg-cor-fundo-elevado dark:active:bg-cor-fundo-elevado-dark ${expandido ? 'bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark' : ''}`}
         >
           <Text className="text-cor-texto dark:text-cor-texto-dark text-lg font-semibold">{item.nome}</Text>
           <Text className="text-xs text-cor-texto-suave dark:text-cor-texto-suave-dark">
@@ -77,7 +77,7 @@ export default function EscolherLivro() {
       <View className="px-5 py-4 border-b border-cor-borda dark:border-cor-borda-dark bg-cor-fundo dark:bg-cor-fundo-dark z-10">
         <View className="flex-row items-center justify-between mb-4">
           <View className="flex-row items-center gap-4">
-            <Pressable onPress={() => router.back()} className="w-8 h-8 items-center justify-center">
+            <Pressable onPress={() => router.back()} className="w-8 h-8 items-center justify-center active:opacity-60">
               <Text className="text-cor-texto dark:text-cor-texto-dark text-xl">←</Text>
             </Pressable>
             <Text className="text-2xl font-bold text-cor-texto dark:text-cor-texto-dark">Livros</Text>

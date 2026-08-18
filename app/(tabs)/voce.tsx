@@ -84,7 +84,7 @@ export default function Voce() {
           <Link href="/configuracoes" asChild>
             <Pressable
               accessibilityLabel="Configurações"
-              className="w-9 h-9 rounded-full bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark items-center justify-center active:opacity-70"
+              className="w-11 h-11 rounded-full bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark items-center justify-center active:opacity-70"
             >
               <MaterialIcons name="settings" size={18} className="text-cor-texto dark:text-cor-texto-dark" />
             </Pressable>

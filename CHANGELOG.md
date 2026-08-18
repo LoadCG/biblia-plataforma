@@ -3,6 +3,11 @@
 Todas as mudanças notáveis feitas no projeto serão documentadas neste arquivo.
 O formato é baseado no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/).
 
+## [Unreleased] - 2026-08-12 (continuação)
+
+### Corrigido
+- **Alvos de toque pequenos demais**: auditoria ao vivo (medindo `getBoundingClientRect()` no navegador) achou 4 botões abaixo do mínimo recomendado (44×44px) — "Cancelar seleção" (24px), cores de grifo e "Ver todas as cores" (32px), engrenagem de Configurações (36px) — e os 4 botões do card do Versículo do Dia com área clicável real de só 25-36px de largura apesar de parecerem uma faixa contínua. Tentativa inicial com `hitSlop` não funcionou — a prop não é implementada no `react-native-web`, só no nativo (confirmado lendo o código-fonte da lib). Corrigido com caixa clicável real maior (padding + margem negativa, ou `flex-1`), mantendo os elementos visuais do mesmo tamanho.
+
 ## [Unreleased] - 2026-08-12
 
 ### Adicionado

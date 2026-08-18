@@ -794,6 +794,44 @@ screenshot do estado pressionado.
 pra cards grandes e botões de destaque com cor sólida (mudança mais
 sutil pra não "piscar" numa área grande).
 
+### 7.8 Alvos de toque pequenos demais `✅`
+**Funcionalidade:** auditoria feita medindo `getBoundingClientRect()`
+de todo botão com `accessibilityLabel` ao vivo no navegador (não só
+inspeção de código) — achou 4 casos reais abaixo do mínimo
+recomendado (44×44 iOS / 48×48 Material): "Cancelar seleção" na barra
+de seleção múltipla da leitura (24×24px), as bolinhas de cor de grifo
+e "Ver todas as cores" (32×32px cada), e o botão de engrenagem de
+Configurações em `/voce` (36×36px). Também achado nos mesmos 4 botões
+de ação do card do Versículo do Dia (Amém/Anotar/Enviar/Mais): a área
+clicável real era só 25-36px de largura porque cada `Pressable` só
+media o próprio conteúdo (ícone+rótulo), mesmo distribuído numa linha
+larga com `justify-between` — o espaço *entre* eles não era clicável,
+apesar de parecer uma faixa contínua.
+**Tentativa inicial que não funcionou, registrada pra não repetir o
+erro:** primeiro tentei resolver só com a prop `hitSlop` do React
+Native — mas `hitSlop` **não é implementado no `react-native-web`**
+(confirmado lendo o código-fonte de `node_modules/react-native-web`,
+nenhuma menção à prop). Funciona só no app nativo; no build web
+(o alvo principal hoje, ver PLANO-PLATAFORMA.md) não tinha efeito
+nenhum — só descobri isso medindo de novo depois de aplicar e ver que
+o tamanho real não mudou.
+**Correção que funciona de verdade:** aumento real da caixa clicável
+via `padding`/tamanho maior + margem negativa pra compensar (não muda
+o espaço ocupado no layout), mantendo o elemento visual (círculo,
+ícone) do mesmo tamanho por dentro, numa `View` aninhada quando
+necessário. Cores de grifo e "Ver todas": caixa cresceu de 32px pra
+44px, círculo visual continua 32px (confirmado medindo o elemento
+interno separadamente). "Cancelar seleção": 24px → 40px via
+`padding` + margem negativa. Configurações: 36px → 44px (aumentado
+direto, sem vizinhos apertados por perto). Card do Versículo do Dia:
+os 4 botões agora usam `flex-1` pra reivindicar toda a fatia da linha
+como área de toque (72×52px medido, contra 25-36px antes).
+**UX/UI:** nenhuma mudança visual perceptível nos elementos pequenos
+(cores de grifo, "Ver todas", "Cancelar") — só a área de toque
+invisível cresceu. Configurações e os botões do Versículo do Dia
+tiveram um crescimento visual sutil, aceitável dado o ganho de
+usabilidade.
+
 ---
 
 ## 8. Infraestrutura de plataforma

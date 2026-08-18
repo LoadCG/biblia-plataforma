@@ -596,7 +596,12 @@ export default function Leitura() {
               {livro.nome} {capitulo}:{Math.min(...Array.from(versiculosSelecionados))}
               {versiculosSelecionados.size > 1 ? `-${Math.max(...Array.from(versiculosSelecionados))}` : ""}
             </Text>
-            <Pressable onPress={() => setVersiculosSelecionados(new Set())} accessibilityLabel="Cancelar seleção" className="active:opacity-60">
+            <Pressable
+              onPress={() => setVersiculosSelecionados(new Set())}
+              accessibilityLabel="Cancelar seleção"
+              hitSlop={10}
+              className="p-2 -m-2 active:opacity-60"
+            >
               <MaterialIcons name="close" size={24} className="text-cor-texto-suave dark:text-cor-texto-suave-dark" />
             </Pressable>
           </View>
@@ -623,9 +628,11 @@ export default function Leitura() {
                         key={i}
                         onPress={() => aplicarCorGrifo(cor)}
                         accessibilityLabel={isDesfazer ? "Remover grifo" : `Grifar com esta cor`}
-                        className={`w-8 h-8 rounded-full ${corBolinha} shadow-sm items-center justify-center active:opacity-70`}
+                        className="w-11 h-11 -m-1.5 items-center justify-center active:opacity-70"
                       >
-                        {isDesfazer && <MaterialIcons name="close" size={18} color="rgba(0,0,0,0.5)" />}
+                        <View className={`w-8 h-8 rounded-full ${corBolinha} shadow-sm items-center justify-center`}>
+                          {isDesfazer && <MaterialIcons name="close" size={18} color="rgba(0,0,0,0.5)" />}
+                        </View>
                       </Pressable>
                     );
                   });
@@ -634,9 +641,11 @@ export default function Leitura() {
                   <Pressable
                     onPress={() => setMostrarTodasCores(true)}
                     accessibilityLabel="Ver todas as cores de grifo"
-                    className="w-8 h-8 rounded-full bg-cor-borda dark:bg-cor-borda-dark items-center justify-center active:opacity-70"
+                    className="w-11 h-11 -m-1.5 items-center justify-center active:opacity-70"
                   >
-                    <MaterialIcons name="more-horiz" size={20} className="text-cor-texto dark:text-cor-texto-dark" />
+                    <View className="w-8 h-8 rounded-full bg-cor-borda dark:bg-cor-borda-dark items-center justify-center">
+                      <MaterialIcons name="more-horiz" size={20} className="text-cor-texto dark:text-cor-texto-dark" />
+                    </View>
                   </Pressable>
                 )}
               </View>

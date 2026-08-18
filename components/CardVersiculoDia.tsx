@@ -138,7 +138,7 @@ export function CardVersiculoDia() {
                 onPress={alternarAmem}
                 disabled={!ref}
                 accessibilityLabel={salvo ? "Remover dos salvos" : "Salvar este versículo"}
-                className="items-center active:opacity-60"
+                className="flex-1 items-center py-1 active:opacity-60"
               >
                 <MaterialIcons name={salvo ? "favorite" : "favorite-border"} size={24} color={salvo ? "#e0a75e" : "white"} />
                 <Text className="text-white/80 text-xs mt-1">Amém</Text>
@@ -147,7 +147,7 @@ export function CardVersiculoDia() {
                 onPress={() => setNotaAberta(true)}
                 disabled={!ref}
                 accessibilityLabel="Anotar sobre este versículo"
-                className="items-center active:opacity-60"
+                className="flex-1 items-center py-1 active:opacity-60"
               >
                 <MaterialIcons name={notaTexto ? "chat-bubble" : "chat-bubble-outline"} size={24} color={notaTexto ? "#e0a75e" : "white"} />
                 <Text className="text-white/80 text-xs mt-1">Anotar</Text>
@@ -155,12 +155,12 @@ export function CardVersiculoDia() {
               <Pressable
                 onPress={() => compartilhar(textoParaCompartilhar())}
                 accessibilityLabel="Enviar este versículo"
-                className="items-center active:opacity-60"
+                className="flex-1 items-center py-1 active:opacity-60"
               >
                 <MaterialIcons name="share" size={24} color="white" />
                 <Text className="text-white/80 text-xs mt-1">Enviar</Text>
               </Pressable>
-              <Pressable onPress={() => setMenuAberto(true)} accessibilityLabel="Mais opções" className="items-center active:opacity-60">
+              <Pressable onPress={() => setMenuAberto(true)} accessibilityLabel="Mais opções" className="flex-1 items-center py-1 active:opacity-60">
                 <MaterialIcons name="more-horiz" size={24} color="white" />
                 <Text className="text-white/80 text-xs mt-1">Mais</Text>
               </Pressable>

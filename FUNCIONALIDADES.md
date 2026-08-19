@@ -196,10 +196,23 @@ um livro específico.
 versículo pedido via `?versiculo=N` na URL.
 **UX/UI:** borda lateral colorida no versículo em foco. Estudo de UX
 ([ESTUDO-UX-LEITURA.md](../ESTUDO-UX-LEITURA.md)) trouxe além disso:
-cabeçalho fixo (sticky) com livro/capítulo sempre visível durante a
-rolagem, barra fina de progresso de leitura no topo, e tipografia
-revista (número de versículo pequeno/discreto, `lineHeight` maior) —
-inspirado no padrão do YouVersion/Bible Gateway.
+barra fina de progresso de leitura no topo, e tipografia revista
+(número de versículo pequeno/discreto, `lineHeight` maior) — inspirado
+no padrão do YouVersion/Bible Gateway.
+
+**Bug real, reportado por usuário (2026-08-18): "na leitura bíblica
+não aparece os títulos atualmente"** — o título "Livro Capítulo" só
+existia dentro do cabeçalho do Modo Foco (ver 1.8), que começa
+**desativado** por padrão; no modo normal de leitura (a maioria do
+tempo), não havia nenhum texto no cabeçalho dizendo qual livro/capítulo
+estava sendo lido — só a barra de abas Texto/Resumo e os ícones de
+áudio/ajustes, sem título nenhum, contradizendo o que este próprio
+documento já dizia existir ("cabeçalho fixo com livro/capítulo sempre
+visível" — never existia fora do Modo Foco). Corrigido: título "Livro
+Capítulo" adicionado também no cabeçalho do modo normal, só na aba
+Texto Bíblico (a aba Resumo já tem seu próprio título grande). Testado
+ao vivo: "Deuteronômio 3" aparece no topo antes de "Marcar capítulo
+como lido"; trocar de aba não duplica o título.
 
 **Bug real reportado por usuário (2026-08-11):** "erro ao carregar
 versículos, leitura bíblica não funcionando". Investigado: a

@@ -3,6 +3,26 @@
 Todas as mudanças notáveis feitas no projeto serão documentadas neste arquivo.
 O formato é baseado no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/).
 
+## [Unreleased] - 2026-08-18 (continuação 10)
+
+### Corrigido
+- **Título do capítulo (livro + número) não aparecia na leitura
+  bíblica** (reportado pelo usuário): a única ocorrência do título
+  "Livro Capítulo" no cabeçalho da tela de leitura
+  (`app/(tabs)/biblia/[livro]/[capitulo].tsx`) estava dentro do bloco
+  `{focoAtivo && (...)}` — só visível no Modo Foco (ver 1.8), que
+  começa **desativado** por padrão. No modo normal de leitura (a
+  maioria do tempo), o cabeçalho tinha só a seta de voltar, as abas
+  "Texto Bíblico"/"Resumo" e os ícones de áudio/ajustes — nenhum texto
+  dizendo qual livro/capítulo está sendo lido, a não ser rolando até a
+  barrinha de navegação bem no fim da tela. Corrigido: título "Livro
+  Capítulo" adicionado também no cabeçalho do modo normal, abaixo da
+  barra de abas — só na aba "Texto Bíblico" (a aba "Resumo" já tem seu
+  próprio título grande, `resumo.nome`, então não duplica). Testado ao
+  vivo: "Deuteronômio 3" aparece no topo da leitura antes do botão
+  "Marcar capítulo como lido"; trocar pra aba "Resumo" não duplica o
+  título.
+
 ## [Unreleased] - 2026-08-18 (continuação 9)
 
 ### Adicionado

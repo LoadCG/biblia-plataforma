@@ -449,6 +449,12 @@ export default function Leitura() {
             </Pressable>
           </View>
         </View>
+
+        {abaAtual === "texto" ? (
+          <Text className="text-xl font-bold text-cor-texto dark:text-cor-texto-dark text-center pb-2">
+            {livro?.nome} {capitulo}
+          </Text>
+        ) : null}
       </View>
       )}
       <ScrollView ref={scrollRef} onScroll={aoRolar} scrollEventThrottle={32} className="flex-1" style={{ display: abaAtual === "texto" ? "flex" : "none" }}>

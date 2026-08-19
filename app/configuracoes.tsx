@@ -1,6 +1,7 @@
 import { Link } from "expo-router";
 import { useEffect, useState } from "react";
 import { Alert, Platform, Pressable, ScrollView, Text, View } from "react-native";
+import { BotaoTema } from "../components/BotaoTema";
 import {
   carregarFonteSerifada,
   carregarIndiceFonte,
@@ -89,9 +90,12 @@ export default function Configuracoes() {
   return (
     <ScrollView className="flex-1 bg-cor-fundo dark:bg-cor-fundo-dark">
       <View className="px-5 pt-6 pb-10 max-w-2xl w-full mx-auto">
-        <Link href="/voce" className="text-cor-destaque dark:text-cor-destaque-dark text-sm mb-2">
-          ← Você
-        </Link>
+        <View className="flex-row items-center justify-between mb-2">
+          <Link href="/voce" className="text-cor-destaque dark:text-cor-destaque-dark text-sm">
+            ← Você
+          </Link>
+          <BotaoTema />
+        </View>
         <Text className="text-2xl font-bold text-cor-texto dark:text-cor-texto-dark mb-5">Configurações</Text>
 
         <Secao titulo="Leitura">

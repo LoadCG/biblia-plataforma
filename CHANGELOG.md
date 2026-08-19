@@ -3,6 +3,18 @@
 Todas as mudanças notáveis feitas no projeto serão documentadas neste arquivo.
 O formato é baseado no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/).
 
+## [Unreleased] - 2026-08-18 (continuação 7)
+
+### Corrigido
+- **Cabeçalho de `/configuracoes` sem botão de tema**: toda tela
+  autônoma do app (`/estatisticas`, `/planos`, `/resumos`, `/salvo`,
+  `/medalhas`) usa o mesmo padrão de cabeçalho — link "← Voltar" e
+  `<BotaoTema />` lado a lado numa linha `flex-row justify-between`.
+  `/configuracoes` era a única exceção: só tinha o link de voltar,
+  sem o botão de tema, e nem usava a mesma estrutura de linha. Ironia
+  à parte (é a tela de configurações de aparência), agora segue o
+  mesmo padrão de cabeçalho de todo o resto do app.
+
 ## [Unreleased] - 2026-08-18 (continuação 6)
 
 ### Corrigido

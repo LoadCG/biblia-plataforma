@@ -3,6 +3,38 @@
 Todas as mudanças notáveis feitas no projeto serão documentadas neste arquivo.
 O formato é baseado no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/).
 
+## [Unreleased] - 2026-08-18 (continuação 6)
+
+### Corrigido
+Auditoria de navegação (a pedido do usuário — "continuar com melhorias
+no fluxo do usuário [...] tem componentes que estão muito diferentes,
+mesmo os que deviam ser parecidos"), feita com um agente de busca
+dedicado, checando todo `router.push`/`Link href` do app contra as
+rotas reais:
+- **Botões "Salvos" e "Notas" (aba Você) levavam pro mesmo lugar sem
+  filtro nenhum**: os dois abriam `/salvo` sem parâmetro, mostrando
+  sempre a lista completa (Todos) — apesar de serem dois botões
+  visualmente distintos, prometendo destinos diferentes. `app/salvo.tsx`
+  ganhou suporte a `?filtro=salvo|nota|grifo|pesquisa` via
+  `useLocalSearchParams` (com validação — um valor desconhecido ou
+  ausente cai em "Todos", nunca quebra), e os dois botões de Você agora
+  passam o filtro certo. Testado ao vivo: "Notas" abre `/salvo?filtro=nota`
+  com o chip "Anotações" já selecionado (confirmado via classe CSS de
+  seleção); "Salvos" abre `/salvo?filtro=salvo` com "Salvos" selecionado.
+- **Rótulo "Ver Todos" (Início, maiúsculo) inconsistente com o resto do
+  app** (que usa sempre minúsculo: "Ver todas as estatísticas", "Ver
+  todas as medalhas", "Ver todas" no modal de conquista) — padronizado
+  pra minúsculo.
+- **"Ver mais" da Atividade (Você) sem contexto de quantidade**: outros
+  pontos do app com "ver mais" mostram "X de Y" (medalhas, estatísticas);
+  esse só dizia "Ver mais" sem indicar quantos itens existem além dos 5
+  mostrados. Agora mostra "Ver mais (mostrando 5 de N)".
+
+O agente também confirmou que nenhum `router.push`/`Link href` do app
+aponta pra uma rota inexistente — o bug das Medalhas (corrigido antes)
+era o único link "morto"/apontando pro lugar errado; o resto encontrado
+foi inconsistência visual/de rótulo, registrada acima.
+
 ## [Unreleased] - 2026-08-18 (continuação 5)
 
 ### Adicionado

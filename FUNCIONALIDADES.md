@@ -1173,9 +1173,17 @@ Medalhas num carrossel horizontal com barra de progresso por conquista
 ambos levando pra `/configuracoes`.
 **UX/UI:** cards de streak/medalhas usam um fundo escuro/metalizado
 fixo, deliberadamente fora do tema claro/escuro do resto do app (padrão
-comum em dashboards de gamificação). **Gap conhecido:** o botão
-"Salvos" leva pra `/salvo`, mas a tela ainda não lista versículos
-salvos de verdade — ver 2.7.
+comum em dashboards de gamificação).
+
+**Bug real, achado numa auditoria de navegação (2026-08-18):** os
+botões "Salvos" e "Notas" levavam os dois pra `/salvo` sem nenhum
+parâmetro — apesar de serem visualmente dois botões distintos
+prometendo destinos diferentes, os dois abriam a mesma lista completa
+sem filtro nenhum aplicado. Corrigido: `app/salvo.tsx` passou a ler um
+parâmetro `?filtro=` (via `useLocalSearchParams`, com validação — um
+valor desconhecido cai em "Todos"), e os dois botões agora passam o
+filtro certo (`salvo`/`nota`). Testado ao vivo: "Notas" abre
+`/salvo?filtro=nota` com o chip "Anotações" pré-selecionado.
 
 ### 9.6b Tela própria de Medalhas `✅`
 **Funcionalidade:** pedido do usuário — "a função de marcar

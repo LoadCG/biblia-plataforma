@@ -109,7 +109,7 @@ export default function Voce() {
 
         <View className="flex-row gap-3 mb-4">
           <Pressable
-            onPress={() => router.push("/salvo")}
+            onPress={() => router.push({ pathname: "/salvo", params: { filtro: "salvo" } })}
             className="flex-1 items-center gap-1.5 rounded-2xl py-4 active:opacity-70"
             style={{ backgroundColor: COR_GAMIFICACAO.fundo }}
           >
@@ -117,7 +117,7 @@ export default function Voce() {
             <Text className="text-xs font-bold text-white">Salvos</Text>
           </Pressable>
           <Pressable
-            onPress={() => router.push("/salvo")}
+            onPress={() => router.push({ pathname: "/salvo", params: { filtro: "nota" } })}
             className="flex-1 items-center gap-1.5 rounded-2xl py-4 active:opacity-70"
             style={{ backgroundColor: COR_GAMIFICACAO.fundo }}
           >
@@ -200,7 +200,7 @@ export default function Voce() {
         )}
         {atividade.length > 5 ? (
           <Link href="/salvo" className="text-sm text-cor-destaque dark:text-cor-destaque-dark self-start mb-4">
-            Ver mais
+            Ver mais (mostrando {recentes.length} de {atividade.length})
           </Link>
         ) : null}
 

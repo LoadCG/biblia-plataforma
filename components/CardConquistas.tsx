@@ -45,7 +45,7 @@ export function CardConquistas({ conquistas }: { conquistas: Conquista[] }) {
       </View>
 
       <Pressable onPress={() => router.push("/medalhas")} className="bg-cor-borda dark:bg-cor-borda-dark self-start px-5 py-2 rounded-full active:opacity-70">
-        <Text className="text-xs font-semibold text-cor-texto dark:text-cor-texto-dark">Ver Todos</Text>
+        <Text className="text-xs font-semibold text-cor-texto dark:text-cor-texto-dark">Ver todos</Text>
       </Pressable>
 
       <Modal visible={!!conquistaAberta} transparent animationType="fade" onRequestClose={() => setConquistaAberta(null)}>

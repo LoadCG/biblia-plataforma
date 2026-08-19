@@ -1,4 +1,4 @@
-import { Link } from "expo-router";
+import { Link, useLocalSearchParams } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { BotaoTema } from "../components/BotaoTema";
@@ -17,10 +17,17 @@ const FILTROS: { chave: Filtro; rotulo: string }[] = [
   { chave: "pesquisa", rotulo: "Pesquisas" },
 ];
 
+const CHAVES_FILTRO = FILTROS.map((f) => f.chave);
+
+function filtroValido(valor: string | undefined): Filtro {
+  return CHAVES_FILTRO.includes(valor as Filtro) ? (valor as Filtro) : "todos";
+}
+
 export default function Salvo() {
+  const { filtro: filtroInicial } = useLocalSearchParams<{ filtro?: string }>();
   const ownerId = useOwnerId();
   const [atividade, setAtividade] = useState<ItemAtividade[]>([]);
-  const [filtro, setFiltro] = useState<Filtro>("todos");
+  const [filtro, setFiltro] = useState<Filtro>(() => filtroValido(filtroInicial));
 
   const carregar = useCallback(async () => {
     if (!ownerId) return;

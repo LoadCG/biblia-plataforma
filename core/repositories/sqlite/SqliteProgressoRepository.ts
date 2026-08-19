@@ -42,4 +42,23 @@ export const sqliteProgressoRepository: ProgressoRepository = {
     );
     return true;
   },
+
+  async definirVarios(ownerId, refs, lido) {
+    const agora = new Date().toISOString();
+    await db.withTransactionAsync(async () => {
+      for (const ref of refs) {
+        if (lido) {
+          await db.runAsync(
+            `INSERT OR IGNORE INTO capitulos_lidos (ownerId, livroSlug, capitulo, lidoEm) VALUES (?, ?, ?, ?)`,
+            [ownerId, ref.livroSlug, ref.capitulo, agora]
+          );
+        } else {
+          await db.runAsync(
+            `DELETE FROM capitulos_lidos WHERE ownerId = ? AND livroSlug = ? AND capitulo = ?`,
+            [ownerId, ref.livroSlug, ref.capitulo]
+          );
+        }
+      }
+    });
+  },
 };

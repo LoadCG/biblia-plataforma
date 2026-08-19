@@ -4,6 +4,11 @@ type Props = {
   totalCapitulos: number;
   lidos: Set<number>;
   onSelecionar: (capitulo: number) => void;
+  /** Quando presente, a grade entra em modo de seleção múltipla: tocar
+   * um capítulo alterna sua seleção (`onAlternarSelecionado`) em vez de
+   * navegar (`onSelecionar`) — usado na marcação em massa. */
+  selecionados?: Set<number>;
+  onAlternarSelecionado?: (capitulo: number) => void;
 };
 
 // Colunas por faixa de largura — quanto mais tela, mais colunas, sem
@@ -18,27 +23,43 @@ function calcularColunas(largura: number, totalCapitulos: number): number {
   return Math.max(1, Math.min(base, totalCapitulos));
 }
 
-export function GradeCapitulos({ totalCapitulos, lidos, onSelecionar }: Props) {
+export function GradeCapitulos({ totalCapitulos, lidos, onSelecionar, selecionados, onAlternarSelecionado }: Props) {
   const { width } = useWindowDimensions();
   const colunas = calcularColunas(width, totalCapitulos);
   const capitulos = Array.from({ length: totalCapitulos }, (_, i) => i + 1);
+  const modoSelecao = !!selecionados;
 
   return (
     <View className="flex-row flex-wrap -m-1">
       {capitulos.map((n) => {
         const lido = lidos.has(n);
+        const selecionado = selecionados?.has(n) ?? false;
         return (
           <View key={n} style={{ width: `${100 / colunas}%` }} className="p-1">
             <Pressable
-              onPress={() => onSelecionar(n)}
-              accessibilityLabel={`Capítulo ${n}${lido ? ", lido" : ""}`}
-              className={`aspect-square items-center justify-center rounded-lg border active:opacity-60 ${
-                lido
-                  ? "border-green-600 bg-green-600"
-                  : "border-cor-borda dark:border-cor-borda-dark bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark"
+              onPress={() => (modoSelecao ? onAlternarSelecionado?.(n) : onSelecionar(n))}
+              accessibilityLabel={
+                modoSelecao
+                  ? `Capítulo ${n}${lido ? ", lido" : ""}${selecionado ? ", selecionado" : ""}`
+                  : `Capítulo ${n}${lido ? ", lido" : ""}`
+              }
+              className={`aspect-square items-center justify-center rounded-lg border-2 active:opacity-60 ${
+                selecionado
+                  ? "border-cor-destaque dark:border-cor-destaque-dark bg-cor-destaque/20"
+                  : lido
+                    ? "border-green-600 bg-green-600"
+                    : "border-cor-borda dark:border-cor-borda-dark bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark"
               }`}
             >
-              <Text className={`text-sm font-semibold ${lido ? "text-white" : "text-cor-texto dark:text-cor-texto-dark"}`}>
+              <Text
+                className={`text-sm font-semibold ${
+                  selecionado
+                    ? "text-cor-destaque dark:text-cor-destaque-dark"
+                    : lido
+                      ? "text-white"
+                      : "text-cor-texto dark:text-cor-texto-dark"
+                }`}
+              >
                 {n}
               </Text>
             </Pressable>

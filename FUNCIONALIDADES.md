@@ -312,11 +312,9 @@ um capítulo tem versículos grifados dentro dele — só mostra
 
 ### 2.4 Marcar capítulo como lido `✅`
 **Funcionalidade:** separado de propósito de "livro lido" (que é sobre o
-resumo). Progresso visível dentro da grade de capítulos daquele livro
-("X de Y lidos" no topo de `app/(tabs)/biblia/escolher/[livro]/index.tsx`).
-A lista de livros (`app/(tabs)/biblia/escolher/index.tsx`) **não** mostra
-essa contagem hoje — só mostra o total de capítulos do livro, sem
-quantos já foram lidos (ver 2.4b).
+resumo). Marcação individual acontece na própria tela de leitura
+(`app/(tabs)/biblia/[livro]/[capitulo].tsx`), um capítulo por vez. Ver
+2.4c pra marcação de vários capítulos de uma vez.
 **UX/UI:** feedback imediato ao marcar (o botão já muda no mesmo toque,
 sem esperar round-trip perceptível).
 
@@ -327,6 +325,62 @@ lidos, calculado com uma única chamada a `progressoRepository.listarTodos`
 (agrupada por `livroSlug` em memória, sem N chamadas por livro).
 **UX/UI:** contagem discreta ao lado do nome do livro, mesmo texto
 suave usado em outros indicadores de progresso do app.
+
+### 2.4c Marcar vários capítulos como lidos de uma vez `✅`
+**Funcionalidade:** pedido do usuário — "preciso marcar vários como
+lidos" (ex.: já leu esses capítulos em papel/outro app antes de
+começar a usar este, ou quer corrigir o histórico de leitura de uma
+vez). No acordeão de livros (`app/(tabs)/biblia/escolher/index.tsx`),
+cada livro expandido ganha um botão "Selecionar vários" que muda a
+`GradeCapitulos` pra modo de seleção múltipla — tocar um capítulo o
+seleciona (contorno destacado na cor de destaque do app, distinto do
+verde de "já lido") em vez de abrir a leitura. Barra de ações com:
+- **Selecionar todos**: marca todos os capítulos do livro pra seleção
+  de uma vez (cobre o caso "marcar o livro inteiro como lido").
+- **Desmarcar**: remove a marcação de leitura dos capítulos
+  selecionados (corrige marcações em massa por engano).
+- **Marcar como lidos**: aplica a leitura aos selecionados.
+Toast de confirmação ("N capítulos marcados como lidos") e a contagem
+"X de Y" do livro na lista atualiza na hora — sem esperar navegação ou
+reload.
+**Técnico:** novo `ProgressoRepository.definirVarios(ownerId, refs,
+lido)` — define o mesmo estado pra uma lista de capítulos numa
+chamada só, em vez de repetir `alternar()` (que é *toggle*, arriscando
+"destoggle" acidental num capítulo que já estava lido). No SQLite
+nativo roda em `withTransactionAsync` com `INSERT OR IGNORE` (a
+`UNIQUE(ownerId, livroSlug, capitulo)` da tabela evita duplicata) ou
+`DELETE`; no localStorage (web), uma passada só sobre a lista antes de
+salvar de volta.
+**Testado ao vivo:** selecionar capítulos 1-3 de Deuteronômio → "Marcar
+como lidos" → contagem "0 de 34" vira "3 de 34" na hora, toast aparece,
+`aria-label` do capítulo 1 confirma "Capítulo 1, lido", estado
+sobrevive a um reload da página.
+
+**Outras ideias de marcação em massa, registradas mas não
+implementadas** (fora do pedido original, avaliar depois se fizer
+sentido):
+- **"Marcar até aqui"**: dado um capítulo, marcar como lido tudo de 1
+  até ele — um atalho pro caso mais comum (leu um livro inteiro até um
+  certo ponto), sem precisar tocar em cada capítulo individualmente
+  mesmo com "Selecionar todos" existente hoje cobrindo só o livro
+  inteiro, não um intervalo parcial.
+- **Seleção por arraste/intervalo** (estilo Fotos do iOS/Android):
+  tocar e arrastar sobre vários capítulos em sequência pra
+  selecionar um intervalo, em vez de tocar um por um — mais rápido pra
+  selecionar 10+ capítulos seguidos.
+- **Marcar leitura em lote a partir de um plano de leitura**: já existe
+  `PlanosRepository` no código — quando planos de leitura ganharem UI,
+  faria sentido marcar todos os capítulos de um dia/semana do plano
+  como lidos numa ação só, reaproveitando `definirVarios`.
+- **Desfazer (undo) da última marcação em massa** via um botão de ação
+  no próprio toast (o componente `Toast.tsx` hoje só mostra texto, sem
+  botão) — reduziria o risco de "Selecionar todos" + "Marcar como
+  lidos" sem querer num livro errado. Registrado como possível
+  evolução do componente `Toast`, não implementado agora.
+- **Resumo/estatística de quantos capítulos foram marcados em massa
+  vs. lidos "de verdade" um a um** — dado interessante pra futuras
+  conquistas/gamificação, mas exigiria um novo campo no modelo
+  (`CapituloLido`) pra distinguir a origem da marcação.
 
 ### 2.5 Navegar entre capítulos `✅`
 **Funcionalidade:** anterior/próximo, cruzando de um livro pro outro nas

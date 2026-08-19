@@ -55,4 +55,22 @@ export const localProgressoRepository: ProgressoRepository = {
       return true;
     });
   },
+
+  definirVarios(ownerId, refs, lido) {
+    return comFila(CHAVE, async () => {
+      const todos = await lerTudo();
+      const agora = new Date().toISOString();
+
+      for (const ref of refs) {
+        const indice = todos.findIndex((c) => c.ownerId === ownerId && mesmaReferencia(c, ref));
+        if (lido && indice === -1) {
+          todos.push({ ...ref, ownerId, lidoEm: agora });
+        } else if (!lido && indice !== -1) {
+          todos.splice(indice, 1);
+        }
+      }
+
+      await salvarTudo(todos);
+    });
+  },
 };

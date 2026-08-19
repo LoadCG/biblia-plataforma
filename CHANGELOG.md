@@ -3,6 +3,30 @@
 Todas as mudanças notáveis feitas no projeto serão documentadas neste arquivo.
 O formato é baseado no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/).
 
+## [Unreleased] - 2026-08-18 (continuação 3)
+
+### Adicionado
+- **Marcar vários capítulos como lidos de uma vez** (pedido do usuário):
+  no acordeão de livros (`/biblia/escolher`), cada livro expandido ganhou
+  um botão "Selecionar vários" que entra em modo de seleção múltipla na
+  grade de capítulos — tocar um capítulo agora o seleciona (contorno
+  destacado) em vez de navegar pra leitura. Barra de ações com
+  "Selecionar todos" (marca o livro inteiro de uma vez), "Desmarcar" e
+  "Marcar como lidos", com toast de confirmação ("N capítulos marcados
+  como lidos") e contagem "X de Y" do livro atualizada na hora, sem
+  precisar recarregar a tela.
+  Novo `ProgressoRepository.definirVarios(ownerId, refs, lido)` —
+  define o mesmo estado (lido/não lido) pra uma lista de capítulos numa
+  chamada só: no SQLite nativo, roda em uma transação com
+  `INSERT OR IGNORE`/`DELETE` (index único `(ownerId, livroSlug,
+  capitulo)` já existente evita duplicata); no localStorage (web), uma
+  passada só sobre a lista antes de salvar de volta — nos dois casos,
+  muito mais rápido que chamar `alternar()` capítulo por capítulo (que
+  também arriscaria "destoggle" acidental se algum já estivesse lido).
+  Testado ao vivo: selecionar capítulos 1-3 de Deuteronômio, marcar como
+  lidos, contagem vai de "0 de 34" pra "3 de 34" na hora, toast aparece,
+  e o estado sobrevive a um reload da página (persistência confirmada).
+
 ## [Unreleased] - 2026-08-18 (continuação 2)
 
 ### Corrigido

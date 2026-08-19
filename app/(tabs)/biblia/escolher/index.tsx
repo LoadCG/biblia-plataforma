@@ -224,13 +224,24 @@ export default function EscolherLivro() {
           </View>
           <BotaoTema />
         </View>
-        <TextInput
-          value={termo}
-          onChangeText={setTermo}
-          placeholder="Buscar livro..."
-          placeholderTextColor="#9ca3af"
-          className="px-4 py-2.5 rounded-full border border-cor-borda dark:border-cor-borda-dark bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark text-cor-texto dark:text-cor-texto-dark"
-        />
+        <View className="relative justify-center">
+          <TextInput
+            value={termo}
+            onChangeText={setTermo}
+            placeholder="Buscar livro..."
+            placeholderTextColor="#9ca3af"
+            className="px-4 py-2.5 pr-10 rounded-full border border-cor-borda dark:border-cor-borda-dark bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark text-cor-texto dark:text-cor-texto-dark"
+          />
+          {termo ? (
+            <Pressable
+              onPress={() => setTermo("")}
+              accessibilityLabel="Limpar busca"
+              className="absolute right-2 w-7 h-7 items-center justify-center rounded-full active:opacity-60"
+            >
+              <MaterialIcons name="close" size={16} className="text-cor-texto-suave dark:text-cor-texto-suave-dark" />
+            </Pressable>
+          ) : null}
+        </View>
       </View>
 
       <FlatList

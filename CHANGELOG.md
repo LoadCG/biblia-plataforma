@@ -3,6 +3,17 @@
 Todas as mudanças notáveis feitas no projeto serão documentadas neste arquivo.
 O formato é baseado no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/).
 
+## [Unreleased] - 2026-08-18 (continuação 9)
+
+### Adicionado
+- **Botão de limpar (X) na busca de livro da leitura bíblica**
+  (pedido do usuário): o campo "Buscar livro..." em `/biblia/escolher`
+  (acessado durante a leitura, ao tocar no nome do livro) não tinha
+  jeito rápido de limpar o texto — só apagar letra por letra. Agora um
+  "✕" aparece dentro do campo, à direita, só quando há texto digitado,
+  e some de novo quando o campo está vazio. Testado ao vivo: aparece
+  ao digitar, some ao voltar o campo pra vazio.
+
 ## [Unreleased] - 2026-08-18 (continuação 8)
 
 ### Corrigido

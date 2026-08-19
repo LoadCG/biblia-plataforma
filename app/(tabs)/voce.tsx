@@ -27,7 +27,7 @@ function MedalhaCarrossel({ conquista }: { conquista: Conquista }) {
   const progresso = conquista.progressoTotal > 0 ? Math.min(1, conquista.progressoAtual / conquista.progressoTotal) : 0;
 
   return (
-    <View className="w-28 mr-3 items-center">
+    <Pressable onPress={() => router.push("/medalhas")} className="w-28 mr-3 items-center active:opacity-70">
       <View
         className="w-16 h-16 rounded-full items-center justify-center mb-2"
         style={{ backgroundColor: conquista.conquistada ? COR_GAMIFICACAO.destaque : COR_GAMIFICACAO.fundoClaro }}
@@ -46,7 +46,7 @@ function MedalhaCarrossel({ conquista }: { conquista: Conquista }) {
       <Text style={{ color: COR_GAMIFICACAO.textoSuave }} className="text-[10px] mt-1">
         {conquista.progressoAtual}/{conquista.progressoTotal}
       </Text>
-    </View>
+    </Pressable>
   );
 }
 
@@ -185,6 +185,11 @@ export default function Voce() {
               <MedalhaCarrossel key={c.id} conquista={c} />
             ))}
           </ScrollView>
+          <Pressable onPress={() => router.push("/medalhas")} className="self-start mt-3 active:opacity-70">
+            <Text style={{ color: COR_GAMIFICACAO.destaque }} className="text-xs font-bold">
+              Ver todas as medalhas →
+            </Text>
+          </Pressable>
         </View>
 
         <Text className="text-sm font-bold text-cor-texto dark:text-cor-texto-dark mt-1 mb-2">Atividade</Text>

@@ -1,7 +1,6 @@
 import { router } from "expo-router";
 import { useState } from "react";
 import { Modal, Pressable, Text, View } from "react-native";
-import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import type { Conquista } from "../core/content/conquistas";
 
 export function CardConquistas({ conquistas }: { conquistas: Conquista[] }) {
@@ -27,11 +26,7 @@ export function CardConquistas({ conquistas }: { conquistas: Conquista[] }) {
                     : 'bg-cor-borda dark:bg-cor-borda-dark border-transparent'
                 }`}
               >
-                <MaterialIcons
-                  name={c.id === 'novo-testamento' ? 'auto-awesome' : c.id === 'pentateuco' ? 'menu-book' : 'emoji-events'}
-                  size={32}
-                  color={completa ? '#e0a75e' : '#9ca3af'}
-                />
+                <Text style={{ fontSize: 30, opacity: completa ? 1 : 0.4 }}>{c.icone}</Text>
                 {!completa && (
                   <View className="absolute bottom-1 bg-cor-fundo/80 dark:bg-cor-fundo-dark/80 px-2 rounded-full">
                     <Text className="text-[10px] text-cor-texto dark:text-cor-texto-dark font-bold">{c.progressoAtual}</Text>
@@ -49,7 +44,7 @@ export function CardConquistas({ conquistas }: { conquistas: Conquista[] }) {
         })}
       </View>
 
-      <Pressable onPress={() => router.push("/voce")} className="bg-cor-borda dark:bg-cor-borda-dark self-start px-5 py-2 rounded-full active:opacity-70">
+      <Pressable onPress={() => router.push("/medalhas")} className="bg-cor-borda dark:bg-cor-borda-dark self-start px-5 py-2 rounded-full active:opacity-70">
         <Text className="text-xs font-semibold text-cor-texto dark:text-cor-texto-dark">Ver Todos</Text>
       </Pressable>
 
@@ -63,9 +58,20 @@ export function CardConquistas({ conquistas }: { conquistas: Conquista[] }) {
                 <Text className="text-xs font-semibold text-cor-destaque dark:text-cor-destaque-dark mb-4">
                   {conquistaAberta.conquistada ? "Conquistada ✓" : `${conquistaAberta.progressoAtual} de ${conquistaAberta.progressoTotal}`}
                 </Text>
-                <Pressable onPress={() => setConquistaAberta(null)} className="self-end px-4 py-2 rounded-full bg-cor-destaque dark:bg-cor-destaque-dark active:opacity-70">
-                  <Text className="text-white font-semibold text-sm">Fechar</Text>
-                </Pressable>
+                <View className="flex-row items-center justify-between">
+                  <Pressable
+                    onPress={() => {
+                      setConquistaAberta(null);
+                      router.push("/medalhas");
+                    }}
+                    className="px-3 py-2 active:opacity-70"
+                  >
+                    <Text className="text-cor-destaque dark:text-cor-destaque-dark font-semibold text-sm">Ver todas</Text>
+                  </Pressable>
+                  <Pressable onPress={() => setConquistaAberta(null)} className="px-4 py-2 rounded-full bg-cor-destaque dark:bg-cor-destaque-dark active:opacity-70">
+                    <Text className="text-white font-semibold text-sm">Fechar</Text>
+                  </Pressable>
+                </View>
               </>
             ) : null}
           </Pressable>

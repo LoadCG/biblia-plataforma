@@ -588,18 +588,29 @@ editorial de verdade), nunca uma API de foto aleatória.
 66 livros — calculados em cima de `livrosLidosRepository`, sem tabela
 própria de progresso. Testado marcando o Pentateuco como lido: os selos
 "Primeiro livro" e "Pentateuco completo" acendem, os outros 4 continuam
-apagados. No card resumido da Início (`CardConquistas.tsx`), "Saiba
-mais" (por medalha) e "Ver Todos" eram `Pressable`s sem `onPress`
-nenhum (achado na mesma auditoria de UI do item 3.2) — agora "Saiba
-mais" abre um modal com a descrição real da conquista
-(`conquista.descricao`, já existia no tipo, só não era mostrada em
-lugar nenhum) e o progresso atual; "Ver Todos" leva pra `/voce`, que
-já tem o carrossel completo das 6 medalhas com barra de progresso.
-Testado ao vivo: modal mostra "Leia os 5 livros do Pentateuco... 0 de
-5" corretamente; "Ver Todos" navega e mostra as 6 medalhas.
+apagados.
+No card resumido da Início (`CardConquistas.tsx`), "Saiba mais" (por
+medalha) abre um modal com a descrição real da conquista
+(`conquista.descricao`) e o progresso atual.
 **UX/UI:** selos discretos (círculos pequenos, opacos quando bloqueados,
 cheios quando conquistados) na home, sem número nem pontuação — só
 reconhecimento silencioso.
+
+**Bug real, reportado por usuário (2026-08-18):** "o botão que era pra
+levar pra tela própria [de medalhas] [...] leva para a tela de perfil
+[Você]" — "Ver Todos" (e "Ver todas" dentro do modal de detalhe)
+levavam pra `/voce`, a aba inteira, não uma tela dedicada às medalhas —
+porque essa tela nunca existiu (ver 9.6b). Corrigido criando
+`app/medalhas.tsx` e apontando os dois pra lá.
+**Inconsistência real, achada na mesma auditoria:** os ícones de
+medalha do card do Início eram desenhados via `MaterialIcons` com um
+mapeamento manual que só cobria 2 dos 6 ids de conquista (o resto caía
+num ícone genérico de troféu, `emoji-events`) — enquanto a aba Você
+sempre usou o emoji de verdade de cada conquista (`conquista.icone`).
+Unificado: os dois agora renderizam o mesmo emoji do modelo de dados,
+com a mesma técnica de opacidade reduzida (0.4) pra "não conquistada
+ainda" já usada em Você — uma fonte de verdade só pro ícone de cada
+medalha, em vez de duas.
 
 ### 3.4 Sequência de dias lendo ("streak") `✅`
 **Funcionalidade:** calculado a partir das datas em que algum capítulo da
@@ -1165,6 +1176,29 @@ fixo, deliberadamente fora do tema claro/escuro do resto do app (padrão
 comum em dashboards de gamificação). **Gap conhecido:** o botão
 "Salvos" leva pra `/salvo`, mas a tela ainda não lista versículos
 salvos de verdade — ver 2.7.
+
+### 9.6b Tela própria de Medalhas `✅`
+**Funcionalidade:** pedido do usuário — "a função de marcar
+[Medalhas], que não tem tela própria [...] o botão que era pra levar
+pra tela própria [...] leva para a tela de perfil [Você]". Nova
+`app/medalhas.tsx`: lista completa das 6 conquistas, uma por linha,
+cada uma com ícone, título, **descrição completa sempre visível** (ao
+contrário do card resumido do Início, que exige tocar "Saiba mais"
+pra ver a descrição) e barra de progresso — pensada como a versão
+"canônica" de referência, nem tão resumida quanto o card do Início nem
+com a pele visual especial (fundo escuro/metalizado) exclusiva do
+carrossel de Você, que continua existindo do jeito que está, por
+pedido explícito do usuário ("tenha outro tipo de visualização mais
+detalhada" — mantido de propósito).
+Três pontos de entrada levam pra lá agora: "Ver Todos" no card do
+Início, "Ver todas" dentro do modal de detalhe de uma medalha (também
+no Início), e "Ver todas as medalhas →" abaixo do carrossel em Você —
+além de cada medalha individual do carrossel de Você também ter virado
+tocável, levando pra mesma tela.
+**Testado ao vivo:** os três pontos de entrada + o toque numa medalha
+individual do carrossel de Você levam corretamente pra
+`/medalhas`, que lista as 6 conquistas com título, descrição e barra
+de progresso.
 
 ### 9.7 Tela "Configurações" `✅`
 **Funcionalidade:** tamanho de fonte, fonte serifada (lê/escreve

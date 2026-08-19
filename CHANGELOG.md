@@ -3,6 +3,35 @@
 Todas as mudanças notáveis feitas no projeto serão documentadas neste arquivo.
 O formato é baseado no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/).
 
+## [Unreleased] - 2026-08-18 (continuação 5)
+
+### Adicionado
+- **Tela própria de Medalhas** (`/medalhas`), pedida pelo usuário: "o
+  botão que era pra levar pra tela própria [...] leva para a tela de
+  perfil". O botão "Ver Todos" do card de Medalhas do Início
+  (`CardConquistas`) apontava pra `/voce` — a aba Você inteira, não uma
+  tela dedicada — porque essa tela nunca existiu. Criada
+  `app/medalhas.tsx`: lista completa das 6 conquistas, cada uma com
+  ícone, título, descrição completa (sem precisar tocar pra ver, ao
+  contrário do card do Início) e barra de progresso. Agora "Ver Todos"
+  (e o "Ver todas" dentro do modal de detalhe de uma medalha) levam
+  pra lá. A aba Você (visualização mais detalhada em carrossel,
+  mantida de propósito — é o pedido explícito do usuário) ganhou um
+  link "Ver todas as medalhas →" abaixo do carrossel, e cada medalha
+  individual do carrossel também ficou tocável, levando pra mesma tela.
+
+### Corrigido
+- **Ícones de medalha inconsistentes entre Início e Você**: o card do
+  Início (`CardConquistas`) desenhava ícones via `MaterialIcons` com um
+  mapeamento manual incompleto (só cobria 2 dos 6 ids de conquista,
+  o resto caía num ícone genérico de troféu) — enquanto a aba Você
+  sempre usou o emoji de verdade de cada conquista
+  (`core/content/conquistas.ts`). Unificado: os dois agora renderizam
+  o mesmo `c.icone`, com a mesma técnica de opacidade reduzida (0.4)
+  pra "não conquistada ainda" usada em Você — elimina uma fonte real
+  de inconsistência visual entre dois componentes que representam a
+  mesma coisa.
+
 ## [Unreleased] - 2026-08-18 (continuação 4)
 
 ### Adicionado

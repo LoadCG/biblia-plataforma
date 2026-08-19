@@ -1,14 +1,20 @@
-import { Pressable, Text, View, useWindowDimensions } from "react-native";
+import { Platform, Pressable, Text, View, useWindowDimensions } from "react-native";
+import { useSelecaoArrasto } from "../core/util/useSelecaoArrasto";
+
+const SET_VAZIO = new Set<number>();
 
 type Props = {
   totalCapitulos: number;
   lidos: Set<number>;
   onSelecionar: (capitulo: number) => void;
-  /** Quando presente, a grade entra em modo de seleção múltipla: tocar
-   * um capítulo alterna sua seleção (`onAlternarSelecionado`) em vez de
-   * navegar (`onSelecionar`) — usado na marcação em massa. */
+  /** Quando presente, a grade entra em modo de seleção múltipla. No web,
+   * pressionar-e-arrastar estende a seleção por um intervalo inteiro
+   * (ver `useSelecaoArrasto`); em toque simples (ou no app nativo, sem
+   * suporte a arraste ainda) cada capítulo alterna via
+   * `onAlternarSelecionado`. */
   selecionados?: Set<number>;
   onAlternarSelecionado?: (capitulo: number) => void;
+  onMudarSelecaoEmMassa?: (novo: Set<number>) => void;
 };
 
 // Colunas por faixa de largura — quanto mais tela, mais colunas, sem
@@ -23,21 +29,41 @@ function calcularColunas(largura: number, totalCapitulos: number): number {
   return Math.max(1, Math.min(base, totalCapitulos));
 }
 
-export function GradeCapitulos({ totalCapitulos, lidos, onSelecionar, selecionados, onAlternarSelecionado }: Props) {
+export function GradeCapitulos({
+  totalCapitulos,
+  lidos,
+  onSelecionar,
+  selecionados,
+  onAlternarSelecionado,
+  onMudarSelecaoEmMassa,
+}: Props) {
   const { width } = useWindowDimensions();
   const colunas = calcularColunas(width, totalCapitulos);
   const capitulos = Array.from({ length: totalCapitulos }, (_, i) => i + 1);
   const modoSelecao = !!selecionados;
 
+  const refArrasto = useSelecaoArrasto({
+    ativo: modoSelecao,
+    selecionados: selecionados ?? SET_VAZIO,
+    onMudarSelecao: onMudarSelecaoEmMassa ?? (() => {}),
+  });
+
   return (
-    <View className="flex-row flex-wrap -m-1">
+    <View ref={refArrasto as any} className="flex-row flex-wrap -m-1">
       {capitulos.map((n) => {
         const lido = lidos.has(n);
         const selecionado = selecionados?.has(n) ?? false;
         return (
           <View key={n} style={{ width: `${100 / colunas}%` }} className="p-1">
             <Pressable
-              onPress={() => (modoSelecao ? onAlternarSelecionado?.(n) : onSelecionar(n))}
+              // No web, o toque (com ou sem arraste) é tratado inteiramente
+              // pelo useSelecaoArrasto (pointerdown/up no container) — dar
+              // onPress aqui também faria a seleção alternar duas vezes por
+              // toque. Fora do web (app nativo, sem suporte a arraste ainda),
+              // o toque direto no Pressable é o único jeito de selecionar.
+              onPress={Platform.OS === "web" && modoSelecao ? undefined : () => (modoSelecao ? onAlternarSelecionado?.(n) : onSelecionar(n))}
+              // @ts-expect-error dataSet é uma extensão do react-native-web pra atributos data-* no DOM, usada pelo useSelecaoArrasto pra achar a célula sob o ponteiro durante o arraste
+              dataSet={{ capitulo: String(n) }}
               accessibilityLabel={
                 modoSelecao
                   ? `Capítulo ${n}${lido ? ", lido" : ""}${selecionado ? ", selecionado" : ""}`

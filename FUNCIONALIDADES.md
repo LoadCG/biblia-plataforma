@@ -356,31 +356,65 @@ como lidos" → contagem "0 de 34" vira "3 de 34" na hora, toast aparece,
 `aria-label` do capítulo 1 confirma "Capítulo 1, lido", estado
 sobrevive a um reload da página.
 
-**Outras ideias de marcação em massa, registradas mas não
-implementadas** (fora do pedido original, avaliar depois se fizer
-sentido):
+**Ideias implementadas depois, a pedido do usuário:** ver 2.4d (seleção
+por arraste) e 5.3 (Toast com ação/Desfazer) abaixo.
+
+**Outras ideias de marcação em massa, registradas mas ainda não
+implementadas** (avaliar depois se fizer sentido):
 - **"Marcar até aqui"**: dado um capítulo, marcar como lido tudo de 1
   até ele — um atalho pro caso mais comum (leu um livro inteiro até um
-  certo ponto), sem precisar tocar em cada capítulo individualmente
-  mesmo com "Selecionar todos" existente hoje cobrindo só o livro
-  inteiro, não um intervalo parcial.
-- **Seleção por arraste/intervalo** (estilo Fotos do iOS/Android):
-  tocar e arrastar sobre vários capítulos em sequência pra
-  selecionar um intervalo, em vez de tocar um por um — mais rápido pra
-  selecionar 10+ capítulos seguidos.
+  certo ponto). Parcialmente coberto hoje pela seleção por arraste
+  (2.4d): arrastar do capítulo 1 até o alvo faz a mesma coisa em um
+  gesto, mas um atalho de um toque só (sem precisar arrastar por um
+  livro de 150 capítulos, ex. Salmos) ainda seria mais rápido nesse
+  caso extremo.
 - **Marcar leitura em lote a partir de um plano de leitura**: já existe
   `PlanosRepository` no código — quando planos de leitura ganharem UI,
   faria sentido marcar todos os capítulos de um dia/semana do plano
   como lidos numa ação só, reaproveitando `definirVarios`.
-- **Desfazer (undo) da última marcação em massa** via um botão de ação
-  no próprio toast (o componente `Toast.tsx` hoje só mostra texto, sem
-  botão) — reduziria o risco de "Selecionar todos" + "Marcar como
-  lidos" sem querer num livro errado. Registrado como possível
-  evolução do componente `Toast`, não implementado agora.
 - **Resumo/estatística de quantos capítulos foram marcados em massa
   vs. lidos "de verdade" um a um** — dado interessante pra futuras
   conquistas/gamificação, mas exigiria um novo campo no modelo
   (`CapituloLido`) pra distinguir a origem da marcação.
+
+### 2.4d Seleção por arraste na marcação em massa `✅`
+**Funcionalidade:** pedido do usuário — "implemente seleção por
+arraste com foco em ux avançada". No modo de seleção múltipla (2.4c),
+no web, pressionar um capítulo e arrastar o ponteiro sobre outros
+estende a seleção pro intervalo inteiro entre o capítulo onde o
+arraste começou e o capítulo atual sob o ponteiro — sem precisar
+tocar um por um. Mesmo padrão do app Fotos do iOS/Android: se o
+arraste **começa** num capítulo já selecionado, o gesto inteiro
+desmarca em vez de marcar (permite tanto estender quanto encolher uma
+seleção com o mesmo gesto). Um toque simples sem arrastar continua
+funcionando normalmente (seleciona só aquele capítulo).
+**Técnico:** novo `core/util/useSelecaoArrasto.ts` — hook só-web
+(`Platform.OS !== "web"` sai cedo) que escuta `pointerdown` no
+container da grade e `pointermove`/`pointerup` na window, usando
+`document.elementFromPoint(x, y)` + um atributo `data-capitulo` (via
+`dataSet`, extensão do react-native-web pra atributos `data-*`) em
+cada célula pra saber qual capítulo está sob o ponteiro a cada
+movimento — evita ter que medir manualmente o layout de cada célula.
+Escolhido em vez de `PanResponder` (a API de gestos nativa do React
+Native) porque a interação em pauta é fundamentalmente de mouse/
+trackpad num navegador, e a combinação `elementFromPoint` + Pointer
+Events já é um padrão testado neste projeto (mesmo tipo de abordagem
+de `useArrastarParaRolar.ts`, ver 7.9) — evita depender de medir
+layout de cada célula manualmente, que teria mais superfície pra bug.
+No app nativo (iOS/Android), o toque direto em cada capítulo (já
+existia antes, ver 2.4c) continua funcionando sem o arraste — não
+testável neste ambiente sem dispositivo real, registrado como escopo
+da v1.
+**UX/UI:** dica de texto "arraste pra selecionar um intervalo" aparece
+enquanto nada está selecionado, pra descoberta do gesto (arrastar não
+é óbvio sem indicação, diferente de tocar).
+**Testado ao vivo, com sequências de `PointerEvent` simuladas de
+verdade** (pointerdown → pointermove × N → pointerup): arrastar do
+capítulo 3 ao 9 selecionou exatamente 3-9 (7 capítulos, confirmado via
+`aria-label` de cada célula, com 2 e 10 confirmadamente fora);
+arrastar de um capítulo já selecionado (5) até 7 desmarcou só 5-7,
+mantendo 3, 4, 8 e 9 selecionados — confirma o comportamento "estilo
+Fotos" de estender ou encolher com o mesmo gesto.
 
 ### 2.5 Navegar entre capítulos `✅`
 **Funcionalidade:** anterior/próximo, cruzando de um livro pro outro nas
@@ -651,6 +685,30 @@ uma vez em `app/_layout.tsx`, pub-sub simples sem Context — qualquer
 lugar do app chama `mostrarToast(mensagem)`, mesmo fora da árvore de
 componentes). No nativo o próprio sheet do sistema (`Share.share`) já
 serve de confirmação, sem precisar do toast.
+
+### 5.3 Toast com botão de ação (Desfazer) `✅`
+**Funcionalidade:** pedido do usuário — "evoluir componente toast
+também", no contexto da marcação em massa (2.4c/2.4d): marcar ou
+desmarcar vários capítulos de uma vez é fácil de fazer sem querer
+(ex. "Selecionar todos" num livro errado). `mostrarToast()` ganhou uma
+segunda forma, com opções (`{ acaoLabel, onAcao, duracaoMs }`) —
+retrocompatível: todo chamador existente (`"Copiado!"`,
+`"Imagem baixada!"`) continua funcionando sem mudança, só passando a
+string. Quando há `acaoLabel`, o toast mostra um botão de ação ao lado
+da mensagem (ex. "Desfazer") e fica visível o dobro do tempo (4s em
+vez de 2s — dá tempo de ler e decidir antes de sumir sozinho); tocar
+no botão cancela o timer de fechar automaticamente, roda `onAcao` e
+fecha o toast na hora.
+Usado hoje pela marcação em massa: desfazer restaura o estado
+**individual** de cada capítulo antes da mudança (não só inverte tudo
+em bloco) — importante porque uma seleção pode misturar capítulos já
+lidos com não lidos; desfazer um "Desmarcar" aplicado a essa seleção
+mista não pode marcar como lido quem nunca tinha sido lido antes.
+**Testado ao vivo:** marcar 4 capítulos → toast "4 capítulos marcados
+como lidos" com botão "Desfazer" → tocar reverte a contagem "4 de 34"
+de volta pra "0 de 34" na hora, e o estado revertido também sobrevive
+a um reload da página (persistiu no banco de verdade, não só na
+memória).
 
 ### 5.2 Gerar imagem de versículo pra compartilhar `🔶`
 **Funcionalidade:** `core/util/gerarImagemVersiculo.ts` — cartão

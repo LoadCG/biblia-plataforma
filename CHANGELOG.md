@@ -3,6 +3,32 @@
 Todas as mudanças notáveis feitas no projeto serão documentadas neste arquivo.
 O formato é baseado no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/).
 
+## [Unreleased] - 2026-08-18 (continuação 4)
+
+### Adicionado
+- **Seleção por arraste na marcação em massa** (pedido do usuário: "implemente
+  seleção por arraste com foco em ux avançada"): no modo de seleção múltipla
+  da grade de capítulos, no web, pressionar e arrastar sobre vários
+  capítulos estende a seleção pro intervalo inteiro, em vez de tocar um por
+  um. Arrastar a partir de um capítulo já selecionado desmarca o intervalo
+  em vez de marcar (mesmo padrão do app Fotos do iOS/Android — permite
+  estender ou encolher a seleção com o mesmo gesto). Novo
+  `core/util/useSelecaoArrasto.ts`, usando `pointerdown`/`pointermove`/
+  `pointerup` + `elementFromPoint` (mesmo tipo de padrão já usado em
+  `useArrastarParaRolar.ts`). Testado ao vivo com sequências reais de
+  `PointerEvent`: arrastar de 3 a 9 selecionou exatamente 7 capítulos (3-9);
+  arrastar de um capítulo já selecionado desmarcou só o intervalo do
+  arraste, mantendo o resto da seleção anterior intacto.
+- **Toast com botão de ação (Desfazer)** (pedido do usuário: "evoluir
+  componente toast também"): `mostrarToast()` ganhou uma segunda forma
+  opcional `{ acaoLabel, onAcao, duracaoMs }`, retrocompatível com todo
+  chamador existente. Usado agora pela marcação em massa — desfazer uma
+  marcação restaura o estado **individual** de cada capítulo (não inverte
+  tudo em bloco), correto mesmo quando a seleção original misturava
+  capítulos já lidos com não lidos. Testado ao vivo: marcar 4 capítulos,
+  tocar "Desfazer" no toast reverte a contagem na hora, e o estado
+  revertido sobrevive a um reload (persistiu de verdade, não só na memória).
+
 ## [Unreleased] - 2026-08-18 (continuação 3)
 
 ### Adicionado

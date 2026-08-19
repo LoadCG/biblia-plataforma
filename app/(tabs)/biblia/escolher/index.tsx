@@ -1,6 +1,6 @@
 import { Link, router, useLocalSearchParams } from "expo-router";
 import { useEffect, useMemo, useState } from "react";
-import { FlatList, Pressable, Text, TextInput, View } from "react-native";
+import { FlatList, Platform, Pressable, Text, TextInput, View } from "react-native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { BotaoTema } from "../../../../components/BotaoTema";
 import { EstadoVazio } from "../../../../components/EstadoVazio";
@@ -70,24 +70,54 @@ export default function EscolherLivro() {
     });
   }
 
-  async function marcarSelecionados(livro: Livro, lido: boolean) {
-    if (!ownerId || selecionados.size === 0) return;
-    const refs = Array.from(selecionados).map((capitulo) => ({ livroSlug: livro.slug, capitulo }));
-    await progressoRepository.definirVarios(ownerId, refs, lido);
-
+  function aplicarEmLote(livroSlug: string, capitulos: number[], lido: boolean) {
     setLidosPorLivro((atual) => {
-      const lidosAtuais = new Set(atual[livro.slug] ?? SET_VAZIO);
-      for (const cap of selecionados) {
+      const lidosAtuais = new Set(atual[livroSlug] ?? SET_VAZIO);
+      for (const cap of capitulos) {
         if (lido) lidosAtuais.add(cap);
         else lidosAtuais.delete(cap);
       }
-      return { ...atual, [livro.slug]: lidosAtuais };
+      return { ...atual, [livroSlug]: lidosAtuais };
     });
+  }
+
+  async function marcarSelecionados(livro: Livro, lido: boolean) {
+    if (!ownerId || selecionados.size === 0) return;
+    const capitulos = Array.from(selecionados);
+    const refs = capitulos.map((capitulo) => ({ livroSlug: livro.slug, capitulo }));
+
+    // Guarda o estado individual de cada capítulo antes da mudança — uma
+    // seleção pode misturar capítulos já lidos com não lidos, então
+    // "Desfazer" precisa restaurar cada um ao que era antes, não só
+    // inverter tudo em bloco (senão desfazer um "Desmarcar" aplicado a uma
+    // seleção mista marcaria como lido até quem nunca tinha sido).
+    const lidosAntes = lidosPorLivro[livro.slug] ?? SET_VAZIO;
+    const estadoAnterior = new Map(capitulos.map((c) => [c, lidosAntes.has(c)]));
+
+    await progressoRepository.definirVarios(ownerId, refs, lido);
+    aplicarEmLote(livro.slug, capitulos, lido);
 
     mostrarToast(
       lido
         ? `${refs.length} ${refs.length === 1 ? "capítulo marcado" : "capítulos marcados"} como lido${refs.length === 1 ? "" : "s"}`
-        : `${refs.length} ${refs.length === 1 ? "capítulo desmarcado" : "capítulos desmarcados"}`
+        : `${refs.length} ${refs.length === 1 ? "capítulo desmarcado" : "capítulos desmarcados"}`,
+      {
+        acaoLabel: "Desfazer",
+        onAcao: async () => {
+          const paraLido = capitulos.filter((c) => estadoAnterior.get(c));
+          const paraNaoLido = capitulos.filter((c) => !estadoAnterior.get(c));
+          await Promise.all([
+            paraLido.length
+              ? progressoRepository.definirVarios(ownerId, paraLido.map((capitulo) => ({ livroSlug: livro.slug, capitulo })), true)
+              : null,
+            paraNaoLido.length
+              ? progressoRepository.definirVarios(ownerId, paraNaoLido.map((capitulo) => ({ livroSlug: livro.slug, capitulo })), false)
+              : null,
+          ]);
+          aplicarEmLote(livro.slug, paraLido, true);
+          aplicarEmLote(livro.slug, paraNaoLido, false);
+        },
+      }
     );
     setLivroSelecaoAtiva(null);
     setSelecionados(new Set());
@@ -120,7 +150,11 @@ export default function EscolherLivro() {
           <View className="px-2 py-4 bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark rounded-b-xl -mt-2 pt-6">
             <View className="flex-row items-center justify-between px-1 mb-4">
               <Text className="text-xs text-cor-texto-suave dark:text-cor-texto-suave-dark">
-                {emSelecao ? `${selecionados.size} selecionado${selecionados.size === 1 ? "" : "s"}` : "Toque num capítulo pra ler"}
+                {emSelecao
+                  ? `${selecionados.size} selecionado${selecionados.size === 1 ? "" : "s"}${
+                      Platform.OS === "web" && selecionados.size === 0 ? " — arraste pra selecionar um intervalo" : ""
+                    }`
+                  : "Toque num capítulo pra ler"}
               </Text>
               <Pressable
                 onPress={() => alternarModoSelecao(item.slug)}
@@ -144,6 +178,7 @@ export default function EscolherLivro() {
               onSelecionar={(cap) => router.push(`/biblia/${item.slug}/${cap}`)}
               selecionados={emSelecao ? selecionados : undefined}
               onAlternarSelecionado={emSelecao ? alternarCapituloSelecionado : undefined}
+              onMudarSelecaoEmMassa={emSelecao ? setSelecionados : undefined}
             />
 
             {emSelecao && (

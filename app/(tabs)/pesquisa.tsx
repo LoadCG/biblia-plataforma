@@ -86,7 +86,8 @@ export default function Pesquisa() {
               <Pressable
                 key={atalho.id}
                 onPress={() => Alert.alert(atalho.rotulo, "Em breve!")}
-                className="flex-1 items-center gap-1.5 mx-1 rounded-2xl bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark py-3.5 active:opacity-70"
+                accessibilityLabel={`${atalho.rotulo} (em breve)`}
+                className="flex-1 items-center gap-1.5 mx-1 rounded-2xl bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark py-3.5 active:opacity-70 opacity-40"
               >
                 <MaterialIcons name={atalho.icone} size={20} color="#8a5a2b" />
                 <Text className="text-xs font-semibold text-cor-texto dark:text-cor-texto-dark">{atalho.rotulo}</Text>

@@ -3,6 +3,20 @@
 Todas as mudanças notáveis feitas no projeto serão documentadas neste arquivo.
 O formato é baseado no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/).
 
+## [Unreleased] - 2026-08-18 (continuação 8)
+
+### Corrigido
+- **Atalhos "Favoritos" e "Apoie" (Descubra) indistinguíveis do
+  atalho "Planos" de verdade**: os três atalhos no topo da aba
+  Descubra tinham exatamente a mesma aparência, mas só "Planos" navega
+  de verdade — os outros dois só mostram um `Alert` "Em breve!" ao
+  tocar (já documentado como mock intencional no código, mas sem
+  nenhuma pista visual). Mesmo problema de visibilidade de estado já
+  corrigido antes pro sino de notificações e "Envie-me Diariamente"
+  (ver 7.10): aplicado `opacity-40` e `accessibilityLabel` com "(em
+  breve)" nos dois atalhos mock, consistente com o padrão já
+  estabelecido no app pra funcionalidades ainda não implementadas.
+
 ## [Unreleased] - 2026-08-18 (continuação 7)
 
 ### Corrigido

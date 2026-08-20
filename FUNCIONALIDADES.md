@@ -980,14 +980,44 @@ alvo comum de referência (~200KB gzip pra "bom" segundo o Lighthouse),
 mas ainda numa faixa razoável pra um app com todo o texto da Bíblia
 embutido (`assets/biblia.json`, ver 2.6) — a maior parte do peso
 provavelmente é dado, não código. **Faltou:** medir separadamente
-quanto do bundle é `assets/biblia.json` vs. código de verdade (ex.:
-`source-map-explorer` ou `expo export` com `--dump-sourcemap`) antes de
-decidir se otimizar (code splitting por rota, lazy load do índice
-FTS5) vale o esforço — item de otimização em si continua não
-iniciado, isto é só a medição pedida no funcionalidade original.
+quanto do bundle é `assets/biblia.json` vs. código de verdade.
 **UX/UI:** tela de carregamento/skeleton em vez de tela branca enquanto
 o app inicializa, se o tempo de carga não puder cair o suficiente —
 ainda não avaliado.
+
+**Continuação (2026-08-19) — a dúvida acima já tem resposta, de graça:**
+a correção da leitura/busca offline (ver 2.6/7.3) já isolou
+`assets/biblia.json` num chunk `lazy=true` separado
+(`core/biblia/bibliaLocalWeb.ts`, `import()` dinâmico), então a medição
+de bundle agora já responde a pergunta antiga sem precisar de
+ferramenta extra:
+- `entry-*.js` (bundle principal, carregado em toda página): **1.85MB
+  bruto / ~483KB gzip** — código de verdade, sem o texto da Bíblia.
+- `biblia-*.js` (o JSON da Bíblia inteira): **4.2MB bruto / ~1.2MB
+  gzip** — carregado só sob demanda (abrir um capítulo ou buscar), não
+  faz parte do carregamento inicial.
+- CSS: 21.6KB bruto / ~4.5KB gzip.
+
+Ou seja: o bundle inicial de verdade (o que trava o primeiro
+carregamento) é ~483KB gzip — ainda acima do alvo "bom" do Lighthouse
+(~200KB), mas o texto bíblico (a maior parte do peso total do projeto)
+**não** faz parte disso mais. Reduzir os ~483KB exigiria code
+splitting por rota (cada tela carregar seu próprio chunk, não tudo
+junto) — que é literalmente o `output: "static"` do Expo Router
+avaliado no item 7.1/E do `TODO.md`, hoje não ativado por risco de
+quebrar rotas dinâmicas em produção sem um jeito de testar num preview
+deploy antes. Ou seja, os itens 7.1 e 7.4 convergem pra mesma mudança:
+não vale otimizar performance de carregamento sem resolver primeiro o
+roteamento estático.
+**Sobre re-renders desnecessários:** revisado o código das duas listas
+grandes do app — a lista de 66 livros (`/biblia/escolher`) já usa
+`FlatList` (virtualizada, só renderiza o que está visível). A grade de
+capítulos (`GradeCapitulos.tsx`) usa `.map()` direto (não virtualizada)
+— até 176 células pro maior livro (Salmos). Não achei evidência de
+problema real (176 `View`s simples não é pesado pra um navegador
+moderno), então não mudei nada especulativamente — fica registrado
+como algo a reconsiderar só se algum dia virar um problema medido de
+verdade, não antes.
 
 ### 7.6 Fundo consistente no "bounce" de rolagem mobile `✅`
 **Funcionalidade:** `html`/`body` não tinham `background-color` definido

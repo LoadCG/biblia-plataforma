@@ -163,15 +163,50 @@ hoje só funciona no web)
 3. Registrar achados em `FUNCIONALIDADES.md` mesmo que a conclusão
    seja "sem problema real encontrado" (como já aconteceu com 9.9).
 
-**E. Pré-renderização estática por rota (SEO)** (7.1)
-1. Levantar a configuração atual de export do Expo Router (web) —
-   hoje gera um `index.html` só.
-2. Avaliar `output: "static"` do Expo Router (já disponível em versões
-   recentes) pra gerar HTML por rota de conteúdo (livro/capítulo).
-3. Testar que o app continua funcionando como SPA depois da mudança
-   (client-side routing não pode quebrar).
-4. Confirmar que o build/deploy do Vercel não precisa de ajuste
-   adicional.
+**E. Pré-renderização estática por rota (SEO)** (7.1) — investigado
+(2026-08-19), **não ativado ainda** por risco de quebrar a navegação
+em produção sem conseguir testar o suficiente neste ambiente.
+1. ~~Levantar a configuração atual~~ — confirmado: sem `web.output` no
+   `app.json`, o Expo Router usa o padrão `"single"` (um `index.html`
+   só, SPA pura).
+2. ~~Avaliar `output: "static"`~~ — testado de verdade
+   (`npx expo export --platform web` com `"output": "static"`
+   temporariamente no `app.json`). Precisou instalar
+   `@expo/metro-runtime` (faltava, erro de bundling sem ele — já
+   adicionado ao `package.json`, é inofensivo mesmo sem `static`
+   ativo). Gera 23 rotas com HTML próprio — todas as telas "hub"
+   (Início, Bíblia, Descubra, Você, Salvo, Sobre, Medalhas,
+   Estatísticas, Configurações, índice de Planos, índice de Resumos)
+   ganham SEO de verdade.
+3. **Achado real, por que não ativar ainda sem mais cuidado:** as
+   rotas dinâmicas (`/resumos/[livro]`, `/biblia/[livro]/[capitulo]`,
+   `/planos/[id]`) geram um arquivo `[livro].html`/`[capitulo].html`
+   **literal** (nome de arquivo com colchetes) — confirmado inspecionando
+   o HTML gerado: é uma casca vazia (sem conteúdo do livro, porque
+   nenhum `slug` real foi passado em build). Pra virar conteúdo de
+   verdade indexável (o objetivo real deste item — cada capítulo/resumo
+   sendo achado pelo Google), precisaria de `generateStaticParams`
+   enumerando cada um dos 66 livros × até ~176 capítulos (mais de 1200
+   páginas) — build bem maior, ainda não avaliado se vale a pena vs. o
+   ganho de SEO real.
+4. **Bloqueio prático:** hospedagem estática "pura" (Vercel incluso)
+   não sabe rotear `/resumos/genesis` pro arquivo `[livro].html`
+   sozinha — isso depende de regra de rewrite específica, e o
+   `vercel.json` atual manda **tudo** pro `index.html`
+   (`"rewrites": [{"source": "/(.*)", "destination": "/index.html"}]`),
+   o que anularia o ganho das 23 rotas estáticas se ativado sem
+   ajustar isso também. Testei localmente com `serve -s` (SPA
+   fallback), que não é 100% idêntico ao comportamento de rewrite do
+   Vercel — não tenho confiança suficiente pra mudar `vercel.json` e
+   fazer push sem um jeito de testar num preview deploy de verdade
+   antes (mudar isso errado quebraria a navegação de todo o app em
+   produção). **Revertido** o `app.json` de volta pro padrão por
+   segurança; `@expo/metro-runtime` ficou instalado (não atrapalha,
+   já é o primeiro passo pra quando isso for retomado).
+5. Próximo passo, se/quando retomar: decidir se vale o build maior com
+   `generateStaticParams`, e testar a mudança de `vercel.json` num
+   preview deploy do Vercel (não direto em produção) antes de mesclar
+   pra `master`.
 
 ### Decisões do usuário (2026-08-19)
 

@@ -3,6 +3,28 @@
 Todas as mudanças notáveis feitas no projeto serão documentadas neste arquivo.
 O formato é baseado no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/).
 
+## [Unreleased] - 2026-08-19 (continuação 5)
+
+### Investigado (sem mudança de código em produção)
+- **Pré-renderização estática por rota / SEO** (`TODO.md` item E,
+  `FUNCIONALIDADES.md` 7.1): testado `web.output: "static"` de
+  verdade — precisou instalar `@expo/metro-runtime` (faltava). Gera
+  23 rotas com HTML próprio, incluindo todas as telas "hub" do app.
+  **Não ativado**: rotas dinâmicas (`/resumos/[livro]`,
+  `/biblia/[livro]/[capitulo]`) geram um arquivo `[livro].html`
+  literal e vazio (sem `generateStaticParams`, e o `vercel.json` atual
+  manda tudo pro `index.html`, o que anularia o ganho sem também
+  ajustar isso) — risco de quebrar navegação em produção sem um jeito
+  de testar num preview deploy do Vercel antes. Revertido o
+  `app.json`; `@expo/metro-runtime` ficou instalado (primeiro passo
+  pra quando isso for retomado com mais cuidado).
+- **Auditoria de performance** (`FUNCIONALIDADES.md` 7.4): medido de
+  verdade com `npx expo export`: bundle principal 1.85MB/~483KB gzip
+  (código, sem o texto da Bíblia — confirmado que a correção de
+  leitura offline já isolou isso num chunk `lazy` separado); grade de
+  capítulos não virtualizada (até 176 células), sem evidência de
+  problema real, não mudado especulativamente.
+
 ## [Unreleased] - 2026-08-19 (continuação 4)
 
 ### Adicionado

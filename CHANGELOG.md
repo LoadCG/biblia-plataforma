@@ -3,6 +3,27 @@
 Todas as mudanças notáveis feitas no projeto serão documentadas neste arquivo.
 O formato é baseado no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/).
 
+## [Unreleased] - 2026-08-19 (continuação)
+
+### Adicionado
+- **Exportar/apagar meus dados** (`FUNCIONALIDADES.md` 6.4): nova
+  seção "Meus dados" em Configurações. Exportar baixa um JSON (web) ou
+  abre o share sheet (nativo) com tudo dos 7 repositórios do app
+  (grifos, capítulos lidos, notas, livros lidos, pesquisas favoritas,
+  versículos salvos, planos). Apagar remove tudo permanentemente,
+  atrás de um modal de confirmação — reaproveita os métodos de
+  alternar/remover já existentes em cada repositório (todos
+  idempotentes) em vez de criar um `apagarTudo` novo em cada um.
+  Testado ao vivo: marcar um capítulo como lido, exportar, apagar pelo
+  fluxo real da UI, e confirmar que o dado sumiu de verdade do
+  `localStorage` (não só que a UI relatou sucesso).
+- **Página "Sobre o projeto"** (`app/sobre.tsx`, `FUNCIONALIDADES.md`
+  8.3): metodologia, fonte do texto bíblico (Almeida Corrigida Fiel,
+  domínio público), origem dos resumos (conteúdo autoral, posição
+  tradicional citando visão acadêmica alternativa quando relevante),
+  limitações, privacidade e link pro repositório — alcançada por
+  Configurações → Sobre.
+
 ## [Unreleased] - 2026-08-19
 
 ### Corrigido

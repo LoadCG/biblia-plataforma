@@ -796,11 +796,36 @@ uma que fala com o banco de dados (o ponto de troca já existe:
 esperando rede) — grifar/marcar como lido precisa continuar instantâneo
 mesmo offline, sincronizando em segundo plano.
 
-### 6.4 Exportar/apagar meus dados `⬜`
-**Funcionalidade:** exigência da LGPD assim que houver conta — exportar
-(JSON) e apagar todos os dados associados ao `ownerId`/conta.
-**UX/UI:** localizável nas configurações sem precisar procurar muito
-(é um direito do usuário, não deveria estar escondido).
+### 6.4 Exportar/apagar meus dados `✅`
+**Funcionalidade:** implementado 2026-08-19, antes de existir qualquer
+sistema de conta — o direito de exportar/apagar já faz sentido hoje,
+já que todo dado do app é isolado por um `ownerId` anônimo por
+dispositivo desde o início (nenhuma dependência de login). Nova seção
+"Meus dados" em `app/configuracoes.tsx`, usando
+`core/util/dadosPessoais.ts`:
+- **Exportar**: `coletarDadosPessoais(ownerId)` agrega, em paralelo,
+  tudo dos 7 repositórios (grifos, capítulos lidos, notas, livros
+  lidos, pesquisas favoritas, versículos salvos, e dias concluídos de
+  cada plano de leitura) num único JSON com timestamp. No web, baixa
+  um arquivo `meus-dados-AAAA-MM-DD.json` via Blob; no nativo, abre o
+  share sheet do sistema (`Share.share`) com o JSON — mesmo padrão já
+  usado pra compartilhar versículos, sem dependência nova.
+- **Apagar**: `apagarDadosPessoais` reaproveita os métodos de
+  alternar/remover que cada repositório já tinha (todos idempotentes:
+  chamar em cima de um item existente sempre remove) em vez de criar
+  um `apagarTudo` novo em cada repositório — menos superfície de
+  código pra uma ação que roda raras vezes. Atrás de um modal de
+  confirmação (mesmo padrão visual dos outros modais do app), com
+  texto explícito de que não pode ser desfeito.
+**UX/UI:** nova seção "Meus dados" dentro de Configurações, ação
+destrutiva com texto vermelho e confirmação obrigatória antes de
+apagar; toast de confirmação depois de cada ação.
+**Testado ao vivo:** marquei Gênesis 1 como lido, exportei (toast
+"Dados exportados!"), confirmei que o registro estava em
+`localStorage`, apaguei tudo pelo fluxo real da UI (botão → modal →
+"Apagar tudo"), e confirmei que `capitulos-lidos` no `localStorage`
+esvaziou (`[]`) — não só que a UI relatou sucesso, mas que o dado
+realmente sumiu da persistência.
 
 ---
 
@@ -1057,12 +1082,20 @@ pra saber pra quem notificar) — depende da Decisão de banco de dados.
 **UX/UI:** opt-in claro, nunca ativado por padrão sem pedir permissão
 explicitamente, com controle fácil de desativar depois.
 
-### 8.3 Página "Sobre o projeto" `⬜`
-**Funcionalidade:** metodologia, fontes, escopo e limitações históricas
-do conteúdo (o site antigo tinha isso planejado, nunca implementado).
-**UX/UI:** tom transparente e honesto sobre debates acadêmicos — alinhado
-com a diretriz de conteúdo do projeto (posição tradicional, citando
-visões alternativas quando relevante).
+### 8.3 Página "Sobre o projeto" `✅`
+**Funcionalidade:** implementada 2026-08-19 em `app/sobre.tsx`,
+alcançada por um link em Configurações → Sobre. Seções: o que é o
+projeto (independente, sem vínculo institucional), fonte do texto
+bíblico (Almeida Corrigida Fiel, domínio público, embutido no app —
+por isso a leitura funciona offline), origem dos resumos (conteúdo
+autoral, posição tradicional/conservadora nas questões de debate
+acadêmico real, citando visão alternativa quando relevante),
+limitações (não é uma edição acadêmica/crítica), privacidade (sem
+conta, dado isolado por dispositivo, link direto pra "Meus dados" em
+Configurações — ver 6.4) e um link pro repositório no GitHub (o
+projeto é open source).
+**UX/UI:** tom transparente e honesto sobre debates acadêmicos,
+alinhado com a diretriz de conteúdo do projeto.
 
 ---
 

@@ -1,10 +1,26 @@
 # Bíblia Plataforma
 
-Uma plataforma bíblica completa, rápida e imersiva (Web + App), construída com Expo Router (React Native + Web) e NativeWind. 
+Uma plataforma bíblica completa, rápida e imersiva (Web + App), construída com Expo Router (React Native + Web) e NativeWind.
 
-Este projeto unifica a experiência de leitura bíblica, resumos teológicos, acompanhamento de progresso diário e medalhas num único código-fonte escalável, substituindo projetos fragmentados anteriores. O plano arquitetural original que guiou essa unificação está em [`PLANO-PLATAFORMA.md`](./PLANO-PLATAFORMA.md). 
+**🔗 Demo ao vivo:** [biblia-plataforma.vercel.app](https://biblia-plataforma.vercel.app)
+
+<!--
+  Screenshot/GIF do app aqui — ex.:
+  ![Tela inicial do app](./docs/screenshot-inicio.png)
+  Tire uma captura da tela inicial (ou grave um GIF curto navegando
+  entre Início → Bíblia → leitura de capítulo) e salve em ./docs/,
+  depois referencie a imagem aqui. Não foi possível gerar isso
+  automaticamente neste ambiente (sem suporte a screenshot real de
+  navegador nesta sessão).
+-->
+
+Este projeto unifica a experiência de leitura bíblica, resumos teológicos, acompanhamento de progresso diário e medalhas num único código-fonte escalável, substituindo projetos fragmentados anteriores. O plano arquitetural original que guiou essa unificação está em [`PLANO-PLATAFORMA.md`](./PLANO-PLATAFORMA.md).
 
 Para visualizar o que já implementamos e o roadmap técnico (próximos passos estruturais), consulte o [`TODO.md`](./TODO.md), o checklist detalhado em [`FUNCIONALIDADES.md`](./FUNCIONALIDADES.md) e o nosso [`CHANGELOG.md`](./CHANGELOG.md).
+
+## Licença
+
+[MIT](./LICENSE) — livre pra usar, estudar e adaptar.
 
 ## Rodando localmente
 
@@ -82,3 +98,4 @@ Checklist completo e detalhado (funcionalidade + UX/UI, item por item) em [`FUNC
 - **Busca**: por nome/conteúdo dos resumos e por palavra em toda a Bíblia (full-text local), tolerante a acentos.
 - **Planos de leitura diária**: trilhas com progresso por dia e lembrete discreto na Início quando um plano fica parado.
 - **Progresso, streak e conquistas**: sequência de dias lendo, medalhas por marcos do cânon, estatísticas pessoais de leitura.
+- **Privacidade em primeiro lugar**: sem conta obrigatória — perfil, progresso e grifos ficam isolados por um ID anônimo de dispositivo. Exportar (JSON) ou apagar todos os seus dados a qualquer momento, direto em Configurações.

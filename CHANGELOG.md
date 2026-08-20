@@ -3,6 +3,22 @@
 Todas as mudanças notáveis feitas no projeto serão documentadas neste arquivo.
 O formato é baseado no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/).
 
+## [Unreleased] - 2026-08-19 (continuação 6)
+
+### Investigado (sem mudança de código em produção)
+- **Foco visível em navegação por teclado** (`FUNCIONALIDADES.md`
+  7.2): tentei adicionar uma regra CSS global de `outline` visível em
+  elementos focados via Tab. Achado técnico real: o pipeline de
+  CSS do NativeWind/Metro descarta silenciosamente qualquer seletor
+  baseado em pseudo-classe de foco (`:focus`, `:focus-visible`, com ou
+  sem `*`) — confirmado inspecionando `document.styleSheets` depois do
+  build, a regra nunca aparece no CSS final. Combinar com `html.dark`
+  como ancestral chega a travar o app inteiro (tela em branco, sem
+  erro no console) — reproduzido isolando a mudança. Revertido; não
+  implementado ainda. Próximo caminho provável: aplicar foco via
+  className por componente em vez de CSS global, escopo bem maior
+  (~90+ elementos interativos).
+
 ## [Unreleased] - 2026-08-19 (continuação 5)
 
 ### Investigado (sem mudança de código em produção)

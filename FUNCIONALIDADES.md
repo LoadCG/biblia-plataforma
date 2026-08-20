@@ -915,6 +915,29 @@ paralelo: `accessibilityState` (nativo) + a prop achatada equivalente
 `aria-selected` do DOM antes/depois de cada interação (ex.: alternar
 tema: `aria-checked` vai de `"true"` pra `"false"` no clique).
 
+**Tentativa real, não concluída (2026-08-19): foco visível em
+navegação por teclado.** Tentei adicionar uma regra CSS global
+(`global.css`) pra mostrar um contorno visível em qualquer elemento
+focado via Tab (hoje nenhum elemento do app mostra indicação nenhuma
+de foco de teclado). **Achado técnico real:** o pipeline de CSS do
+NativeWind/Metro desta versão do projeto **descarta silenciosamente**
+qualquer seletor baseado em pseudo-classe de foco (`:focus`,
+`:focus-visible`, com ou sem `*` na frente) — confirmado lendo
+`document.styleSheets` depois do build: a regra simplesmente não
+aparece no CSS final, mesmo sem erro nenhum reportado. Pior: combinar
+com `html.dark` como ancestral (`html.dark :focus-visible {...}`) **trava
+o app inteiro** (tela em branco, sem nenhum erro no console) —
+reproduzido de forma isolada (revertendo só essa regra o app volta a
+funcionar). Seletores baseados em tag/classe simples (`html, body
+{...}`, já existentes no arquivo) funcionam normalmente — o problema é
+especificamente com pseudo-classes de foco soltas no CSS global.
+**Não resolvido ainda:** provável próximo caminho é aplicar foco via
+className por componente (`focus:` do NativeWind, se suportado pela
+mesma versão — não testado) em vez de uma regra CSS global, o que
+exigiria tocar em cada `Pressable`/`TextInput` interativo (~90+
+elementos) — escopo bem maior que uma regra CSS única, avaliar depois
+se vale o esforço nesse formato.
+
 ### 7.3 Leitura offline de verdade `✅`
 **Funcionalidade:** no app nativo instalado, o conteúdo dos resumos já
 funciona offline (é dado embutido no app), e a Bíblia inteira também

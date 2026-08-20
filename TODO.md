@@ -131,12 +131,30 @@ hoje só funciona no web)
 4. Testar com um leitor de tela real (VoiceOver/NVDA) pelo menos na
    jornada principal (escolher livro → ler capítulo → grifar).
 
-**C. Leitura offline de verdade** (7.3, hoje parcial)
-1. Levantar o que ainda depende de rede na leitura (ex.: algum caminho
-   que não usa a base local SQLite/FTS5 embutida).
-2. Testar a jornada principal com a rede desligada de propósito,
-   listar cada ponto que quebra.
-3. Corrigir um de cada vez, começando pelo mais usado.
+**C. Leitura offline de verdade** (7.3) — ✅ feito (2026-08-19)
+1. ~~Levantar o que ainda depende de rede na leitura~~ — achado que a
+   leitura de capítulo no web sempre dependia da `bible-api.com`
+   (`buscarReferencia` só usava a base local pro nativo; no web só
+   tinha um cache LRU de 200 capítulos já visitados, via AsyncStorage —
+   não era a Bíblia inteira offline). A busca "Na Bíblia" no web
+   também sempre retornava vazio.
+2. ~~Portar a leitura de capítulo do web pro mesmo padrão~~ — feito:
+   novo `core/biblia/leituraLocalWeb.ts` lê `assets/biblia.json`
+   direto (mesmo carregador cacheado de `buscaGlobalWeb.ts`, extraído
+   pra `core/biblia/bibliaLocalWeb.ts`); `buscarReferencia` tenta local
+   primeiro, cai pra `bible-api.com` só se a busca local falhar
+   (rede de segurança, não caminho principal).
+3. ~~Testar a jornada principal com a rede desligada de propósito~~ —
+   verificado que a leitura de capítulo (`/biblia/19-salmos/23`, entre
+   outros) e a busca "Na Bíblia" não geram **nenhuma** requisição pra
+   `bible-api.com` (conferido na aba de rede do navegador); Metro
+   inclusive faz code-splitting de verdade dos módulos novos em chunks
+   `lazy=true` separados (`leituraLocalWeb.bundle`,
+   `buscaGlobalWeb.bundle`, `assets/biblia.bundle`), carregados só sob
+   demanda — não inflam o bundle inicial.
+   **Ainda depende de rede:** só o carregamento inicial do app (os
+   próprios bundles JS) e, se a busca local falhar por algum motivo
+   inesperado, o fallback pra API externa.
 
 **D. Auditoria de performance** (7.4, hoje parcial)
 1. Medir tempo de carregamento inicial (web) e tamanho do bundle.

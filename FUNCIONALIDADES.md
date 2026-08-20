@@ -446,8 +446,8 @@ foi embutida em `assets/biblia.json` e injetada numa tabela virtual
 FTS5 do SQLite na primeira execução (`garantirBaseBiblia()`). A busca
 roda 100% local via `buscarGlobal(termo)` em
 `core/biblia/BibliaAPI.ts` — nada de rate limit de API externa.
-Só nativo (iOS/Android); no web `buscarGlobal` retorna vazio de
-propósito (ver 7.3) pra evitar instabilidade do SQLite WASM.
+No nativo (iOS/Android) via FTS5; no web via `core/biblia/
+buscaGlobalWeb.ts` (ver bug abaixo, corrigido em 2026-08-19).
 **UX/UI:** aba "Na Bíblia" dentro da tela Descubra
 (`app/(tabs)/pesquisa.tsx`), com debounce de 500ms; cada resultado
 mostra a referência e o trecho, link direto pro versículo
@@ -483,6 +483,35 @@ dispositivo/simulador nativo de verdade** — este ambiente só tem
 acesso ao navegador, não a um simulador iOS/Android; a validação via
 `node:sqlite` cobre a lógica SQL, não o comportamento do `expo-sqlite`
 em produção.
+
+**Bug grave real, achado durante auditoria de "leitura offline"
+(2026-08-19, item C do plano em `TODO.md`): a busca "Na Bíblia" nunca
+funcionava no web.** `buscarGlobal` tinha `if (isWeb) return [];` — um
+"fallback simples pra evitar crashes no SQLite WASM" que, na prática,
+fazia a aba "Na Bíblia" da busca devolver **zero resultados sempre**,
+pra qualquer termo, silenciosamente (sem erro, só "Nenhum versículo
+encontrado" — indistinguível de uma busca que genuinamente não achou
+nada). Isso valia pro app publicado no Vercel (web é a plataforma
+principal de acesso hoje) — a funcionalidade só existia de verdade no
+build nativo, nunca testado num dispositivo real (ver parágrafo
+acima). O README e este documento chamavam a busca de "100% local" sem
+deixar claro que isso não valia pro web.
+**Corrigido:** novo `core/biblia/buscaGlobalWeb.ts` — em vez de lidar
+com SQLite/WASM no navegador, faz busca em memória sobre o mesmo
+`assets/biblia.json` já embutido no app (carregado sob demanda via
+`import()` dinâmico só quando alguém busca de verdade, cacheado no
+módulo depois da primeira busca; normalização de acento igual à já
+usada em `core/content/busca.ts`). `buscarGlobal` agora chama isso no
+web em vez de retornar `[]`.
+**Testado ao vivo:** buscar "amor" retorna "Na Bíblia (50)" com
+resultados reais de Gênesis/Êxodo/Levítico/Números, cada um com link
+correto pro versículo (`/biblia/01-genesis/12?versiculo=13`
+confirmado); buscar "coracao" (sem acento) encontra "coração" (Gênesis
+6:5) — normalização de acento funcionando; sem erros no console.
+**Limitação conhecida:** é busca por substring simples (contém o
+termo), não busca por palavra/radical como o FTS5 nativo — não é
+idêntica funcionalmente, mas resolve o problema real (zero resultados
+sempre) com uma solução muito mais simples que integrar SQLite/WASM.
 
 ### 2.7 Favoritar/salvar versículo (distinto de grifar) `✅`
 **Funcionalidade:** distinto de grifo e nota, `VersiculoSalvo`/
@@ -886,12 +915,31 @@ paralelo: `accessibilityState` (nativo) + a prop achatada equivalente
 `aria-selected` do DOM antes/depois de cada interação (ex.: alternar
 tema: `aria-checked` vai de `"true"` pra `"false"` no clique).
 
-### 7.3 Leitura offline de verdade `🔶`
+### 7.3 Leitura offline de verdade `✅`
 **Funcionalidade:** no app nativo instalado, o conteúdo dos resumos já
 funciona offline (é dado embutido no app), e a Bíblia inteira também
-(ver 2.6, `assets/biblia.json` + SQLite FTS5) — a leitura bíblica não
+(ver 2.6, `assets/biblia.json` + SQLite FTS5).
+
+**Correção real (2026-08-19): esta seção dizia "a leitura bíblica não
 depende mais de rede em nenhuma plataforma desde a migração pro
-SQLite. Na versão *web*, a app em si (bundle JS/CSS/HTML) agora tem
+SQLite" — falso pro web.** A migração pro SQLite só cobria o nativo; a
+leitura de capítulo no web sempre bateu na `bible-api.com` a cada
+capítulo aberto (só um cache LRU de 200 capítulos via AsyncStorage,
+não a Bíblia inteira offline), e a busca "Na Bíblia" no web sempre
+retornava vazio (ver bug em 2.6). Corrigido: `buscarReferencia` agora
+tenta `core/biblia/leituraLocalWeb.ts` primeiro no web (lê
+`assets/biblia.json` direto, mesmo carregador cacheado que a busca
+usa, extraído pra `core/biblia/bibliaLocalWeb.ts`), caindo pra
+`bible-api.com` só como rede de segurança se a busca local falhar por
+algum motivo. **Testado ao vivo:** abrir `/biblia/19-salmos/23` e
+buscar "amor"/"coracao" na aba Descubra não geram **nenhuma**
+requisição de rede pra `bible-api.com` (conferido na aba de rede do
+navegador); Metro faz code-splitting de verdade dos módulos novos —
+carregados em chunks `lazy=true` separados
+(`leituraLocalWeb.bundle`, `buscaGlobalWeb.bundle`,
+`assets/biblia.bundle`), só sob demanda, não inflam o bundle inicial.
+
+Na versão *web*, a app em si (bundle JS/CSS/HTML) também tem
 estratégia de offline: `public/sw.js`, um service worker registrado
 via `core/registrarServiceWorker.ts` (chamado em `app/_layout.tsx`,
 só no web). Estratégia deliberadamente conservadora — navegação

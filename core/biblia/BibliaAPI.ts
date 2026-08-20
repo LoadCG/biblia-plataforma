@@ -118,7 +118,18 @@ import { livros } from "../content/livros";
 
 // Função para buscar um capítulo ou versículo específico
 export async function buscarReferencia(ref: string): Promise<CapituloTexto> {
-  if (isWeb) return buscarWeb(ref);
+  if (isWeb) {
+    // Local primeiro (mesmo assets/biblia.json já embutido, sem rede) —
+    // a bible-api.com só entra como rede de segurança se, por algum
+    // motivo, a busca local falhar (ver leituraLocalWeb.ts). Antes, o
+    // web sempre dependia da API externa pra cada capítulo aberto.
+    try {
+      const { buscarLocalWeb } = await import("./leituraLocalWeb");
+      return await buscarLocalWeb(ref);
+    } catch {
+      return buscarWeb(ref);
+    }
+  }
 
   await garantirBaseBiblia(); // Garante que a Bíblia está populada
 
@@ -196,9 +207,14 @@ export type ResultadoBuscaGlobal = {
   texto: string;
 };
 
-// Implementação da busca global usando FTS5 (Full-Text Search)
+// Implementação da busca global usando FTS5 (Full-Text Search) no
+// nativo; no web, busca em memória sobre o JSON embutido (ver
+// buscaGlobalWeb.ts — SQLite/WASM no navegador foi evitado de propósito).
 export async function buscarGlobal(query: string): Promise<ResultadoBuscaGlobal[]> {
-  if (isWeb) return []; // Fallback simples na web para evitar crashes no SQLite WASM
+  if (isWeb) {
+    const { buscarGlobalWeb } = await import("./buscaGlobalWeb");
+    return buscarGlobalWeb(query);
+  }
 
   await garantirBaseBiblia();
 

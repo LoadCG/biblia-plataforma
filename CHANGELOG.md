@@ -3,6 +3,37 @@
 Todas as mudanças notáveis feitas no projeto serão documentadas neste arquivo.
 O formato é baseado no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/).
 
+## [Unreleased] - 2026-08-19 (continuação 3)
+
+### Corrigido
+- **Leitura de capítulo no web sempre dependia da `bible-api.com`,
+  mesmo com a Bíblia inteira já embutida no app** (`FUNCIONALIDADES.md`
+  7.3): a migração pro SQLite (para busca full-text e leitura offline)
+  só cobria o app nativo — no web, cada capítulo aberto sempre batia
+  na API externa (só um cache LRU de 200 capítulos via AsyncStorage).
+  Corrigido: novo `core/biblia/leituraLocalWeb.ts` lê
+  `assets/biblia.json` direto no web (mesmo carregador cacheado
+  compartilhado com a busca, extraído pra
+  `core/biblia/bibliaLocalWeb.ts`); `buscarReferencia` tenta local
+  primeiro, cai pra `bible-api.com` só como rede de segurança se a
+  busca local falhar. Testado ao vivo: abrir um capítulo e buscar não
+  geram nenhuma requisição pra `bible-api.com` (conferido na aba de
+  rede do navegador); Metro faz code-splitting de verdade dos módulos
+  novos em chunks carregados só sob demanda.
+- **Busca "Na Bíblia" nunca funcionava no web** (`FUNCIONALIDADES.md`
+  2.6) — achado durante auditoria de leitura offline. `buscarGlobal`
+  tinha `if (isWeb) return [];`, um fallback que fazia a aba "Na
+  Bíblia" da busca devolver zero resultados sempre, pra qualquer
+  termo, silenciosamente (sem erro visível) — no app publicado no
+  Vercel, que é web. Corrigido com um novo módulo
+  `core/biblia/buscaGlobalWeb.ts`: busca em memória sobre o mesmo
+  `assets/biblia.json` já embutido no app, carregado sob demanda
+  (`import()` dinâmico, só quando alguém busca de verdade) e cacheado
+  depois da primeira busca — evita ter que lidar com SQLite/WASM no
+  navegador. Testado ao vivo: buscar "amor" retorna 50 resultados reais
+  com link correto pro versículo; "coracao" (sem acento) encontra
+  "coração" — normalização de acento funcionando; sem erros no console.
+
 ## [Unreleased] - 2026-08-19 (continuação 2)
 
 ### Corrigido

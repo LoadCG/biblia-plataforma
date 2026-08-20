@@ -70,7 +70,7 @@ Registro completo (com o raciocínio por trás de cada escolha) em [`PLANO-PLATA
 - **Padrão de Repositório**: Nenhuma tela se comunica direto com o banco de dados. Tudo passa por `core/repositories` (hoje implementado com `expo-sqlite`, offline). Isso garante que uma eventual migração pra Cloud Sync seja invisível para o frontend.
 - **Identidade Inicial (OwnerID)**: Toda interação no app (progresso, grifos, notas, salvos, planos) já é vinculada a um UUID de dispositivo. Isso evita dor de cabeça em migrações futuras para usuários logados.
 - **Experiência Imersiva**: O app oculta ativamente distrações durante a rolagem do texto bíblico, trocando cabeçalhos grandes por rodapés minimalistas. Suporta auto-scroll inteligente (pulando direto para um versículo escolhido) avaliando a árvore do DOM via `onLayout` do React Native.
-- **Bíblia offline e busca full-text**: o texto bíblico completo (Almeida ACF, ~31 mil versículos) é embutido no app e indexado numa tabela virtual FTS5 do SQLite na primeira execução — a busca por palavra roda 100% local, sem depender de rede.
+- **Bíblia offline e busca full-text**: o texto bíblico completo (Almeida ACF, ~31 mil versículos) é embutido no app. No nativo (iOS/Android), é indexado numa tabela virtual FTS5 do SQLite na primeira execução. No web, a busca roda em memória sobre o mesmo JSON embutido (`core/biblia/buscaGlobalWeb.ts`). Nos dois casos, sem depender de rede nem de API externa.
 
 ## Funcionalidades Atuais
 

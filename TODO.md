@@ -173,36 +173,40 @@ hoje só funciona no web)
 4. Confirmar que o build/deploy do Vercel não precisa de ajuste
    adicional.
 
-### 🔴 Bloqueados numa decisão do usuário
+### Decisões do usuário (2026-08-19)
 
-**F. Trocar tradução do texto bíblico** (2.9) — bloqueado em: qual
-segunda tradução usar. Almeida ACF (a atual) é domínio público; quase
-toda tradução em português mais "moderna" (NVI, NAA, NTLH) é
-licenciada/paga — precisa decidir se vale pagar por uma licença, ou se
-existe outra tradução de domínio público aceitável.
+- **F. Trocar tradução do texto bíblico** (2.9) — **decidido: não por
+  enquanto.** Continua só Almeida ACF (domínio público), sem pagar por
+  licença de outra tradução. Item fechado, fora do radar até o usuário
+  pedir de novo.
+- **G. Criar conta / login** (6.1-6.3) — **decidido: sem conta de
+  verdade por enquanto.** Em vez disso, perfil local (nome + foto)
+  editável, guardado por `ownerId` anônimo (AsyncStorage no web,
+  SQLite no nativo) — ver `core/repositories/PerfilRepository.ts`,
+  feito em 2026-08-19. Pronto pra virar perfil de conta de verdade
+  depois, sem mudar quem consome isso.
+- **H. Notificação diária do versículo do dia** (9.10) e
+  **notificações push** (8.2) — **decidido: sem notificação real por
+  enquanto.** Fechado, sem versão simplificada via lembrete local
+  também (o usuário optou por não fazer nem essa por ora).
+- **I. Publicar nas lojas de app** (8.1) — **decidido: não publicar
+  por enquanto.**
 
-**G. Criar conta / login** (6.1, e por consequência 6.2 migrar dados
-locais + 6.3 sincronizar entre dispositivos) — bloqueado em: qual
-provedor de backend (Supabase vs Firebase, ver decisão em aberto no
-`PLANO-PLATAFORMA.md`) e a política de idade mínima pro público do
-app. Sem isso decidido, não faz sentido começar a implementar — mudar
-de provedor depois de já ter código escrito em cima de um deles é
-retrabalho evitável.
+### 🟢 Preparar o repositório pra ficar público (2026-08-19)
 
-**H. Notificação diária do versículo do dia** (9.10) e **notificações
-push** (8.2) — ambos dependem de G (conta + backend) pra agendar do
-lado do servidor. Sem isso, a única forma de notificação diária é
-`expo-notifications` local (que já existe pro lembrete de leitura em
-Configurações) — se quiser algo mais simples só com o que já existe,
-dá pra reaproveitar o mesmo mecanismo de lembrete local pro versículo
-do dia sem esperar G, mas não é a versão "de verdade" com conteúdo
-dinâmico do servidor.
-
-**I. Publicar nas lojas de app** (8.1) — bloqueado em: contas de
-desenvolvedor pagas (Apple $99/ano, Google $25 uma vez), ícone e tela
-de splash com identidade própria (hoje usa o padrão do template do
-Expo — vale resolver isso mesmo antes de publicar, é rápido e não
-depende de conta nenhuma).
+O usuário vai tornar o repositório GitHub público (hoje privado) —
+pediu pra preparar tudo da melhor forma possível antes disso.
+1. ~~Auditoria de segredos~~ — feito: nenhum arquivo de segredo/chave
+   foi commitado em nenhum momento do histórico do git (`git log --all
+   --diff-filter=A`), e não há chaves/tokens hardcoded no código atual
+   (só falsos positivos em `assets/biblia.json`/`livros.json`, texto
+   bíblico normal contendo a palavra "token" por coincidência).
+2. Atualizar `LICENSE` — hoje ainda é o padrão MIT do template do
+   Expo (copyright "650 Industries, Inc."), não reflete a autoria real
+   do projeto.
+3. Melhorar o `README.md` com uma screenshot/GIF do app e o link do
+   deploy no Vercel — quem avalia portfólio raramente clona e roda
+   localmente.
 
 ### Como isso deve ser lido
 

@@ -1,18 +1,20 @@
 import { Link, router } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
-import { Pressable, ScrollView, Text, View } from "react-native";
+import { Image, Pressable, ScrollView, Text, View } from "react-native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { BotaoTema } from "../../components/BotaoTema";
 import { CardAtividade } from "../../components/CardAtividade";
 import { EstadoVazio } from "../../components/EstadoVazio";
 import { FogoStreak } from "../../components/FogoStreak";
+import { ModalPerfil } from "../../components/ModalPerfil";
 import { obterLivro } from "../../core/content/livros";
 import { calcularConquistas, type Conquista } from "../../core/content/conquistas";
 import { carregarAtividade, chaveAtividade, type ItemAtividade } from "../../core/estatisticas/atividade";
 import { carregarCompartilhamentos } from "../../core/estatisticas/compartilhamentos";
 import { calcularSequenciaAtual } from "../../core/estatisticas/streak";
 import { mensagemStreak } from "../../core/estatisticas/mensagemStreak";
-import { livrosLidosRepository, progressoRepository } from "../../core/repositories";
+import { livrosLidosRepository, perfilRepository, progressoRepository } from "../../core/repositories";
+import { PERFIL_PADRAO, type Perfil } from "../../core/repositories/PerfilRepository";
 import { useColorScheme } from "../../core/theme";
 import { useArrastarParaRolar } from "../../core/util/useArrastarParaRolar";
 import { useOwnerId } from "../../core/useOwnerId";
@@ -69,19 +71,23 @@ export default function Voce() {
   const refMedalhas = useArrastarParaRolar();
   const { colorScheme } = useColorScheme();
   const cores = colorScheme === "dark" ? CORES_TEMA.escuro : CORES_TEMA.claro;
+  const [perfil, setPerfil] = useState<Perfil>(PERFIL_PADRAO);
+  const [editandoPerfil, setEditandoPerfil] = useState(false);
 
   const carregarTudo = useCallback(async () => {
     if (!ownerId) return;
-    const [lidos, progresso, ativ, compart] = await Promise.all([
+    const [lidos, progresso, ativ, compart, perfilCarregado] = await Promise.all([
       livrosLidosRepository.listar(ownerId),
       progressoRepository.listarTodos(ownerId),
       carregarAtividade(ownerId),
       carregarCompartilhamentos(),
+      perfilRepository.obter(ownerId),
     ]);
     setSequencia(calcularSequenciaAtual(progresso.map((p) => p.lidoEm)));
     setConquistas(calcularConquistas(new Set(lidos)));
     setAtividade(ativ);
     setCompartilhamentos(compart);
+    setPerfil(perfilCarregado);
   }, [ownerId]);
 
   useEffect(() => {
@@ -105,19 +111,39 @@ export default function Voce() {
           </Link>
         </View>
 
-        <View className="flex-row items-start justify-between mb-5">
-          <View>
-            <Text className="text-2xl font-extrabold text-cor-texto dark:text-cor-texto-dark">Visitante</Text>
-            <Text className="text-xs text-cor-texto-suave dark:text-cor-texto-suave-dark mt-0.5">@visitante</Text>
+        <Pressable onPress={() => setEditandoPerfil(true)} accessibilityLabel="Editar perfil" className="flex-row items-start justify-between mb-5 active:opacity-80">
+          <View className="flex-1 pr-3">
+            <Text className="text-2xl font-extrabold text-cor-texto dark:text-cor-texto-dark" numberOfLines={1}>
+              {perfil.nome}
+            </Text>
+            <Text className="text-xs text-cor-destaque dark:text-cor-destaque-dark font-semibold mt-0.5">Editar perfil ✎</Text>
             <View className="flex-row items-center gap-1 mt-1">
               <MaterialIcons name="place" size={13} color={cores.textoSuave} />
               <Text className="text-xs text-cor-texto-suave dark:text-cor-texto-suave-dark">Sem conta ainda</Text>
             </View>
           </View>
-          <View className="w-16 h-16 rounded-full bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark items-center justify-center border-2 border-cor-destaque dark:border-cor-destaque-dark">
-            <Text className="text-3xl">🙂</Text>
+          <View className="w-16 h-16 rounded-full bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark items-center justify-center border-2 border-cor-destaque dark:border-cor-destaque-dark overflow-hidden">
+            {perfil.avatarUri ? (
+              <Image source={{ uri: perfil.avatarUri }} className="w-full h-full" />
+            ) : (
+              <Text className="text-3xl">🙂</Text>
+            )}
           </View>
-        </View>
+        </Pressable>
+
+        {editandoPerfil ? (
+          <ModalPerfil
+            visivel
+            perfilAtual={perfil}
+            onFechar={() => setEditandoPerfil(false)}
+            onSalvar={async (novoPerfil) => {
+              if (!ownerId) return;
+              await perfilRepository.salvar(ownerId, novoPerfil);
+              setPerfil(novoPerfil);
+              setEditandoPerfil(false);
+            }}
+          />
+        ) : null}
 
         <View className="flex-row gap-3 mb-4">
           <Pressable

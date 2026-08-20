@@ -3,6 +3,21 @@
 Todas as mudanças notáveis feitas no projeto serão documentadas neste arquivo.
 O formato é baseado no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/).
 
+## [Unreleased] - 2026-08-19 (continuação 4)
+
+### Adicionado
+- **Editar nome e foto do perfil, sem conta** (`FUNCIONALIDADES.md`
+  9.6c): decisão do usuário — sem login real por enquanto, mas com
+  perfil local (nome + foto) persistido por `ownerId` anônimo. Novo
+  `PerfilRepository` (AsyncStorage no web, nova tabela SQLite `perfil`
+  no nativo) e `components/ModalPerfil.tsx`, aberto ao tocar no
+  cabeçalho de perfil em `/voce`. Foto via `expo-image-picker` (nova
+  dependência, instalada com `npx expo install` pra ficar compatível
+  com o SDK do projeto), recorte quadrado, comprimida e guardada como
+  data URI. Perfil incluído em "Exportar/apagar meus dados" (6.4).
+  Testado ao vivo: trocar nome, salvar, recarregar a página — nome
+  persiste de verdade.
+
 ## [Unreleased] - 2026-08-19 (continuação 3)
 
 ### Corrigido

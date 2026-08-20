@@ -72,6 +72,12 @@ export function initDB() {
       UNIQUE(ownerId, planoId, diaConcluido)
     );
 
+    CREATE TABLE IF NOT EXISTS perfil (
+      ownerId TEXT PRIMARY KEY,
+      nome TEXT NOT NULL,
+      avatarUri TEXT
+    );
+
     CREATE TABLE IF NOT EXISTS biblia_text (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       livroSlug TEXT NOT NULL,

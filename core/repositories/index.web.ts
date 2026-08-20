@@ -5,6 +5,7 @@ import { localLivrosLidosRepository } from "./local/LocalLivrosLidosRepository";
 import { localPesquisasFavoritasRepository } from "./local/LocalPesquisasFavoritasRepository";
 import { localVersiculosSalvosRepository } from "./local/LocalVersiculosSalvosRepository";
 import { localPlanosRepository } from "./local/LocalPlanosRepository";
+import { localPerfilRepository } from "./local/LocalPerfilRepository";
 
 // Na web, o expo-sqlite causa erros de SharedArrayBuffer.
 // Para testar interfaces rapidamente na web, usamos o AsyncStorage local e evitamos importar sqlite.
@@ -16,5 +17,6 @@ export const livrosLidosRepository = localLivrosLidosRepository;
 export const pesquisasFavoritasRepository = localPesquisasFavoritasRepository;
 export const versiculosSalvosRepository = localVersiculosSalvosRepository;
 export const planosRepository = localPlanosRepository;
+export const perfilRepository = localPerfilRepository;
 
 export { obterOwnerId } from "../owner";

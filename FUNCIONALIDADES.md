@@ -1291,8 +1291,8 @@ só a referência, igual ao padrão já usado no popover de referências
 (1.9).
 
 ### 9.6 Você: perfil, Salvo e Atividade `✅`
-**Funcionalidade:** cabeçalho de perfil (nome, `@visitante`, tag de
-localização placeholder, avatar); card "Salvo" com prévia dos
+**Funcionalidade:** cabeçalho de perfil (nome editável, foto editável
+— ver 9.6c, tag de localização placeholder); card "Salvo" com prévia dos
 grifos/notas recentes (`core/util/tempoRelativo.ts`) e menu de 3
 pontinhos com Ler/Compartilhar/Resumo do livro/Copiar/Editar/Excluir,
 funcionando também com botão direito no web; tela `/salvo` completa
@@ -1365,6 +1365,30 @@ tocável, levando pra mesma tela.
 individual do carrossel de Você levam corretamente pra
 `/medalhas`, que lista as 6 conquistas com título, descrição e barra
 de progresso.
+
+### 9.6c Editar nome e foto do perfil (sem conta) `✅`
+**Funcionalidade:** pedido do usuário, decidindo não implementar login
+por enquanto (ver 6.1 em `TODO.md`) — "sem conta real ainda, vamos usar
+algum tipo de localstorage ou sqlite por enquanto para poder trocar
+nome e foto". Novo `PerfilRepository` (`obter`/`salvar`, um registro
+por `ownerId`), com implementação local (AsyncStorage, web) e SQLite
+(nova tabela `perfil`, nativo) — mesmo padrão dos outros repositórios
+do app. Tocar no cabeçalho de perfil em `/voce` (nome ou foto) abre
+`components/ModalPerfil.tsx`: campo de nome (até 40 caracteres) e
+seletor de foto via `expo-image-picker` (novo — instalado com `npx
+expo install` pra garantir versão compatível com o SDK do projeto),
+recorte quadrado, comprimida (`quality: 0.5`) e guardada como *data
+URI* base64 — simples de exibir em qualquer plataforma sem gerenciar
+caminho de arquivo. Perfil incluído em "Exportar/apagar meus dados"
+(ver 6.4): apagar tudo volta o perfil pro padrão ("Visitante", sem
+foto).
+**UX/UI:** nome e avatar têm um retorno visual claro de que são
+tocáveis ("Editar perfil ✎" abaixo do nome); modal com o mesmo padrão
+visual dos outros modais do app (`ModalNota`, confirmação de apagar
+dados).
+**Testado ao vivo:** tocar no cabeçalho abre o modal; trocar o nome
+pra "Cauan" e salvar atualiza a tela na hora; reload da página mantém
+"Cauan" (persistência confirmada, não só estado em memória).
 
 ### 9.7 Tela "Configurações" `✅`
 **Funcionalidade:** tamanho de fonte, fonte serifada (lê/escreve

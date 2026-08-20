@@ -7,15 +7,18 @@ import {
   grifosRepository,
   livrosLidosRepository,
   notasRepository,
+  perfilRepository,
   pesquisasFavoritasRepository,
   planosRepository,
   progressoRepository,
   versiculosSalvosRepository,
 } from "../repositories";
+import { PERFIL_PADRAO, type Perfil } from "../repositories/PerfilRepository";
 import type { Grifo, Nota, PesquisaFavorita, CapituloLido, VersiculoSalvo } from "../types/leitura";
 
 export type DadosPessoais = {
   exportadoEm: string;
+  perfil: Perfil;
   grifos: Grifo[];
   capitulosLidos: CapituloLido[];
   notas: Nota[];
@@ -26,7 +29,8 @@ export type DadosPessoais = {
 };
 
 export async function coletarDadosPessoais(ownerId: string): Promise<DadosPessoais> {
-  const [grifos, capitulosLidos, notas, livrosLidos, pesquisasFavoritas, versiculosSalvos] = await Promise.all([
+  const [perfil, grifos, capitulosLidos, notas, livrosLidos, pesquisasFavoritas, versiculosSalvos] = await Promise.all([
+    perfilRepository.obter(ownerId),
     grifosRepository.listarTodos(ownerId),
     progressoRepository.listarTodos(ownerId),
     notasRepository.listarTodas(ownerId),
@@ -46,6 +50,7 @@ export async function coletarDadosPessoais(ownerId: string): Promise<DadosPessoa
 
   return {
     exportadoEm: new Date().toISOString(),
+    perfil,
     grifos,
     capitulosLidos,
     notas,
@@ -63,6 +68,7 @@ export async function coletarDadosPessoais(ownerId: string): Promise<DadosPessoa
 // vezes (o usuário decide apagar tudo, não é um caminho quente).
 export async function apagarDadosPessoais(ownerId: string, dados: DadosPessoais): Promise<void> {
   await Promise.all([
+    perfilRepository.salvar(ownerId, PERFIL_PADRAO),
     ...dados.grifos.map((g) => grifosRepository.alternar(ownerId, g)),
     dados.capitulosLidos.length
       ? progressoRepository.definirVarios(

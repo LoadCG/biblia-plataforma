@@ -587,12 +587,25 @@ qualquer imagem, incluindo conteúdo impróprio pro público jovem do
 app (relatado: uma foto de casal com pouca roupa apareceu no card).
 Removida a dependência de imagem externa por completo — sem fonte não
 curada, zero risco de recorrência. Substituída por um gradiente sólido
-nas cores de marca do app (`#332920 → #241d16 → #1b1712`, a mesma
-paleta "metalizada" já usada nos cards de gamificação em `/voce`), sem
-nenhuma chamada de rede pra imagem. Se no futuro quiser voltar a ter
-uma imagem de fundo, precisa ser um conjunto pequeno e curado de
-paisagens específicas (bundladas no app ou de uma fonte com controle
-editorial de verdade), nunca uma API de foto aleatória.
+nas cores de marca do app, sem nenhuma chamada de rede pra imagem. Se
+no futuro quiser voltar a ter uma imagem de fundo, precisa ser um
+conjunto pequeno e curado de paisagens específicas (bundladas no app
+ou de uma fonte com controle editorial de verdade), nunca uma API de
+foto aleatória.
+
+**Correção de tema (2026-08-19):** o gradiente (e o texto/ícones em
+cima dele) era fixo na paleta escura sempre, mesmo no modo claro —
+reportado pelo usuário como parte de "muitos elementos [...] não
+mudam pro modo claro junto com os outros" (ver 9.6). Corrigido:
+`CardVersiculoDia` agora usa `useColorScheme()` pra escolher entre a
+paleta escura original (`#40331f → #241d16 → #141210`) e uma nova
+paleta clara em tom creme (`#f3e6d3 → #fdf9f2 → #faf8f4`, a partir do
+token `cor-destaque-fundo`), com texto/ícones trocando entre branco
+(escuro) e `cor-texto` (claro) — os únicos elementos do app que
+realmente precisam ser cor fixa em hex são o array de cores do
+`LinearGradient` e o `color` do `MaterialIcons`, nenhum dos dois aceita
+`dark:`; todo o resto do card usa classes `dark:` normais, iguais ao
+resto do app.
 
 ### 3.3 Conquistas de progresso `✅`
 **Funcionalidade:** 6 marcos ligados à estrutura do cânon
@@ -1184,9 +1197,32 @@ Medalhas num carrossel horizontal com barra de progresso por conquista
 (redesenho de gamificação); "Atividade" com as 5 ações mais recentes +
 "ver mais"; ícone de engrenagem no topo e card de Configurações no fim,
 ambos levando pra `/configuracoes`.
-**UX/UI:** cards de streak/medalhas usam um fundo escuro/metalizado
-fixo, deliberadamente fora do tema claro/escuro do resto do app (padrão
-comum em dashboards de gamificação).
+**UX/UI:** cards de streak/medalhas antes usavam um fundo
+escuro/metalizado fixo, sempre igual independente do tema (padrão
+comum em dashboards de gamificação) — **corrigido em 2026-08-19** (ver
+bug abaixo) pra seguir o tema claro/escuro do resto do app, a pedido
+do usuário.
+
+**Bug real, reportado pelo usuário (2026-08-19): "muitos elementos
+estão disponíveis apenas no modo escuro e não mudam para o modo claro
+junto com os outros".** Os cards "Salvos"/"Notas", "Sequência Diária" e
+"Medalhas" (com o carrossel `MedalhaCarrossel`) usavam uma constante
+`COR_GAMIFICACAO` com cores fixas em hex, aplicadas via `style={{
+backgroundColor/color }}` — diferente do resto do app, que usa classes
+`dark:` do Tailwind/NativeWind pra alternar de cor automaticamente. Ao
+trocar de tema, esses cards simplesmente não reagiam, enquanto os
+cards vizinhos (Compartilhamentos, Configurações) mudavam
+normalmente — dando a impressão de estarem "presos" no modo escuro.
+Corrigido: os fundos agora usam `bg-cor-fundo-elevado dark:bg-cor-
+fundo-elevado-dark` (mesmo token dos outros cards da tela), e uma nova
+tabela `CORES_TEMA` cobre os valores que ainda precisam ser hex de
+verdade (cor do `MaterialIcons`, que não aceita `dark:`). O mesmo tipo
+de cor fixa foi achado e corrigido também no card "Versículo do Dia"
+(`CardVersiculoDia.tsx`, ver 3.2) e em vários ícones soltos pela
+Início/Descubra/Planos que não seguiam o texto ao lado (que já
+trocava de cor corretamente) — lista completa no CHANGELOG.
+Testado ao vivo alternando o tema várias vezes, lendo
+`backgroundColor`/`color` computados antes e depois de cada troca.
 
 **Bug real, achado numa auditoria de navegação (2026-08-18):** os
 botões "Salvos" e "Notas" levavam os dois pra `/salvo` sem nenhum

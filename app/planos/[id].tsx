@@ -6,6 +6,7 @@ import { BotaoTema } from "../../components/BotaoTema";
 import { obterPlano } from "../../core/content/planos";
 import { livros } from "../../core/content/livros";
 import { planosRepository } from "../../core/repositories";
+import { useColorScheme } from "../../core/theme";
 import { useOwnerId } from "../../core/useOwnerId";
 
 const SOMBRA = { shadowColor: "#000", shadowOpacity: 0.06, shadowRadius: 4, shadowOffset: { width: 0, height: 1 } };
@@ -27,6 +28,8 @@ export default function DetalhePlano() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const plano = obterPlano(id ?? "");
   const ownerId = useOwnerId();
+  const { colorScheme } = useColorScheme();
+  const escuro = colorScheme === "dark";
   const [diasConcluidos, setDiasConcluidos] = useState<Set<number>>(new Set());
 
   useEffect(() => {
@@ -97,7 +100,7 @@ export default function DetalhePlano() {
                     concluido ? "bg-green-600" : "border border-cor-borda dark:border-cor-borda-dark"
                   }`}
                 >
-                  <MaterialIcons name={concluido ? "check-circle" : "radio-button-unchecked"} size={16} color={concluido ? "white" : "#6b6153"} />
+                  <MaterialIcons name={concluido ? "check-circle" : "radio-button-unchecked"} size={16} color={concluido ? "white" : escuro ? "#b3a894" : "#6b6153"} />
                   <Text className={`text-xs font-semibold ${concluido ? "text-white" : "text-cor-texto dark:text-cor-texto-dark"}`}>
                     {concluido ? "Concluído" : "Marcar"}
                   </Text>

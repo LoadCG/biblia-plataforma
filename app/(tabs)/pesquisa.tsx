@@ -79,7 +79,7 @@ export default function Pesquisa() {
               onPress={() => router.push("/planos")}
               className="flex-1 items-center gap-1.5 mx-1 rounded-2xl bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark py-3.5 active:opacity-70"
             >
-              <MaterialIcons name="event-note" size={20} color="#8a5a2b" />
+              <MaterialIcons name="event-note" size={20} color={escuro ? "#e0a75e" : "#8a5a2b"} />
               <Text className="text-xs font-semibold text-cor-texto dark:text-cor-texto-dark">Planos</Text>
             </Pressable>
             {ATALHOS_MOCK.map((atalho) => (
@@ -89,7 +89,7 @@ export default function Pesquisa() {
                 accessibilityLabel={`${atalho.rotulo} (em breve)`}
                 className="flex-1 items-center gap-1.5 mx-1 rounded-2xl bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark py-3.5 active:opacity-70 opacity-40"
               >
-                <MaterialIcons name={atalho.icone} size={20} color="#8a5a2b" />
+                <MaterialIcons name={atalho.icone} size={20} color={escuro ? "#e0a75e" : "#8a5a2b"} />
                 <Text className="text-xs font-semibold text-cor-texto dark:text-cor-texto-dark">{atalho.rotulo}</Text>
               </Pressable>
             ))}

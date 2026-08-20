@@ -3,6 +3,44 @@
 Todas as mudanças notáveis feitas no projeto serão documentadas neste arquivo.
 O formato é baseado no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/).
 
+## [Unreleased] - 2026-08-19
+
+### Corrigido
+- **Vários elementos ficavam presos no visual do modo escuro e não
+  mudavam pro modo claro junto com o resto do app** (reportado pelo
+  usuário). Causa: alguns componentes usavam cores fixas em hex (via
+  `style={{ backgroundColor/color }}` ou `color=` do `MaterialIcons`)
+  em vez das classes `dark:` do Tailwind/NativeWind usadas no resto do
+  app — então, ao trocar de tema, esses elementos simplesmente não
+  reagiam, enquanto tudo ao redor mudava normalmente. Corrigido em:
+  - `components/CardVersiculoDia.tsx` (card "Versículo do Dia" da
+    Início): gradiente, texto e ícones eram fixos na paleta escura.
+    Agora usam `useColorScheme()` pra escolher entre a paleta escura
+    original e uma nova paleta clara (creme, a partir do token
+    `cor-destaque-fundo`), com texto/ícones também trocando entre
+    branco (escuro) e `cor-texto` (claro).
+  - `app/(tabs)/voce.tsx`: os cards "Salvos"/"Notas", "Sequência
+    Diária" e "Medalhas" (incluindo os selos do carrossel,
+    `MedalhaCarrossel`) usavam a constante `COR_GAMIFICACAO`, uma
+    paleta escura fixa. Substituída por `bg-cor-fundo-elevado
+    dark:bg-cor-fundo-elevado-dark` (mesmo tratamento já usado nos
+    outros cards da mesma tela, como Compartilhamentos) + uma tabela
+    `CORES_TEMA` pros valores que precisam ser hex de verdade (ícones
+    do `MaterialIcons`, que não aceitam `dark:`).
+  - Ícones soltos com cor fixa que não seguiam o texto ao lado (que já
+    trocava corretamente): o ícone "📍" da Você, o ícone do card
+    "Continue lendo" da Início, os ícones "Planos"/"Favoritos"/"Apoie"
+    da Descubra, e o ícone de dia concluído dos Planos de leitura.
+  - Botão "Baixar" (gerar imagem de versículo, leitura bíblica): texto
+    e ícone brancos fixos sobre `bg-cor-destaque dark:bg-cor-destaque-dark`
+    — no escuro, esse token é um dourado claro, e branco em cima dava
+    só ~2.1:1 de contraste (mesmo problema já resolvido antes no card
+    "Estudo por Resumos" da Início, agora replicado aqui).
+  Testado ao vivo alternando o tema várias vezes: os cards antes presos
+  no visual escuro agora mudam de cor junto com o resto da tela nos
+  dois sentidos (claro→escuro e escuro→claro), confirmado lendo
+  `backgroundColor`/`color` computados antes/depois de cada troca.
+
 ## [Unreleased] - 2026-08-18 (continuação 10)
 
 ### Corrigido

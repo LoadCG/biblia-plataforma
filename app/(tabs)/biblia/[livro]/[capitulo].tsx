@@ -29,7 +29,7 @@ import {
 import { salvarUltimaLeitura } from "../../../../core/leitura/ultimaLeitura";
 import { grifosRepository, notasRepository, progressoRepository, versiculosSalvosRepository } from "../../../../core/repositories";
 import { falarCapitulo, pararAudio, suportaAudio } from "../../../../core/leitura/audio";
-import { alternarTema } from "../../../../core/theme";
+import { alternarTema, useColorScheme } from "../../../../core/theme";
 import { gerarImagemVersiculo, suportaImagemVersiculo } from "../../../../core/util/gerarImagemVersiculo";
 import { mensagemErroAmigavel } from "../../../../core/util/erroAmigavel";
 import { linkVersiculo } from "../../../../core/util/linkVersiculo";
@@ -43,6 +43,8 @@ export default function Leitura() {
   const capitulo = parseInt(params.capitulo ?? "", 10);
   const versiculoAlvo = params.versiculo ? parseInt(params.versiculo, 10) : null;
   const ownerId = useOwnerId();
+  const { colorScheme } = useColorScheme();
+  const escuro = colorScheme === "dark";
 
   const indiceLivro = livro ? livros.indexOf(livro) : -1;
   const valido = !!livro && !!capitulo && capitulo >= 1 && capitulo <= (livro?.capitulos ?? 1);
@@ -804,8 +806,12 @@ export default function Leitura() {
                 }}
                 className="flex-row items-center gap-1.5 bg-cor-destaque dark:bg-cor-destaque-dark px-5 py-2.5 rounded-full active:opacity-70"
               >
-                <MaterialIcons name="download" size={18} color="white" />
-                <Text className="text-white font-semibold text-sm">Baixar</Text>
+                {/* dark:cor-destaque-dark é um dourado claro, feito pra
+                    texto/ícone em cima, não pra fundo com branco — branco
+                    aqui dava só ~2.1:1 de contraste (mesmo problema já
+                    corrigido no card "Estudo por Resumos" do Início) */}
+                <MaterialIcons name="download" size={18} color={escuro ? "#2a241c" : "white"} />
+                <Text className="text-white dark:text-cor-texto font-semibold text-sm">Baixar</Text>
               </Pressable>
               <Pressable onPress={() => setImagemVersiculo(null)} className="px-5 py-2.5 rounded-full border border-white/30 active:opacity-70">
                 <Text className="text-white font-semibold text-sm">Fechar</Text>

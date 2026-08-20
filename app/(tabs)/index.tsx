@@ -41,7 +41,7 @@ function capitulosRecentes(itens: CapituloLido[], limite: number) {
     .slice(0, limite);
 }
 
-function CardContinueLendo({ item }: { item: CapituloLido }) {
+function CardContinueLendo({ item, escuro }: { item: CapituloLido; escuro: boolean }) {
   const livro = obterLivro(item.livroSlug);
   if (!livro) return null;
 
@@ -52,7 +52,7 @@ function CardContinueLendo({ item }: { item: CapituloLido }) {
       style={{ shadowColor: "#000", shadowOpacity: 0.06, shadowRadius: 4, shadowOffset: { width: 0, height: 1 } }}
     >
       <View className="w-9 h-9 rounded-full bg-cor-destaque-fundo dark:bg-cor-destaque-fundo-dark items-center justify-center mb-2.5">
-        <MaterialIcons name="auto-stories" size={18} color="#8a5a2b" />
+        <MaterialIcons name="auto-stories" size={18} color={escuro ? "#e0a75e" : "#8a5a2b"} />
       </View>
       <Text numberOfLines={1} className="text-sm font-bold text-cor-texto dark:text-cor-texto-dark">
         {livro.nome}
@@ -116,7 +116,7 @@ export default function Inicio() {
             <Text className="text-sm font-bold text-cor-texto dark:text-cor-texto-dark mb-2.5">Continue lendo</Text>
             <ScrollView ref={refContinueLendo} horizontal showsHorizontalScrollIndicator={false}>
               {recentes.map((item) => (
-                <CardContinueLendo key={`${item.livroSlug}-${item.capitulo}`} item={item} />
+                <CardContinueLendo key={`${item.livroSlug}-${item.capitulo}`} item={item} escuro={escuro} />
               ))}
             </ScrollView>
           </View>

@@ -13,37 +13,47 @@ import { carregarCompartilhamentos } from "../../core/estatisticas/compartilhame
 import { calcularSequenciaAtual } from "../../core/estatisticas/streak";
 import { mensagemStreak } from "../../core/estatisticas/mensagemStreak";
 import { livrosLidosRepository, progressoRepository } from "../../core/repositories";
+import { useColorScheme } from "../../core/theme";
 import { useArrastarParaRolar } from "../../core/util/useArrastarParaRolar";
 import { useOwnerId } from "../../core/useOwnerId";
 
 const SOMBRA = { shadowColor: "#000", shadowOpacity: 0.06, shadowRadius: 4, shadowOffset: { width: 0, height: 1 } };
 
-// Cards de gamificação usam um fundo escuro/metalizado fixo — proposital,
-// não segue o tema claro/escuro do resto do app (padrão comum em
-// dashboards de gamificação: o "troféu" tem identidade visual própria).
-const COR_GAMIFICACAO = { fundo: "#241d16", fundoClaro: "#332920", destaque: "#e0a75e", textoSuave: "#b8a690" };
+// Cores dos tokens de tema (tailwind.config.js), como valor real — só
+// necessário aqui porque `style={{ backgroundColor/color }}` não aceita
+// `dark:`. Antes esses cards de gamificação usavam uma paleta escura
+// fixa (proposital, mas sem alternativa clara — reportado pelo usuário
+// como "muitos elementos [...] não mudam pro modo claro junto com os
+// outros"). Agora seguem exatamente os mesmos tokens usados no resto do
+// app, só que como valor de `style` em vez de className.
+const CORES_TEMA = {
+  claro: { destaque: "#8a5a2b", borda: "#e6ded0", textoSuave: "#6b6153" },
+  escuro: { destaque: "#e0a75e", borda: "#3a3226", textoSuave: "#b3a894" },
+};
 
 function MedalhaCarrossel({ conquista }: { conquista: Conquista }) {
+  const { colorScheme } = useColorScheme();
+  const cores = colorScheme === "dark" ? CORES_TEMA.escuro : CORES_TEMA.claro;
   const progresso = conquista.progressoTotal > 0 ? Math.min(1, conquista.progressoAtual / conquista.progressoTotal) : 0;
 
   return (
     <Pressable onPress={() => router.push("/medalhas")} className="w-28 mr-3 items-center active:opacity-70">
       <View
         className="w-16 h-16 rounded-full items-center justify-center mb-2"
-        style={{ backgroundColor: conquista.conquistada ? COR_GAMIFICACAO.destaque : COR_GAMIFICACAO.fundoClaro }}
+        style={{ backgroundColor: conquista.conquistada ? cores.destaque : cores.borda }}
       >
         <Text style={{ fontSize: 26, opacity: conquista.conquistada ? 1 : 0.4 }}>{conquista.icone}</Text>
       </View>
-      <Text numberOfLines={1} className="text-xs font-bold text-white text-center mb-1.5">
+      <Text numberOfLines={1} className="text-xs font-bold text-cor-texto dark:text-cor-texto-dark text-center mb-1.5">
         {conquista.titulo}
       </Text>
-      <View className="w-full h-1.5 rounded-full" style={{ backgroundColor: COR_GAMIFICACAO.fundoClaro }}>
+      <View className="w-full h-1.5 rounded-full" style={{ backgroundColor: cores.borda }}>
         <View
           className="h-1.5 rounded-full"
-          style={{ width: `${progresso * 100}%`, backgroundColor: COR_GAMIFICACAO.destaque }}
+          style={{ width: `${progresso * 100}%`, backgroundColor: cores.destaque }}
         />
       </View>
-      <Text style={{ color: COR_GAMIFICACAO.textoSuave }} className="text-[10px] mt-1">
+      <Text style={{ color: cores.textoSuave }} className="text-[10px] mt-1">
         {conquista.progressoAtual}/{conquista.progressoTotal}
       </Text>
     </Pressable>
@@ -57,6 +67,8 @@ export default function Voce() {
   const [conquistas, setConquistas] = useState<Conquista[]>([]);
   const [atividade, setAtividade] = useState<ItemAtividade[]>([]);
   const refMedalhas = useArrastarParaRolar();
+  const { colorScheme } = useColorScheme();
+  const cores = colorScheme === "dark" ? CORES_TEMA.escuro : CORES_TEMA.claro;
 
   const carregarTudo = useCallback(async () => {
     if (!ownerId) return;
@@ -98,7 +110,7 @@ export default function Voce() {
             <Text className="text-2xl font-extrabold text-cor-texto dark:text-cor-texto-dark">Visitante</Text>
             <Text className="text-xs text-cor-texto-suave dark:text-cor-texto-suave-dark mt-0.5">@visitante</Text>
             <View className="flex-row items-center gap-1 mt-1">
-              <MaterialIcons name="place" size={13} color="#6b6153" />
+              <MaterialIcons name="place" size={13} color={cores.textoSuave} />
               <Text className="text-xs text-cor-texto-suave dark:text-cor-texto-suave-dark">Sem conta ainda</Text>
             </View>
           </View>
@@ -110,19 +122,19 @@ export default function Voce() {
         <View className="flex-row gap-3 mb-4">
           <Pressable
             onPress={() => router.push({ pathname: "/salvo", params: { filtro: "salvo" } })}
-            className="flex-1 items-center gap-1.5 rounded-2xl py-4 active:opacity-70"
-            style={{ backgroundColor: COR_GAMIFICACAO.fundo }}
+            className="flex-1 items-center gap-1.5 rounded-2xl py-4 shadow-sm active:opacity-70 bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark"
+            style={SOMBRA}
           >
-            <MaterialIcons name="bookmark-border" size={20} color={COR_GAMIFICACAO.destaque} />
-            <Text className="text-xs font-bold text-white">Salvos</Text>
+            <MaterialIcons name="bookmark-border" size={20} color={cores.destaque} />
+            <Text className="text-xs font-bold text-cor-texto dark:text-cor-texto-dark">Salvos</Text>
           </Pressable>
           <Pressable
             onPress={() => router.push({ pathname: "/salvo", params: { filtro: "nota" } })}
-            className="flex-1 items-center gap-1.5 rounded-2xl py-4 active:opacity-70"
-            style={{ backgroundColor: COR_GAMIFICACAO.fundo }}
+            className="flex-1 items-center gap-1.5 rounded-2xl py-4 shadow-sm active:opacity-70 bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark"
+            style={SOMBRA}
           >
-            <MaterialIcons name="edit-note" size={20} color={COR_GAMIFICACAO.destaque} />
-            <Text className="text-xs font-bold text-white">Notas</Text>
+            <MaterialIcons name="edit-note" size={20} color={cores.destaque} />
+            <Text className="text-xs font-bold text-cor-texto dark:text-cor-texto-dark">Notas</Text>
           </Pressable>
         </View>
 
@@ -148,15 +160,15 @@ export default function Voce() {
         </Link>
 
         <View
-          className="rounded-3xl px-5 py-5 mb-3 flex-row items-center justify-between"
-          style={{ backgroundColor: COR_GAMIFICACAO.fundo }}
+          className="rounded-3xl px-5 py-5 mb-3 flex-row items-center justify-between shadow-sm bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark"
+          style={SOMBRA}
         >
           <View>
-            <Text className="text-4xl font-extrabold text-white">{sequencia}</Text>
-            <Text style={{ color: COR_GAMIFICACAO.textoSuave }} className="text-xs font-semibold mt-0.5">
+            <Text className="text-4xl font-extrabold text-cor-texto dark:text-cor-texto-dark">{sequencia}</Text>
+            <Text style={{ color: cores.textoSuave }} className="text-xs font-semibold mt-0.5">
               {sequencia === 1 ? "dia seguido lendo" : "dias seguidos lendo"}
             </Text>
-            <Text style={{ color: COR_GAMIFICACAO.destaque }} className="text-xs font-bold mt-1.5">
+            <Text style={{ color: cores.destaque }} className="text-xs font-bold mt-1.5">
               {mensagemStreak(sequencia)}
             </Text>
           </View>
@@ -173,10 +185,10 @@ export default function Voce() {
           </View>
         </View>
 
-        <View className="rounded-3xl px-5 pt-4 pb-5 mb-4" style={{ backgroundColor: COR_GAMIFICACAO.fundo }}>
+        <View className="rounded-3xl px-5 pt-4 pb-5 mb-4 shadow-sm bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark" style={SOMBRA}>
           <View className="flex-row items-center justify-between mb-3">
-            <Text className="text-white font-extrabold text-base">🏅 Medalhas</Text>
-            <Text style={{ color: COR_GAMIFICACAO.textoSuave }} className="text-xs font-semibold">
+            <Text className="text-cor-texto dark:text-cor-texto-dark font-extrabold text-base">🏅 Medalhas</Text>
+            <Text style={{ color: cores.textoSuave }} className="text-xs font-semibold">
               {conquistas.filter((c) => c.conquistada).length}/{conquistas.length}
             </Text>
           </View>
@@ -186,7 +198,7 @@ export default function Voce() {
             ))}
           </ScrollView>
           <Pressable onPress={() => router.push("/medalhas")} className="self-start mt-3 active:opacity-70">
-            <Text style={{ color: COR_GAMIFICACAO.destaque }} className="text-xs font-bold">
+            <Text style={{ color: cores.destaque }} className="text-xs font-bold">
               Ver todas as medalhas →
             </Text>
           </Pressable>

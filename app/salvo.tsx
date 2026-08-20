@@ -59,6 +59,11 @@ export default function Salvo() {
             <Pressable
               key={chave}
               onPress={() => setFiltro(chave)}
+              accessibilityRole="tab"
+              accessibilityLabel={rotulo}
+              accessibilityState={{ selected: filtro === chave }}
+              // @ts-expect-error accessibilitySelected é uma extensão do react-native-web, não existe nos tipos do React Native
+              accessibilitySelected={filtro === chave}
               className={`px-3.5 py-1.5 rounded-full border active:opacity-70 ${
                 filtro === chave
                   ? "bg-cor-destaque dark:bg-cor-destaque-dark border-cor-destaque dark:border-cor-destaque-dark"

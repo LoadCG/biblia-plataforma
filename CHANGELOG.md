@@ -3,6 +3,24 @@
 Todas as mudanças notáveis feitas no projeto serão documentadas neste arquivo.
 O formato é baseado no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/).
 
+## [Unreleased] - 2026-08-19 (continuação 2)
+
+### Corrigido
+- **Estado de toggles não era anunciado pra leitor de tela**
+  (`FUNCIONALIDADES.md` 7.2): tema, "Marcar capítulo como lido", abas
+  Texto Bíblico/Resumo, cores de grifo, "Salvar" da seleção múltipla,
+  "Amém" do Versículo do Dia, chips de filtro em `/salvo` e células de
+  `GradeCapitulos` tinham `accessibilityLabel` mas nenhum
+  `accessibilityState` — um leitor de tela lia o rótulo, nunca dizia
+  se estava ligado/selecionado. Achado no processo: a versão do
+  `react-native-web` do projeto (0.21.2) não traduz
+  `accessibilityState={{checked/selected}}` pra `aria-checked`/
+  `aria-selected` — só reconhece as props achatadas antigas
+  `accessibilityChecked`/`accessibilitySelected`. Corrigido mantendo
+  os dois em paralelo (nativo + web). Testado ao vivo lendo
+  `aria-checked`/`aria-selected` do DOM antes/depois de cada
+  interação.
+
 ## [Unreleased] - 2026-08-19 (continuação)
 
 ### Adicionado

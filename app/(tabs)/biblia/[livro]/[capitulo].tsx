@@ -424,10 +424,26 @@ export default function Leitura() {
           </Pressable>
 
           <View className="flex-row rounded-full bg-cor-borda dark:bg-cor-borda-dark p-1">
-            <Pressable onPress={() => setAbaAtual("texto")} className={`px-4 py-1.5 rounded-full active:opacity-60 ${abaAtual === "texto" ? "bg-cor-fundo dark:bg-cor-fundo-dark shadow-sm" : ""}`}>
+            <Pressable
+              onPress={() => setAbaAtual("texto")}
+              accessibilityRole="tab"
+              accessibilityLabel="Texto Bíblico"
+              accessibilityState={{ selected: abaAtual === "texto" }}
+              // @ts-expect-error accessibilitySelected é uma extensão do react-native-web, não existe nos tipos do React Native
+              accessibilitySelected={abaAtual === "texto"}
+              className={`px-4 py-1.5 rounded-full active:opacity-60 ${abaAtual === "texto" ? "bg-cor-fundo dark:bg-cor-fundo-dark shadow-sm" : ""}`}
+            >
               <Text className={`text-xs font-bold ${abaAtual === "texto" ? "text-cor-texto dark:text-cor-texto-dark" : "text-cor-texto-suave dark:text-cor-texto-suave-dark"}`}>Texto Bíblico</Text>
             </Pressable>
-            <Pressable onPress={() => setAbaAtual("resumo")} className={`px-4 py-1.5 rounded-full active:opacity-60 ${abaAtual === "resumo" ? "bg-cor-fundo dark:bg-cor-fundo-dark shadow-sm" : ""}`}>
+            <Pressable
+              onPress={() => setAbaAtual("resumo")}
+              accessibilityRole="tab"
+              accessibilityLabel="Resumo"
+              accessibilityState={{ selected: abaAtual === "resumo" }}
+              // @ts-expect-error accessibilitySelected é uma extensão do react-native-web, não existe nos tipos do React Native
+              accessibilitySelected={abaAtual === "resumo"}
+              className={`px-4 py-1.5 rounded-full active:opacity-60 ${abaAtual === "resumo" ? "bg-cor-fundo dark:bg-cor-fundo-dark shadow-sm" : ""}`}
+            >
               <Text className={`text-xs font-bold ${abaAtual === "resumo" ? "text-cor-texto dark:text-cor-texto-dark" : "text-cor-texto-suave dark:text-cor-texto-suave-dark"}`}>Resumo</Text>
             </Pressable>
           </View>
@@ -463,6 +479,11 @@ export default function Leitura() {
         <View className="px-5 pt-6 pb-32 max-w-2xl w-full mx-auto">
           <Pressable
             onPress={alternarCapituloLido}
+            accessibilityRole="checkbox"
+            accessibilityLabel="Capítulo lido"
+            accessibilityState={{ checked: capituloLido }}
+            // @ts-expect-error accessibilityChecked é uma extensão do react-native-web, não existe nos tipos do React Native
+            accessibilityChecked={capituloLido}
             className={`self-start px-4 py-2.5 rounded-full mb-6 active:opacity-70 ${
               capituloLido
                 ? "bg-green-600"
@@ -637,7 +658,11 @@ export default function Leitura() {
                       <Pressable
                         key={i}
                         onPress={() => aplicarCorGrifo(cor)}
-                        accessibilityLabel={isDesfazer ? "Remover grifo" : `Grifar com esta cor`}
+                        accessibilityRole="checkbox"
+                        accessibilityLabel={isDesfazer ? "Remover grifo" : "Grifar com esta cor"}
+                        accessibilityState={{ checked: isDesfazer }}
+                        // @ts-expect-error accessibilityChecked é uma extensão do react-native-web, não existe nos tipos do React Native
+                        accessibilityChecked={isDesfazer}
                         className="w-11 h-11 -m-1.5 items-center justify-center active:opacity-70"
                       >
                         <View className={`w-8 h-8 rounded-full ${corBolinha} shadow-sm items-center justify-center`}>
@@ -666,6 +691,11 @@ export default function Leitura() {
                 return (
                   <Pressable
                     onPress={alternarSalvosSelecionados}
+                    accessibilityRole="checkbox"
+                    accessibilityLabel="Salvar versículos selecionados"
+                    accessibilityState={{ checked: todosSalvos }}
+                    // @ts-expect-error accessibilityChecked é uma extensão do react-native-web, não existe nos tipos do React Native
+                    accessibilityChecked={todosSalvos}
                     className="flex-row items-center justify-center gap-1 bg-cor-borda dark:bg-cor-borda-dark px-4 py-2 rounded-lg active:opacity-70"
                   >
                     <MaterialIcons name={todosSalvos ? "bookmark" : "bookmark-border"} size={18} className="text-cor-texto dark:text-cor-texto-dark" />

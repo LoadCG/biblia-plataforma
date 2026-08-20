@@ -64,11 +64,16 @@ export function GradeCapitulos({
               onPress={Platform.OS === "web" && modoSelecao ? undefined : () => (modoSelecao ? onAlternarSelecionado?.(n) : onSelecionar(n))}
               // @ts-expect-error dataSet é uma extensão do react-native-web pra atributos data-* no DOM, usada pelo useSelecaoArrasto pra achar a célula sob o ponteiro durante o arraste
               dataSet={{ capitulo: String(n) }}
-              accessibilityLabel={
-                modoSelecao
-                  ? `Capítulo ${n}${lido ? ", lido" : ""}${selecionado ? ", selecionado" : ""}`
-                  : `Capítulo ${n}${lido ? ", lido" : ""}`
-              }
+              accessibilityRole={modoSelecao ? "checkbox" : "button"}
+              accessibilityLabel={`Capítulo ${n}${lido ? ", lido" : ""}`}
+              accessibilityState={modoSelecao ? { checked: selecionado } : { selected: lido }}
+              // accessibilityChecked/accessibilitySelected: extensões do
+              // react-native-web (não existem nos tipos do React Native,
+              // por isso o @ts-expect-error acima em `dataSet` também
+              // cobre estas duas) — accessibilityState sozinho não vira
+              // aria-checked/aria-selected nesta versão do RNW (0.21.2).
+              accessibilityChecked={modoSelecao ? selecionado : undefined}
+              accessibilitySelected={!modoSelecao ? lido : undefined}
               className={`aspect-square items-center justify-center rounded-lg border-2 active:opacity-60 ${
                 selecionado
                   ? "border-cor-destaque dark:border-cor-destaque-dark bg-cor-destaque/20"

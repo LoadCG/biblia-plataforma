@@ -153,7 +153,11 @@ export function CardVersiculoDia() {
               <Pressable
                 onPress={alternarAmem}
                 disabled={!ref}
-                accessibilityLabel={salvo ? "Remover dos salvos" : "Salvar este versículo"}
+                accessibilityRole="checkbox"
+                accessibilityLabel="Salvar este versículo"
+                accessibilityState={{ checked: salvo }}
+                // @ts-expect-error accessibilityChecked é uma extensão do react-native-web, não existe nos tipos do React Native
+                accessibilityChecked={salvo}
                 className="flex-1 items-center py-1 active:opacity-60"
               >
                 <MaterialIcons name={salvo ? "favorite" : "favorite-border"} size={24} color={salvo ? corDestaque : corIconePadrao} />

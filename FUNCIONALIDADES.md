@@ -858,6 +858,34 @@ nenhum dos dois foi verificado ainda.
 teclado (o site antigo tinha isso resolvido — reaproveitar o padrão) —
 ainda pendente.
 
+**Continuação (2026-08-19): estado não era anunciado em nenhum
+toggle.** Auditoria (agente de busca dedicado) achou que vários
+controles do tipo liga/desliga tinham `accessibilityLabel` mas nenhum
+`accessibilityState` — um leitor de tela lê o rótulo, mas nunca diz se
+o tema está claro/escuro, se o capítulo já foi marcado como lido, se a
+cor de grifo já está aplicada, etc. Adicionado `accessibilityRole`
+(`switch`/`tab`/`checkbox`, conforme o caso) + `accessibilityState` em:
+tema (`BotaoTema`), abas "Texto Bíblico"/"Resumo" e "Marcar capítulo
+como lido" na leitura, cada bolinha de cor de grifo, o toggle "Salvar"
+da barra de seleção múltipla, o "Amém" do card do Versículo do Dia,
+os chips de filtro em `/salvo`, e as células de `GradeCapitulos`
+(estado "lido" fora do modo de seleção, "selecionado" dentro dele).
+**Achado técnico real no processo:** a versão do `react-native-web`
+usada no projeto (0.21.2) **não traduz** a prop moderna
+`accessibilityState={{ checked/selected }}` do React Native pra
+`aria-checked`/`aria-selected` no DOM — confirmado lendo o código-fonte
+da lib (`accessibilityState` não está na lista de props repassadas de
+`View`/`Pressable` pro elemento real). Ela só reconhece as props
+achatadas antigas `accessibilityChecked`/`accessibilitySelected`
+(de antes do RN unificar tudo em `accessibilityState`). Sem isso,
+os atributos ARIA simplesmente não apareciam no DOM, apesar do código
+"parecer certo" e passar no nativo. Corrigido mantendo os dois em
+paralelo: `accessibilityState` (nativo) + a prop achatada equivalente
+(web) — igual ao precedente já registrado com `dataSet` em
+`GradeCapitulos.tsx`. Testado ao vivo lendo `aria-checked`/
+`aria-selected` do DOM antes/depois de cada interação (ex.: alternar
+tema: `aria-checked` vai de `"true"` pra `"false"` no clique).
+
 ### 7.3 Leitura offline de verdade `🔶`
 **Funcionalidade:** no app nativo instalado, o conteúdo dos resumos já
 funciona offline (é dado embutido no app), e a Bíblia inteira também

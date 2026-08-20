@@ -88,3 +88,109 @@ Abaixo, um detalhamento técnico e arquitetural de como implementaremos as próx
     - Card de Streak (Perseverança) evoluindo nosso "Foguinho" atual.
     - Card de Estatísticas de Leitura original.
     - Card Imersivo de Medalhas: Um container elegante exibindo nossas medalhas originais de leitura (Pentateuco, Evangelhos, etc.) em destaque com barras de progresso próprias.
+
+---
+
+## Plano detalhado do que falta (2026-08-19)
+
+Feito recentemente, fora da lista acima (ver `CHANGELOG.md` e
+`FUNCIONALIDADES.md` pra detalhe completo de cada um): tela própria de
+Medalhas, seleção em massa/por arraste de capítulos lidos, Toast com
+ação (Desfazer), correção de elementos presos no modo escuro, exportar/
+apagar meus dados, página "Sobre o projeto".
+
+Itens abaixo vêm de `FUNCIONALIDADES.md` marcados `⬜`/`🔶` (não
+iniciado/parcial), quebrados em microtarefas. **Legenda:**
+🟢 posso começar sem aprovação (só código, sem decisão de produto/conta
+paga) · 🔴 precisa de uma decisão do usuário antes de começar (conta,
+serviço pago, política).
+
+### 🟢 Sem bloqueio — posso atacar em qualquer ordem
+
+**A. Gerar imagem de versículo no nativo** (`FUNCIONALIDADES.md` 5.2,
+hoje só funciona no web)
+1. Instalar `react-native-view-shot` e `expo-sharing`.
+2. Capturar a `View` do cartão de versículo já existente (o desenho já
+   está pronto pro web via Canvas — no nativo, capturar a View
+   renderizada em vez de redesenhar em Canvas).
+3. Compartilhar o arquivo capturado via `expo-sharing`.
+4. Testar em pelo menos um preview/simulador antes de considerar feito
+   (não dá pra validar 100% sem dispositivo/simulador nativo à mão,
+   registrar essa limitação se for o caso).
+
+**B. Navegação só por teclado / leitor de tela** (7.2, hoje parcial)
+1. Levantar lista de todo `Pressable` sem `accessibilityRole="button"`
+   nas telas principais (Início, Bíblia, Descubra, Você) — auditoria,
+   sem código ainda.
+2. Adicionar `accessibilityRole`/`accessibilityState` onde faltar
+   (ex.: toggles como grifo/salvo precisam de `accessibilityState={{
+   selected }}`).
+3. Testar navegação por Tab no web (já existem atalhos de teclado em
+   parte da leitura — conferir se cobrem todas as telas ou só a
+   leitura de capítulo).
+4. Testar com um leitor de tela real (VoiceOver/NVDA) pelo menos na
+   jornada principal (escolher livro → ler capítulo → grifar).
+
+**C. Leitura offline de verdade** (7.3, hoje parcial)
+1. Levantar o que ainda depende de rede na leitura (ex.: algum caminho
+   que não usa a base local SQLite/FTS5 embutida).
+2. Testar a jornada principal com a rede desligada de propósito,
+   listar cada ponto que quebra.
+3. Corrigir um de cada vez, começando pelo mais usado.
+
+**D. Auditoria de performance** (7.4, hoje parcial)
+1. Medir tempo de carregamento inicial (web) e tamanho do bundle.
+2. Verificar se há re-renders desnecessários nas telas com listas
+   grandes (grade de capítulos de Salmos, lista de 66 livros).
+3. Registrar achados em `FUNCIONALIDADES.md` mesmo que a conclusão
+   seja "sem problema real encontrado" (como já aconteceu com 9.9).
+
+**E. Pré-renderização estática por rota (SEO)** (7.1)
+1. Levantar a configuração atual de export do Expo Router (web) —
+   hoje gera um `index.html` só.
+2. Avaliar `output: "static"` do Expo Router (já disponível em versões
+   recentes) pra gerar HTML por rota de conteúdo (livro/capítulo).
+3. Testar que o app continua funcionando como SPA depois da mudança
+   (client-side routing não pode quebrar).
+4. Confirmar que o build/deploy do Vercel não precisa de ajuste
+   adicional.
+
+### 🔴 Bloqueados numa decisão do usuário
+
+**F. Trocar tradução do texto bíblico** (2.9) — bloqueado em: qual
+segunda tradução usar. Almeida ACF (a atual) é domínio público; quase
+toda tradução em português mais "moderna" (NVI, NAA, NTLH) é
+licenciada/paga — precisa decidir se vale pagar por uma licença, ou se
+existe outra tradução de domínio público aceitável.
+
+**G. Criar conta / login** (6.1, e por consequência 6.2 migrar dados
+locais + 6.3 sincronizar entre dispositivos) — bloqueado em: qual
+provedor de backend (Supabase vs Firebase, ver decisão em aberto no
+`PLANO-PLATAFORMA.md`) e a política de idade mínima pro público do
+app. Sem isso decidido, não faz sentido começar a implementar — mudar
+de provedor depois de já ter código escrito em cima de um deles é
+retrabalho evitável.
+
+**H. Notificação diária do versículo do dia** (9.10) e **notificações
+push** (8.2) — ambos dependem de G (conta + backend) pra agendar do
+lado do servidor. Sem isso, a única forma de notificação diária é
+`expo-notifications` local (que já existe pro lembrete de leitura em
+Configurações) — se quiser algo mais simples só com o que já existe,
+dá pra reaproveitar o mesmo mecanismo de lembrete local pro versículo
+do dia sem esperar G, mas não é a versão "de verdade" com conteúdo
+dinâmico do servidor.
+
+**I. Publicar nas lojas de app** (8.1) — bloqueado em: contas de
+desenvolvedor pagas (Apple $99/ano, Google $25 uma vez), ícone e tela
+de splash com identidade própria (hoje usa o padrão do template do
+Expo — vale resolver isso mesmo antes de publicar, é rápido e não
+depende de conta nenhuma).
+
+### Como isso deve ser lido
+
+Ao começar qualquer item da lista 🟢: mover a marcação em
+`FUNCIONALIDADES.md` de `⬜`/`🔶` pra `🔶`/em andamento, documentar o que
+foi feito e testado (mesmo padrão já seguido em todo o resto do
+documento), e atualizar este arquivo riscando a microtarefa concluída.
+Itens 🔴 ficam registrados aqui pra não se perderem, mas não devem ser
+iniciados sem a decisão correspondente do usuário.

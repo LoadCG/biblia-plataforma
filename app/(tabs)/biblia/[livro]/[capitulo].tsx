@@ -37,6 +37,7 @@ import { gerarImagemVersiculo } from "../../../../core/util/gerarImagemVersiculo
 import { mensagemErroAmigavel } from "../../../../core/util/erroAmigavel";
 import { linkVersiculo } from "../../../../core/util/linkVersiculo";
 import { mostrarToast } from "../../../../core/util/toast";
+import { scrollSuave } from "../../../../core/util/scrollSuave";
 import { useArrastarParaRolar } from "../../../../core/util/useArrastarParaRolar";
 import { useOwnerId } from "../../../../core/useOwnerId";
 
@@ -202,7 +203,7 @@ export default function Leitura() {
     // Auto scroll para o versículo se for o alvo e ainda não scrollamos
     if (versiculoAlvo === numero && !versiculoAutoScrollRealizado) {
       setTimeout(() => {
-        scrollRef.current?.scrollTo({ y: Math.max(0, y - 50), animated: true });
+        scrollSuave(scrollRef, Math.max(0, y - 50));
         setVersiculoAutoScrollRealizado(true);
         setVersiculoRealcado(numero);
         setTimeout(() => {
@@ -216,19 +217,32 @@ export default function Leitura() {
   const ultimoY = useRef(0);
   function aoRolar(e: NativeSyntheticEvent<NativeScrollEvent>) {
     setDestaqueAlvo(false);
-    
+
     const { contentOffset, contentSize, layoutMeasurement } = e.nativeEvent;
-    const y = contentOffset.y;
-    
-    // Auto-focus on scroll down (like reading more)
-    if (y > ultimoY.current + 15 && y > 100) {
+    const alturaRolavel = contentSize.height - layoutMeasurement.height;
+    // "Elastic overscroll"/bounce (arrastar além do início/fim da lista,
+    // comum no iOS e no web) manda valores de `contentOffset.y` negativos
+    // ou maiores que `alturaRolavel` durante a animação de retorno — sem
+    // esse clamp, essas oscilações cruzavam o limiar de ±15px repetidas
+    // vezes e faziam o cabeçalho/navbar aparecer e sumir em sequência
+    // rápida ("glitch") ao chegar no fim da página (reportado pelo
+    // usuário, 2026-08-20).
+    const y = Math.max(0, Math.min(contentOffset.y, Math.max(alturaRolavel, 0)));
+
+    // Perto do fim do conteúdo não há mais nada a revelar escondendo o
+    // cabeçalho — mantém ele sempre visível ali, em vez de decidir por
+    // direção de arrasto (que é instável bem na borda, ver acima).
+    const pertoDoFim = alturaRolavel > 0 && y >= alturaRolavel - 24;
+
+    if (pertoDoFim) {
+      setFocoAtivo(false);
+    } else if (y > ultimoY.current + 15 && y > 100) {
       setFocoAtivo(true);
     } else if (y < ultimoY.current - 15 || y <= 50) {
       setFocoAtivo(false);
     }
     ultimoY.current = y;
 
-    const alturaRolavel = contentSize.height - layoutMeasurement.height;
     setProgresso(alturaRolavel > 0 ? Math.min(1, Math.max(0, y / alturaRolavel)) : 0);
   }
 
@@ -360,7 +374,7 @@ export default function Leitura() {
     if (versiculoFalando === null) return;
     const y = posicoes.current[versiculoFalando];
     if (y !== undefined) {
-      scrollRef.current?.scrollTo({ y: Math.max(0, y - 100), animated: true });
+      scrollSuave(scrollRef, Math.max(0, y - 100));
     }
   }, [versiculoFalando]);
 
@@ -532,24 +546,6 @@ export default function Leitura() {
       )}
       <ScrollView ref={scrollRef} onScroll={aoRolar} scrollEventThrottle={32} className="flex-1" style={{ display: abaAtual === "texto" ? "flex" : "none" }}>
         <View className="px-5 pt-6 pb-32 max-w-2xl w-full mx-auto">
-          <Pressable
-            onPress={alternarCapituloLido}
-            accessibilityRole="checkbox"
-            accessibilityLabel="Capítulo lido"
-            accessibilityState={{ checked: capituloLido }}
-            // @ts-expect-error accessibilityChecked é uma extensão do react-native-web, não existe nos tipos do React Native
-            accessibilityChecked={capituloLido}
-            className={`self-start px-4 py-2.5 rounded-full mb-6 active:opacity-70 ${
-              capituloLido
-                ? "bg-green-600"
-                : "border border-cor-borda dark:border-cor-borda-dark bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark"
-            }`}
-          >
-            <Text className={`text-sm font-semibold ${capituloLido ? "text-white" : "text-cor-texto dark:text-cor-texto-dark"}`}>
-              {capituloLido ? "✓ Capítulo lido" : "Marcar capítulo como lido"}
-            </Text>
-          </Pressable>
-
           {erro ? (
             <View className="items-start gap-3">
               <Text className="text-cor-texto-suave dark:text-cor-texto-suave-dark">{erro}</Text>
@@ -636,6 +632,26 @@ export default function Leitura() {
               {dados.texto}
             </Text>
           )}
+
+          {!erro && dados ? (
+            <Pressable
+              onPress={alternarCapituloLido}
+              accessibilityRole="checkbox"
+              accessibilityLabel="Capítulo lido"
+              accessibilityState={{ checked: capituloLido }}
+              // @ts-expect-error accessibilityChecked é uma extensão do react-native-web, não existe nos tipos do React Native
+              accessibilityChecked={capituloLido}
+              className={`self-start px-4 py-2.5 rounded-full mt-6 active:opacity-70 ${
+                capituloLido
+                  ? "bg-green-600"
+                  : "border border-cor-borda dark:border-cor-borda-dark bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark"
+              }`}
+            >
+              <Text className={`text-sm font-semibold ${capituloLido ? "text-white" : "text-cor-texto dark:text-cor-texto-dark"}`}>
+                {capituloLido ? "✓ Capítulo lido" : "Marcar capítulo como lido"}
+              </Text>
+            </Pressable>
+          ) : null}
         </View>
       </ScrollView>
 

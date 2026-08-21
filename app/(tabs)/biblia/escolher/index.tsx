@@ -157,7 +157,7 @@ export default function EscolherLivro() {
                   ? `${selecionados.size} selecionado${selecionados.size === 1 ? "" : "s"}${
                       Platform.OS === "web" && selecionados.size === 0 ? " — arraste pra selecionar um intervalo" : ""
                     }`
-                  : "Toque num capítulo pra ler"}
+                  : "Toque num capítulo pra ler, ou segure pra escolher um versículo"}
               </Text>
               <Pressable
                 onPress={() => alternarModoSelecao(item.slug)}
@@ -180,6 +180,7 @@ export default function EscolherLivro() {
               totalCapitulos={item.capitulos}
               lidos={lidos}
               onSelecionar={(cap) => router.push(`/biblia/${item.slug}/${cap}`)}
+              onSelecionarLongo={(cap) => router.push(`/biblia/escolher/${item.slug}/${cap}`)}
               selecionados={emSelecao ? selecionados : undefined}
               onAlternarSelecionado={emSelecao ? alternarCapituloSelecionado : undefined}
               onMudarSelecaoEmMassa={emSelecao ? setSelecionados : undefined}

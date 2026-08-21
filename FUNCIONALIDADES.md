@@ -301,23 +301,34 @@ primeiro instante sem virar poluição visual permanente na tela.
 **UX/UI:** o fade acontece só uma vez por navegação (não repete se o
 usuário rolar de volta até o versículo depois).
 
-### 2.2b Tela dedicada de escolher versículo `⬜`
-**Funcionalidade:** hoje não existe — cogitada durante o planejamento
-original mas nunca construída; o app só chega num versículo específico
-recebendo `?versiculo=N` por link direto. Se fizer sentido ter uma grade
-de versículos navegável (como a de capítulos), é uma tela nova
-(`app/biblia/[livro]/[capitulo]/index.tsx` reorganizando a rota atual,
-por exemplo), não uma extensão da tela de leitura. **Achado
-(2026-08-11):** existia de fato uma versão dessa tela
-(`escolher/[livro]/[capitulo].tsx`), contradizendo esta nota — mas
-estava com um bug que a deixava sempre quebrada (buscava o versículo
-pelo slug da URL em vez do nome do livro) e era o destino de um link
-com a rota errada no acordeão de livros. Removida — ver 2.1 pro relato
-completo. Se essa funcionalidade for retomada no futuro, construir do
-zero seguindo esta nota, não reaproveitar a implementação antiga.
-**UX/UI:** mesma grade de números da seleção de capítulo (2.1), com
-indicador de "já grifado" por versículo, já que ali sim faz sentido
-granularidade de versículo.
+### 2.2b Tela dedicada de escolher versículo `✅`
+**Funcionalidade:** `app/(tabs)/biblia/escolher/[livro]/[capitulo].tsx`
+(2026-08-20) — grade tocável de todos os versículos de um capítulo,
+reutilizando `GradeCapitulos` (generalizado com uma prop `rotulo`
+opcional, "Capítulo" por padrão, pra não misturar o rótulo de
+acessibilidade quando a grade representa versículos). Toque num
+número leva direto pra `/biblia/{slug}/{capitulo}?versiculo=N`
+(mesmo parâmetro que a leitura já lê pra rolar até o versículo).
+Indicador verde mostra versículos já grifados (`grifosRepository.
+listarPorCapitulo`), no lugar do indicador "lido" que a grade usa pra
+capítulos.
+**Histórico:** existia uma primeira versão dessa tela, mas com um bug
+que a deixava sempre vazia — buscava o texto do capítulo usando o slug
+da URL direto, quando `buscarReferencia` espera o nome do livro
+(`${livro.nome} ${capitulo}`, mesmo padrão que a leitura já usa).
+Removida em 2026-08-11 (ver 2.1). Reconstruída do zero em 2026-08-20
+resolvendo o livro via `obterLivro(slug)` primeiro e só então usando
+`livro.nome` na busca, evitando repetir o bug original.
+**UX/UI:** acessível por toque longo (`onLongPress`) numa célula de
+capítulo na tela de Livros (`escolher/index.tsx`) — toque simples
+continua abrindo a leitura direto, sem mudar o comportamento padrão
+que já existia; dica de texto "toque pra ler, ou segure pra escolher
+um versículo" avisa da opção. Testado ao vivo: grade de Salmos 23
+mostra os 6 versículos certos; toque simples leva pra
+`/biblia/19-salmos/23?versiculo=4`; toque longo simulado (pointerdown
++ mouseup com 700ms de intervalo, já que a ferramenta de automação não
+tem um gesto nativo de "segurar") navegou corretamente da grade de
+capítulos pra `/biblia/escolher/19-salmos/23`.
 
 ### 2.3 Grifar versículo `✅`
 **Funcionalidade:** alterna e persiste por referência exata
@@ -1531,18 +1542,20 @@ Fase 8).
 **UX/UI:** cor do destaque do versículo lido dinamicamente do grifo
 salvo, não mais uma cor Tailwind fixa.
 
-### 9.9 Modo escuro mais contrastado `🔶`
+### 9.9 Modo escuro mais contrastado `✅`
 **Funcionalidade:** auditoria de contraste feita (não implementação
 nova): calculado manualmente o contraste WCAG entre
 `cor-texto-suave-dark` (`#b3a894`) e os dois fundos escuros usados
 atrás dele — 6.87:1 contra `cor-fundo-elevado-dark` e 7.59:1 contra
 `cor-fundo-dark`. Ambos já passam WCAG AA (mínimo 4.5:1) com folga, e
 quase alcançam AAA (7:1). **Nenhuma mudança de cor foi feita** — não há
-falha objetiva de contraste nos tokens atuais pra corrigir. Se o pedido
-for uma segunda variante de tema (preto mais puro, estilo AMOLED, por
-preferência visual e não por falha de acessibilidade), isso ainda não
-foi construído e precisa de direção de design mais específica antes.
-**UX/UI:** sem mudança visual ainda — ver acima.
+falha objetiva de contraste nos tokens atuais pra corrigir.
+**Decisão do usuário (2026-08-20):** uma segunda variante de tema
+(preto mais puro, estilo AMOLED, por preferência visual e não por
+falha de acessibilidade) fica fechada por ora — sem direção de design
+definida. Item fechado, fora do radar até o usuário pedir de novo (ver
+`TODO.md`, mesmo padrão das outras decisões 🔴).
+**UX/UI:** sem mudança visual — contraste atual já é adequado.
 
 ### 9.10 Notificação diária do versículo do dia `⬜`
 **Funcionalidade:** backlog explícito, mencionado pelo usuário mas

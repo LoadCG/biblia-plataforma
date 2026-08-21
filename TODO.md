@@ -14,7 +14,13 @@
 - [x] **Refatoração da Navegação Bíblica (Acordeão YouVersion-style)**:
   - [x] Remoção da tela antiga de escolha de capítulos (`escolher/[livro]/index.tsx`).
   - [x] Implementação de lista em acordeão na tela de Livros.
-  - [x] Criação de tela dedicada para escolha de versículos em grade de 5 colunas (`escolher/[livro]/[capitulo].tsx`).
+  - [x] Criação de tela dedicada para escolha de versículos em grade
+    (`escolher/[livro]/[capitulo].tsx`). **Nota (2026-08-20):** essa
+    primeira versão foi removida em 2026-08-11 por um bug (buscava o
+    texto usando o slug da URL em vez do nome do livro, sempre vinha
+    vazia) — este checklist ficou incorretamente marcado como feito
+    durante esse período. Reconstruída do zero em 2026-08-20 corrigindo
+    o bug original, ver seção "Item não óbvio" abaixo.
   - [x] Auto-scroll inteligente ao entrar no versículo alvo, lendo query params e utilizando as posições (Y) medidas dinamicamente via `onLayout`.
 - [x] **Refatoração de Estado Global Local (NavbarContext)**: Criado um context provider leve no layout principal (`app/(tabs)/_layout.tsx`) para que qualquer tela filha possa ocultar a tab bar.
 
@@ -256,6 +262,33 @@ pediu pra preparar tudo da melhor forma possível antes disso.
 3. Melhorar o `README.md` com uma screenshot/GIF do app e o link do
    deploy no Vercel — quem avalia portfólio raramente clona e roda
    localmente.
+
+### Itens "não óbvios" achados fora do plano (2026-08-20)
+
+Itens que estavam `⬜`/`🔶` em `FUNCIONALIDADES.md` mas não tinham
+entrado nem no plano 🟢/🔴 acima nem nas decisões já tomadas — ficaram
+esquecidos no meio do checklist.
+
+- **J. Tela dedicada de escolher versículo** (2.2b) — ✅ feito
+  (2026-08-20). Reconstruída (`app/(tabs)/biblia/escolher/[livro]/
+  [capitulo].tsx`), corrigindo o bug original que a fez ser removida em
+  2026-08-11 (buscava o texto do capítulo usando o slug da URL direto;
+  `buscarReferencia` espera `${livro.nome} ${capitulo}` — corrigido
+  resolvendo o livro via `obterLivro(slug)` primeiro). Acessível via
+  toque longo (`onLongPress`, novo prop em `GradeCapitulos`) numa
+  célula de capítulo na tela de Livros — toque simples continua abrindo
+  a leitura direto, sem mudar o comportamento padrão. Grade reaproveita
+  `GradeCapitulos` (generalizado com prop `rotulo`), com indicador
+  verde de "já grifado" no versículo. Testado ao vivo: grade renderiza
+  os 6 versículos certos de Salmos 23, toque leva pra
+  `/biblia/19-salmos/23?versiculo=N`, e o toque longo simulado (evento
+  pointerdown/mouseup com 700ms de intervalo) navegou corretamente pra
+  `/biblia/escolher/19-salmos/23`.
+- **K. Modo escuro AMOLED** (9.9) — **decidido (2026-08-20): fechado
+  por ora.** Não é bug de acessibilidade (contraste atual já passa
+  WCAG AA com folga), é só uma ideia de tema visual sem direção de
+  design definida. Fica registrado, fora do radar até o usuário pedir
+  de novo.
 
 ### Como isso deve ser lido
 

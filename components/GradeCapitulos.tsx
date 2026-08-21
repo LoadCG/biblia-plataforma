@@ -7,6 +7,14 @@ type Props = {
   totalCapitulos: number;
   lidos: Set<number>;
   onSelecionar: (capitulo: number) => void;
+  /** Toque longo numa célula — usado pra abrir um atalho alternativo
+   * sem competir com o toque simples (ex.: escolher um versículo
+   * específico em vez de abrir o capítulo inteiro). */
+  onSelecionarLongo?: (capitulo: number) => void;
+  /** Rótulo singular usado no `accessibilityLabel` de cada célula
+   * ("Capítulo N" por padrão, "Versículo N" quando a grade representa
+   * versículos em vez de capítulos). */
+  rotulo?: string;
   /** Quando presente, a grade entra em modo de seleção múltipla. No web,
    * pressionar-e-arrastar estende a seleção por um intervalo inteiro
    * (ver `useSelecaoArrasto`); em toque simples (ou no app nativo, sem
@@ -33,6 +41,8 @@ export function GradeCapitulos({
   totalCapitulos,
   lidos,
   onSelecionar,
+  onSelecionarLongo,
+  rotulo = "Capítulo",
   selecionados,
   onAlternarSelecionado,
   onMudarSelecaoEmMassa,
@@ -62,10 +72,11 @@ export function GradeCapitulos({
               // toque. Fora do web (app nativo, sem suporte a arraste ainda),
               // o toque direto no Pressable é o único jeito de selecionar.
               onPress={Platform.OS === "web" && modoSelecao ? undefined : () => (modoSelecao ? onAlternarSelecionado?.(n) : onSelecionar(n))}
+              onLongPress={!modoSelecao && onSelecionarLongo ? () => onSelecionarLongo(n) : undefined}
               // @ts-expect-error dataSet é uma extensão do react-native-web pra atributos data-* no DOM, usada pelo useSelecaoArrasto pra achar a célula sob o ponteiro durante o arraste
               dataSet={{ capitulo: String(n) }}
               accessibilityRole={modoSelecao ? "checkbox" : "button"}
-              accessibilityLabel={`Capítulo ${n}${lido ? ", lido" : ""}`}
+              accessibilityLabel={`${rotulo} ${n}${lido ? ", lido" : ""}`}
               accessibilityState={modoSelecao ? { checked: selecionado } : { selected: lido }}
               // accessibilityChecked/accessibilitySelected: extensões do
               // react-native-web (não existem nos tipos do React Native,

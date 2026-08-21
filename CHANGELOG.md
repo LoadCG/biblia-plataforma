@@ -5,6 +5,28 @@ O formato é baseado no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.
 
 ## [Unreleased] - 2026-08-20
 
+### Adicionado (itens "não óbvios" achados fora do plano)
+- **Tela dedicada de escolher versículo** (`TODO.md` item J,
+  `FUNCIONALIDADES.md` 2.2b): reconstruída depois de achar uma
+  inconsistência real na documentação — o `TODO.md` listava essa tela
+  como "feito", mas ela tinha sido removida em 2026-08-11 por um bug
+  (buscava o texto usando o slug da URL em vez do nome do livro) e
+  nunca foi reconstruída. Nova versão em
+  `app/(tabs)/biblia/escolher/[livro]/[capitulo].tsx`, corrigindo o bug
+  original (resolve o livro via `obterLivro(slug)` primeiro). Grade
+  reaproveita `components/GradeCapitulos.tsx` (generalizado com uma
+  prop `rotulo` opcional e um novo `onSelecionarLongo`), acessível por
+  toque longo numa célula de capítulo na tela de Livros — toque simples
+  continua abrindo a leitura, sem mudar o comportamento padrão. Testado
+  ao vivo: grade certa (6 versículos de Salmos 23), toque simples e
+  toque longo simulado via eventos de ponteiro navegando pros lugares
+  certos.
+- **Modo escuro AMOLED (9.9)**: decisão do usuário — fica fechado por
+  ora (não é bug de acessibilidade, é só uma ideia de tema sem direção
+  de design definida). Marcado como `✅` (investigado, sem ação
+  necessária) em vez de `🔶` em `FUNCIONALIDADES.md`, mesmo padrão das
+  outras decisões já fechadas.
+
 ### Corrigido (auditoria pontual de UI/navegação)
 - **Contraste ruim nas pílulas de filtro da tela Salvo**
   (`app/salvo.tsx`): filtro selecionado usava `bg-cor-destaque(-dark)`

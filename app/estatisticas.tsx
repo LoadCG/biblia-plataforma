@@ -7,7 +7,7 @@ import { useOwnerId } from "../core/useOwnerId";
 
 function Cartao({ numero, rotulo }: { numero: string | number; rotulo: string }) {
   return (
-    <View className="flex-1 min-w-[140px] rounded-xl border border-cor-borda dark:border-cor-borda-dark bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark p-4">
+    <View className="w-[48%] min-w-[140px] rounded-xl border border-cor-borda dark:border-cor-borda-dark bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark p-4">
       <Text className="text-2xl font-bold text-cor-destaque dark:text-cor-destaque-dark">{numero}</Text>
       <Text className="text-sm text-cor-texto-suave dark:text-cor-texto-suave-dark mt-0.5">{rotulo}</Text>
     </View>

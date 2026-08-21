@@ -67,8 +67,8 @@ export default function Medalhas() {
     <ScrollView className="flex-1 bg-cor-fundo dark:bg-cor-fundo-dark">
       <View className="px-5 pt-6 pb-10 max-w-2xl w-full mx-auto">
         <View className="flex-row items-center justify-between mb-2">
-          <Link href="/" className="text-cor-destaque dark:text-cor-destaque-dark text-sm">
-            ← Início
+          <Link href="/voce" className="text-cor-destaque dark:text-cor-destaque-dark text-sm">
+            ← Você
           </Link>
           <BotaoTema />
         </View>

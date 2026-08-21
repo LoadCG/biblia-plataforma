@@ -179,7 +179,7 @@ export default function Voce() {
           <Pressable accessibilityRole="link" className="rounded-2xl bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark px-4 py-3.5 mb-4 shadow-sm active:opacity-80" style={SOMBRA}>
             <Text className="text-sm font-bold text-cor-texto dark:text-cor-texto-dark mb-2">📌 Salvo</Text>
             {atividade.length === 0 ? (
-              <EstadoVazio titulo="Nada salvo ainda" descricao="Toque em ✎ Grifar ou 🗒 Anotar durante a leitura pra ver aqui." />
+              <EstadoVazio titulo="Nada aqui ainda" descricao="Grife, anote ou favorite uma busca durante a leitura pra ver aqui." />
             ) : (
               recentes
                 .slice(0, 3)

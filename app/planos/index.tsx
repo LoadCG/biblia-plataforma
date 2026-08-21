@@ -1,4 +1,4 @@
-import { Link } from "expo-router";
+import { Link, router } from "expo-router";
 import { useEffect, useState } from "react";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
@@ -53,9 +53,18 @@ export default function Planos() {
     <ScrollView className="flex-1 bg-cor-fundo dark:bg-cor-fundo-dark">
       <View className="px-5 pt-6 pb-10 max-w-2xl w-full mx-auto">
         <View className="flex-row items-center justify-between mb-2">
-          <Link href="/" className="text-cor-destaque dark:text-cor-destaque-dark text-sm">
-            ← Início
-          </Link>
+          {/* /planos é acessível tanto da Início quanto de Descubra
+              (ver TODO.md, item 6 do backlog de UI) — "← Voltar" com
+              router.back() reflete de onde a pessoa realmente veio, em
+              vez de fixar um destino que pode estar errado pra metade
+              dos casos. Cai pra Início só se não houver histórico
+              (ex.: URL aberta direto). */}
+          <Pressable
+            onPress={() => (router.canGoBack() ? router.back() : router.replace("/"))}
+            accessibilityRole="button"
+          >
+            <Text className="text-cor-destaque dark:text-cor-destaque-dark text-sm">← Voltar</Text>
+          </Pressable>
           <BotaoTema />
         </View>
         <Text className="text-2xl font-bold text-cor-texto dark:text-cor-texto-dark mb-1">Planos de leitura</Text>

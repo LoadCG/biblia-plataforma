@@ -5,6 +5,32 @@ O formato é baseado no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.
 
 ## [Unreleased] - 2026-08-20
 
+### Corrigido (backlog de UI, itens 2/6/9 por ordem de impacto)
+- **Grade de cartões da tela Estatísticas** (`FUNCIONALIDADES.md` 3.5):
+  cartões com `flex-1` deixavam o último esticado ocupando a linha
+  toda quando o total era ímpar. Trocado por `w-[48%]` fixo (grade
+  sempre de 2 colunas). Testado ao vivo.
+- **Botão de voltar de `/medalhas` incorreto** (`FUNCIONALIDADES.md`
+  9.6b): dizia "← Início" mas a tela só é alcançável a partir de
+  `/voce` — bug real, corrigido pra "← Você". **Botão de voltar de
+  `/planos` fixo demais** (4.1): alcançável tanto da Início quanto de
+  Descubra, agora usa `router.back()` dinâmico em vez de sempre "←
+  Início". Testado ao vivo nos dois casos.
+- **Texto de estado vazio de "Salvos" divergente** (9.6): card
+  resumido de Você e tela `/salvo` tinham frases parecidas mas não
+  idênticas — unificado.
+
+### Revisado sem mudança de código (backlog de UI, itens 4/8/10)
+- **Emoji vs. `MaterialIcons` na aba Você**: confirmado que é a
+  decisão já registrada de "gamificação autoral" — mantido de
+  propósito.
+- **Números "0" isolados**: código já mostra o rótulo/unidade logo
+  junto do número nos dois casos citados — achado da auditoria parece
+  ter vindo da extração de texto da página, não de um problema real.
+- **Ficha rápida do resumo de livro**: já tem borda + fundo próprios
+  separando do conteúdo abaixo — a separação sugerida já existe, só
+  implementada de outro jeito.
+
 ### Adicionado (README, a pedido do usuário)
 - Seção **"Tecnologias"** — lista curta com Expo Router, NativeWind,
   TypeScript, SQLite/AsyncStorage, Jest e Vercel.

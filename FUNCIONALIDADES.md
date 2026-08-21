@@ -740,7 +740,14 @@ mesmo padrão já usado em `ProgressoRepository`. Testado com dados
 variados nas quatro fontes — todos os números bateram.
 **UX/UI:** link discreto "Minhas estatísticas" na home (não polui a tela
 principal com números), cartões simples numa grade, sem gráfico nem
-comparação com outras pessoas.
+comparação com outras pessoas. **Ajuste (2026-08-20, achado na
+auditoria ampla de UI):** os cartões usavam `flex-1` (cresce pra
+preencher a linha) — com número ímpar de cartões (5, ou 6 quando a
+sequência aparece), o último ficava sozinho e esticado ocupando a
+largura toda da última linha, destoando visualmente dos pares
+anteriores. Trocado por `w-[48%]` fixo: grade sempre de 2 colunas, o
+cartão ímpar fica do tamanho normal, só sozinho à esquerda. Testado ao
+vivo (todos os cartões com a mesma largura, incluindo o solitário).
 
 ---
 
@@ -752,7 +759,14 @@ comparação com outras pessoas.
 (`planosLeitura`, `obterPlano`). Tela de listagem em `app/planos/index.tsx`.
 **UX/UI:** cada card mostra título, descrição e progresso; tela de
 detalhe (`app/planos/[id].tsx`) lista os dias com as referências
-tocáveis, linkando direto pro capítulo.
+tocáveis, linkando direto pro capítulo. **Ajuste (2026-08-20, achado
+na auditoria ampla de UI):** `/planos` é alcançável tanto da Início
+(card de lembrete, 4.3) quanto de Descubra (atalho "Planos") — o link
+de voltar era fixo "← Início", errado pra metade dos casos reais.
+Trocado por um botão dinâmico "← Voltar" com `router.back()` (cai pra
+`router.replace("/")` só se não houver histórico, ex. URL aberta
+direto). Testado ao vivo: entrando por Descubra → Planos, "← Voltar"
+retorna pra `/pesquisa`, não mais sempre `/`.
 
 ### 4.2 Progresso do plano `✅`
 **Funcionalidade:** separado do progresso geral de livros/capítulos —
@@ -1443,6 +1457,11 @@ adicionado no topo (`text-2xl font-bold`, mesmo padrão de "Descubra")
 — era a única das 4 abas principais sem nenhum rótulo identificando a
 tela (Início mostra "Boa noite", Descubra mostra "Descubra"). Fica ao
 lado do `BotaoTema`/engrenagem de Configurações. Testado ao vivo.
+Também unificado o texto do estado vazio do card "📌 Salvo" com o da
+tela `/salvo` — eram frases parecidas mas não idênticas ("Toque em
+✎ Grifar ou 🗒 Anotar..." vs. "Grife, anote ou favorite uma busca...").
+Agora os dois usam exatamente "Nada aqui ainda" / "Grife, anote ou
+favorite uma busca durante a leitura pra ver aqui." Testado ao vivo.
 **Funcionalidade:** cabeçalho de perfil (nome editável, foto editável
 — ver 9.6c, tag de localização placeholder); card "Salvo" com prévia dos
 grifos/notas recentes (`core/util/tempoRelativo.ts`) e menu de 3
@@ -1528,6 +1547,11 @@ tocável, levando pra mesma tela.
 individual do carrossel de Você levam corretamente pra
 `/medalhas`, que lista as 6 conquistas com título, descrição e barra
 de progresso.
+
+**Bug real, achado numa auditoria pontual de UI (2026-08-20):** o link
+de voltar da tela dizia "← Início" e apontava pra `/`, mas `/medalhas`
+só é alcançável a partir de `/voce` (`router.push("/medalhas")`, ver
+acima) — nunca da Início. Corrigido pra "← Você"/`href="/voce"`.
 
 ### 9.6c Editar nome e foto do perfil (sem conta) `✅`
 **Funcionalidade:** pedido do usuário, decidindo não implementar login

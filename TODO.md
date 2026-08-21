@@ -308,10 +308,15 @@ de impacto:
    `BotaoTema`/engrenagem de Configurações (antes só tinha os ícones,
    sem rótulo nenhum). Testado ao vivo: "Você" aparece no topo da
    tela, igual às outras 3 abas.
-2. **Grade de 5 cartões em Estatísticas** (livros lidos, capítulos,
-   versículos grifados, notas, tempo estimado) — número ímpar pode
-   deixar um cartão sozinho/esticado na última linha, dependendo da
-   largura. Vale conferir visualmente em mobile x desktop.
+2. ~~**Grade de 5 cartões em Estatísticas**~~ — ✅ feito (2026-08-20).
+   Os cartões usavam `flex-1` (crescem pra preencher a linha), então o
+   5º cartão sozinho na última linha ficava esticado ocupando a largura
+   toda — visualmente destoante dos outros pares. Trocado por
+   `w-[48%]` fixo (mantendo `min-w-[140px]`): agora é sempre grade de 2
+   colunas, e o cartão ímpar fica do tamanho normal, só sozinho à
+   esquerda da última linha, sem esticar. Testado ao vivo:
+   `getBoundingClientRect()` confirma os 5 cartões com a mesma largura
+   (303px), incluindo o último sozinho.
 3. ~~**Cabeçalho da leitura de capítulo com 3 blocos empilhados sem
    hierarquia clara**~~ — ✅ feito (2026-08-20), parcialmente. Título
    do capítulo aumentado de `text-xl` (20px) pra `text-2xl` (24px,
@@ -323,9 +328,14 @@ de impacto:
    tela de leitura tem restrições de espaço diferentes, com abas
    Texto/Resumo ocupando o topo), só um ajuste de hierarquia tipográfica
    e separação visual.
-4. **Mistura de emoji cru (🙂🔗🏅) com `MaterialIcons` na aba Você** —
-   já é decisão de "gamificação autoral" (ver TODO), mas emoji renderiza
-   diferente por sistema operacional; vale confirmar que é intencional.
+4. ~~**Mistura de emoji cru (🙂🔗🏅) com `MaterialIcons` na aba Você**~~
+   — revisado (2026-08-20), **mantido de propósito, sem mudança de
+   código.** Confirmado: é a mesma decisão já registrada de
+   "gamificação autoral" (medalhas/streak/cards com identidade própria,
+   não emprestada de outro app) — trocar emoji por `MaterialIcons`
+   perderia justamente essa identidade visual mais pessoal que os
+   ícones de sistema (usados no resto da navegação) não têm. Risco de
+   render diferente por SO é aceito conscientemente, não é um bug.
 5. ~~**Card "Estudo por Resumos" na Início ainda sem barra de progresso
    visual**~~ — ✅ feito (2026-08-20). Adicionada barra fina
    (`h-1.5 rounded-full`, mesmo padrão visual usado em Planos) abaixo
@@ -335,27 +345,49 @@ de impacto:
    (`bg-white dark:bg-cor-texto`) proporcional a `lidos.length /
    livros.length`. Testado ao vivo: barra renderiza (231px de trilho,
    0px de preenchimento com 0 livros lidos — matemática confere).
-6. **Botão de voltar inconsistente em telas "hub" acessíveis por mais
-   de um caminho** (Medalhas, Planos, Resumos podem vir de Início ou de
-   Você) — não é bug, mas vale confirmar que sempre reflete de onde a
-   pessoa realmente veio.
+6. ~~**Botão de voltar inconsistente em telas "hub" acessíveis por mais
+   de um caminho**~~ — ✅ feito (2026-08-20). Achado real ao investigar:
+   `/medalhas` dizia "← Início" e apontava pra `/`, mas só é alcançável
+   a partir de `/voce` (`router.push("/medalhas")` em `voce.tsx`) — bug
+   de verdade, corrigido pra "← Você"/`/voce`. `/planos` é alcançável
+   tanto da Início (card de lembrete) quanto de Descubra (atalho
+   "Planos") — trocado de link fixo "← Início" pra um botão dinâmico
+   "← Voltar" com `router.back()` (cai pra `router.replace("/")` só se
+   não houver histórico, ex. URL aberta direto). `/resumos` e
+   `/estatisticas` conferidos e já estavam corretos (alcançáveis só da
+   Início). Testado ao vivo: de Descubra → Planos → "← Voltar" retorna
+   pra `/pesquisa` (não mais sempre `/`); Medalhas mostra "← Você".
 7. **Cards de tema em Descubra sem a ilustração prevista no plano
    original** (item 7 do topo deste arquivo) — hoje é só emoji + cor
    sólida; a "ilustração/imagem flutuando no card" nunca foi feita.
    Ficou implicitamente pela metade, sem estar marcado como tal em
-   lugar nenhum.
-8. **Números "0" isolados sem contexto imediato** em "Sequência Diária"
-   e "Compartilhamentos" na Você — comparado ao formato "X/Y" das
-   Medalhas, que é mais autoexplicativo num relance.
-9. **Texto de estado vazio de "Salvos" ligeiramente diferente entre o
-   card resumido da Você e a tela `/salvo`** — mesma ideia, duas frases
-   quase iguais mas não idênticas.
-10. **Ficha rápida do resumo de livro sem separação visual clara do
-    conteúdo abaixo** — os 5 rótulos em caixa alta (AUTOR, DATA
-    PROVÁVEL...) têm o mesmo peso visual entre si, e o salto pra "6
-    títulos em texto normal" das seções de conteúdo poderia ganhar uma
-    linha divisória ou leve mudança de fundo marcando onde uma parte
-    termina e a outra começa.
+   lugar nenhum. **Não implementado ainda** — geração de ilustração
+   original é trabalho de design maior, fora do escopo de um ajuste
+   pontual de UI.
+8. ~~**Números "0" isolados sem contexto imediato**~~ — revisado
+   (2026-08-20), **sem mudança de código.** Conferindo o código-fonte:
+   o número já vem com o rótulo logo abaixo em ambos os cards ("0" +
+   "dias seguidos lendo" na Sequência, "0 vezes" já concatenado no
+   texto de Compartilhamentos) — o achado da auditoria parece ter sido
+   uma leitura do texto extraído da página (onde as duas linhas ficam
+   próximas sem quebra visual clara no dump de texto), não um problema
+   real de UI. Manter o padrão atual, sem forçar um redesenho pra
+   "X/Y" que não é claramente melhor pra esses dois casos específicos.
+9. ~~**Texto de estado vazio de "Salvos" ligeiramente diferente entre o
+   card resumido da Você e a tela `/salvo`**~~ — ✅ feito (2026-08-20).
+   Unificado pro mesmo texto de `/salvo` ("Nada aqui ainda" / "Grife,
+   anote ou favorite uma busca durante a leitura pra ver aqui.") nos
+   dois lugares. Testado ao vivo.
+10. ~~**Ficha rápida do resumo de livro sem separação visual clara do
+    conteúdo abaixo**~~ — revisado (2026-08-20), **sem mudança de
+    código.** Conferindo o código: a ficha rápida já fica dentro de uma
+    caixa com borda e fundo próprios
+    (`border rounded-xl bg-cor-fundo-elevado ... mb-8`), com margem de
+    32px antes do primeiro título de seção — já existe separação visual
+    real (borda + fundo + espaço), a sugestão da auditoria (linha
+    divisória ou mudança de fundo) já está essencialmente implementada
+    de outro jeito. Não fazia sentido adicionar uma segunda camada de
+    separação por cima da que já existe.
 
 **Limitações desta auditoria:** não foi possível confirmar hover em
 desktop web (sem mouse real simulável) nem testar resize ao vivo com o

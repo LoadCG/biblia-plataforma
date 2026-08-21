@@ -5,6 +5,17 @@ O formato é baseado no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.
 
 ## [Unreleased] - 2026-08-20
 
+### Adicionado (README, a pedido do usuário)
+- Seção **"Tecnologias"** — lista curta com Expo Router, NativeWind,
+  TypeScript, SQLite/AsyncStorage, Jest e Vercel.
+- Seção **"Testes e verificação de tipos"** com os comandos `tsc`/`jest`.
+- Seção **"Autor"** — @LoadCG, site (www.cauangabriel.com.br) e e-mail
+  de contato (cauangabrielfac@gmail.com), a pedido explícito do usuário.
+- "Compartilhamento de versículos" adicionado ao resumo de
+  funcionalidades (existia no app, mas não estava listado no README).
+- Alinhamento da árvore de diretórios corrigido (indentação
+  inconsistente entre linhas antes).
+
 ### Corrigido (repositório tornado público)
 - **`.gitignore`**: adicionado `PROMPT-CONTINUACAO.md` (arquivo
   temporário de transferência de contexto entre sessões de IA, notas

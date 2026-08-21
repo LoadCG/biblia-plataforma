@@ -8,15 +8,24 @@ Uma plataforma bíblica completa, rápida e imersiva (Web + App), construída co
   Screenshot/GIF do app aqui — ex.:
   ![Tela inicial do app](./docs/screenshot-inicio.png)
   Tire uma captura da tela inicial (ou grave um GIF curto navegando
-  entre Início → Bíblia → leitura de capítulo) e salve em ./docs/,
-  depois referencie a imagem aqui. Não foi possível gerar isso
-  automaticamente neste ambiente (sem suporte a screenshot real de
-  navegador nesta sessão).
+  entre Início → Bíblia → leitura de capítulo), salve em ./docs/ e
+  troque este comentário pela linha de imagem acima. Não foi possível
+  gerar isso automaticamente neste ambiente (a ferramenta de screenshot
+  do navegador não funciona nas sessões de IA usadas neste projeto).
 -->
 
 Este projeto unifica a experiência de leitura bíblica, resumos teológicos, acompanhamento de progresso diário e medalhas num único código-fonte escalável, substituindo projetos fragmentados anteriores. O plano arquitetural original que guiou essa unificação está em [`PLANO-PLATAFORMA.md`](./PLANO-PLATAFORMA.md).
 
 Para visualizar o que já implementamos e o roadmap técnico (próximos passos estruturais), consulte o [`TODO.md`](./TODO.md), o checklist detalhado em [`FUNCIONALIDADES.md`](./FUNCIONALIDADES.md) e o nosso [`CHANGELOG.md`](./CHANGELOG.md).
+
+## Tecnologias
+
+- **[Expo Router](https://docs.expo.dev/router/introduction/)** — React Native + Web num único código-fonte, roteamento por arquivo.
+- **[NativeWind v4](https://www.nativewind.dev/)** (Tailwind CSS v3) — estilização utilitária cross-platform.
+- **TypeScript** em todo o projeto.
+- **[expo-sqlite](https://docs.expo.dev/versions/latest/sdk/sqlite/)** (nativo) / **AsyncStorage** (web) — persistência local, mesma interface de repositório nos dois.
+- **Jest** + **@testing-library/react-native** — testes unitários das regras de negócio.
+- Hospedagem: **[Vercel](https://vercel.com)** (deploy automático a partir de `master`).
 
 ## Licença
 
@@ -35,41 +44,47 @@ npm run ios      # Roda no simulador iOS (exclusivo para macOS)
 
 > **Atenção (Dependências):** O `tailwindcss` está fixado na versão `^3.4` de propósito. A versão atual do NativeWind no projeto suporta apenas o Tailwind v3. Não atualize para Tailwind v4 para evitar quebras no build cross-platform.
 
+### Testes e verificação de tipos
+
+```bash
+npx tsc --noEmit   # Checagem de tipos
+npx jest           # Testes unitários (core/biblia, core/util)
+```
+
 ## Estrutura de Diretórios Atual
 
 ```text
-app/                  Rotas (Expo Router — cada arquivo é uma tela baseada em arquivos)
-  _layout.tsx          Layout raiz (Contextos globais como NavbarContext, temas, css)
-  (tabs)/              Navegação principal (Início, Bíblia, Descubra, Você)
-    index.tsx            Home imersiva: Versículo do dia, Resumos, Streak e Medalhas
-    resumos/             Sessão de estudos teológicos
-    biblia/              Leitura bíblica
-      escolher/          Fluxo estilo YouVersion (Lista de Livros + Acordeão de capítulos + grade de versículos)
-      [livro]/[capitulo] Tela de leitura avançada (Auto-scroll, foco, grifos, notas, salvos)
-    pesquisa.tsx          Busca por temas + busca full-text na Bíblia inteira
-    voce.tsx              Perfil, atividade, gamificação e atalho de configurações
-  planos/               Planos de leitura diária (listagem + progresso por dia)
-  resumos/              Resumos teológicos por livro (listagem + página de cada livro)
-  salvo.tsx             Grifos, notas, salvos e pesquisas favoritas, num só lugar
-  medalhas.tsx          Tela própria de conquistas/medalhas
-  estatisticas.tsx       Estatísticas pessoais de leitura
-  configuracoes.tsx      Fonte, tema e outras preferências
-  sobre.tsx              Página "Sobre o projeto"
+app/                      Rotas (Expo Router — cada arquivo é uma tela baseada em arquivos)
+  _layout.tsx              Layout raiz (Contextos globais como NavbarContext, temas, css)
+  (tabs)/                  Navegação principal (Início, Bíblia, Descubra, Você)
+    index.tsx                Home imersiva: Versículo do dia, Resumos, Streak e Medalhas
+    biblia/                  Leitura bíblica
+      escolher/                Fluxo estilo YouVersion (Lista de Livros + Acordeão de capítulos + grade de versículos)
+      [livro]/[capitulo]       Tela de leitura avançada (Auto-scroll, foco, grifos, notas, salvos)
+    pesquisa.tsx              Busca por temas + busca full-text na Bíblia inteira
+    voce.tsx                  Perfil, atividade, gamificação e atalho de configurações
+  planos/                  Planos de leitura diária (listagem + progresso por dia)
+  resumos/                 Resumos teológicos por livro (listagem + página de cada livro)
+  salvo.tsx                Grifos, notas, salvos e pesquisas favoritas, num só lugar
+  medalhas.tsx             Tela própria de conquistas/medalhas
+  estatisticas.tsx         Estatísticas pessoais de leitura
+  configuracoes.tsx        Fonte, tema e outras preferências
+  sobre.tsx                Página "Sobre o projeto"
 
-core/                 Lógica de Negócios e Dados (Desacoplada da UI)
-  types/                Interfaces globais de domínio (Grifos, Salvos, Notas, Planos)
-  repositories/         Camada de Repositórios (implementação SQLite; interface trocável)
-  content/              Motor de resumos, livros e planos de leitura (JSON parseado)
-  biblia/               Leitura e busca full-text offline (JSON embutido no web, SQLite FTS5 no nativo), com fallback pra bible-api.com
-  leitura/              Hooks e lógicas de preferência (Fonte A+/A-, Serifada, Tema, lembretes)
-  estatisticas/         Streak, conquistas, atividade agregada e compartilhamentos
+core/                     Lógica de Negócios e Dados (Desacoplada da UI)
+  types/                    Interfaces globais de domínio (Grifos, Salvos, Notas, Planos)
+  repositories/              Camada de Repositórios (SQLite no nativo, AsyncStorage no web; interface trocável)
+  content/                   Motor de resumos, livros e planos de leitura (JSON parseado)
+  biblia/                    Leitura e busca full-text offline (JSON embutido no web, SQLite FTS5 no nativo), com fallback pra bible-api.com
+  leitura/                   Hooks e lógicas de preferência (Fonte A+/A-, Serifada, Tema, lembretes)
+  estatisticas/              Streak, conquistas, atividade agregada e compartilhamentos
 
-components/           Componentes de UI Reutilizáveis (Cards, Botões, Modais)
+components/               Componentes de UI Reutilizáveis (Cards, Botões, Modais)
 
-resumos-biblicos/     (Arquivos Markdown fonte com o texto teológico original)
+resumos-biblicos/         Arquivos Markdown fonte com o texto teológico original
 
 scripts/
-  gerar-conteudo.js    Gera o JSON consolidado lendo a pasta resumos-biblicos/
+  gerar-conteudo.js        Gera o JSON consolidado lendo a pasta resumos-biblicos/
 ```
 
 ## Atualizando o conteúdo estático
@@ -88,8 +103,8 @@ Registro completo (com o raciocínio por trás de cada escolha) em [`PLANO-PLATA
 
 - **Padrão de Repositório**: Nenhuma tela se comunica direto com o banco de dados. Tudo passa por `core/repositories` (SQLite no nativo, AsyncStorage no web — mesma interface nos dois, trocada automaticamente por plataforma via `index.web.ts`). Isso garante que uma eventual migração pra Cloud Sync seja invisível para o frontend.
 - **Identidade Inicial (OwnerID)**: Toda interação no app (progresso, grifos, notas, salvos, planos) já é vinculada a um UUID de dispositivo. Isso evita dor de cabeça em migrações futuras para usuários logados.
-- **Experiência Imersiva**: O app oculta ativamente distrações durante a rolagem do texto bíblico, trocando cabeçalhos grandes por rodapés minimalistas. Suporta auto-scroll inteligente (pulando direto para um versículo escolhido) avaliando a árvore do DOM via `onLayout` do React Native.
-- **Bíblia offline e busca full-text**: o texto bíblico completo (Almeida ACF, ~31 mil versículos) é embutido no app. No nativo (iOS/Android), é indexado numa tabela virtual FTS5 do SQLite na primeira execução. No web, a busca roda em memória sobre o mesmo JSON embutido (`core/biblia/buscaGlobalWeb.ts`). Nos dois casos, sem depender de rede nem de API externa.
+- **Experiência Imersiva**: O app oculta ativamente distrações durante a rolagem do texto bíblico, trocando cabeçalhos grandes por rodapés minimalistas. Suporta auto-scroll inteligente e suave (pulando direto para um versículo escolhido) avaliando a árvore do DOM via `onLayout` do React Native.
+- **Bíblia offline e busca full-text**: o texto bíblico completo (Almeida ACF, ~31 mil versículos, domínio público) é embutido no app. No nativo (iOS/Android), é indexado numa tabela virtual FTS5 do SQLite na primeira execução. No web, a busca roda em memória sobre o mesmo JSON embutido (`core/biblia/buscaGlobalWeb.ts`). Nos dois casos, sem depender de rede nem de API externa.
 
 ## Funcionalidades Atuais
 
@@ -101,4 +116,12 @@ Checklist completo e detalhado (funcionalidade + UX/UI, item por item) em [`FUNC
 - **Busca**: por nome/conteúdo dos resumos e por palavra em toda a Bíblia (full-text local), tolerante a acentos.
 - **Planos de leitura diária**: trilhas com progresso por dia e lembrete discreto na Início quando um plano fica parado.
 - **Progresso, streak e conquistas**: sequência de dias lendo, medalhas por marcos do cânon, estatísticas pessoais de leitura.
+- **Compartilhamento de versículos**: cartão de imagem gerado na hora (Canvas no web, captura de View no nativo), com texto, referência e identidade visual do app.
 - **Privacidade em primeiro lugar**: sem conta obrigatória — perfil, progresso e grifos ficam isolados por um ID anônimo de dispositivo. Exportar (JSON) ou apagar todos os seus dados a qualquer momento, direto em Configurações.
+
+## Autor
+
+Feito por **[@LoadCG](https://github.com/LoadCG)** (Cauan Gabriel).
+
+- 🌐 [www.cauangabriel.com.br](https://www.cauangabriel.com.br)
+- 📧 [cauangabrielfac@gmail.com](mailto:cauangabrielfac@gmail.com)

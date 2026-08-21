@@ -35,6 +35,14 @@ precisar voltar pra lista.
 **UX/UI:** cartões de navegação com nome do livro, não só uma seta
 genérica — a pessoa já vê pra onde vai antes de tocar.
 
+**Bug real, achado numa auditoria pontual de UI (2026-08-20):** o link
+"Voltar para todos os livros"/"← Todos os livros" em
+`app/resumos/[livro].tsx` (nos dois estados: livro não encontrado e
+normal) apontava pra `/` (Início) em vez de `/resumos` (a lista real
+de resumos) — quem tocava caía na Início, não na lista de onde tinha
+vindo. Corrigido nos dois lugares. Testado ao vivo, `href` confirmado
+como `/resumos`.
+
 ### 1.3 Marcar livro como lido `✅`
 **Funcionalidade:** alterna e persiste por dispositivo (`LivrosLidosRepository`), refletido na lista de resumos (`/resumos`) e na tela do livro.
 **UX/UI:** selo verde visível no card da lista, sem precisar abrir o
@@ -1442,6 +1450,17 @@ parâmetro `?filtro=` (via `useLocalSearchParams`, com validação — um
 valor desconhecido cai em "Todos"), e os dois botões agora passam o
 filtro certo (`salvo`/`nota`). Testado ao vivo: "Notas" abre
 `/salvo?filtro=nota` com o chip "Anotações" pré-selecionado.
+
+**Bug real, achado numa auditoria pontual de UI (2026-08-20):** as
+pílulas de filtro da tela `/salvo` ("Todos", "Salvos", "Anotações"...)
+usavam `bg-cor-destaque dark:bg-cor-destaque-dark` (dourado claro no
+modo escuro) com `text-white` em cima quando selecionadas — mesmo tipo
+de bug de contraste (~2,1:1) já corrigido antes no botão "Baixar" da
+leitura e no card "Estudo por Resumos" (ver `cor-destaque-dark` é um
+dourado claro pensado pra ícone/texto em cima, não pra fundo com texto
+branco), reintroduzido aqui num lugar novo. Corrigido pro mesmo padrão
+já usado nos outros dois lugares: `text-white dark:text-cor-texto`.
+Testado ao vivo: fundo `rgb(224,167,94)` com texto `rgb(42,36,28)`.
 
 ### 9.6b Tela própria de Medalhas `✅`
 **Funcionalidade:** pedido do usuário — "a função de marcar

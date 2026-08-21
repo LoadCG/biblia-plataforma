@@ -5,6 +5,21 @@ O formato é baseado no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.
 
 ## [Unreleased] - 2026-08-20
 
+### Corrigido (auditoria pontual de UI/navegação)
+- **Contraste ruim nas pílulas de filtro da tela Salvo**
+  (`app/salvo.tsx`): filtro selecionado usava `bg-cor-destaque(-dark)`
+  (dourado claro no modo escuro) com `text-white` em cima — ~2,1:1 de
+  contraste, o mesmo padrão de bug já corrigido antes em outros
+  lugares (botão "Baixar" da leitura, card "Estudo por Resumos"), só
+  que reintroduzido aqui. Corrigido pro mesmo padrão:
+  `text-white dark:text-cor-texto`. Testado ao vivo: fundo
+  `rgb(224,167,94)` com texto `rgb(42,36,28)` agora, contraste bom.
+- **Link "Voltar para todos os livros" incorreto no resumo de um
+  livro** (`app/resumos/[livro].tsx`): apontava pra `/` (Início) em
+  vez de `/resumos` (a lista real de resumos), tanto no estado normal
+  quanto no de "livro não encontrado". Corrigido nos dois lugares.
+  Testado ao vivo, `href` confirmado como `/resumos`.
+
 ### Adicionado
 - **Gerar imagem de versículo no nativo** (`TODO.md` item A,
   `FUNCIONALIDADES.md` 5.2): antes só funcionava no web (Canvas API).

@@ -72,7 +72,7 @@ export default function Salvo() {
             >
               <Text
                 className={`text-xs font-semibold ${
-                  filtro === chave ? "text-white" : "text-cor-texto dark:text-cor-texto-dark"
+                  filtro === chave ? "text-white dark:text-cor-texto" : "text-cor-texto dark:text-cor-texto-dark"
                 }`}
               >
                 {rotulo}

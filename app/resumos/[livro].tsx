@@ -63,7 +63,7 @@ export default function ResumoLivro() {
     return (
       <View className="flex-1 items-center justify-center bg-cor-fundo dark:bg-cor-fundo-dark px-6">
         <Text className="text-cor-texto dark:text-cor-texto-dark">Livro não encontrado.</Text>
-        <Link href="/" className="text-cor-destaque dark:text-cor-destaque-dark mt-3">
+        <Link href="/resumos" className="text-cor-destaque dark:text-cor-destaque-dark mt-3">
           Voltar para todos os livros
         </Link>
       </View>
@@ -91,7 +91,7 @@ export default function ResumoLivro() {
       <ScrollView onScroll={aoRolar} scrollEventThrottle={32} className="flex-1">
       <View className="px-5 pt-6 pb-10 max-w-2xl w-full mx-auto">
         <View className="flex-row items-center justify-between mb-5">
-          <Link href="/" className="text-cor-destaque dark:text-cor-destaque-dark">
+          <Link href="/resumos" className="text-cor-destaque dark:text-cor-destaque-dark">
             ← Todos os livros
           </Link>
           <View className="flex-row items-center gap-3">

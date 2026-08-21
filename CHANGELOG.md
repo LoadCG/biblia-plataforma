@@ -5,6 +5,14 @@ O formato é baseado no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.
 
 ## [Unreleased] - 2026-08-20
 
+### Adicionado (pedido explícito do usuário)
+- **Atalho de tema no cabeçalho da leitura de capítulo**
+  (`FUNCIONALIDADES.md` 1.6b): segunda instância do `BotaoTema` direto
+  no cabeçalho de `app/(tabs)/biblia/[livro]/[capitulo].tsx`, ao lado
+  do botão "Aa" e do ícone de áudio — antes só dava pra trocar de tema
+  durante a leitura abrindo o modal de ajustes primeiro. Testado ao
+  vivo em largura mobile (375px): cabe sem gerar rolagem horizontal.
+
 ### Adicionado (itens "não óbvios" achados fora do plano)
 - **Tela dedicada de escolher versículo** (`TODO.md` item J,
   `FUNCIONALIDADES.md` 2.2b): reconstruída depois de achar uma

@@ -290,6 +290,65 @@ esquecidos no meio do checklist.
   design definida. Fica registrado, fora do radar até o usuário pedir
   de novo.
 
+### Backlog de melhorias de UI (auditoria ampla, 2026-08-20)
+
+A pedido do usuário ("melhorar a UI em todas as páginas e todos os
+aspectos"), uma auditoria cobriu as telas principais (Início, Bíblia,
+Descubra, Você, Salvo, Configurações, Planos, Resumos, Medalhas,
+Estatísticas), testando ao vivo no navegador. Só achados com impacto
+real na experiência, sem repetir nada já corrigido (contraste,
+active states, alvo de toque, cards presos no modo escuro — ver
+histórico completo em `FUNCIONALIDADES.md`). Nenhum item abaixo foi
+implementado ainda — é um backlog documentado pra priorizar, em ordem
+de impacto:
+
+1. **Aba "Você" sem título de página.** Início mostra "Boa noite" e
+   Descubra mostra "Descubra" logo no topo — `/voce` não tem
+   equivalente, é a única das 4 abas principais sem esse rótulo.
+2. **Grade de 5 cartões em Estatísticas** (livros lidos, capítulos,
+   versículos grifados, notas, tempo estimado) — número ímpar pode
+   deixar um cartão sozinho/esticado na última linha, dependendo da
+   largura. Vale conferir visualmente em mobile x desktop.
+3. **Cabeçalho da leitura de capítulo com 3 blocos empilhados sem
+   hierarquia clara** (abas Texto/Resumo + ícones, título do
+   livro/capítulo, "Marcar capítulo como lido") — foge do padrão
+   "voltar → título grande → subtítulo" que as outras telas seguem,
+   sendo essa a tela mais usada do app.
+4. **Mistura de emoji cru (🙂🔗🏅) com `MaterialIcons` na aba Você** —
+   já é decisão de "gamificação autoral" (ver TODO), mas emoji renderiza
+   diferente por sistema operacional; vale confirmar que é intencional.
+5. **Card "Estudo por Resumos" na Início ainda sem barra de progresso
+   visual** — o próprio `FUNCIONALIDADES.md` (3.1) já registra isso
+   como pendência nunca implementada, e o app já usa barra de progresso
+   em Planos/Medalhas, então a ausência aqui destoa.
+6. **Botão de voltar inconsistente em telas "hub" acessíveis por mais
+   de um caminho** (Medalhas, Planos, Resumos podem vir de Início ou de
+   Você) — não é bug, mas vale confirmar que sempre reflete de onde a
+   pessoa realmente veio.
+7. **Cards de tema em Descubra sem a ilustração prevista no plano
+   original** (item 7 do topo deste arquivo) — hoje é só emoji + cor
+   sólida; a "ilustração/imagem flutuando no card" nunca foi feita.
+   Ficou implicitamente pela metade, sem estar marcado como tal em
+   lugar nenhum.
+8. **Números "0" isolados sem contexto imediato** em "Sequência Diária"
+   e "Compartilhamentos" na Você — comparado ao formato "X/Y" das
+   Medalhas, que é mais autoexplicativo num relance.
+9. **Texto de estado vazio de "Salvos" ligeiramente diferente entre o
+   card resumido da Você e a tela `/salvo`** — mesma ideia, duas frases
+   quase iguais mas não idênticas.
+10. **Ficha rápida do resumo de livro sem separação visual clara do
+    conteúdo abaixo** — os 5 rótulos em caixa alta (AUTOR, DATA
+    PROVÁVEL...) têm o mesmo peso visual entre si, e o salto pra "6
+    títulos em texto normal" das seções de conteúdo poderia ganhar uma
+    linha divisória ou leve mudança de fundo marcando onde uma parte
+    termina e a outra começa.
+
+**Limitações desta auditoria:** não foi possível confirmar hover em
+desktop web (sem mouse real simulável) nem testar resize ao vivo com o
+app já montado — mesmas limitações já registradas em
+`FUNCIONALIDADES.md`. Achados vêm de DOM/texto real do app rodando,
+não só leitura de código.
+
 ### Como isso deve ser lido
 
 Ao começar qualquer item da lista 🟢: mover a marcação em

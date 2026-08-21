@@ -75,6 +75,17 @@ dispositivo e compartilhado com a leitura de capítulo — ver 2.2c.
 **UX/UI:** controle discreto, não competindo visualmente com o conteúdo;
 desabilita visualmente ao chegar no limite mínimo/máximo.
 
+### 1.6b Atalho de tema direto no cabeçalho da leitura de capítulo `✅`
+**Funcionalidade:** `BotaoTema` (mesmo componente usado em Configurações
+e no modal "Ajustes de leitura") ganhou uma segunda instância direto no
+cabeçalho de `app/(tabs)/biblia/[livro]/[capitulo].tsx` (2026-08-20),
+ao lado do botão "Aa" e do ícone de áudio — antes só dava pra trocar de
+tema durante a leitura abrindo o modal de ajustes primeiro. Pedido
+explícito do usuário.
+**UX/UI:** testado ao vivo em largura mobile (375px): botão cabe sem
+gerar rolagem horizontal (borda direita em 359px de 375px disponíveis),
+sem sobrepor os outros ícones do cabeçalho.
+
 ### 1.7 Fonte serifada opcional `✅`
 **Funcionalidade:** botão "Aa" ao lado do controle de tamanho, nas duas
 telas de leitura (resumo e capítulo). Usa fontes de sistema (Georgia no

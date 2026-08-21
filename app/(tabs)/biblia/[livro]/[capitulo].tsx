@@ -501,7 +501,7 @@ export default function Leitura() {
             </Pressable>
           </View>
 
-          <View className="flex-row items-center">
+          <View className="flex-row items-center gap-1">
             {suportaAudio() && abaAtual === "texto" ? (
               <Pressable
                 onPress={alternarAudio}
@@ -516,6 +516,7 @@ export default function Leitura() {
                 />
               </Pressable>
             ) : null}
+            <BotaoTema />
             <Pressable onPress={() => setModalAjustesAberto(true)} accessibilityRole="button" accessibilityLabel="Ajustes de leitura" className="w-10 h-10 items-center justify-center active:opacity-60">
               <Text style={{ fontFamily: FAMILIA_SERIFADA }} className="text-lg font-bold text-cor-texto dark:text-cor-texto-dark">Aa</Text>
             </Pressable>

@@ -5,6 +5,21 @@ O formato é baseado no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.
 
 ## [Unreleased] - 2026-08-20
 
+### Adicionado (backlog de UI, itens 1/3/5 por ordem de impacto)
+- **Título "Você" na aba de perfil** (`FUNCIONALIDADES.md` 9.6): era
+  a única das 4 abas principais sem rótulo identificando a tela.
+  Adicionado no mesmo padrão de "Descubra" (`text-2xl font-bold`).
+- **Barra de progresso no card "Estudo por Resumos" da Início**
+  (`FUNCIONALIDADES.md` 3.1): antes só texto ("X de 66 livros lidos"),
+  agora com barra fina abaixo, mesmo padrão visual de Planos. Testado
+  ao vivo: trilho de 231px, preenchimento proporcional aos livros lidos.
+- **Hierarquia visual do cabeçalho da leitura de capítulo**
+  (`FUNCIONALIDADES.md` 2.2): título aumentado de 20px pra 24px e
+  `border-b` separando o cabeçalho do conteúdo — os 3 blocos do topo
+  (abas, título, "marcar como lido") estavam sem separação visual
+  clara. Testado ao vivo (tamanho de fonte confirmado via
+  `getComputedStyle`).
+
 ### Adicionado (pedido explícito do usuário)
 - **Atalho de tema no cabeçalho da leitura de capítulo**
   (`FUNCIONALIDADES.md` 1.6b): segunda instância do `BotaoTema` direto

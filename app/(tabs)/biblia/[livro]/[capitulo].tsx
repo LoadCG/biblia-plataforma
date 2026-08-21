@@ -470,7 +470,7 @@ export default function Leitura() {
       )}
 
       {!focoAtivo && (
-      <View className="bg-cor-fundo dark:bg-cor-fundo-dark">
+      <View className="bg-cor-fundo dark:bg-cor-fundo-dark border-b border-cor-borda dark:border-cor-borda-dark">
         <View className="px-3 py-2 flex-row items-center justify-between">
           <Pressable onPress={() => router.back()} accessibilityRole="button" accessibilityLabel="Voltar" className="w-10 h-10 items-center justify-center active:opacity-60">
             <MaterialIcons name="arrow-back" size={24} className="text-cor-texto dark:text-cor-texto-dark" />
@@ -524,7 +524,7 @@ export default function Leitura() {
         </View>
 
         {abaAtual === "texto" ? (
-          <Text className="text-xl font-bold text-cor-texto dark:text-cor-texto-dark text-center pb-2">
+          <Text className="text-2xl font-bold text-cor-texto dark:text-cor-texto-dark text-center pt-1 pb-3">
             {livro?.nome} {capitulo}
           </Text>
         ) : null}

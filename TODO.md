@@ -302,25 +302,39 @@ histórico completo em `FUNCIONALIDADES.md`). Nenhum item abaixo foi
 implementado ainda — é um backlog documentado pra priorizar, em ordem
 de impacto:
 
-1. **Aba "Você" sem título de página.** Início mostra "Boa noite" e
-   Descubra mostra "Descubra" logo no topo — `/voce` não tem
-   equivalente, é a única das 4 abas principais sem esse rótulo.
+1. ~~**Aba "Você" sem título de página.**~~ — ✅ feito (2026-08-20).
+   Adicionado título "Você" (`text-2xl font-bold`, mesmo padrão de
+   "Descubra") no topo de `app/(tabs)/voce.tsx`, ao lado do
+   `BotaoTema`/engrenagem de Configurações (antes só tinha os ícones,
+   sem rótulo nenhum). Testado ao vivo: "Você" aparece no topo da
+   tela, igual às outras 3 abas.
 2. **Grade de 5 cartões em Estatísticas** (livros lidos, capítulos,
    versículos grifados, notas, tempo estimado) — número ímpar pode
    deixar um cartão sozinho/esticado na última linha, dependendo da
    largura. Vale conferir visualmente em mobile x desktop.
-3. **Cabeçalho da leitura de capítulo com 3 blocos empilhados sem
-   hierarquia clara** (abas Texto/Resumo + ícones, título do
-   livro/capítulo, "Marcar capítulo como lido") — foge do padrão
-   "voltar → título grande → subtítulo" que as outras telas seguem,
-   sendo essa a tela mais usada do app.
+3. ~~**Cabeçalho da leitura de capítulo com 3 blocos empilhados sem
+   hierarquia clara**~~ — ✅ feito (2026-08-20), parcialmente. Título
+   do capítulo aumentado de `text-xl` (20px) pra `text-2xl` (24px,
+   confirmado via `getComputedStyle` ao vivo) pra se destacar mais como
+   título principal da tela, e o bloco de cabeçalho (abas + ícones +
+   título) ganhou `border-b` separando visualmente de onde o conteúdo
+   começa — mesmo padrão de divisor usado em outras telas. Não foi uma
+   reestruturação completa do padrão "voltar → título → subtítulo" (a
+   tela de leitura tem restrições de espaço diferentes, com abas
+   Texto/Resumo ocupando o topo), só um ajuste de hierarquia tipográfica
+   e separação visual.
 4. **Mistura de emoji cru (🙂🔗🏅) com `MaterialIcons` na aba Você** —
    já é decisão de "gamificação autoral" (ver TODO), mas emoji renderiza
    diferente por sistema operacional; vale confirmar que é intencional.
-5. **Card "Estudo por Resumos" na Início ainda sem barra de progresso
-   visual** — o próprio `FUNCIONALIDADES.md` (3.1) já registra isso
-   como pendência nunca implementada, e o app já usa barra de progresso
-   em Planos/Medalhas, então a ausência aqui destoa.
+5. ~~**Card "Estudo por Resumos" na Início ainda sem barra de progresso
+   visual**~~ — ✅ feito (2026-08-20). Adicionada barra fina
+   (`h-1.5 rounded-full`, mesmo padrão visual usado em Planos) abaixo
+   do texto "X de 66 livros lidos", com trilho translúcido
+   (`bg-white/20 dark:bg-cor-texto/10`, mesmos tokens já usados no
+   círculo do ícone do card) e preenchimento sólido
+   (`bg-white dark:bg-cor-texto`) proporcional a `lidos.length /
+   livros.length`. Testado ao vivo: barra renderiza (231px de trilho,
+   0px de preenchimento com 0 livros lidos — matemática confere).
 6. **Botão de voltar inconsistente em telas "hub" acessíveis por mais
    de um caminho** (Medalhas, Planos, Resumos podem vir de Início ou de
    Você) — não é bug, mas vale confirmar que sempre reflete de onde a

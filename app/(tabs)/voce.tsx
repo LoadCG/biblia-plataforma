@@ -104,7 +104,9 @@ export default function Voce() {
   return (
     <ScrollView className="flex-1 bg-cor-fundo dark:bg-cor-fundo-dark">
       <View className="px-4 pt-6 pb-10 max-w-2xl w-full mx-auto">
-        <View className="flex-row items-center justify-end gap-3 mb-2">
+        <View className="flex-row items-center justify-between gap-3 mb-2">
+          <Text className="text-2xl font-bold text-cor-texto dark:text-cor-texto-dark">Você</Text>
+          <View className="flex-row items-center gap-3">
           <BotaoTema />
           <Link href="/configuracoes" asChild>
             <Pressable
@@ -115,6 +117,7 @@ export default function Voce() {
               <MaterialIcons name="settings" size={18} className="text-cor-texto dark:text-cor-texto-dark" />
             </Pressable>
           </Link>
+          </View>
         </View>
 
         <Pressable onPress={() => setEditandoPerfil(true)} accessibilityRole="button" accessibilityLabel="Editar perfil" className="flex-row items-start justify-between mb-5 active:opacity-80">

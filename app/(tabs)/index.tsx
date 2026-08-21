@@ -154,11 +154,17 @@ export default function Inicio() {
             accessibilityRole="link"
             className="flex-row items-center justify-between rounded-3xl bg-cor-destaque dark:bg-cor-destaque-dark px-6 py-5 mb-4 shadow-sm active:opacity-90"
           >
-            <View>
+            <View className="flex-1 pr-4">
               <Text className="text-xl font-bold text-white dark:text-cor-texto mb-1">Estudo por Resumos</Text>
-              <Text className="text-sm text-white/80 dark:text-cor-texto/70">
+              <Text className="text-sm text-white/80 dark:text-cor-texto/70 mb-2">
                 {lidos.length} de {livros.length} livros lidos
               </Text>
+              <View className="h-1.5 rounded-full bg-white/20 dark:bg-cor-texto/10">
+                <View
+                  className="h-1.5 rounded-full bg-white dark:bg-cor-texto"
+                  style={{ width: `${livros.length > 0 ? (lidos.length / livros.length) * 100 : 0}%` }}
+                />
+              </View>
             </View>
             <View className="w-12 h-12 rounded-full bg-white/20 dark:bg-cor-texto/10 items-center justify-center">
               <MaterialIcons name="menu-book" size={24} color={escuro ? "#2a241c" : "white"} />

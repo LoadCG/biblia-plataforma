@@ -233,6 +233,17 @@ Texto Bíblico (a aba Resumo já tem seu próprio título grande). Testado
 ao vivo: "Deuteronômio 3" aparece no topo antes de "Marcar capítulo
 como lido"; trocar de aba não duplica o título.
 
+**Ajuste de hierarquia visual (2026-08-20, achado na auditoria ampla de
+UI):** o cabeçalho (abas Texto/Resumo + ícones, título do
+livro/capítulo, "Marcar capítulo como lido") tinha os três blocos
+empilhados sem separação visual clara entre si — diferente do padrão
+"voltar → título grande → subtítulo" que outras telas seguem. Ajustado
+sem reestruturar tudo (a leitura tem restrições de espaço diferentes,
+com as abas ocupando o topo): título aumentado de `text-xl` (20px) pra
+`text-2xl` (24px, confirmado ao vivo via `getComputedStyle`) pra se
+destacar mais, e o bloco de cabeçalho ganhou `border-b` separando
+visualmente de onde o conteúdo (capítulo lido + versículos) começa.
+
 **Bug real reportado por usuário (2026-08-11):** "erro ao carregar
 versículos, leitura bíblica não funcionando". Investigado: a
 `bible-api.com` (usada na versão *web*, ver 2.6/Decisão 11) é uma API
@@ -599,8 +610,14 @@ automaticamente, reaproveitando as posições já medidas via `onLayout`.
 
 ### 3.1 Contador de progresso geral `✅`
 **Funcionalidade:** "X de 66 livros lidos" na home.
-**UX/UI:** hoje é só texto — considerar uma barra de progresso visual
-(o site antigo tinha isso), mais fácil de captar num relance.
+**UX/UI:** barra de progresso visual adicionada (2026-08-20, achado na
+auditoria ampla de UI) — antes era só texto. Barra fina (`h-1.5
+rounded-full`, mesmo padrão visual usado em Planos) abaixo do texto,
+trilho translúcido (`bg-white/20 dark:bg-cor-texto/10`, mesmos tokens
+já usados no círculo do ícone ao lado) e preenchimento sólido
+(`bg-white dark:bg-cor-texto`) proporcional a `lidos.length /
+livros.length`. Testado ao vivo: trilho de 231px renderizado, 0px de
+preenchimento com 0 livros lidos.
 
 ### 3.2 Versículo do dia `✅`
 **Funcionalidade:** lista curada de 40 versículos (`core/biblia/versiculoDoDia.ts`),
@@ -1421,6 +1438,11 @@ só a referência, igual ao padrão já usado no popover de referências
 (1.9).
 
 ### 9.6 Você: perfil, Salvo e Atividade `✅`
+**UX/UI (2026-08-20, achado na auditoria ampla de UI):** título "Você"
+adicionado no topo (`text-2xl font-bold`, mesmo padrão de "Descubra")
+— era a única das 4 abas principais sem nenhum rótulo identificando a
+tela (Início mostra "Boa noite", Descubra mostra "Descubra"). Fica ao
+lado do `BotaoTema`/engrenagem de Configurações. Testado ao vivo.
 **Funcionalidade:** cabeçalho de perfil (nome editável, foto editável
 — ver 9.6c, tag de localização placeholder); card "Salvo" com prévia dos
 grifos/notas recentes (`core/util/tempoRelativo.ts`) e menu de 3

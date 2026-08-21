@@ -5,6 +5,20 @@ O formato é baseado no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.
 
 ## [Unreleased] - 2026-08-20
 
+### Corrigido (repositório tornado público)
+- **`.gitignore`**: adicionado `PROMPT-CONTINUACAO.md` (arquivo
+  temporário de transferência de contexto entre sessões de IA, notas
+  internas de trabalho — nunca deveria ser commitado, ficou de fora
+  por sorte até agora).
+- **`README.md` desatualizado sobre a arquitetura de dados**: dizia
+  que a busca full-text usava "SQLite FTS5" e que o motor de biblia era
+  "fetch/cache da bible-api.com", mas isso descreve só o nativo — o web
+  usa busca em memória sobre JSON embutido e persistência via
+  AsyncStorage (não SQLite), com a API externa como fallback só se a
+  busca local falhar (ver 2026-08-19, item 7.3). Corrigido pra
+  descrever os dois caminhos corretamente. Também atualizada a árvore
+  de diretórios (faltavam `resumos/`, `medalhas.tsx`, `sobre.tsx`).
+
 ### Adicionado (backlog de UI, itens 1/3/5 por ordem de impacto)
 - **Título "Você" na aba de perfil** (`FUNCIONALIDADES.md` 9.6): era
   a única das 4 abas principais sem rótulo identificando a tela.

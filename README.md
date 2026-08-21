@@ -44,20 +44,23 @@ app/                  Rotas (Expo Router — cada arquivo é uma tela baseada em
     index.tsx            Home imersiva: Versículo do dia, Resumos, Streak e Medalhas
     resumos/             Sessão de estudos teológicos
     biblia/              Leitura bíblica
-      escolher/          Fluxo estilo YouVersion (Lista de Livros + Acordeão de capítulos)
+      escolher/          Fluxo estilo YouVersion (Lista de Livros + Acordeão de capítulos + grade de versículos)
       [livro]/[capitulo] Tela de leitura avançada (Auto-scroll, foco, grifos, notas, salvos)
-    pesquisa.tsx          Busca por temas + busca full-text na Bíblia inteira (SQLite FTS5)
+    pesquisa.tsx          Busca por temas + busca full-text na Bíblia inteira
     voce.tsx              Perfil, atividade, gamificação e atalho de configurações
   planos/               Planos de leitura diária (listagem + progresso por dia)
+  resumos/              Resumos teológicos por livro (listagem + página de cada livro)
   salvo.tsx             Grifos, notas, salvos e pesquisas favoritas, num só lugar
+  medalhas.tsx          Tela própria de conquistas/medalhas
   estatisticas.tsx       Estatísticas pessoais de leitura
   configuracoes.tsx      Fonte, tema e outras preferências
+  sobre.tsx              Página "Sobre o projeto"
 
 core/                 Lógica de Negócios e Dados (Desacoplada da UI)
   types/                Interfaces globais de domínio (Grifos, Salvos, Notas, Planos)
   repositories/         Camada de Repositórios (implementação SQLite; interface trocável)
   content/              Motor de resumos, livros e planos de leitura (JSON parseado)
-  biblia/               Motor de fetch/cache da bible-api.com + busca full-text local (FTS5)
+  biblia/               Leitura e busca full-text offline (JSON embutido no web, SQLite FTS5 no nativo), com fallback pra bible-api.com
   leitura/              Hooks e lógicas de preferência (Fonte A+/A-, Serifada, Tema, lembretes)
   estatisticas/         Streak, conquistas, atividade agregada e compartilhamentos
 
@@ -83,7 +86,7 @@ Isso compilará os arquivos para `core/content/dados/livros.json`. O app carrega
 
 Registro completo (com o raciocínio por trás de cada escolha) em [`PLANO-PLATAFORMA.md`](./PLANO-PLATAFORMA.md). Resumo:
 
-- **Padrão de Repositório**: Nenhuma tela se comunica direto com o banco de dados. Tudo passa por `core/repositories` (hoje implementado com `expo-sqlite`, offline). Isso garante que uma eventual migração pra Cloud Sync seja invisível para o frontend.
+- **Padrão de Repositório**: Nenhuma tela se comunica direto com o banco de dados. Tudo passa por `core/repositories` (SQLite no nativo, AsyncStorage no web — mesma interface nos dois, trocada automaticamente por plataforma via `index.web.ts`). Isso garante que uma eventual migração pra Cloud Sync seja invisível para o frontend.
 - **Identidade Inicial (OwnerID)**: Toda interação no app (progresso, grifos, notas, salvos, planos) já é vinculada a um UUID de dispositivo. Isso evita dor de cabeça em migrações futuras para usuários logados.
 - **Experiência Imersiva**: O app oculta ativamente distrações durante a rolagem do texto bíblico, trocando cabeçalhos grandes por rodapés minimalistas. Suporta auto-scroll inteligente (pulando direto para um versículo escolhido) avaliando a árvore do DOM via `onLayout` do React Native.
 - **Bíblia offline e busca full-text**: o texto bíblico completo (Almeida ACF, ~31 mil versículos) é embutido no app. No nativo (iOS/Android), é indexado numa tabela virtual FTS5 do SQLite na primeira execução. No web, a busca roda em memória sobre o mesmo JSON embutido (`core/biblia/buscaGlobalWeb.ts`). Nos dois casos, sem depender de rede nem de API externa.

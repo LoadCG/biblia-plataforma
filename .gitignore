@@ -40,3 +40,7 @@ yarn-error.*
 /ios
 /android
 .claude/
+
+# arquivo temporário de transferência de contexto entre sessões de IA —
+# nunca deve ser commitado (notas internas de trabalho, não documentação)
+PROMPT-CONTINUACAO.md

@@ -138,6 +138,9 @@ export default function EscolherLivro() {
             }
             setLivroExpandido(expandido ? null : item.slug);
           }}
+          accessibilityRole="button"
+          accessibilityLabel={item.nome}
+          accessibilityState={{ expanded: expandido }}
           className={`flex-row items-center justify-between px-4 py-4 rounded-xl active:bg-cor-fundo-elevado dark:active:bg-cor-fundo-elevado-dark ${expandido ? 'bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark' : ''}`}
         >
           <Text className="text-cor-texto dark:text-cor-texto-dark text-lg font-semibold">{item.nome}</Text>
@@ -158,6 +161,7 @@ export default function EscolherLivro() {
               </Text>
               <Pressable
                 onPress={() => alternarModoSelecao(item.slug)}
+                accessibilityRole="button"
                 accessibilityLabel={emSelecao ? "Cancelar seleção" : "Marcar vários capítulos como lidos"}
                 className="flex-row items-center gap-1.5 px-3 py-1.5 rounded-full bg-cor-borda dark:bg-cor-borda-dark active:opacity-70"
               >
@@ -185,6 +189,7 @@ export default function EscolherLivro() {
               <View className="flex-row items-center gap-2 mt-4 px-1">
                 <Pressable
                   onPress={() => setSelecionados(new Set(Array.from({ length: item.capitulos }, (_, i) => i + 1)))}
+                  accessibilityRole="button"
                   className="px-3 py-2 rounded-full border border-cor-borda dark:border-cor-borda-dark active:opacity-70"
                 >
                   <Text className="text-xs font-semibold text-cor-texto dark:text-cor-texto-dark">Selecionar todos</Text>
@@ -192,6 +197,7 @@ export default function EscolherLivro() {
                 <Pressable
                   onPress={() => marcarSelecionados(item, false)}
                   disabled={selecionados.size === 0}
+                  accessibilityRole="button"
                   className={`px-3 py-2 rounded-full border border-cor-borda dark:border-cor-borda-dark ${selecionados.size === 0 ? "opacity-40" : "active:opacity-70"}`}
                 >
                   <Text className="text-xs font-semibold text-cor-texto dark:text-cor-texto-dark">Desmarcar</Text>
@@ -199,6 +205,7 @@ export default function EscolherLivro() {
                 <Pressable
                   onPress={() => marcarSelecionados(item, true)}
                   disabled={selecionados.size === 0}
+                  accessibilityRole="button"
                   className={`flex-1 items-center px-3 py-2 rounded-full bg-cor-destaque dark:bg-cor-destaque-dark ${selecionados.size === 0 ? "opacity-40" : "active:opacity-70"}`}
                 >
                   <Text className="text-xs font-semibold text-white">Marcar como lidos</Text>
@@ -217,7 +224,7 @@ export default function EscolherLivro() {
       <View className="px-5 py-4 border-b border-cor-borda dark:border-cor-borda-dark bg-cor-fundo dark:bg-cor-fundo-dark z-10">
         <View className="flex-row items-center justify-between mb-4">
           <View className="flex-row items-center gap-4">
-            <Pressable onPress={() => router.back()} className="w-8 h-8 items-center justify-center active:opacity-60">
+            <Pressable onPress={() => router.back()} accessibilityRole="button" accessibilityLabel="Voltar" className="w-8 h-8 items-center justify-center active:opacity-60">
               <Text className="text-cor-texto dark:text-cor-texto-dark text-xl">←</Text>
             </Pressable>
             <Text className="text-2xl font-bold text-cor-texto dark:text-cor-texto-dark">Livros</Text>
@@ -235,6 +242,7 @@ export default function EscolherLivro() {
           {termo ? (
             <Pressable
               onPress={() => setTermo("")}
+              accessibilityRole="button"
               accessibilityLabel="Limpar busca"
               className="absolute right-2 w-7 h-7 items-center justify-center rounded-full active:opacity-60"
             >

@@ -61,7 +61,7 @@ export function CardVersiculoTema({ referencia }: { referencia: string }) {
   if (href && dados) {
     return (
       <Link href={href} asChild>
-        <Pressable className="active:opacity-80">{conteudo}</Pressable>
+        <Pressable accessibilityRole="link" className="active:opacity-80">{conteudo}</Pressable>
       </Link>
     );
   }

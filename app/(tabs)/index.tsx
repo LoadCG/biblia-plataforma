@@ -48,6 +48,8 @@ function CardContinueLendo({ item, escuro }: { item: CapituloLido; escuro: boole
   return (
     <Pressable
       onPress={() => router.push(`/biblia/${livro.slug}/${item.capitulo}`)}
+      accessibilityRole="link"
+      accessibilityLabel={`${livro.nome}, capítulo ${item.capitulo}`}
       className="w-32 mr-3 rounded-2xl bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark px-3.5 py-4 shadow-sm active:opacity-80"
       style={{ shadowColor: "#000", shadowOpacity: 0.06, shadowRadius: 4, shadowOffset: { width: 0, height: 1 } }}
     >
@@ -101,7 +103,9 @@ export default function Inicio() {
             <BotaoTema />
             <Pressable
               disabled
+              accessibilityRole="button"
               accessibilityLabel="Notificações (em breve)"
+              accessibilityState={{ disabled: true }}
               className="w-8 h-8 items-center justify-center opacity-40"
             >
               <MaterialIcons name="notifications-none" size={24} className="text-cor-texto dark:text-cor-texto-dark" />
@@ -124,7 +128,7 @@ export default function Inicio() {
 
         {lembretePlano ? (
           <Link href={`/planos/${lembretePlano.plano.id}`} asChild>
-            <Pressable className="flex-row items-center justify-between rounded-2xl bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark border border-cor-borda dark:border-cor-borda-dark px-4 py-3.5 mb-4 active:opacity-80">
+            <Pressable accessibilityRole="link" className="flex-row items-center justify-between rounded-2xl bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark border border-cor-borda dark:border-cor-borda-dark px-4 py-3.5 mb-4 active:opacity-80">
               <View className="flex-1 pr-3">
                 <Text className="text-sm font-bold text-cor-texto dark:text-cor-texto-dark mb-0.5">
                   Que tal continuar o "{lembretePlano.plano.titulo}"?
@@ -147,6 +151,7 @@ export default function Inicio() {
             (marrom quase preto) só neste card. */}
         <Link href="/resumos" asChild>
           <Pressable
+            accessibilityRole="link"
             className="flex-row items-center justify-between rounded-3xl bg-cor-destaque dark:bg-cor-destaque-dark px-6 py-5 mb-4 shadow-sm active:opacity-90"
           >
             <View>

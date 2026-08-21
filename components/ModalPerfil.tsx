@@ -46,7 +46,7 @@ export function ModalPerfil({ visivel, perfilAtual, onFechar, onSalvar }: Props)
         <Pressable onPress={(e) => e.stopPropagation()} className="w-full max-w-sm rounded-2xl bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark p-6">
           <Text className="text-lg font-bold text-cor-texto dark:text-cor-texto-dark mb-4">Editar perfil</Text>
 
-          <Pressable onPress={escolherFoto} accessibilityLabel="Trocar foto" className="self-center mb-5 active:opacity-70">
+          <Pressable onPress={escolherFoto} accessibilityRole="button" accessibilityLabel="Trocar foto" className="self-center mb-5 active:opacity-70">
             <View className="w-20 h-20 rounded-full bg-cor-borda dark:bg-cor-borda-dark items-center justify-center overflow-hidden border-2 border-cor-destaque dark:border-cor-destaque-dark">
               {avatarUri ? (
                 <Image source={{ uri: avatarUri }} className="w-full h-full" />
@@ -72,10 +72,10 @@ export function ModalPerfil({ visivel, perfilAtual, onFechar, onSalvar }: Props)
           />
 
           <View className="flex-row justify-end gap-2">
-            <Pressable onPress={onFechar} className="px-4 py-2 rounded-full border border-cor-borda dark:border-cor-borda-dark active:opacity-70">
+            <Pressable onPress={onFechar} accessibilityRole="button" className="px-4 py-2 rounded-full border border-cor-borda dark:border-cor-borda-dark active:opacity-70">
               <Text className="text-cor-texto dark:text-cor-texto-dark">Cancelar</Text>
             </Pressable>
-            <Pressable onPress={salvar} className="px-4 py-2 rounded-full bg-cor-destaque dark:bg-cor-destaque-dark active:opacity-70">
+            <Pressable onPress={salvar} accessibilityRole="button" className="px-4 py-2 rounded-full bg-cor-destaque dark:bg-cor-destaque-dark active:opacity-70">
               <Text className="text-white font-semibold">Salvar</Text>
             </Pressable>
           </View>

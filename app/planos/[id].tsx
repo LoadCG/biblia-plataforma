@@ -95,7 +95,11 @@ export default function DetalhePlano() {
                 <Text className="text-sm font-bold text-cor-texto dark:text-cor-texto-dark">Dia {diaPlano.dia}</Text>
                 <Pressable
                   onPress={() => alternarDia(diaPlano.dia)}
+                  accessibilityRole="checkbox"
                   accessibilityLabel={concluido ? "Desmarcar dia como concluído" : "Marcar dia como concluído"}
+                  accessibilityState={{ checked: concluido }}
+                  // @ts-expect-error accessibilityChecked é uma extensão do react-native-web, não existe nos tipos do React Native
+                  accessibilityChecked={concluido}
                   className={`flex-row items-center gap-1.5 px-3 py-1.5 rounded-full active:opacity-70 ${
                     concluido ? "bg-green-600" : "border border-cor-borda dark:border-cor-borda-dark"
                   }`}
@@ -117,7 +121,7 @@ export default function DetalhePlano() {
                   );
                   return href ? (
                     <Link key={ref} href={href} asChild>
-                      <Pressable className="active:opacity-70">{conteudo}</Pressable>
+                      <Pressable accessibilityRole="link" className="active:opacity-70">{conteudo}</Pressable>
                     </Link>
                   ) : (
                     <View key={ref}>{conteudo}</View>

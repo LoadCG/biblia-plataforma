@@ -77,6 +77,7 @@ export default function Pesquisa() {
           <View className="flex-row justify-between mb-4">
             <Pressable
               onPress={() => router.push("/planos")}
+              accessibilityRole="link"
               className="flex-1 items-center gap-1.5 mx-1 rounded-2xl bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark py-3.5 active:opacity-70"
             >
               <MaterialIcons name="event-note" size={20} color={escuro ? "#e0a75e" : "#8a5a2b"} />
@@ -86,6 +87,7 @@ export default function Pesquisa() {
               <Pressable
                 key={atalho.id}
                 onPress={() => Alert.alert(atalho.rotulo, "Em breve!")}
+                accessibilityRole="button"
                 accessibilityLabel={`${atalho.rotulo} (em breve)`}
                 className="flex-1 items-center gap-1.5 mx-1 rounded-2xl bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark py-3.5 active:opacity-70 opacity-40"
               >
@@ -109,16 +111,26 @@ export default function Pesquisa() {
         
         {termo.trim() ? (
           <View className="flex-row mt-4 mb-2">
-            <Pressable 
+            <Pressable
               onPress={() => setAbaExibicao('biblia')}
+              accessibilityRole="tab"
+              accessibilityLabel="Na Bíblia"
+              accessibilityState={{ selected: abaExibicao === 'biblia' }}
+              // @ts-expect-error accessibilitySelected é uma extensão do react-native-web, não existe nos tipos do React Native
+              accessibilitySelected={abaExibicao === 'biblia'}
               className={`mr-4 pb-2 border-b-2 active:opacity-60 ${abaExibicao === 'biblia' ? 'border-cor-destaque dark:border-cor-destaque-dark' : 'border-transparent'}`}
             >
               <Text className={`font-semibold ${abaExibicao === 'biblia' ? 'text-cor-texto dark:text-cor-texto-dark' : 'text-cor-texto-suave dark:text-cor-texto-suave-dark'}`}>
                 Na Bíblia {resultadosBiblia.length > 0 && `(${resultadosBiblia.length})`}
               </Text>
             </Pressable>
-            <Pressable 
+            <Pressable
               onPress={() => setAbaExibicao('resumos')}
+              accessibilityRole="tab"
+              accessibilityLabel="Nos Resumos"
+              accessibilityState={{ selected: abaExibicao === 'resumos' }}
+              // @ts-expect-error accessibilitySelected é uma extensão do react-native-web, não existe nos tipos do React Native
+              accessibilitySelected={abaExibicao === 'resumos'}
               className={`pb-2 border-b-2 active:opacity-60 ${abaExibicao === 'resumos' ? 'border-cor-destaque dark:border-cor-destaque-dark' : 'border-transparent'}`}
             >
               <Text className={`font-semibold ${abaExibicao === 'resumos' ? 'text-cor-texto dark:text-cor-texto-dark' : 'text-cor-texto-suave dark:text-cor-texto-suave-dark'}`}>
@@ -135,7 +147,11 @@ export default function Pesquisa() {
             <>
               <Pressable
                 onPress={alternarFavorita}
+                accessibilityRole="checkbox"
                 accessibilityLabel={favoritada ? "Remover busca dos favoritos" : "Favoritar esta busca"}
+                accessibilityState={{ checked: favoritada }}
+                // @ts-expect-error accessibilityChecked é uma extensão do react-native-web, não existe nos tipos do React Native
+                accessibilityChecked={favoritada}
                 className="flex-row items-center gap-1.5 self-start mb-3 px-3 py-1.5 rounded-full border border-cor-borda dark:border-cor-borda-dark active:opacity-70"
               >
                 <Text>{favoritada ? "★" : "☆"}</Text>
@@ -151,6 +167,7 @@ export default function Pesquisa() {
                   resultadosResumo.map(({ livro, trecho }) => (
                     <Link key={livro.slug} href={`/resumos/${livro.slug}`} asChild>
                       <Pressable
+                        accessibilityRole="link"
                         className="rounded-2xl bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark px-4 py-3 mb-2 shadow-sm active:opacity-80"
                         style={{ shadowColor: "#000", shadowOpacity: 0.06, shadowRadius: 4, shadowOffset: { width: 0, height: 1 } }}
                       >
@@ -179,6 +196,7 @@ export default function Pesquisa() {
                     return (
                     <Link key={`${resultado.livroSlug}-${resultado.capitulo}-${resultado.versiculo}-${i}`} href={`/biblia/${livroCorreto.slug}/${resultado.capitulo}?versiculo=${resultado.versiculo}`} asChild>
                       <Pressable
+                        accessibilityRole="link"
                         className="rounded-2xl bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark px-4 py-3 mb-2 shadow-sm active:opacity-80"
                         style={{ shadowColor: "#000", shadowOpacity: 0.06, shadowRadius: 4, shadowOffset: { width: 0, height: 1 } }}
                       >
@@ -197,7 +215,7 @@ export default function Pesquisa() {
             </>
           ) : temaSelecionado ? (
             <>
-              <Pressable onPress={() => setTemaSelecionado(null)} className="self-start mb-3 active:opacity-60">
+              <Pressable onPress={() => setTemaSelecionado(null)} accessibilityRole="button" className="self-start mb-3 active:opacity-60">
                 <Text className="text-sm text-cor-destaque dark:text-cor-destaque-dark font-semibold">← Voltar aos temas</Text>
               </Pressable>
               <Text className="text-lg font-bold text-cor-texto dark:text-cor-texto-dark mb-3">{temaSelecionado.titulo}</Text>
@@ -215,6 +233,8 @@ export default function Pesquisa() {
                   <Pressable
                     key={tema.id}
                     onPress={() => setTemaSelecionado(tema)}
+                    accessibilityRole="button"
+                    accessibilityLabel={tema.titulo}
                     style={{ backgroundColor: escuro ? tema.corBgDark : tema.corBg, width: "48%", height: 128 }}
                     className="rounded-3xl mb-3 justify-end overflow-hidden active:opacity-80"
                   >

@@ -91,7 +91,7 @@ export function CardVersiculoDia() {
         >
           <Text className="text-cor-texto/90 dark:text-white/90 text-xs font-semibold uppercase tracking-widest">Versículo do Dia</Text>
           <Text className="text-cor-texto-suave dark:text-white/80 text-sm">{erro}</Text>
-          <Pressable onPress={carregarVersiculo} className="px-4 py-2 rounded-full bg-black/5 dark:bg-white/10 active:opacity-70">
+          <Pressable onPress={carregarVersiculo} accessibilityRole="button" accessibilityLabel="Tentar novamente" className="px-4 py-2 rounded-full bg-black/5 dark:bg-white/10 active:opacity-70">
             <Text className="text-cor-texto dark:text-white font-semibold text-sm">Tentar novamente</Text>
           </Pressable>
         </LinearGradient>
@@ -166,6 +166,7 @@ export function CardVersiculoDia() {
               <Pressable
                 onPress={() => setNotaAberta(true)}
                 disabled={!ref}
+                accessibilityRole="button"
                 accessibilityLabel="Anotar sobre este versículo"
                 className="flex-1 items-center py-1 active:opacity-60"
               >
@@ -174,13 +175,14 @@ export function CardVersiculoDia() {
               </Pressable>
               <Pressable
                 onPress={() => compartilhar(textoParaCompartilhar())}
+                accessibilityRole="button"
                 accessibilityLabel="Enviar este versículo"
                 className="flex-1 items-center py-1 active:opacity-60"
               >
                 <MaterialIcons name="share" size={24} color={corIconePadrao} />
                 <Text className="text-cor-texto-suave dark:text-white/80 text-xs mt-1">Enviar</Text>
               </Pressable>
-              <Pressable onPress={() => setMenuAberto(true)} accessibilityLabel="Mais opções" className="flex-1 items-center py-1 active:opacity-60">
+              <Pressable onPress={() => setMenuAberto(true)} accessibilityRole="button" accessibilityLabel="Mais opções" className="flex-1 items-center py-1 active:opacity-60">
                 <MaterialIcons name="more-horiz" size={24} color={corIconePadrao} />
                 <Text className="text-cor-texto-suave dark:text-white/80 text-xs mt-1">Mais</Text>
               </Pressable>
@@ -188,7 +190,9 @@ export function CardVersiculoDia() {
 
             <Pressable
               disabled
+              accessibilityRole="button"
               accessibilityLabel="Enviar versículo diariamente (em breve)"
+              accessibilityState={{ disabled: true }}
               className="self-end bg-black/5 dark:bg-white/10 rounded-full px-3.5 py-1.5 items-center justify-center flex-row gap-1.5 opacity-40"
             >
               <MaterialIcons name="notifications-none" size={14} color={corIconePadrao} />

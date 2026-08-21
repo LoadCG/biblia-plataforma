@@ -938,6 +938,40 @@ exigiria tocar em cada `Pressable`/`TextInput` interativo (~90+
 elementos) — escopo bem maior que uma regra CSS única, avaliar depois
 se vale o esforço nesse formato.
 
+**Continuação (2026-08-20): auditoria completa de todo `Pressable` das
+telas principais e componentes compartilhados.** Varredura manual de
+todos os `app/**/*.tsx` e `components/**/*.tsx` listados no plano
+(item B do `TODO.md`) — mais de 100 ocorrências de `Pressable` em 24
+arquivos. **Achado:** boa parte já tinha `accessibilityLabel` de uma
+auditoria anterior, mas faltava `accessibilityRole="button"` (ou
+`"link"`/`"tab"`/`"checkbox"`/`"switch"` conforme o caso) na maioria —
+sem role, um leitor de tela não anuncia o elemento como algo
+interativo/acionável, só lê o texto solto. Corrigido em ~70 elementos
+espalhados por `voce.tsx`, `configuracoes.tsx`, `pesquisa.tsx`,
+`index.tsx`, `planos/[id].tsx`, `planos/index.tsx`,
+`biblia/escolher/index.tsx`, `biblia/[livro]/[capitulo].tsx` (mais
+~18 que já tinham label mas não role), `resumos/index.tsx`,
+`resumos/[livro].tsx`, `_layout.tsx` (abas viraram `role="tab"` com
+`accessibilityState`/`accessibilitySelected` em paralelo — mesmo
+achado técnico do RNW 0.21.2 documentado acima), e nos componentes
+`CardAtividade`, `CardConquistas`, `CardVersiculoTema`, `MenuAcoes`,
+`ModalNota`, `ModalPerfil`, `PopoverVersiculo`, `Toast`, `Tooltip`,
+`CardVersiculoDia`. Também viraram toggle de verdade (role
+`switch`/`checkbox` + `accessibilityState` + prop achatada em
+paralelo) três controles que pareciam decorativos mas eram
+liga/desliga sem anúncio de estado: "Fonte serifada" e "Lembrete
+diário" em `configuracoes.tsx`/`resumos/[livro].tsx`, "Favoritar
+busca" em `pesquisa.tsx`, e "Marcar livro como lido" em
+`resumos/[livro].tsx`. Backdrops de modal (o `Pressable` que só fecha
+ao tocar fora) foram deixados sem role — não são um controle
+navegável por si, são a área de fundo do próprio modal. Testado ao
+vivo: `aria-checked`/`aria-selected` aparecem e alternam corretamente
+no DOM pros toggles de tema/fonte serifada (`configuracoes`) e pras
+abas de filtro em `/salvo`. **Faltou (mesma lacuna já registrada
+acima):** teste de verdade com leitor de tela (VoiceOver/NVDA) — só
+varredura de código + inspeção de DOM via script, não uso real de
+leitor de tela; e o foco visível por teclado continua pendente.
+
 ### 7.3 Leitura offline de verdade `✅`
 **Funcionalidade:** no app nativo instalado, o conteúdo dos resumos já
 funciona offline (é dado embutido no app), e a Bíblia inteira também

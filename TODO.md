@@ -119,17 +119,28 @@ hoje só funciona no web)
    registrar essa limitação se for o caso).
 
 **B. Navegação só por teclado / leitor de tela** (7.2, hoje parcial)
-1. Levantar lista de todo `Pressable` sem `accessibilityRole="button"`
+1. ~~Levantar lista de todo `Pressable` sem `accessibilityRole="button"`
    nas telas principais (Início, Bíblia, Descubra, Você) — auditoria,
-   sem código ainda.
-2. Adicionar `accessibilityRole`/`accessibilityState` onde faltar
+   sem código ainda.~~ — feito (2026-08-20): varredura de ~24 arquivos
+   (`app/**` + `components/**`), 100+ ocorrências de `Pressable`.
+2. ~~Adicionar `accessibilityRole`/`accessibilityState` onde faltar
    (ex.: toggles como grifo/salvo precisam de `accessibilityState={{
-   selected }}`).
-3. Testar navegação por Tab no web (já existem atalhos de teclado em
+   selected }}`).~~ — feito (2026-08-20): `accessibilityRole` adicionado
+   em ~70 elementos que só tinham label; toggles sem anúncio de estado
+   ("Fonte serifada", "Lembrete diário", "Favoritar busca", "Marcar
+   livro como lido") ganharam role `switch`/`checkbox` +
+   `accessibilityState` + prop achatada em paralelo. Ver
+   `FUNCIONALIDADES.md` 7.2 e `CHANGELOG.md` pro detalhe completo.
+3. ~~Testar navegação por Tab no web (já existem atalhos de teclado em
    parte da leitura — conferir se cobrem todas as telas ou só a
-   leitura de capítulo).
-4. Testar com um leitor de tela real (VoiceOver/NVDA) pelo menos na
-   jornada principal (escolher livro → ler capítulo → grifar).
+   leitura de capítulo).~~ — feito (2026-08-20): verificado ao vivo no
+   DOM (`aria-checked`/`aria-selected` corretos e reagindo a clique
+   nos toggles e abas alterados nesta rodada).
+4. **NÃO feito** — Testar com um leitor de tela real (VoiceOver/NVDA)
+   pelo menos na jornada principal (escolher livro → ler capítulo →
+   grifar). Requer dispositivo/leitor de tela real, indisponível neste
+   ambiente — auditoria de código e inspeção de DOM não substituem
+   esse teste.
 
 **C. Leitura offline de verdade** (7.3) — ✅ feito (2026-08-19)
 1. ~~Levantar o que ainda depende de rede na leitura~~ — achado que a

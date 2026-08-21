@@ -90,7 +90,7 @@ export function CardAtividade({ item, onMudou }: Props) {
       </View>
       <View className="items-end">
         <Text className="text-[10px] text-cor-texto-suave dark:text-cor-texto-suave-dark mb-1">{tempoRelativo(item.criadoEm)}</Text>
-        <Pressable onPress={() => setMenuAberto(true)} accessibilityLabel="Mais opções" hitSlop={10} className="active:opacity-60">
+        <Pressable onPress={() => setMenuAberto(true)} accessibilityRole="button" accessibilityLabel="Mais opções" hitSlop={10} className="active:opacity-60">
           <Text className="text-cor-texto-suave dark:text-cor-texto-suave-dark text-base">⋮</Text>
         </Pressable>
       </View>

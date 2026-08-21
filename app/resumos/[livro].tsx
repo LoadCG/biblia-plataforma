@@ -99,6 +99,7 @@ export default function ResumoLivro() {
               <Pressable
                 onPress={() => ajustarFonte(-1)}
                 disabled={indiceFonte === 0}
+                accessibilityRole="button"
                 accessibilityLabel="Diminuir tamanho da fonte"
                 className="w-10 h-10 items-center justify-center rounded-full border border-cor-borda dark:border-cor-borda-dark active:opacity-60"
               >
@@ -109,6 +110,7 @@ export default function ResumoLivro() {
               <Pressable
                 onPress={() => ajustarFonte(1)}
                 disabled={indiceFonte === TAMANHOS_FONTE.length - 1}
+                accessibilityRole="button"
                 accessibilityLabel="Aumentar tamanho da fonte"
                 className="w-10 h-10 items-center justify-center rounded-full border border-cor-borda dark:border-cor-borda-dark active:opacity-60"
               >
@@ -124,7 +126,11 @@ export default function ResumoLivro() {
               </Pressable>
               <Pressable
                 onPress={alternarFonteSerifada}
-                accessibilityLabel={fonteSerifada ? "Desativar fonte serifada" : "Ativar fonte serifada"}
+                accessibilityRole="switch"
+                accessibilityLabel="Fonte serifada"
+                accessibilityState={{ checked: fonteSerifada }}
+                // @ts-expect-error accessibilityChecked é uma extensão do react-native-web, não existe nos tipos do React Native
+                accessibilityChecked={fonteSerifada}
                 className={`w-10 h-10 items-center justify-center rounded-full border active:opacity-60 ${
                   fonteSerifada
                     ? "bg-cor-destaque-fundo dark:bg-cor-destaque-fundo-dark border-cor-destaque dark:border-cor-destaque-dark"
@@ -156,6 +162,11 @@ export default function ResumoLivro() {
 
         <Pressable
           onPress={alternarLido}
+          accessibilityRole="checkbox"
+          accessibilityLabel="Marcar livro como lido"
+          accessibilityState={{ checked: lido }}
+          // @ts-expect-error accessibilityChecked é uma extensão do react-native-web, não existe nos tipos do React Native
+          accessibilityChecked={lido}
           className={`self-start px-4 py-2.5 rounded-full mb-6 active:opacity-70 ${
             lido ? "bg-green-600" : "border border-cor-borda dark:border-cor-borda-dark bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark"
           }`}
@@ -220,7 +231,7 @@ export default function ResumoLivro() {
           <View className="flex-1">
             {anterior ? (
               <Link href={`/resumos/${anterior.slug}`} asChild>
-                <Pressable className="border border-cor-borda dark:border-cor-borda-dark rounded-xl p-3 active:opacity-70">
+                <Pressable accessibilityRole="link" className="border border-cor-borda dark:border-cor-borda-dark rounded-xl p-3 active:opacity-70">
                   <Text className="text-xs text-cor-texto-suave dark:text-cor-texto-suave-dark">← Anterior</Text>
                   <Text className="text-cor-texto dark:text-cor-texto-dark font-semibold">{anterior.nome}</Text>
                 </Pressable>
@@ -230,7 +241,7 @@ export default function ResumoLivro() {
           <View className="flex-1">
             {proximo ? (
               <Link href={`/resumos/${proximo.slug}`} asChild>
-                <Pressable className="border border-cor-borda dark:border-cor-borda-dark rounded-xl p-3 items-end active:opacity-70">
+                <Pressable accessibilityRole="link" className="border border-cor-borda dark:border-cor-borda-dark rounded-xl p-3 items-end active:opacity-70">
                   <Text className="text-xs text-cor-texto-suave dark:text-cor-texto-suave-dark">Próximo →</Text>
                   <Text className="text-cor-texto dark:text-cor-texto-dark font-semibold">{proximo.nome}</Text>
                 </Pressable>

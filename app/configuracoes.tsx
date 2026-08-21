@@ -148,6 +148,7 @@ export default function Configuracoes() {
               <Pressable
                 onPress={() => ajustarFonte(-1)}
                 disabled={indiceFonte === 0}
+                accessibilityRole="button"
                 accessibilityLabel="Diminuir tamanho da fonte"
                 className="w-10 h-10 items-center justify-center rounded-full border border-cor-borda dark:border-cor-borda-dark active:opacity-60"
               >
@@ -160,6 +161,7 @@ export default function Configuracoes() {
               <Pressable
                 onPress={() => ajustarFonte(1)}
                 disabled={indiceFonte === TAMANHOS_FONTE.length - 1}
+                accessibilityRole="button"
                 accessibilityLabel="Aumentar tamanho da fonte"
                 className="w-10 h-10 items-center justify-center rounded-full border border-cor-borda dark:border-cor-borda-dark active:opacity-60"
               >
@@ -179,7 +181,15 @@ export default function Configuracoes() {
             </View>
           </Linha>
           <Linha ultima>
-            <Pressable onPress={alternarFonteSerifada} className="flex-row items-center justify-between active:opacity-70">
+            <Pressable
+              onPress={alternarFonteSerifada}
+              accessibilityRole="switch"
+              accessibilityLabel="Fonte serifada"
+              accessibilityState={{ checked: fonteSerifada }}
+              // @ts-expect-error accessibilityChecked é uma extensão do react-native-web, não existe nos tipos do React Native
+              accessibilityChecked={fonteSerifada}
+              className="flex-row items-center justify-between active:opacity-70"
+            >
               <View>
                 <Text className="text-cor-texto dark:text-cor-texto-dark font-semibold">Fonte serifada</Text>
                 <Text style={{ fontFamily: FAMILIA_SERIFADA }} className="text-xs text-cor-texto-suave dark:text-cor-texto-suave-dark mt-0.5">
@@ -199,7 +209,15 @@ export default function Configuracoes() {
 
         <Secao titulo="Aparência">
           <Linha ultima>
-            <Pressable onPress={alternarTema} className="flex-row items-center justify-between active:opacity-70">
+            <Pressable
+              onPress={alternarTema}
+              accessibilityRole="switch"
+              accessibilityLabel="Tema"
+              accessibilityState={{ checked: escuro }}
+              // @ts-expect-error accessibilityChecked é uma extensão do react-native-web, não existe nos tipos do React Native
+              accessibilityChecked={escuro}
+              className="flex-row items-center justify-between active:opacity-70"
+            >
               <Text className="text-cor-texto dark:text-cor-texto-dark font-semibold">Tema</Text>
               <Text className="text-sm text-cor-texto-suave dark:text-cor-texto-suave-dark">
                 {escuro ? "☾ Escuro" : "☀ Claro"} · toque pra trocar
@@ -210,7 +228,15 @@ export default function Configuracoes() {
 
         <Secao titulo="Notificações">
           <Linha ultima>
-            <Pressable onPress={alternarLembreteDiario} className="flex-row items-center justify-between active:opacity-70">
+            <Pressable
+              onPress={alternarLembreteDiario}
+              accessibilityRole="switch"
+              accessibilityLabel="Lembrete diário"
+              accessibilityState={{ checked: lembreteAtivo }}
+              // @ts-expect-error accessibilityChecked é uma extensão do react-native-web, não existe nos tipos do React Native
+              accessibilityChecked={lembreteAtivo}
+              className="flex-row items-center justify-between active:opacity-70"
+            >
               <View className="flex-1 pr-3">
                 <Text className="text-cor-texto dark:text-cor-texto-dark font-semibold">Lembrete diário</Text>
                 <Text className="text-xs text-cor-texto-suave dark:text-cor-texto-suave-dark mt-0.5">
@@ -244,6 +270,8 @@ export default function Configuracoes() {
             <Pressable
               onPress={exportarMeusDados}
               disabled={exportando}
+              accessibilityRole="button"
+              accessibilityLabel="Exportar meus dados"
               className={`flex-row items-center justify-between active:opacity-70 ${exportando ? "opacity-40" : ""}`}
             >
               <View className="flex-1 pr-3">
@@ -256,7 +284,7 @@ export default function Configuracoes() {
             </Pressable>
           </Linha>
           <Linha ultima>
-            <Pressable onPress={() => setConfirmarApagar(true)} className="flex-row items-center justify-between active:opacity-70">
+            <Pressable onPress={() => setConfirmarApagar(true)} accessibilityRole="button" accessibilityLabel="Apagar todos os meus dados" className="flex-row items-center justify-between active:opacity-70">
               <View className="flex-1 pr-3">
                 <Text className="text-red-600 font-semibold">Apagar todos os meus dados</Text>
                 <Text className="text-xs text-cor-texto-suave dark:text-cor-texto-suave-dark mt-0.5">
@@ -271,7 +299,7 @@ export default function Configuracoes() {
         <Secao titulo="Sobre">
           <Linha ultima>
             <Link href="/sobre" asChild>
-              <Pressable className="flex-row items-center justify-between active:opacity-70">
+              <Pressable accessibilityRole="link" className="flex-row items-center justify-between active:opacity-70">
                 <Text className="text-cor-texto dark:text-cor-texto-dark font-semibold">Sobre o projeto</Text>
                 <Text className="text-cor-texto-suave dark:text-cor-texto-suave-dark">→</Text>
               </Pressable>
@@ -292,6 +320,7 @@ export default function Configuracoes() {
               <Pressable
                 onPress={() => setConfirmarApagar(false)}
                 disabled={apagando}
+                accessibilityRole="button"
                 className="px-4 py-2 rounded-full border border-cor-borda dark:border-cor-borda-dark active:opacity-70"
               >
                 <Text className="text-cor-texto dark:text-cor-texto-dark">Cancelar</Text>
@@ -299,6 +328,7 @@ export default function Configuracoes() {
               <Pressable
                 onPress={apagarMeusDados}
                 disabled={apagando}
+                accessibilityRole="button"
                 className={`px-4 py-2 rounded-full bg-red-600 active:opacity-70 ${apagando ? "opacity-60" : ""}`}
               >
                 <Text className="text-white font-semibold">{apagando ? "Apagando..." : "Apagar tudo"}</Text>

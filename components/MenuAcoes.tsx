@@ -37,6 +37,8 @@ export function MenuAcoes({ acoes, aberto, onFechar }: Props) {
                 onFechar();
                 acao.onPress();
               }}
+              accessibilityRole="button"
+              accessibilityLabel={acao.label}
               className="flex-row items-center gap-3 px-5 py-3.5 active:bg-cor-borda dark:active:bg-cor-borda-dark"
             >
               {acao.icone ? (

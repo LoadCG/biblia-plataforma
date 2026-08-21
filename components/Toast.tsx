@@ -58,6 +58,8 @@ export function Toast() {
               payload.onAcao?.();
               esconder();
             }}
+            accessibilityRole="button"
+            accessibilityLabel={payload.acaoLabel}
             className="px-3 py-1.5 rounded-full bg-cor-fundo/15 dark:bg-cor-fundo-dark/15 active:opacity-70"
           >
             <Text className="text-cor-fundo dark:text-cor-fundo-dark text-sm font-bold">{payload.acaoLabel}</Text>

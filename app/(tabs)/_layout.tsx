@@ -58,6 +58,11 @@ const BotaoAba = forwardRef<View, BotaoAbaProps>(({ rotulo, icone, sidebar, isFo
     <Pressable
       ref={ref}
       {...props}
+      accessibilityRole="tab"
+      accessibilityLabel={rotulo}
+      accessibilityState={{ selected: isFocused }}
+      // @ts-expect-error accessibilitySelected é uma extensão do react-native-web, não existe nos tipos do React Native
+      accessibilitySelected={isFocused}
       className={
         sidebar
           ? `flex-row items-center gap-3 rounded-xl px-3.5 py-2.5 mb-1 active:opacity-70 ${

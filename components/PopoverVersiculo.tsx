@@ -47,6 +47,7 @@ export function PopoverVersiculo({ referencia, refCapitulo, onFechar }: Props) {
             </Text>
             <Pressable
               onPress={onFechar}
+              accessibilityRole="button"
               accessibilityLabel="Fechar"
               className="w-8 h-8 items-center justify-center rounded-full bg-cor-borda dark:bg-cor-borda-dark active:opacity-70"
             >
@@ -78,6 +79,7 @@ export function PopoverVersiculo({ referencia, refCapitulo, onFechar }: Props) {
           {refAtual !== refCapitulo ? (
             <Pressable
               onPress={() => setRefAtual(refCapitulo)}
+              accessibilityRole="button"
               className="self-start mt-4 px-4 py-2 rounded-full border border-cor-borda dark:border-cor-borda-dark active:opacity-70"
             >
               <Text className="text-sm font-semibold text-cor-texto dark:text-cor-texto-dark">

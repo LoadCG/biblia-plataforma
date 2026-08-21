@@ -39,7 +39,12 @@ function MedalhaCarrossel({ conquista }: { conquista: Conquista }) {
   const progresso = conquista.progressoTotal > 0 ? Math.min(1, conquista.progressoAtual / conquista.progressoTotal) : 0;
 
   return (
-    <Pressable onPress={() => router.push("/medalhas")} className="w-28 mr-3 items-center active:opacity-70">
+    <Pressable
+      onPress={() => router.push("/medalhas")}
+      accessibilityRole="button"
+      accessibilityLabel={`${conquista.titulo}, ${conquista.progressoAtual} de ${conquista.progressoTotal}`}
+      className="w-28 mr-3 items-center active:opacity-70"
+    >
       <View
         className="w-16 h-16 rounded-full items-center justify-center mb-2"
         style={{ backgroundColor: conquista.conquistada ? cores.destaque : cores.borda }}
@@ -103,6 +108,7 @@ export default function Voce() {
           <BotaoTema />
           <Link href="/configuracoes" asChild>
             <Pressable
+              accessibilityRole="link"
               accessibilityLabel="Configurações"
               className="w-11 h-11 rounded-full bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark items-center justify-center active:opacity-70"
             >
@@ -111,7 +117,7 @@ export default function Voce() {
           </Link>
         </View>
 
-        <Pressable onPress={() => setEditandoPerfil(true)} accessibilityLabel="Editar perfil" className="flex-row items-start justify-between mb-5 active:opacity-80">
+        <Pressable onPress={() => setEditandoPerfil(true)} accessibilityRole="button" accessibilityLabel="Editar perfil" className="flex-row items-start justify-between mb-5 active:opacity-80">
           <View className="flex-1 pr-3">
             <Text className="text-2xl font-extrabold text-cor-texto dark:text-cor-texto-dark" numberOfLines={1}>
               {perfil.nome}
@@ -148,6 +154,7 @@ export default function Voce() {
         <View className="flex-row gap-3 mb-4">
           <Pressable
             onPress={() => router.push({ pathname: "/salvo", params: { filtro: "salvo" } })}
+            accessibilityRole="button"
             className="flex-1 items-center gap-1.5 rounded-2xl py-4 shadow-sm active:opacity-70 bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark"
             style={SOMBRA}
           >
@@ -156,6 +163,7 @@ export default function Voce() {
           </Pressable>
           <Pressable
             onPress={() => router.push({ pathname: "/salvo", params: { filtro: "nota" } })}
+            accessibilityRole="button"
             className="flex-1 items-center gap-1.5 rounded-2xl py-4 shadow-sm active:opacity-70 bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark"
             style={SOMBRA}
           >
@@ -165,7 +173,7 @@ export default function Voce() {
         </View>
 
         <Link href="/salvo" asChild>
-          <Pressable className="rounded-2xl bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark px-4 py-3.5 mb-4 shadow-sm active:opacity-80" style={SOMBRA}>
+          <Pressable accessibilityRole="link" className="rounded-2xl bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark px-4 py-3.5 mb-4 shadow-sm active:opacity-80" style={SOMBRA}>
             <Text className="text-sm font-bold text-cor-texto dark:text-cor-texto-dark mb-2">📌 Salvo</Text>
             {atividade.length === 0 ? (
               <EstadoVazio titulo="Nada salvo ainda" descricao="Toque em ✎ Grifar ou 🗒 Anotar durante a leitura pra ver aqui." />
@@ -223,7 +231,7 @@ export default function Voce() {
               <MedalhaCarrossel key={c.id} conquista={c} />
             ))}
           </ScrollView>
-          <Pressable onPress={() => router.push("/medalhas")} className="self-start mt-3 active:opacity-70">
+          <Pressable onPress={() => router.push("/medalhas")} accessibilityRole="button" className="self-start mt-3 active:opacity-70">
             <Text style={{ color: cores.destaque }} className="text-xs font-bold">
               Ver todas as medalhas →
             </Text>
@@ -244,6 +252,7 @@ export default function Voce() {
 
         <Link href="/configuracoes" asChild>
           <Pressable
+            accessibilityRole="link"
             className="flex-row items-center justify-between rounded-2xl bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark px-4 py-3.5 mt-2 shadow-sm active:opacity-80"
             style={SOMBRA}
           >

@@ -18,7 +18,13 @@ export function CardConquistas({ conquistas }: { conquistas: Conquista[] }) {
         {topConquistas.map((c, index) => {
           const completa = c.conquistada;
           return (
-            <Pressable key={c.id} onPress={() => setConquistaAberta(c)} className="items-center flex-1 active:opacity-70">
+            <Pressable
+              key={c.id}
+              onPress={() => setConquistaAberta(c)}
+              accessibilityRole="button"
+              accessibilityLabel={`${c.titulo}${completa ? ", conquistada" : `, ${c.progressoAtual} de ${c.progressoTotal}`}`}
+              className="items-center flex-1 active:opacity-70"
+            >
               <View
                 className={`w-20 h-20 rounded-full items-center justify-center mb-3 border-2 ${
                   completa
@@ -44,7 +50,7 @@ export function CardConquistas({ conquistas }: { conquistas: Conquista[] }) {
         })}
       </View>
 
-      <Pressable onPress={() => router.push("/medalhas")} className="bg-cor-borda dark:bg-cor-borda-dark self-start px-5 py-2 rounded-full active:opacity-70">
+      <Pressable onPress={() => router.push("/medalhas")} accessibilityRole="button" className="bg-cor-borda dark:bg-cor-borda-dark self-start px-5 py-2 rounded-full active:opacity-70">
         <Text className="text-xs font-semibold text-cor-texto dark:text-cor-texto-dark">Ver todos</Text>
       </Pressable>
 
@@ -64,11 +70,12 @@ export function CardConquistas({ conquistas }: { conquistas: Conquista[] }) {
                       setConquistaAberta(null);
                       router.push("/medalhas");
                     }}
+                    accessibilityRole="button"
                     className="px-3 py-2 active:opacity-70"
                   >
                     <Text className="text-cor-destaque dark:text-cor-destaque-dark font-semibold text-sm">Ver todas</Text>
                   </Pressable>
-                  <Pressable onPress={() => setConquistaAberta(null)} className="px-4 py-2 rounded-full bg-cor-destaque dark:bg-cor-destaque-dark active:opacity-70">
+                  <Pressable onPress={() => setConquistaAberta(null)} accessibilityRole="button" className="px-4 py-2 rounded-full bg-cor-destaque dark:bg-cor-destaque-dark active:opacity-70">
                     <Text className="text-white font-semibold text-sm">Fechar</Text>
                   </Pressable>
                 </View>

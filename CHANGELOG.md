@@ -3,6 +3,27 @@
 Todas as mudanças notáveis feitas no projeto serão documentadas neste arquivo.
 O formato é baseado no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/).
 
+## [Unreleased] - 2026-08-20
+
+### Corrigido
+- **Acessibilidade — `accessibilityRole` faltando em dezenas de
+  `Pressable`** (`TODO.md` item B, `FUNCIONALIDADES.md` 7.2): auditoria
+  de todo `Pressable` das telas principais e componentes
+  compartilhados (~24 arquivos, 100+ ocorrências) achou que a maioria
+  já tinha `accessibilityLabel` de uma passada anterior, mas faltava
+  `accessibilityRole` — sem role, leitor de tela não anuncia o
+  elemento como interativo. Adicionado `role="button"/"link"/"tab"`
+  em ~70 elementos, e três controles que eram toggles sem anunciar
+  estado ("Fonte serifada", "Lembrete diário", "Favoritar busca",
+  "Marcar livro como lido") ganharam `role="switch"/"checkbox"` +
+  `accessibilityState` + a prop achatada equivalente
+  (`accessibilityChecked`/`accessibilitySelected`, necessária nesta
+  versão do react-native-web — ver achado técnico já documentado em
+  `FUNCIONALIDADES.md` 7.2). Testado ao vivo no DOM (aria-checked/
+  aria-selected corretos e reagindo a clique). Segue faltando teste
+  com leitor de tela real (VoiceOver/NVDA) e foco visível por
+  teclado.
+
 ## [Unreleased] - 2026-08-19 (continuação 6)
 
 ### Investigado (sem mudança de código em produção)

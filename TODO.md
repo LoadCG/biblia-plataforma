@@ -107,16 +107,19 @@ serviço pago, política).
 
 ### 🟢 Sem bloqueio — posso atacar em qualquer ordem
 
-**A. Gerar imagem de versículo no nativo** (`FUNCIONALIDADES.md` 5.2,
-hoje só funciona no web)
-1. Instalar `react-native-view-shot` e `expo-sharing`.
-2. Capturar a `View` do cartão de versículo já existente (o desenho já
-   está pronto pro web via Canvas — no nativo, capturar a View
-   renderizada em vez de redesenhar em Canvas).
-3. Compartilhar o arquivo capturado via `expo-sharing`.
-4. Testar em pelo menos um preview/simulador antes de considerar feito
-   (não dá pra validar 100% sem dispositivo/simulador nativo à mão,
-   registrar essa limitação se for o caso).
+**A. Gerar imagem de versículo no nativo** (`FUNCIONALIDADES.md` 5.2)
+— ✅ feito (2026-08-20)
+1. ~~Instalar `react-native-view-shot` e `expo-sharing`.~~
+2. ~~Capturar a `View` do cartão de versículo já existente~~ — feito
+   via `components/CartaoVersiculoImagem.tsx` (View real, não desenho
+   em Canvas) + `captureRef`.
+3. ~~Compartilhar o arquivo capturado via `expo-sharing`.~~ — feito
+   (`Sharing.shareAsync`).
+4. Testar em pelo menos um preview/simulador — **não feito**: sem
+   dispositivo/simulador nativo disponível neste ambiente (só
+   navegador). Só `tsc`/`jest` limpos e revisão de código; o caminho
+   web foi reverificado ao vivo pra garantir que não quebrou com a
+   refatoração compartilhada.
 
 **B. Navegação só por teclado / leitor de tela** (7.2, hoje parcial)
 1. ~~Levantar lista de todo `Pressable` sem `accessibilityRole="button"`

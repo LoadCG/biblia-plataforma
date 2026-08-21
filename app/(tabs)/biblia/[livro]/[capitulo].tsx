@@ -3,6 +3,8 @@ import { useNavbar } from "../../_layout";
 import { useEffect, useRef, useState, useMemo } from "react";
 import { ActivityIndicator, Image, NativeSyntheticEvent, NativeScrollEvent, Pressable, ScrollView, Text, View, Share, LayoutAnimation, Platform, UIManager } from "react-native";
 import * as Clipboard from "expo-clipboard";
+import * as Sharing from "expo-sharing";
+import { captureRef } from "react-native-view-shot";
 
 if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
   UIManager.setLayoutAnimationEnabledExperimental(true);
@@ -16,6 +18,7 @@ import { buscarReferencia } from "../../../../core/biblia/BibliaAPI";
 import type { CapituloTexto } from "../../../../core/biblia/tipos";
 import { livros, obterLivro, obterResumo } from "../../../../core/content/livros";
 import { TextoComReferencias } from "../../../../components/TextoComReferencias";
+import { CartaoVersiculoImagem } from "../../../../components/CartaoVersiculoImagem";
 import { coresDoGenero, descricaoDoGenero } from "../../../../core/content/genero";
 import {
   carregarFonteSerifada,
@@ -30,7 +33,7 @@ import { salvarUltimaLeitura } from "../../../../core/leitura/ultimaLeitura";
 import { grifosRepository, notasRepository, progressoRepository, versiculosSalvosRepository } from "../../../../core/repositories";
 import { falarCapitulo, pararAudio, suportaAudio } from "../../../../core/leitura/audio";
 import { alternarTema, useColorScheme } from "../../../../core/theme";
-import { gerarImagemVersiculo, suportaImagemVersiculo } from "../../../../core/util/gerarImagemVersiculo";
+import { gerarImagemVersiculo } from "../../../../core/util/gerarImagemVersiculo";
 import { mensagemErroAmigavel } from "../../../../core/util/erroAmigavel";
 import { linkVersiculo } from "../../../../core/util/linkVersiculo";
 import { mostrarToast } from "../../../../core/util/toast";
@@ -102,6 +105,8 @@ export default function Leitura() {
   const [audioTocando, setAudioTocando] = useState(false);
   const [versiculoFalando, setVersiculoFalando] = useState<number | null>(null);
   const [imagemVersiculo, setImagemVersiculo] = useState<string | null>(null);
+  const [cartaoNativoParaCapturar, setCartaoNativoParaCapturar] = useState<{ texto: string; referencia: string } | null>(null);
+  const refCartaoNativo = useRef<View>(null);
   const refBarraSelecao = useArrastarParaRolar();
 
   const { setOculta } = useNavbar();
@@ -365,11 +370,59 @@ export default function Leitura() {
     const texto = dados.versiculos.find((v) => v.numero === numero)?.texto;
     if (!texto) return;
     const referencia = `${livro.nome} ${capitulo}:${numero}`;
-    const imagem = gerarImagemVersiculo(texto, referencia);
-    if (imagem) {
-      setImagemVersiculo(imagem);
-      setVersiculosSelecionados(new Set());
+
+    if (Platform.OS === "web") {
+      const imagem = gerarImagemVersiculo(texto, referencia);
+      if (imagem) {
+        setImagemVersiculo(imagem);
+        setVersiculosSelecionados(new Set());
+      }
+      return;
     }
+
+    // No nativo não dá pra desenhar em Canvas — renderiza o cartão
+    // como uma View de verdade fora da tela e captura ela no próximo
+    // efeito, depois que já tiver montado com o texto certo.
+    setCartaoNativoParaCapturar({ texto, referencia });
+    setVersiculosSelecionados(new Set());
+  }
+
+  // Captura o cartão nativo assim que ele terminar de montar/renderizar
+  // com o texto pedido (ver `gerarImagemDoVersiculoSelecionado`).
+  useEffect(() => {
+    if (!cartaoNativoParaCapturar || !refCartaoNativo.current) return;
+    let cancelado = false;
+    (async () => {
+      try {
+        const uri = await captureRef(refCartaoNativo, { format: "png", quality: 1 });
+        if (!cancelado) setImagemVersiculo(uri);
+      } catch {
+        if (!cancelado) mostrarToast("Não foi possível gerar a imagem.");
+      } finally {
+        if (!cancelado) setCartaoNativoParaCapturar(null);
+      }
+    })();
+    return () => {
+      cancelado = true;
+    };
+  }, [cartaoNativoParaCapturar]);
+
+  async function compartilharImagemVersiculo() {
+    if (!imagemVersiculo) return;
+    if (Platform.OS === "web") {
+      const link = document.createElement("a");
+      link.href = imagemVersiculo;
+      link.download = `${livro?.slug ?? "versiculo"}-${capitulo}.png`;
+      link.click();
+      mostrarToast("Imagem baixada!");
+      return;
+    }
+    const disponivel = await Sharing.isAvailableAsync();
+    if (!disponivel) {
+      mostrarToast("Compartilhamento não disponível neste dispositivo.");
+      return;
+    }
+    await Sharing.shareAsync(imagemVersiculo, { mimeType: "image/png", dialogTitle: "Compartilhar versículo" });
   }
 
   async function copiarVersiculos() {
@@ -731,12 +784,12 @@ export default function Leitura() {
                 <Text className="text-cor-texto dark:text-cor-texto-dark font-semibold text-sm">Copiar</Text>
               </Pressable>
 
-              <Pressable onPress={compartilharVersiculos} accessibilityRole="button" className={`flex-row items-center justify-center gap-1 bg-cor-borda dark:bg-cor-borda-dark px-4 py-2 rounded-lg active:opacity-70 ${suportaImagemVersiculo() && versiculosSelecionados.size === 1 ? "" : "mr-6"}`}>
+              <Pressable onPress={compartilharVersiculos} accessibilityRole="button" className={`flex-row items-center justify-center gap-1 bg-cor-borda dark:bg-cor-borda-dark px-4 py-2 rounded-lg active:opacity-70 ${versiculosSelecionados.size === 1 ? "" : "mr-6"}`}>
                 <MaterialIcons name="share" size={18} className="text-cor-texto dark:text-cor-texto-dark" />
                 <Text className="text-cor-texto dark:text-cor-texto-dark font-semibold text-sm">Compartilhar</Text>
               </Pressable>
 
-              {suportaImagemVersiculo() && versiculosSelecionados.size === 1 ? (
+              {versiculosSelecionados.size === 1 ? (
                 <Pressable onPress={gerarImagemDoVersiculoSelecionado} accessibilityRole="button" className="flex-row items-center justify-center gap-1 bg-cor-borda dark:bg-cor-borda-dark px-4 py-2 rounded-lg mr-6 active:opacity-70">
                   <MaterialIcons name="image" size={18} className="text-cor-texto dark:text-cor-texto-dark" />
                   <Text className="text-cor-texto dark:text-cor-texto-dark font-semibold text-sm">Imagem</Text>
@@ -843,25 +896,17 @@ export default function Leitura() {
             ) : null}
             <View className="flex-row gap-3">
               <Pressable
-                onPress={() => {
-                  if (Platform.OS === "web" && imagemVersiculo) {
-                    const link = document.createElement("a");
-                    link.href = imagemVersiculo;
-                    link.download = `${livro?.slug ?? "versiculo"}-${capitulo}.png`;
-                    link.click();
-                  }
-                  mostrarToast("Imagem baixada!");
-                }}
+                onPress={compartilharImagemVersiculo}
                 accessibilityRole="button"
-                accessibilityLabel="Baixar imagem"
+                accessibilityLabel={Platform.OS === "web" ? "Baixar imagem" : "Compartilhar imagem"}
                 className="flex-row items-center gap-1.5 bg-cor-destaque dark:bg-cor-destaque-dark px-5 py-2.5 rounded-full active:opacity-70"
               >
                 {/* dark:cor-destaque-dark é um dourado claro, feito pra
                     texto/ícone em cima, não pra fundo com branco — branco
                     aqui dava só ~2.1:1 de contraste (mesmo problema já
                     corrigido no card "Estudo por Resumos" do Início) */}
-                <MaterialIcons name="download" size={18} color={escuro ? "#2a241c" : "white"} />
-                <Text className="text-white dark:text-cor-texto font-semibold text-sm">Baixar</Text>
+                <MaterialIcons name={Platform.OS === "web" ? "download" : "share"} size={18} color={escuro ? "#2a241c" : "white"} />
+                <Text className="text-white dark:text-cor-texto font-semibold text-sm">{Platform.OS === "web" ? "Baixar" : "Compartilhar"}</Text>
               </Pressable>
               <Pressable onPress={() => setImagemVersiculo(null)} accessibilityRole="button" accessibilityLabel="Fechar" className="px-5 py-2.5 rounded-full border border-white/30 active:opacity-70">
                 <Text className="text-white font-semibold text-sm">Fechar</Text>
@@ -870,6 +915,12 @@ export default function Leitura() {
           </Pressable>
         </Pressable>
       </Modal>
+
+      {cartaoNativoParaCapturar ? (
+        <View style={{ position: "absolute", top: -9999, left: -9999 }}>
+          <CartaoVersiculoImagem ref={refCartaoNativo} texto={cartaoNativoParaCapturar.texto} referencia={cartaoNativoParaCapturar.referencia} />
+        </View>
+      ) : null}
     </View>
   );
 }

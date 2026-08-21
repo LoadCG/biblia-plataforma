@@ -776,26 +776,39 @@ de volta pra "0 de 34" na hora, e o estado revertido também sobrevive
 a um reload da página (persistiu no banco de verdade, não só na
 memória).
 
-### 5.2 Gerar imagem de versículo pra compartilhar `🔶`
-**Funcionalidade:** `core/util/gerarImagemVersiculo.ts` — cartão
-1080x1080 desenhado direto via Canvas API (sem dependência nova, sem
-servidor), fundo em gradiente com as cores de marca do app (mesmos
-tons de `cor-fundo-dark`/`cor-destaque-dark`), quebra de linha manual
-(`measureText`) e tamanho de fonte que diminui automaticamente pra
-versículos longos não estourarem o cartão. Só web por enquanto — no
-nativo exigiria capturar uma View de verdade (`react-native-view-shot`)
-e compartilhar o arquivo (`expo-sharing`), duas dependências novas que
-não dava pra validar sem dispositivo/simulador nativo à mão; fica pro
-próximo passo natural quando isso puder ser testado de verdade.
-Testado ao vivo no navegador: canvas gerado 1080×1080 de verdade (não
-em branco — confirmado decodificando os pixels), baixado como PNG via
-link temporário. Botão só aparece com exatamente 1 versículo
-selecionado (`versiculosSelecionados.size === 1`, testado com 1 e com
-2 selecionados).
+### 5.2 Gerar imagem de versículo pra compartilhar `✅`
+**Funcionalidade:** duas implementações que convergem no mesmo modal
+de preview em `app/(tabs)/biblia/[livro]/[capitulo].tsx`:
+- **Web** (`core/util/gerarImagemVersiculo.ts`): cartão 1080x1080
+  desenhado direto via Canvas API (sem dependência nova, sem
+  servidor), fundo em gradiente com as cores de marca do app (mesmos
+  tons de `cor-fundo-dark`/`cor-destaque-dark`), quebra de linha
+  manual (`measureText`) e tamanho de fonte que diminui
+  automaticamente pra versículos longos não estourarem o cartão.
+- **Nativo** (2026-08-20, `components/CartaoVersiculoImagem.tsx`):
+  como não dá pra desenhar em Canvas no nativo, o mesmo cartão é uma
+  `View` de verdade (gradiente via `expo-linear-gradient`, já era
+  dependência do projeto) renderizada fora da tela
+  (`top: -9999, left: -9999`) e capturada com `react-native-view-shot`
+  (`captureRef`) assim que monta com o texto certo (`useEffect` que
+  observa o estado `cartaoNativoParaCapturar`). O PNG resultante
+  (`file://...`) alimenta o mesmo `<Image>` de preview que o web usa
+  pro `data:` URI. Instalado `expo-sharing` pra compartilhar o
+  arquivo — o botão "Baixar" do modal vira "Compartilhar" no nativo
+  e chama `Sharing.shareAsync` em vez do link de download do DOM.
+  **Limitação registrada:** não dá pra validar 100% sem um
+  dispositivo/simulador nativo à mão neste ambiente (só navegador
+  disponível) — o caminho web foi reverificado ao vivo depois da
+  mudança (canvas 1080×1080 decodificado, PNG baixado via link
+  temporário, segue funcionando igual); o caminho nativo (captura da
+  View + `Sharing.shareAsync`) ficou sem teste ao vivo em dispositivo
+  real, só revisão de código e `tsc`/`jest` limpos.
 **UX/UI:** botão "Imagem" na barra de seleção da leitura (ao lado de
-Compartilhar), abre um modal de preview com "Baixar"/"Fechar". Fonte
-serifada (Georgia) e cores herdadas da identidade visual do app, não
-uma captura de tela crua da interface.
+Compartilhar), agora visível em toda plataforma (antes só aparecia no
+web via `suportaImagemVersiculo()`, removido). Abre um modal de
+preview com "Baixar"/"Fechar" no web ou "Compartilhar"/"Fechar" no
+nativo. Fonte serifada (Georgia) e cores herdadas da identidade visual
+do app, não uma captura de tela crua da interface.
 
 ---
 

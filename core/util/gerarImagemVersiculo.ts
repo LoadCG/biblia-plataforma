@@ -1,12 +1,10 @@
 import { Platform } from "react-native";
 
 // Cartão de imagem pra compartilhar um versículo (ver 5.2 do
-// FUNCIONALIDADES.md) — só web por enquanto: usa a Canvas API direto,
-// sem dependência nova nem servidor. No nativo exigiria capturar uma
-// View de verdade (`react-native-view-shot`) e um sharer de arquivo
-// (`expo-sharing`), duas dependências novas que não dá pra validar
-// sem um dispositivo/simulador nativo à mão — fica pro próximo passo
-// natural quando isso puder ser testado de verdade.
+// FUNCIONALIDADES.md) — versão web: usa a Canvas API direto, sem
+// dependência nova nem servidor. A versão nativa usa uma View de
+// verdade (`components/CartaoVersiculoImagem.tsx`) capturada com
+// `react-native-view-shot` e compartilhada com `expo-sharing`.
 const LARGURA = 1080;
 const ALTURA = 1080;
 const COR_FUNDO_DE = "#241c12";

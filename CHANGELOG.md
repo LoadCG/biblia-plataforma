@@ -5,6 +5,23 @@ O formato é baseado no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.
 
 ## [Unreleased] - 2026-08-20
 
+### Adicionado
+- **Gerar imagem de versículo no nativo** (`TODO.md` item A,
+  `FUNCIONALIDADES.md` 5.2): antes só funcionava no web (Canvas API).
+  Instalado `react-native-view-shot` e `expo-sharing`. Criado
+  `components/CartaoVersiculoImagem.tsx` — mesmo cartão visual do web
+  (gradiente + Georgia + cores de marca), mas como `View` de verdade
+  (usa `expo-linear-gradient`, já era dependência), renderizada fora
+  da tela e capturada via `captureRef` assim que monta com o texto
+  certo. O botão "Imagem" na leitura agora aparece em toda plataforma
+  (antes só no web); o modal de preview ganhou "Compartilhar" (via
+  `Sharing.shareAsync`) no lugar de "Baixar" quando não é web.
+  Reverificado ao vivo que o caminho web continua funcionando igual
+  depois da refatoração (canvas 1080×1080 real, PNG baixado). O
+  caminho nativo em si não pôde ser testado ao vivo neste ambiente
+  (sem dispositivo/simulador nativo disponível, só navegador) — só
+  `tsc`/`jest` limpos e revisão de código.
+
 ### Corrigido
 - **Acessibilidade — `accessibilityRole` faltando em dezenas de
   `Pressable`** (`TODO.md` item B, `FUNCIONALIDADES.md` 7.2): auditoria

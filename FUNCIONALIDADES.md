@@ -128,9 +128,43 @@ barra de topo com abas Texto/Resumo e ajustes, mostrando só uma faixa
 fina com "Livro Capítulo"), desativa ao rolar pra cima ou voltar perto
 do topo.
 **UX/UI:** saída é automática (rolar pra cima), não depende de um botão
-escondido — a barra flutuante de navegação de capítulo (pill) e a tab
-bar continuam sempre visíveis mesmo em foco ativo, então a pessoa nunca
-fica presa sem controles de navegação.
+escondido — a barra flutuante de navegação de capítulo (pill) continua
+sempre visível mesmo em foco ativo, então a pessoa nunca fica presa sem
+controles de navegação. No celular a tab bar inferior é ocultada em
+foco ativo (`NavbarContext.setOculta`); no desktop a sidebar nunca é
+ocultada.
+
+**Bug real, reportado pelo usuário (2026-08-20): "leitura bíblica está
+inutilizável no celular, quando começa a rolar para baixo a tela toda
+some, fica da cor do fundo do tema (off white ou marrom)".** Causa raiz
+em `app/(tabs)/_layout.tsx`, não na tela de leitura: a tab bar do
+celular era **desmontada** quando o Modo Foco ligava
+(`{!sidebar && !oculta ? <TabList>...</TabList> : null}`). Só que os
+`TabTrigger` dentro daquele `TabList` são exatamente o que *define
+quais telas existem* pro `expo-router/ui` (`triggersToScreens` em
+`node_modules/expo-router/build/ui/common.js`, alimentado por
+`useTabsWithChildren` percorrendo os children do `<Tabs>` — mesma
+mecânica da "pegadinha 1" já documentada no topo daquele arquivo).
+Sem triggers, nenhuma tela é registrada, o `<TabSlot>` renderiza vazio
+e sobra só o `backgroundColor` do `<Tabs>` — `#faf8f4` no tema claro e
+`#1b1712` no escuro, exatamente o "off white ou marrom" relatado.
+Acontecia **só no celular** porque no desktop quem renderiza os
+triggers é a sidebar, que nunca é ocultada — por isso não apareceu em
+nenhum teste anterior (todos feitos em viewport desktop, ou em mobile
+sem rolar o suficiente pra ativar o foco).
+Corrigido mantendo o `TabList` sempre montado e escondendo só
+visualmente com `display: "none"` (que também tira os botões da ordem
+de tabulação e do leitor de tela, então não vira uma armadilha de
+acessibilidade).
+**Testado ao vivo (antes e depois, viewport mobile real de 375px com
+reload após o resize — `useWindowDimensions` não reage a resize sem
+recarregar):** com o código antigo, rolar 200px deixava
+`document.body.innerText.length === 0` (página literalmente vazia) e a
+tab bar fora do DOM; com a correção, o mesmo scroll mantém o texto
+íntegro (14.032 chars) e a tab bar só muda pra `display: none`,
+voltando a `flex` ao rolar pra cima. Navegação por abas conferida
+depois da correção (clicar em "Você" leva pra `/voce`), e o desktop
+segue com a sidebar visível e o texto intacto.
 
 ---
 

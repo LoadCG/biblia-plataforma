@@ -5,6 +5,27 @@ O formato é baseado no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.
 
 ## [Unreleased] - 2026-08-20
 
+### Corrigido (bug crítico reportado pelo usuário)
+- **Leitura bíblica inutilizável no celular: a tela inteira ficava em
+  branco ao rolar pra baixo** (`FUNCIONALIDADES.md` 1.8). Relato: "a
+  tela toda some, fica da cor do fundo do tema (off white ou marrom)".
+  Causa raiz em `app/(tabs)/_layout.tsx`, não na tela de leitura: o
+  Modo Foco **desmontava** a tab bar do celular
+  (`{!sidebar && !oculta ? <TabList/> : null}`), e os `TabTrigger` ali
+  dentro são o que define quais telas existem pro `expo-router/ui`
+  (`triggersToScreens`). Sem triggers, nenhuma tela era registrada, o
+  `<TabSlot>` renderizava vazio e sobrava só o `backgroundColor` do
+  `<Tabs>` — `#faf8f4` (off white) no claro e `#1b1712` (marrom) no
+  escuro, exatamente o relatado. Só afetava o celular porque no desktop
+  quem renderiza os triggers é a sidebar, que nunca é ocultada.
+  Corrigido mantendo o `TabList` sempre montado e escondendo só com
+  `display: "none"` (que também o tira da ordem de tabulação e do
+  leitor de tela).
+  Verificado ao vivo antes/depois em viewport mobile real: com o código
+  antigo, rolar 200px zerava o `innerText` da página; com a correção, o
+  texto fica íntegro e a tab bar volta ao rolar pra cima. Navegação por
+  abas e o desktop conferidos sem regressão.
+
 ### Corrigido (backlog de UI, itens 2/6/9 por ordem de impacto)
 - **Grade de cartões da tela Estatísticas** (`FUNCIONALIDADES.md` 3.5):
   cartões com `flex-1` deixavam o último esticado ocupando a linha

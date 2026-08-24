@@ -132,10 +132,25 @@ export default function TabsLayout() {
 
         <TabSlot style={{ flex: 1 }} />
 
-        {!sidebar && !oculta ? (
-          <TabList style={{ 
-            backgroundColor: cores.elevado, 
-            paddingTop: 8, 
+        {/* Pegadinha 3 (bug real, reportado em 2026-08-20: "leitura
+            bíblica está inutilizável no celular, quando começa a rolar
+            para baixo a tela toda some, fica da cor do fundo do tema"):
+            este TabList NÃO pode ser desmontado quando o Modo Foco
+            esconde a barra. Os `TabTrigger` aqui dentro é que *definem*
+            quais telas existem (`triggersToScreens`, ver pegadinha 1
+            acima) — tirar o TabList da árvore zera a lista de telas, o
+            `TabSlot` renderiza vazio e sobra só o `backgroundColor` do
+            `<Tabs>` (#faf8f4 no claro, #1b1712 no escuro — exatamente o
+            "off white ou marrom" relatado). Só acontecia no celular
+            porque no desktop quem renderiza é a sidebar acima, que
+            nunca é ocultada. Solução: manter sempre montado e esconder
+            só visualmente com `display: "none"` (que também tira os
+            botões da ordem de tabulação e do leitor de tela). */}
+        {!sidebar ? (
+          <TabList style={{
+            display: oculta ? "none" : "flex",
+            backgroundColor: cores.elevado,
+            paddingTop: 8,
             paddingBottom: 8,
             borderTopWidth: 1,
             borderTopColor: cores.borda,

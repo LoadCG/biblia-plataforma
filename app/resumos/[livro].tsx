@@ -190,7 +190,11 @@ export default function ResumoLivro() {
               <TextoComReferencias
                 texto={item.valor}
                 className="text-cor-texto dark:text-cor-texto-dark mt-0.5"
-                style={fonteSerifada ? { fontFamily: FAMILIA_SERIFADA } : undefined}
+                style={{
+                  fontSize: tamanhoFonte,
+                  lineHeight: tamanhoFonte * 1.4,
+                  fontFamily: fonteSerifada ? FAMILIA_SERIFADA : undefined,
+                }}
               />
             </View>
           ))}

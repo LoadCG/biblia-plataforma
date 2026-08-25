@@ -75,6 +75,19 @@ dispositivo e compartilhado com a leitura de capítulo — ver 2.2c.
 **UX/UI:** controle discreto, não competindo visualmente com o conteúdo;
 desabilita visualmente ao chegar no limite mínimo/máximo.
 
+**Bug real, reportado pelo usuário (2026-08-20): "os primeiros textos
+ficam pequenos demais mesmo quando o usuário aumenta a fonte ao máximo
+possível".** A ficha rápida no topo do resumo (AUTOR, DATA PROVÁVEL,
+PERÍODO HISTÓRICO...) **não respeitava o controle de fonte** — o
+`TextoComReferencias` dela não recebia `fontSize`/`lineHeight`
+nenhum, só herdava o tamanho padrão do texto, enquanto as seções de
+conteúdo mais abaixo (Pano de Fundo, Temas Principais etc.) já
+escalavam corretamente com `tamanhoFonte`. Corrigido nos dois lugares
+onde a ficha rápida é renderizada: `app/resumos/[livro].tsx` (tela
+dedicada de resumo) e a aba "Resumo" dentro da leitura de capítulo
+(`app/(tabs)/biblia/[livro]/[capitulo].tsx`) — ambas agora aplicam
+`fontSize: tamanhoFonte` igual ao resto do texto corrido.
+
 ### 1.6b Atalho de tema direto no cabeçalho da leitura de capítulo `✅`
 **Funcionalidade:** `BotaoTema` (mesmo componente usado em Configurações
 e no modal "Ajustes de leitura") ganhou uma segunda instância direto no

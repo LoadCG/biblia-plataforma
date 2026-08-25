@@ -774,7 +774,11 @@ export default function Leitura() {
               {resumo.fichaRapida.map((item, i) => (
                 <View key={item.rotulo} className={`px-4 py-3 ${i < resumo.fichaRapida.length - 1 ? "border-b border-cor-borda dark:border-cor-borda-dark" : ""}`}>
                   <Text className="text-xs font-semibold uppercase text-cor-texto-suave dark:text-cor-texto-suave-dark">{item.rotulo}</Text>
-                  <TextoComReferencias texto={item.valor} className="text-cor-texto dark:text-cor-texto-dark mt-0.5" style={fonteSerifada ? { fontFamily: FAMILIA_SERIFADA } : undefined} />
+                  <TextoComReferencias
+                    texto={item.valor}
+                    className="text-cor-texto dark:text-cor-texto-dark mt-0.5"
+                    style={{ fontSize: tamanhoFonte, lineHeight: tamanhoFonte * 1.4, fontFamily: fonteSerifada ? FAMILIA_SERIFADA : undefined }}
+                  />
                 </View>
               ))}
             </View>

@@ -5,6 +5,13 @@ O formato é baseado no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.
 
 ## [Unreleased] - 2026-08-20
 
+### Corrigido (fonte da ficha rápida do resumo)
+- **Ficha rápida do resumo não respeitava o controle de tamanho de
+  fonte** (`FUNCIONALIDADES.md` 1.6): AUTOR/DATA PROVÁVEL/PERÍODO
+  HISTÓRICO etc. ficavam sempre no tamanho padrão mesmo com o A+ no
+  máximo, enquanto o resto do texto corrido já escalava. Corrigido em
+  `app/resumos/[livro].tsx` e na aba "Resumo" da leitura de capítulo.
+
 ### Reescrito (sistema de esconder/mostrar durante a rolagem)
 - **Modo Foco da leitura bíblica** (`FUNCIONALIDADES.md` 1.8): pedido
   do usuário pra refatorar tudo depois de achar 3 bugs no celular

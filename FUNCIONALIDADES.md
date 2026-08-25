@@ -1707,6 +1707,25 @@ vem de dado dinâmico, não dá pra usar `dark:` do NativeWind ali); texto
 deixa claro que a busca hoje é só nos resumos, não no texto bíblico
 inteiro (ver 9.5) — evita expectativa errada.
 
+**Item pendente do plano original fechado (2026-08-24):** o item 7 do
+plano de reformulação visual (topo do `TODO.md`) pedia "uma ilustração
+ou imagem gerada dinamicamente (com estilo próprio do nosso app)
+flutuando no card" — os cards ficaram só com o emoji cru de sistema
+(❤️🌿🕊️ etc.) desde a reformulação, sem imagem própria, item registrado
+como pendente na auditoria de UI de 2026-08-20 (achado 7). Sem gerador
+de imagem disponível, implementada a alternativa que ainda cumpre "não
+copiar, identidade original": `components/IlustracaoTema.tsx`, um
+ícone de traço (line art) desenhado à mão por tema em SVG
+(`react-native-svg`, já dependência do projeto), usando a mesma cor de
+texto do card — substitui o emoji cru (que também renderiza diferente
+por sistema operacional, Windows/Mac/Android têm sets distintos) por
+algo consistente em qualquer plataforma e com cara própria do app. O
+campo `icone` (emoji) continua em `Tema` só como fallback/referência,
+não é mais renderizado. Testado ao vivo: 8 SVGs renderizados (um por
+card), cor do traço acompanha o tema claro/escuro corretamente
+(`#e0a99f` no escuro → `#934840` no claro pro card "Amor", por
+exemplo).
+
 ### 9.5 Pesquisa: busca por palavra na Bíblia inteira `✅`
 **Funcionalidade:** resolvido junto com a migração pro SQLite (ver
 2.6) — índice de texto completo virou uma tabela virtual FTS5 do

@@ -3,6 +3,22 @@
 Todas as mudanças notáveis feitas no projeto serão documentadas neste arquivo.
 O formato é baseado no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/).
 
+## [Unreleased] - 2026-08-24
+
+### Adicionado
+- **Ilustrações originais nos cards de tema da tela Descubra**
+  (`FUNCIONALIDADES.md` 9.4, `TODO.md` item 7 do backlog de UI):
+  último item pendente do plano de reformulação visual original —
+  pedia "uma ilustração ou imagem gerada dinamicamente, com estilo
+  próprio do nosso app, flutuando no card", os cards ficaram só com
+  emoji cru desde a reformulação. `components/IlustracaoTema.tsx`:
+  8 ícones de traço (line art) desenhados originalmente em SVG
+  (`react-native-svg`), um por tema (Amor, Cura, Ansiedade, Raiva,
+  Alegria, Perdão, Esperança, Sabedoria), usando a cor de texto do
+  próprio card — substitui o emoji (que também renderiza diferente por
+  sistema operacional). Testado ao vivo: 8 SVGs renderizados
+  corretamente, cor do traço acompanha a troca de tema claro/escuro.
+
 ## [Unreleased] - 2026-08-20
 
 ### Corrigido (ambiente de teste ao vivo — pedido do usuário pra investigar)

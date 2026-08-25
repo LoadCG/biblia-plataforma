@@ -1,10 +1,15 @@
+import type { IdTema } from "../../components/IlustracaoTema";
+
 // Temas pré-definidos pra aba Pesquisa — lista curada de referências
 // por assunto, no mesmo espírito de REFERENCIAS_CURADAS em
 // versiculoDoDia.ts. Cores usam a mesma paleta de genero.ts (bg/texto
 // claros e escuros já testados de contraste).
 export type Tema = {
-  id: string;
+  id: IdTema;
   titulo: string;
+  /** Emoji só como rótulo de acessibilidade/fallback — o card usa a
+   * ilustração SVG própria (`IlustracaoTema`), não este emoji cru
+   * (ver `components/IlustracaoTema.tsx`). */
   icone: string;
   corBg: string;
   corBgDark: string;

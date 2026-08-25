@@ -357,13 +357,14 @@ de impacto:
    `/estatisticas` conferidos e já estavam corretos (alcançáveis só da
    Início). Testado ao vivo: de Descubra → Planos → "← Voltar" retorna
    pra `/pesquisa` (não mais sempre `/`); Medalhas mostra "← Você".
-7. **Cards de tema em Descubra sem a ilustração prevista no plano
-   original** (item 7 do topo deste arquivo) — hoje é só emoji + cor
-   sólida; a "ilustração/imagem flutuando no card" nunca foi feita.
-   Ficou implicitamente pela metade, sem estar marcado como tal em
-   lugar nenhum. **Não implementado ainda** — geração de ilustração
-   original é trabalho de design maior, fora do escopo de um ajuste
-   pontual de UI.
+7. ~~**Cards de tema em Descubra sem a ilustração prevista no plano
+   original**~~ — ✅ feito (2026-08-24). Sem gerador de imagem
+   disponível, implementada a alternativa que ainda cumpre "não copiar,
+   identidade original": `components/IlustracaoTema.tsx`, ícone de
+   traço (line art) desenhado por tema em SVG
+   (`react-native-svg`), substituindo o emoji cru de sistema (que
+   também rendia diferente por SO). Testado ao vivo: 8 ilustrações
+   renderizadas, cor acompanha o tema claro/escuro.
 8. ~~**Números "0" isolados sem contexto imediato**~~ — revisado
    (2026-08-20), **sem mudança de código.** Conferindo o código-fonte:
    o número já vem com o rótulo logo abaixo em ambos os cards ("0" +

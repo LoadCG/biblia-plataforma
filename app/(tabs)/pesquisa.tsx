@@ -5,6 +5,7 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { BotaoTema } from "../../components/BotaoTema";
 import { CardVersiculoTema } from "../../components/CardVersiculoTema";
 import { EstadoVazio } from "../../components/EstadoVazio";
+import { IlustracaoTema } from "../../components/IlustracaoTema";
 import { buscarLivros } from "../../core/content/busca";
 import { livros } from "../../core/content/livros";
 import { buscarGlobal, ResultadoBuscaGlobal } from "../../core/biblia/BibliaAPI";
@@ -238,11 +239,11 @@ export default function Pesquisa() {
                     style={{ backgroundColor: escuro ? tema.corBgDark : tema.corBg, width: "48%", height: 128 }}
                     className="rounded-3xl mb-3 justify-end overflow-hidden active:opacity-80"
                   >
-                    <Text
-                      style={{ position: "absolute", top: -14, right: -10, fontSize: 68, opacity: 0.5, transform: [{ rotate: "-12deg" }] }}
+                    <View
+                      style={{ position: "absolute", top: -10, right: -10, opacity: 0.5, transform: [{ rotate: "-12deg" }] }}
                     >
-                      {tema.icone}
-                    </Text>
+                      <IlustracaoTema tema={tema.id} cor={escuro ? tema.corTextoDark : tema.corTexto} tamanho={72} />
+                    </View>
                     <Text
                       style={{ color: escuro ? tema.corTextoDark : tema.corTexto }}
                       className="text-lg font-extrabold px-4 pb-4"

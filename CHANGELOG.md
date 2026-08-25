@@ -5,6 +5,27 @@ O formato é baseado no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.
 
 ## [Unreleased] - 2026-08-20
 
+### Reescrito (sistema de esconder/mostrar durante a rolagem)
+- **Modo Foco da leitura bíblica** (`FUNCIONALIDADES.md` 1.8): pedido
+  do usuário pra refatorar tudo depois de achar 3 bugs no celular
+  (demora pra sumir, difícil trazer de volta arrastando, "glitch" no
+  fim da leitura). Causa raiz: cabeçalho e tab bar eram desmontados/
+  remontados ao ligar/desligar o foco, mudando a altura visível do
+  `ScrollView` — a mesma métrica usada pra decidir "perto do fim",
+  formando um loop de realimentação. Reescrito como camada sobreposta
+  (`Animated.View` sempre montada, `translateY` animado) que nunca
+  participa do layout do conteúdo, igual ao que apps como Twitter/
+  Instagram/YouVersion fazem. Esta tela também parou de esconder a
+  tab bar do app (fica sempre visível agora). Algoritmo de direção
+  reescrito pra acumular distância desde a última troca de direção
+  (em vez de comparar delta frame a frame), corrigindo o "difícil de
+  trazer de volta". Achado e corrigido no processo: um loop de
+  remontagem infinito no `onLayout` do novo cabeçalho (jitter de
+  subpixel disparando `setState` sem parar). `tsc`/`jest` limpos;
+  parte da verificação ao vivo ficou inconclusiva por instabilidade
+  do ambiente de preview nesta sessão (ver nota detalhada no
+  `FUNCIONALIDADES.md`) — recomendado testar em dispositivo real.
+
 ### Corrigido (4 bugs reportados após teste real em celular)
 - **Overflow horizontal no cabeçalho da leitura em mobile**
   (`FUNCIONALIDADES.md` 2.2): 5 controles espremidos numa linha só

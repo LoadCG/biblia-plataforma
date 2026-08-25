@@ -1,7 +1,6 @@
 import { Link, router, useLocalSearchParams } from "expo-router";
-import { useNavbar } from "../../_layout";
 import { useEffect, useRef, useState, useMemo } from "react";
-import { ActivityIndicator, Image, NativeSyntheticEvent, NativeScrollEvent, Pressable, ScrollView, Text, View, Share, LayoutAnimation, Platform, UIManager } from "react-native";
+import { ActivityIndicator, Animated, Image, NativeSyntheticEvent, NativeScrollEvent, Pressable, ScrollView, Text, View, Share, LayoutAnimation, Platform, UIManager } from "react-native";
 import * as Clipboard from "expo-clipboard";
 import * as Sharing from "expo-sharing";
 import { captureRef } from "react-native-view-shot";
@@ -110,12 +109,24 @@ export default function Leitura() {
   const refCartaoNativo = useRef<View>(null);
   const refBarraSelecao = useArrastarParaRolar();
 
-  const { setOculta } = useNavbar();
+  // Altura real do cabeçalho, medida via onLayout (varia entre a aba
+  // Texto — que tem uma linha extra de título — e a aba Resumo).
+  // Usada tanto pra deslocar o cabeçalho pra fora da tela quanto pra
+  // reservar o mesmo espaço fixo no topo do conteúdo, sempre — ver
+  // nota grande abaixo sobre por que esse espaço não pode variar com
+  // o scroll.
+  const [alturaHeader, setAlturaHeader] = useState(96);
+  const progressoFoco = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    setOculta(focoAtivo);
-    return () => setOculta(false);
-  }, [focoAtivo, setOculta]);
+    Animated.timing(progressoFoco, {
+      toValue: focoAtivo ? 1 : 0,
+      duration: 220,
+      useNativeDriver: Platform.OS !== "web",
+    }).start();
+  }, [focoAtivo, progressoFoco]);
+
+  const headerTranslateY = progressoFoco.interpolate({ inputRange: [0, 1], outputRange: [0, -alturaHeader] });
 
   const scrollRef = useRef<ScrollView>(null);
   const posicoes = useRef<Record<number, number>>({});
@@ -214,36 +225,82 @@ export default function Leitura() {
     }
   };
 
+  // Reescrito do zero (2026-08-20) depois de 3 bugs reportados pelo
+  // usuário testando no celular: cabeçalho demorava pra sumir, era
+  // difícil trazer de volta arrastando pra cima, e "glitchava"
+  // (aparecia/sumia repetidas vezes) ao chegar no fim da página.
+  //
+  // Causa raiz dos 3, achada investigando como front-end sênior: o
+  // cabeçalho E a tab bar do app (`NavbarContext`) eram desmontados/
+  // remontados quando o foco ligava/desligava — isso muda a altura
+  // real da área visível do ScrollView (`layoutMeasurement.height`).
+  // Só que a lógica de decisão usava exatamente esse valor
+  // (`alturaRolavel = contentSize.height - layoutMeasurement.height`)
+  // pra saber se estava "perto do fim" — ou seja, a decisão de
+  // esconder o cabeçalho influenciava a própria métrica usada pra
+  // tomar a próxima decisão. Um loop de realimentação clássico: some →
+  // a área visível cresce → "perto do fim" deixa de ser verdade →
+  // aparece de novo → área visível encolhe → "perto do fim" volta a
+  // ser verdade → some de novo, repetindo enquanto o dedo continua na
+  // tela. É o mesmo motivo pelo qual apps de verdade (Twitter,
+  // Instagram, YouVersion) sempre implementam essa barra como uma
+  // camada sobreposta (`position: absolute`/`fixed`) que nunca
+  // participa do layout do conteúdo abaixo — ver o cabeçalho logo
+  // abaixo, agora `Animated.View` absoluto, e a tab bar do app, que
+  // parou de ser escondida por esta tela (`app/(tabs)/_layout.tsx`
+  // não recebe mais `setOculta` daqui). Com isso,
+  // `layoutMeasurement.height` fica estável durante toda a leitura, e
+  // o loop de realimentação deixa de existir estruturalmente — não é
+  // só um ajuste de threshold.
+  //
+  // Corrigido também o algoritmo de decisão em si: a versão antiga
+  // comparava o delta entre o evento de scroll atual e o anterior
+  // (~a cada 32ms) contra um limiar fixo — um arrasto lento pra cima
+  // gera vários eventos de poucos pixels cada, nenhum sozinho cruzando
+  // o limiar, então "nunca" trazia o cabeçalho de volta (era preciso
+  // um chute rápido). A versão nova acumula a distância percorrida
+  // *desde a última troca de direção* (zera o acumulador sempre que a
+  // direção muda) — é o padrão usado por bibliotecas de "hide on
+  // scroll" consolidadas, funciona igual pra arrasto lento ou rápido.
+  const DELTA_MINIMO = 4; // ignora jitter/ruído residual de momentum
+  const LIMIAR_ACUMULADO = 32; // distância na mesma direção antes de reagir
+  const MARGEM_BORDA = 64; // perto do topo/fim, cabeçalho sempre visível
   const ultimoY = useRef(0);
+  const acumulado = useRef(0);
+  const direcaoAtual = useRef<"cima" | "baixo">("cima");
+
   function aoRolar(e: NativeSyntheticEvent<NativeScrollEvent>) {
     setDestaqueAlvo(false);
 
     const { contentOffset, contentSize, layoutMeasurement } = e.nativeEvent;
-    const alturaRolavel = contentSize.height - layoutMeasurement.height;
-    // "Elastic overscroll"/bounce (arrastar além do início/fim da lista,
-    // comum no iOS e no web) manda valores de `contentOffset.y` negativos
-    // ou maiores que `alturaRolavel` durante a animação de retorno — sem
-    // esse clamp, essas oscilações cruzavam o limiar de ±15px repetidas
-    // vezes e faziam o cabeçalho/navbar aparecer e sumir em sequência
-    // rápida ("glitch") ao chegar no fim da página (reportado pelo
-    // usuário, 2026-08-20).
-    const y = Math.max(0, Math.min(contentOffset.y, Math.max(alturaRolavel, 0)));
-
-    // Perto do fim do conteúdo não há mais nada a revelar escondendo o
-    // cabeçalho — mantém ele sempre visível ali, em vez de decidir por
-    // direção de arrasto (que é instável bem na borda, ver acima).
-    const pertoDoFim = alturaRolavel > 0 && y >= alturaRolavel - 24;
-
-    if (pertoDoFim) {
-      setFocoAtivo(false);
-    } else if (y > ultimoY.current + 15 && y > 100) {
-      setFocoAtivo(true);
-    } else if (y < ultimoY.current - 15 || y <= 50) {
-      setFocoAtivo(false);
-    }
+    const alturaRolavel = Math.max(0, contentSize.height - layoutMeasurement.height);
+    // Overscroll elástico (arrastar além do início/fim, comum no
+    // iOS/web) manda `contentOffset.y` fora de [0, alturaRolavel]
+    // durante a animação de retorno — sem o clamp, isso ainda geraria
+    // ruído na direção detectada mesmo com layoutMeasurement estável.
+    const y = Math.max(0, Math.min(contentOffset.y, alturaRolavel));
+    const diferenca = y - ultimoY.current;
     ultimoY.current = y;
+    setProgresso(alturaRolavel > 0 ? y / alturaRolavel : 0);
 
-    setProgresso(alturaRolavel > 0 ? Math.min(1, Math.max(0, y / alturaRolavel)) : 0);
+    if (y <= MARGEM_BORDA || (alturaRolavel > 0 && y >= alturaRolavel - MARGEM_BORDA)) {
+      acumulado.current = 0;
+      setFocoAtivo(false);
+      return;
+    }
+
+    if (Math.abs(diferenca) < DELTA_MINIMO) return;
+
+    const direcao = diferenca > 0 ? "baixo" : "cima";
+    if (direcao !== direcaoAtual.current) {
+      direcaoAtual.current = direcao;
+      acumulado.current = 0;
+    }
+    acumulado.current += Math.abs(diferenca);
+
+    if (acumulado.current >= LIMIAR_ACUMULADO) {
+      setFocoAtivo(direcao === "baixo");
+    }
   }
 
   if (!livro || !valido) {
@@ -491,21 +548,41 @@ export default function Leitura() {
 
   return (
     <View className="flex-1 bg-cor-fundo dark:bg-cor-fundo-dark">
+      {/* Barra fina de progresso — persistente mesmo com o cabeçalho
+          escondido (foco de leitura), por isso fica fora do overlay
+          animado abaixo, com seu próprio espaço reservado (top: 2). */}
       <View className="h-0.5 bg-cor-borda dark:bg-cor-borda-dark">
         <View className="h-0.5 bg-cor-destaque dark:bg-cor-destaque-dark" style={{ width: `${progresso * 100}%` }} />
       </View>
 
-
-      {focoAtivo && (
-        <View className="absolute bottom-0 left-0 right-0 bg-cor-fundo dark:bg-cor-fundo-dark px-4 py-4 border-t border-cor-borda dark:border-cor-borda-dark items-center justify-center z-50">
-          <Text className="text-[10px] font-bold text-cor-texto-suave dark:text-cor-texto-suave-dark tracking-widest uppercase">
-            {livro?.nome} {capitulo}
-          </Text>
-        </View>
-      )}
-
-      {!focoAtivo && (
-      <View className="bg-cor-fundo dark:bg-cor-fundo-dark border-b border-cor-borda dark:border-cor-borda-dark">
+      {/* Cabeçalho como camada sobreposta (`position: absolute`), SEMPRE
+          montada — nunca desmonta/remonta mais. Ver a nota grande em
+          `aoRolar` pra entender por que isso é essencial: um cabeçalho
+          que participa do layout do conteúdo abaixo (crescendo/
+          encolhendo o ScrollView ao aparecer/sumir) realimenta a
+          própria lógica que decide se ele deve aparecer ou sumir,
+          causando o "glitch" perto do fim da leitura. Como camada
+          solta por cima, esconder/mostrar é só uma questão visual
+          (`translateY` animado) que não move nem redimensiona nada
+          embaixo. */}
+      <Animated.View
+        onLayout={(e) => {
+          // Guarda contra loop de remontagem infinito (bug real achado
+          // ao testar, 2026-08-20): sem o limiar, jitter de subpixel na
+          // medição (ex. 95.998 vs 96.002 entre um layout e outro, comum
+          // no RNW por causa do ResizeObserver que faz `onLayout` no
+          // web) fazia `setAlturaHeader` disparar de novo a cada
+          // render, que muda o `paddingTop` do ScrollView, que altera
+          // sutilmente o layout, retriggando o próprio `onLayout` — um
+          // loop sem fim que travava o app inteiro (visível nos logs
+          // como "Running application main" se repetindo dezenas de
+          // vezes por carregamento).
+          const novaAltura = e.nativeEvent.layout.height;
+          setAlturaHeader((atual) => (Math.abs(atual - novaAltura) > 0.5 ? novaAltura : atual));
+        }}
+        style={{ transform: [{ translateY: headerTranslateY }], position: "absolute", top: 2, left: 0, right: 0, zIndex: 20 }}
+        className="bg-cor-fundo dark:bg-cor-fundo-dark border-b border-cor-borda dark:border-cor-borda-dark"
+      >
         <View className="px-3 py-2 flex-row items-center justify-between">
           <Pressable onPress={() => router.back()} accessibilityRole="button" accessibilityLabel="Voltar" className="w-10 h-10 items-center justify-center active:opacity-60">
             <MaterialIcons name="arrow-back" size={24} className="text-cor-texto dark:text-cor-texto-dark" />
@@ -557,10 +634,16 @@ export default function Leitura() {
             {livro?.nome} {capitulo}
           </Text>
         ) : null}
-      </View>
-      )}
-      <ScrollView ref={scrollRef} onScroll={aoRolar} scrollEventThrottle={32} className="flex-1" style={{ display: abaAtual === "texto" ? "flex" : "none" }}>
-        <View className="px-5 pt-6 pb-32 max-w-2xl w-full mx-auto">
+      </Animated.View>
+      <ScrollView
+        ref={scrollRef}
+        onScroll={aoRolar}
+        scrollEventThrottle={16}
+        className="flex-1"
+        style={{ display: abaAtual === "texto" ? "flex" : "none" }}
+        contentContainerStyle={{ paddingTop: alturaHeader + 8 }}
+      >
+        <View className="px-5 pb-32 max-w-2xl w-full mx-auto">
           {erro ? (
             <View className="items-start gap-3">
               <Text className="text-cor-texto-suave dark:text-cor-texto-suave-dark">{erro}</Text>
@@ -672,8 +755,8 @@ export default function Leitura() {
 
 
       {abaAtual === "resumo" && resumo && (
-        <ScrollView className="flex-1">
-          <View className="px-5 pt-6 pb-32 max-w-2xl w-full mx-auto">
+        <ScrollView className="flex-1" contentContainerStyle={{ paddingTop: alturaHeader + 8 }}>
+          <View className="px-5 pb-32 max-w-2xl w-full mx-auto">
             <Tooltip titulo={resumo.genero} descricao={descricaoDoGenero(resumo.genero)}>
               <View className={`self-start flex-row items-center gap-1 px-3 py-1 rounded-full mb-3 ${coresDoGenero(resumo.genero).bg}`}>
                 <Text className={`text-xs font-semibold uppercase tracking-wide ${coresDoGenero(resumo.genero).texto}`}>{resumo.genero}</Text>
@@ -832,8 +915,14 @@ export default function Leitura() {
         </View>
       )}
 
-      {/* Barra fixa de navegação (Estilo Pílula Flutuante) */}
-      {!focoAtivo && (
+      {/* Barra fixa de navegação (Estilo Pílula Flutuante) — sempre
+          visível agora (2026-08-20): antes sumia junto com o
+          cabeçalho no foco de leitura, mas como ela mesma é pequena,
+          discreta e não atrapalha a leitura, virou também a referência
+          permanente de "onde estou" (livro/capítulo) quando o
+          cabeçalho está escondido, no lugar da antiga faixa mínima que
+          existia só pra isso (removida — duplicava a mesma
+          informação). */}
       <View className="absolute bottom-6 left-0 right-0 items-center justify-center pointer-events-box-none">
         <View
           {...(Platform.OS === "web" ? { title: "Atalhos: ← → troca de capítulo, T alterna o tema" } : {})}
@@ -869,7 +958,6 @@ export default function Leitura() {
           </Pressable>
         </View>
       </View>
-      )}
 
       {versiculoEditandoNota !== null ? (
         <ModalNota

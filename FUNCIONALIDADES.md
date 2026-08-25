@@ -124,15 +124,94 @@ tocando fora ou no ✕.
 ### 1.8 Modo foco `✅`
 **Funcionalidade:** implementado em `app/(tabs)/biblia/[livro]/[capitulo].tsx`
 via `focoAtivo` — ativa automaticamente ao rolar pra baixo (esconde a
-barra de topo com abas Texto/Resumo e ajustes, mostrando só uma faixa
-fina com "Livro Capítulo"), desativa ao rolar pra cima ou voltar perto
-do topo.
+barra de topo com abas Texto/Resumo e ajustes), desativa ao rolar pra
+cima ou voltar perto do topo/fim.
 **UX/UI:** saída é automática (rolar pra cima), não depende de um botão
-escondido — a barra flutuante de navegação de capítulo (pill) continua
-sempre visível mesmo em foco ativo, então a pessoa nunca fica presa sem
-controles de navegação. No celular a tab bar inferior é ocultada em
-foco ativo (`NavbarContext.setOculta`); no desktop a sidebar nunca é
-ocultada.
+escondido — a barra flutuante de navegação de capítulo (pill, mostrando
+"Livro Capítulo" com setas de anterior/próximo) fica **sempre visível**,
+inclusive em foco ativo, servindo de referência permanente de "onde
+estou" mesmo com o cabeçalho escondido. A tab bar do app **não é mais
+ocultada** por esta tela (ver reescrita completa abaixo, 2026-08-20) —
+fica sempre visível em qualquer tela, celular ou desktop.
+
+**Reescrita completa do sistema de esconder/mostrar (2026-08-20), a
+pedido do usuário depois de testar no celular e achar 3 bugs reais:
+"demora pra sumir", "difícil de fazer voltar arrastando pra cima" e um
+"glitch" (aparece/some repetidas vezes) ao chegar no fim da leitura.**
+
+**Causa raiz dos 3 bugs, investigada como front-end sênior:** tanto o
+cabeçalho da leitura quanto a tab bar do app (via `NavbarContext`) eram
+**desmontados/remontados** quando o Modo Foco ligava/desligava — isso
+muda a altura real da área visível do `ScrollView`
+(`layoutMeasurement.height`). A lógica de decisão usava exatamente esse
+valor (`alturaRolavel = contentSize.height - layoutMeasurement.height`)
+pra saber se estava "perto do fim" — ou seja, **a decisão de esconder o
+cabeçalho influenciava a própria métrica usada pra decidir se deveria
+esconder o cabeçalho**: um loop de realimentação clássico (some → área
+visível cresce → "perto do fim" deixa de ser verdade → aparece de novo
+→ área visível encolhe → "perto do fim" volta a ser verdade → some de
+novo, repetindo). É por isso que apps de verdade (Twitter, Instagram,
+YouVersion) sempre implementam esse tipo de barra como uma **camada
+sobreposta** (`position: absolute`/`fixed`) que nunca participa do
+layout do conteúdo abaixo — nunca como algo que é desmontado/remontado
+ou que cresce/encolhe o container do scroll.
+
+**Correção estrutural:**
+- O cabeçalho da leitura virou um `Animated.View` **sempre montado**,
+  `position: absolute`, animado por `translateY` (não mais
+  desmontagem/remontagem abrupta — ganha uma transição suave de verdade,
+  220ms). O `ScrollView` reserva um `paddingTop` fixo (altura do
+  cabeçalho, medida uma vez via `onLayout`) que não muda com o scroll,
+  então esconder o cabeçalho nunca redimensiona a área de rolagem.
+- Esta tela **parou de chamar `NavbarContext.setOculta`** — a tab bar do
+  app não é mais escondida durante a leitura (fica sempre visível, igual
+  a todas as outras telas). Removida a autoridade dela sobre esse
+  comportamento elimina de vez a segunda fonte do loop de realimentação.
+  `NavbarContext` continua existindo em `app/(tabs)/_layout.tsx` pra uma
+  tela futura que precise do mesmo controle, documentado lá pra não
+  repetir o erro (implementar como camada sobreposta, não como algo que
+  participa do layout).
+- A antiga "faixa mínima" que aparecia no rodapé em foco ativo (mostrando
+  "LIVRO CAPÍTULO" em caixa alta) foi **removida** — a pílula flutuante
+  de navegação (já existia, já mostrava a mesma informação) virou sempre
+  visível e assumiu esse papel, eliminando duplicação.
+
+**Correção do algoritmo de decisão em si:** a versão antiga comparava o
+delta entre o evento de scroll atual e o anterior (a cada ~32ms) contra
+um limiar fixo de 15px — um arrasto lento pra cima gera vários eventos
+de poucos pixels cada, nenhum sozinho cruzando o limiar, então "nunca"
+trazia o cabeçalho de volta (só um chute rápido funcionava — essa é a
+causa do "difícil de fazer voltar"). A versão nova **acumula a
+distância percorrida desde a última troca de direção** (zera o
+acumulador sempre que a direção muda, limiar de 32px acumulados) — é o
+padrão usado por bibliotecas de "hide on scroll" consolidadas, funciona
+igual pra arrasto lento ou rápido. `scrollEventThrottle` também reduzido
+de 32 pra 16 (resposta mais fina).
+
+**Bug adicional achado ao implementar (2026-08-20):** a primeira versão
+do `onLayout` do novo cabeçalho (`setAlturaHeader(e.nativeEvent.layout.height)`,
+sem guarda) causava um **loop de remontagem infinito** — jitter de
+subpixel na medição (comum no React Native Web, que mede `onLayout` via
+`ResizeObserver`) fazia o estado mudar a cada render, alterando o
+`paddingTop` do `ScrollView`, que sutilmente mudava o layout de novo,
+retrigando o próprio `onLayout` sem fim (visível nos logs do Metro como
+"Running application main" se repetindo dezenas de vezes por
+carregamento, página em branco). Corrigido com uma guarda de tolerância
+(só atualiza o estado se a altura mudar mais de 0.5px).
+
+**Verificação:** `tsc`/`jest` limpos. Confirmado ao vivo, antes do
+ambiente de preview ficar instável nesta sessão (múltiplos reinícios de
+servidor deixaram o WebSocket de Fast Refresh intermitente,
+independente do código — mesmo a tela Início, não tocada nesta mudança,
+apresentou o mesmo sintoma): `clientHeight` do `ScrollView` permaneceu
+constante (737px) do topo ao fim de uma rolagem simulada de ~13.000px
+(prova de que o loop de realimentação foi eliminado estruturalmente);
+zero alternâncias de `translateY` numa janela de 400px perto do fim da
+leitura (o "glitch" original). **Verificação em dispositivo real
+recomendada antes de considerar 100% confirmado** — a instabilidade do
+ambiente impediu reconfirmar o comportamento completo de esconder ao
+rolar pra baixo depois da correção do loop de `onLayout` (achada
+tardiamente na sessão).
 
 **Bug real, reportado pelo usuário (2026-08-20): "leitura bíblica está
 inutilizável no celular, quando começa a rolar para baixo a tela toda

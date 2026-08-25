@@ -86,6 +86,17 @@ BotaoAba.displayName = "BotaoAba";
 
 import { createContext, useContext, useState } from "react";
 
+// Sem consumidor no momento (2026-08-20) — a leitura de capítulo, único
+// lugar que chamava `setOculta`, parou de esconder a tab bar do app
+// depois de um refactor do sistema de auto-esconder durante a rolagem
+// (ver o comentário grande em `aoRolar` de `[capitulo].tsx`): esconder
+// a tab bar mudava a altura visível do ScrollView, alimentando um loop
+// de realimentação que causava o "glitch" perto do fim da leitura.
+// Mantido aqui (infraestrutura barata, já testada) pra uma tela futura
+// que precise do mesmo controle — só que dessa vez implementando o
+// próprio elemento a esconder como camada sobreposta (`position:
+// absolute`/`fixed`), não como algo que participa do layout do
+// conteúdo, senão o mesmo bug se repete.
 export const NavbarContext = createContext({
   oculta: false,
   setOculta: (v: boolean) => {},

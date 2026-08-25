@@ -5,6 +5,46 @@ O formato é baseado no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.
 
 ## [Unreleased] - 2026-08-20
 
+### Corrigido (4 bugs reportados após teste real em celular)
+- **Overflow horizontal no cabeçalho da leitura em mobile**
+  (`FUNCIONALIDADES.md` 2.2): 5 controles espremidos numa linha só
+  (voltar, pílula Texto/Resumo de 2 botões, ouvir, tema com texto
+  completo, Aa) estouravam a largura em telas estreitas. Pílula virou
+  1 botão só ("Ver resumo"/"Ver Bíblia", mostra o destino, não o
+  estado atual) e `BotaoTema` ganhou uma variante `compacto` (só
+  ícone `dark-mode`/`light-mode`, sem texto) usada só nesse cabeçalho.
+  Testado ao vivo: sem `overflow-x` em 375px, todos os controles numa
+  linha, funciona também no desktop.
+- **Navbar "vazando" fundo cru durante gesto de arrasto no mobile**
+  (`FUNCIONALIDADES.md` 2.2): causa raiz era `height: 100%` no HTML
+  padrão gerado pelo Expo Router (clássico "bug do 100vh no mobile" —
+  a barra de endereço do navegador anima durante o arrasto e o layout
+  fica temporariamente menor que o viewport real, expondo o fundo do
+  `body`). Corrigido injetando `100dvh` via `core/
+  corrigirAlturaViewportMobile.ts` em runtime (não dá pra usar só
+  `app/+html.tsx` porque este projeto usa `web.output: "single"`, onde
+  esse arquivo não tem efeito — documentado no próprio código pra não
+  se repetir). Verificado que o CSS está ativo e vencendo a cascata;
+  o gesto de arrasto em si não é simulável neste ambiente de
+  automação.
+- **Botão "Compartilhar" sem nenhuma resposta visual**
+  (`FUNCIONALIDADES.md` 5.2): toast "Compartilhado!" adicionado depois
+  do compartilhamento (não ao cancelar). Achado real ao implementar:
+  no web `Share.share` resolve com `undefined`, e checar
+  `resultado.action` direto (sem optional chaining) lançava erro e
+  engolia o toast silenciosamente — o mesmo sintoma do bug original,
+  causado pela própria tentativa de correção. Corrigido e testado ao
+  vivo com `navigator.share` mockado nos dois cenários (sucesso e
+  cancelamento).
+- **Nota salva vazia ao editar em `/salvo`** (`FUNCIONALIDADES.md`
+  2.8): `components/CardAtividade.tsx` era o único dos 3 pontos que
+  salvam nota sem checar se o texto (já trimado por `ModalNota`) tinha
+  ficado vazio — editar uma nota existente apagando tudo salvava uma
+  nota vazia em vez de remover. Corrigido pro mesmo padrão dos outros
+  dois lugares (`salvarNota` na leitura, `CardVersiculoDia`). Testado
+  ao vivo: criar nota, editar em `/salvo` apagando tudo, nota some da
+  lista.
+
 ### Corrigido (bug crítico reportado pelo usuário)
 - **Leitura bíblica inutilizável no celular: a tela inteira ficava em
   branco ao rolar pra baixo** (`FUNCIONALIDADES.md` 1.8). Relato: "a

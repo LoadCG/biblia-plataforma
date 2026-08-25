@@ -278,6 +278,62 @@ com as abas ocupando o topo): título aumentado de `text-xl` (20px) pra
 destacar mais, e o bloco de cabeçalho ganhou `border-b` separando
 visualmente de onde o conteúdo (capítulo lido + versículos) começa.
 
+**Bug real, reportado pelo usuário (2026-08-20): "o conteúdo da parte
+de cima é grande demais para caber no espaço delimitado, então cria um
+overflow-x na tela" no celular.** O cabeçalho tinha 5 grupos de
+controles espremidos numa linha só (voltar, pílula "Texto Bíblico"/
+"Resumo" com 2 botões, ouvir em voz alta, `BotaoTema` com texto
+completo "☾ Escuro"/"☀ Claro", "Aa") — cabia numa tela desktop, mas
+estourava a largura em telas de celular estreitas. Duas correções:
+1. **Pílula de 2 botões → 1 botão só**, mostrando o nome do modo *pra
+   onde* ele leva (não o atual) — "Ver resumo" quando na leitura,
+   "Ver Bíblia" quando no resumo. Testado ao vivo: alterna
+   corretamente nos dois sentidos, com o rótulo certo em cada estado.
+2. **`BotaoTema` ganhou uma variante `compacto`** (só ícone
+   `dark-mode`/`light-mode` do MaterialIcons, sem o texto do botão
+   normal) — usada só neste cabeçalho apertado; a versão com texto
+   continua em Configurações e no modal de ajustes de leitura, onde
+   sobra espaço e o texto ajuda a clareza. Mesmo padrão que apps como
+   YouVersion/Kindle usam pra alternar tema numa toolbar compartilhada
+   com outros ícones. Testado ao vivo: sem `overflow-x` em 375px de
+   largura (`document.documentElement.scrollWidth === innerWidth`),
+   com todos os 5 controles cabendo numa linha só.
+
+**Bug real, reportado pelo usuário (2026-08-20): "é possível ver 'o
+que tem abaixo' da navbar [...] durante a leitura bíblica [ao] clicar,
+segurar e arrastar para cima sobre a navbar do celular, [ela] vai um
+pouco para cima e uma div marrom aparece abaixo dela".** Causa raiz:
+o HTML servido pelo Expo Router define `html, body, #root { height:
+100% }` (`ScrollViewStyleReset`, embutido no template padrão do
+`expo-router/build/static/html.js` — confirmado batendo `curl` no dev
+server). No mobile, `100%` é recalculado contra a altura *visível* do
+viewport, que muda dinamicamente conforme a barra de endereço do
+navegador anima pra dentro/fora durante um gesto de arrasto — por um
+instante o layout (calculado pra altura antiga) fica menor que o
+viewport de verdade, expondo o `background-color` cru do `body`
+(`global.css`, `#faf8f4`/`#1b1712` — o "marrom" relatado é o tom
+escuro) por baixo dos elementos fixados no fim da tela. É o clássico
+"bug do 100vh no mobile"; a correção moderna é `100dvh` (dynamic
+viewport height, que o navegador recalcula sozinho conforme a UI dele
+muda). Só acontecia na leitura bíblica porque é a única tela com uma
+barra flutuante fixa por cima do conteúdo (a pílula de navegação entre
+capítulos), além da tab bar.
+**Solução técnica não óbvia:** `app/+html.tsx` (criado, documentado
+internamente) só teria efeito se `web.output` fosse `"static"`/
+`"server"` — este projeto usa `"single"` (ver `TODO.md`, item E), então
+customizar o HTML normalmente não muda nada nem no dev nem no build do
+Vercel. A correção que roda de verdade é `core/
+corrigirAlturaViewportMobile.ts`, chamada em `app/_layout.tsx` — injeta
+o `<style>` com `100dvh` via DOM em runtime (mesmo padrão já usado por
+`registrarServiceWorker`). Testado ao vivo: `<style
+id="altura-dinamica-viewport">` presente no `<head>` com o CSS
+esperado, `getComputedStyle` de `html`/`body`/`#root` batendo com
+`innerHeight`. **Limitação de teste:** não dá pra simular de verdade a
+animação da barra de endereço do navegador (só existe em dispositivo
+físico/navegador real) neste ambiente de automação — a correção foi
+verificada estar ativa e corretamente sobrepondo o CSS padrão, não o
+gesto de arrasto em si.
+
 **Bug real reportado por usuário (2026-08-11):** "erro ao carregar
 versículos, leitura bíblica não funcionando". Investigado: a
 `bible-api.com` (usada na versão *web*, ver 2.6/Decisão 11) é uma API
@@ -611,7 +667,25 @@ texto salvo e o botão "Remover"), remover.
 (ver 2.3), não por um ícone fixo; nota editada em modal (não atrapalha a
 leitura do capítulo em volta); prévia do texto da nota aparece embaixo
 do versículo com um 📝, então não precisa abrir o modal só pra lembrar o
-que escreveu.
+que escreveu. `ModalNota` já manda o texto trimado (`texto.trim()`) pro
+callback `onSalvar`, e nota vazia (ou só espaços, que vira `""` depois
+do trim) remove em vez de salvar — nunca existiu nota vazia persistida
+de verdade.
+
+**Bug real, achado investigando um pedido do usuário pra confirmar esse
+comportamento (2026-08-20):** esse tratamento (`if (texto) salvar; else
+remover`) já existia em `salvarNota` na tela de leitura
+(`app/(tabs)/biblia/[livro]/[capitulo].tsx`) e em `CardVersiculoDia.tsx`
+(nota no card "Versículo do Dia"), mas **faltava em
+`components/CardAtividade.tsx`** — o `onSalvar` do modal de editar nota
+acessado pelo menu "⋮" > "Editar" na tela `/salvo` (ou no card "Salvo"
+resumido de Você) chamava `notasRepository.salvar` incondicionalmente,
+sem checar se o texto tinha ficado vazio. Editar uma nota existente
+apagando tudo salvava uma nota vazia em vez de removê-la. Corrigido pro
+mesmo padrão dos outros dois lugares. Testado ao vivo: criar nota no
+versículo 3 de Salmos 119, editar em `/salvo` apagando tudo (só
+espaços) e salvar — a nota some da lista (`EstadoVazio` "Nada aqui
+ainda"), confirmando remoção em vez de nota vazia persistida.
 
 ### 2.9 Trocar tradução do texto bíblico `⬜`
 **Funcionalidade:** bible-api.com tem outras traduções além da Almeida —
@@ -846,6 +920,28 @@ uma vez em `app/_layout.tsx`, pub-sub simples sem Context — qualquer
 lugar do app chama `mostrarToast(mensagem)`, mesmo fora da árvore de
 componentes). No nativo o próprio sheet do sistema (`Share.share`) já
 serve de confirmação, sem precisar do toast.
+
+**Bug real, reportado pelo usuário (2026-08-20): "o botão compartilhar
+[...] não mostra resposta na tela além da resposta que é nativa do
+navegador ou dispositivo, não apresentando resposta imediata"
+(testado no navegador do celular).** O botão "Compartilhar" da barra
+de seleção de versículos (`compartilharVersiculos`, distinto do fluxo
+de 5.1/5.2 acima) chama `Share.share` do RN direto, sem nenhum toast
+— diferente do botão "Copiar" ao lado, que sempre mostrou "Copiado!".
+Corrigido: toast "Compartilhado!" depois que a pessoa termina de
+compartilhar de verdade (não ao cancelar, pra não soar como erro por
+uma ação intencional). **Achado real ao implementar:** no web,
+`Share.share` (react-native-web) delega pro `navigator.share` do
+navegador, que resolve a Promise com `undefined` — só o RN nativo
+devolve um objeto `{ action }`. A primeira tentativa (`resultado.action
+!== Share.dismissedAction`) lançava `TypeError` no web porque
+`resultado` era `undefined`, caía no `catch` silencioso, e o toast
+**nunca aparecia** — exatamente o bug relatado, reintroduzido pela
+própria correção até eu testar de verdade com um `navigator.share`
+mockado. Corrigido com optional chaining (`resultado?.action`).
+Testado ao vivo simulando os dois casos (`navigator.share` mockado
+resolvendo normalmente vs. lançando `AbortError` como um cancelamento
+real): toast aparece só no caminho de sucesso.
 
 ### 5.3 Toast com botão de ação (Desfazer) `✅`
 **Funcionalidade:** pedido do usuário — "evoluir componente toast

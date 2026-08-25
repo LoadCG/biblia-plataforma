@@ -450,7 +450,28 @@ export default function Leitura() {
   async function compartilharVersiculos() {
     const texto = textoDosVersiculosSelecionados();
     if (!texto) return;
-    await Share.share({ message: texto });
+    // `Share.share` sozinho não dava nenhum retorno visível além do
+    // seletor nativo do navegador/SO — que no navegador do celular
+    // pode demorar um instante pra abrir, dando a impressão de que o
+    // toque não fez nada (achado real, 2026-08-20). O toast só aparece
+    // depois que a pessoa realmente termina de compartilhar (não ao
+    // cancelar, pra não soar como erro por uma ação intencional).
+    try {
+      // No web, `Share.share` (react-native-web) delega direto pro
+      // `navigator.share` do navegador, que resolve a Promise com
+      // `undefined` (sem `.action` — só o RN nativo devolve esse
+      // objeto). Por isso o optional chaining: em `undefined?.action`
+      // dá `undefined`, diferente de `Share.dismissedAction`, e o
+      // toast aparece — sem ele, `resultado.action` lançava
+      // `TypeError` no web, caía no catch e o toast nunca aparecia.
+      const resultado = await Share.share({ message: texto });
+      if (resultado?.action !== Share.dismissedAction) {
+        mostrarToast("Compartilhado!");
+      }
+    } catch {
+      // usuário cancelou ou o navegador bloqueou o compartilhamento —
+      // sem feedback de erro pra não incomodar por uma ação normal.
+    }
     setVersiculosSelecionados(new Set());
   }
 
@@ -490,30 +511,24 @@ export default function Leitura() {
             <MaterialIcons name="arrow-back" size={24} className="text-cor-texto dark:text-cor-texto-dark" />
           </Pressable>
 
-          <View className="flex-row rounded-full bg-cor-borda dark:bg-cor-borda-dark p-1">
-            <Pressable
-              onPress={() => setAbaAtual("texto")}
-              accessibilityRole="tab"
-              accessibilityLabel="Texto Bíblico"
-              accessibilityState={{ selected: abaAtual === "texto" }}
-              // @ts-expect-error accessibilitySelected é uma extensão do react-native-web, não existe nos tipos do React Native
-              accessibilitySelected={abaAtual === "texto"}
-              className={`px-4 py-1.5 rounded-full active:opacity-60 ${abaAtual === "texto" ? "bg-cor-fundo dark:bg-cor-fundo-dark shadow-sm" : ""}`}
-            >
-              <Text className={`text-xs font-bold ${abaAtual === "texto" ? "text-cor-texto dark:text-cor-texto-dark" : "text-cor-texto-suave dark:text-cor-texto-suave-dark"}`}>Texto Bíblico</Text>
-            </Pressable>
-            <Pressable
-              onPress={() => setAbaAtual("resumo")}
-              accessibilityRole="tab"
-              accessibilityLabel="Resumo"
-              accessibilityState={{ selected: abaAtual === "resumo" }}
-              // @ts-expect-error accessibilitySelected é uma extensão do react-native-web, não existe nos tipos do React Native
-              accessibilitySelected={abaAtual === "resumo"}
-              className={`px-4 py-1.5 rounded-full active:opacity-60 ${abaAtual === "resumo" ? "bg-cor-fundo dark:bg-cor-fundo-dark shadow-sm" : ""}`}
-            >
-              <Text className={`text-xs font-bold ${abaAtual === "resumo" ? "text-cor-texto dark:text-cor-texto-dark" : "text-cor-texto-suave dark:text-cor-texto-suave-dark"}`}>Resumo</Text>
-            </Pressable>
-          </View>
+          {/* Antes era um switch de 2 pílulas ("Texto Bíblico"/"Resumo")
+              sempre visíveis, mais os ícones de áudio/tema/ajustes ao
+              lado — no mobile isso tudo junto não cabia na largura da
+              tela e criava overflow horizontal (achado real,
+              2026-08-20). Virou um botão só, mostrando o nome do modo
+              PRA ONDE ele leva (não o modo atual) — mesmo padrão de
+              toggle usado no resto do app (ex. Aa/tema). */}
+          <Pressable
+            onPress={() => setAbaAtual((atual) => (atual === "texto" ? "resumo" : "texto"))}
+            accessibilityRole="button"
+            accessibilityLabel={abaAtual === "texto" ? "Ver resumo do livro" : "Ver texto bíblico"}
+            className="flex-row items-center gap-1 px-3 py-1.5 rounded-full bg-cor-borda dark:bg-cor-borda-dark active:opacity-60"
+          >
+            <MaterialIcons name={abaAtual === "texto" ? "menu-book" : "auto-stories"} size={14} className="text-cor-texto dark:text-cor-texto-dark" />
+            <Text className="text-xs font-bold text-cor-texto dark:text-cor-texto-dark">
+              {abaAtual === "texto" ? "Ver resumo" : "Ver Bíblia"}
+            </Text>
+          </Pressable>
 
           <View className="flex-row items-center gap-1">
             {suportaAudio() && abaAtual === "texto" ? (
@@ -530,7 +545,7 @@ export default function Leitura() {
                 />
               </Pressable>
             ) : null}
-            <BotaoTema />
+            <BotaoTema compacto />
             <Pressable onPress={() => setModalAjustesAberto(true)} accessibilityRole="button" accessibilityLabel="Ajustes de leitura" className="w-10 h-10 items-center justify-center active:opacity-60">
               <Text style={{ fontFamily: FAMILIA_SERIFADA }} className="text-lg font-bold text-cor-texto dark:text-cor-texto-dark">Aa</Text>
             </Pressable>

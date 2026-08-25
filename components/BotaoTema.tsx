@@ -1,9 +1,37 @@
 import { Pressable, Text } from "react-native";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { alternarTema, useColorScheme } from "../core/theme";
 
-export function BotaoTema() {
+type Props = {
+  // Versão só com ícone (sem o texto "☀ Claro"/"☾ Escuro"), pensada pra
+  // cabeçalhos apertados no mobile — mesmo padrão que apps como
+  // YouVersion/Kindle usam pra alternar tema num espaço de toolbar
+  // compartilhado com outros botões, em vez do texto completo cabendo
+  // só em telas de configuração dedicadas. Ver `FUNCIONALIDADES.md`
+  // 2.2 (achado real de overflow horizontal no cabeçalho da leitura,
+  // 2026-08-20).
+  compacto?: boolean;
+};
+
+export function BotaoTema({ compacto = false }: Props) {
   const { colorScheme } = useColorScheme();
   const escuro = colorScheme === "dark";
+
+  if (compacto) {
+    return (
+      <Pressable
+        onPress={alternarTema}
+        accessibilityRole="switch"
+        accessibilityLabel="Tema escuro"
+        accessibilityState={{ checked: escuro }}
+        // @ts-expect-error accessibilityChecked é uma extensão do react-native-web, não existe nos tipos do React Native
+        accessibilityChecked={escuro}
+        className="w-10 h-10 items-center justify-center active:opacity-60"
+      >
+        <MaterialIcons name={escuro ? "light-mode" : "dark-mode"} size={22} className="text-cor-texto dark:text-cor-texto-dark" />
+      </Pressable>
+    );
+  }
 
   return (
     <Pressable

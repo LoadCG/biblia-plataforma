@@ -105,7 +105,17 @@ export function CardAtividade({ item, onMudou }: Props) {
           onFechar={() => setEditando(false)}
           onSalvar={async (texto) => {
             if (!ownerId) return;
-            await notasRepository.salvar(ownerId, { livroSlug: item.livroSlug, capitulo: item.capitulo, versiculo: item.versiculo }, texto);
+            const ref = { livroSlug: item.livroSlug, capitulo: item.capitulo, versiculo: item.versiculo };
+            // `ModalNota` já manda o texto trimado, mas o valor pode
+            // ter ficado vazio (nota apagada por completo) — nesse
+            // caso remove em vez de salvar uma nota vazia (achado
+            // real, 2026-08-20, mesmo tratamento que já existia em
+            // `salvarNota` na tela de leitura).
+            if (texto) {
+              await notasRepository.salvar(ownerId, ref, texto);
+            } else {
+              await notasRepository.remover(ownerId, ref);
+            }
             setEditando(false);
             onMudou();
           }}

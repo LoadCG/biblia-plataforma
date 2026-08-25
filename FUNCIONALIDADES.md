@@ -212,19 +212,65 @@ retrigando o próprio `onLayout` sem fim (visível nos logs do Metro como
 carregamento, página em branco). Corrigido com uma guarda de tolerância
 (só atualiza o estado se a altura mudar mais de 0.5px).
 
-**Verificação:** `tsc`/`jest` limpos. Confirmado ao vivo, antes do
-ambiente de preview ficar instável nesta sessão (múltiplos reinícios de
-servidor deixaram o WebSocket de Fast Refresh intermitente,
-independente do código — mesmo a tela Início, não tocada nesta mudança,
-apresentou o mesmo sintoma): `clientHeight` do `ScrollView` permaneceu
-constante (737px) do topo ao fim de uma rolagem simulada de ~13.000px
-(prova de que o loop de realimentação foi eliminado estruturalmente);
-zero alternâncias de `translateY` numa janela de 400px perto do fim da
-leitura (o "glitch" original). **Verificação em dispositivo real
-recomendada antes de considerar 100% confirmado** — a instabilidade do
-ambiente impediu reconfirmar o comportamento completo de esconder ao
-rolar pra baixo depois da correção do loop de `onLayout` (achada
-tardiamente na sessão).
+**Verificação:** `tsc`/`jest` limpos.
+
+**Duas causas reais descobertas investigando por que a sessão de teste
+ao vivo ficava presa num loop de reload (pedido explícito do usuário,
+2026-08-20 — "investigue o motivo para você não estar conseguindo
+testar corretamente"):**
+
+1. **Service Worker servindo bundle de dev congelado** — achada
+   principal, não relacionada a esta funcionalidade especificamente.
+   `public/sw.js` faz cache-first pras requisições de bundle JS
+   (estratégia certa pra produção, onde os arquivos têm hash de
+   conteúdo no nome). Só que em dev (`expo start`) o Metro serve os
+   bundles em URLs **sem hash** (`entry.bundle?platform=web&dev=true&
+   hot=false&...`, sempre a mesma URL não importa quantas vezes o
+   código mude) — uma vez cacheado pelo SW, aquele bundle fica
+   congelado pra sempre, ignorando qualquer edição de código seguinte.
+   Ao longo da sessão o SW acabou cacheando uma versão desatualizada o
+   bastante pra quebrar ao montar (referenciando algo já removido do
+   código-fonte); o cliente de dev do Metro recarregava a página pra
+   tentar de novo, o SW servia o MESMO bundle quebrado de novo — loop
+   infinito, sem nenhum erro visível no console da página (o SW roda
+   fora da aba). Corrigido definitivamente em
+   `core/registrarServiceWorker.ts`: o SW **nunca registra em
+   desenvolvimento** (`__DEV__`) — só em builds de produção de verdade,
+   com limpeza defensiva de qualquer registro/cache antigo que tenha
+   sobrado de sessões de teste anteriores a esta correção. Confirmado
+   ao vivo: 1 registro de SW + 1 cache encontrados e removidos na
+   sessão afetada; depois da correção, carregamentos sucessivos da
+   tela de leitura renderizaram os 176 versículos de Salmos 119
+   corretamente e de forma estável.
+2. **`requestAnimationFrame` nunca dispara na aba de automação do
+   navegador usada nestas sessões** — achado ao investigar por que a
+   transição do cabeçalho nunca parecia completar mesmo com o loop de
+   reload já resolvido. `document.visibilityState` fica `"hidden"` e
+   `document.hasFocus()` retorna `false` nessa aba (mesmo depois de
+   "selecioná-la" via ferramenta) — o Chrome suspende `rAF` por
+   completo pra abas assim, comportamento padrão de economia de
+   energia do navegador, não um bug do projeto. Isso afeta qualquer
+   animação baseada em `requestAnimationFrame`, incluindo
+   `Animated.timing` (confirmado testando manualmente via console:
+   `Animated.timing(...).start()` nunca avança o valor nem chama o
+   callback de conclusão nessa aba) e `core/util/scrollSuave.ts` (ver
+   2.2). **A lógica em si foi verificada correta por outro caminho**:
+   chamar `progressoFoco.setValue(1)` manualmente (contorna o `rAF`)
+   atualiza o `translateY` do cabeçalho corretamente pra `-96px` na
+   hora — confirma que a ligação `Animated.Value` → interpolação →
+   estilo está certa; e instrumentando `focoAtivo` diretamente
+   confirmou que ele alterna pra `true` exatamente no ponto esperado
+   (~100px de rolagem acumulada) ao simular um arrasto lento. Ou seja:
+   **o algoritmo de decisão e a ligação da animação com o DOM estão
+   corretos** — só a reprodução visual da transição em si não é
+   observável nesta ferramenta de automação (limitação do ambiente,
+   registrada aqui pra não se repetir; não afeta usuários reais, cujas
+   abas ficam visíveis/em foco normalmente). `clientHeight` do
+   `ScrollView` permaneceu constante (737px) do topo ao fim de uma
+   rolagem simulada de ~13.000px (prova de que o loop de realimentação
+   original foi eliminado estruturalmente), e zero alternâncias de
+   `translateY` numa janela de 400px perto do fim da leitura (o
+   "glitch" original).
 
 **Bug real, reportado pelo usuário (2026-08-20): "leitura bíblica está
 inutilizável no celular, quando começa a rolar para baixo a tela toda

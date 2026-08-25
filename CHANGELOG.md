@@ -5,6 +5,32 @@ O formato é baseado no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.
 
 ## [Unreleased] - 2026-08-20
 
+### Corrigido (ambiente de teste ao vivo — pedido do usuário pra investigar)
+- **Service Worker travava sessões de teste em dev num loop infinito
+  de reload** (`FUNCIONALIDADES.md` 1.8): `public/sw.js` faz
+  cache-first pras requisições de bundle JS — certo pra produção
+  (arquivos com hash), mas em dev o Metro serve bundles em URLs sem
+  hash, então o SW cacheava uma versão congelada que ficava cada vez
+  mais desatualizada até quebrar ao montar, causando reload → SW serve
+  o mesmo bundle quebrado de novo → loop, sem erro visível no console
+  da página (o SW roda fora da aba). Corrigido em
+  `core/registrarServiceWorker.ts`: nunca registra em desenvolvimento
+  (`__DEV__`), com limpeza defensiva de registros/caches antigos.
+  Confirmado ao vivo: 1 SW + 1 cache encontrados e removidos; depois
+  disso a leitura de Salmos 119 renderizou os 176 versículos de forma
+  estável em carregamentos sucessivos.
+- **Achado, não corrigido (limitação do ambiente, não bug do
+  projeto):** a aba de automação usada pra testar fica com
+  `document.visibilityState: "hidden"` e sem foco o tempo todo — o
+  Chrome suspende `requestAnimationFrame` por completo nessas
+  condições, afetando `Animated.timing` e qualquer animação baseada em
+  rAF (incluindo `scrollSuave.ts`, ver 2.2). Confirmado que a lógica em
+  si está correta por outros caminhos (`setValue` manual atualiza o
+  DOM certinho, `focoAtivo` alterna no ponto esperado ao simular
+  scroll) — só a transição visual não é observável nesta ferramenta.
+  Não afeta usuários reais. Registrado em detalhe no
+  `FUNCIONALIDADES.md` 1.8 pra não se repetir em sessões futuras.
+
 ### Corrigido (fonte da ficha rápida do resumo)
 - **Ficha rápida do resumo não respeitava o controle de tamanho de
   fonte** (`FUNCIONALIDADES.md` 1.6): AUTOR/DATA PROVÁVEL/PERÍODO

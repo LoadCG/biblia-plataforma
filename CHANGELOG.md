@@ -5,6 +5,15 @@ O formato é baseado no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.
 
 ## [Unreleased] - 2026-08-24
 
+### Corrigido
+- **Botões "Favoritos"/"Apoie" em Descubra fingiam ser clicáveis**
+  (`FUNCIONALIDADES.md` 9.4): achado numa varredura pedida pelo usuário
+  atrás de "botões de UI sem utilidade real no backend" —
+  `onPress={() => Alert.alert(rotulo, "Em breve!")}`, sem `disabled`,
+  diferente do padrão do resto do app pra placeholders (sino de
+  notificações, "Enviar diariamente" — ambos `disabled` de verdade).
+  Corrigidos pro mesmo padrão. `Alert` (import morto) removido.
+
 ### Adicionado
 - **Ilustrações originais nos cards de tema da tela Descubra**
   (`FUNCIONALIDADES.md` 9.4, `TODO.md` item 7 do backlog de UI):

@@ -1726,6 +1726,22 @@ card), cor do traço acompanha o tema claro/escuro corretamente
 (`#e0a99f` no escuro → `#934840` no claro pro card "Amor", por
 exemplo).
 
+**Bug real, achado numa varredura de "botões sem utilidade real"
+(2026-08-24):** a fileira de atalhos acima da barra de busca ("Planos",
+"Favoritos", "Apoie") tinha "Favoritos" e "Apoie" **totalmente
+clicáveis** (sem `disabled`), mas o `onPress` só disparava
+`Alert.alert(rotulo, "Em breve!")` — nenhuma tela, nenhuma
+persistência, nenhuma lógica real por trás (o próprio código já tinha
+um comentário `[MOCK — FRONT-END]` avisando disso). Inconsistente com
+o padrão do resto do app pra placeholders reais (sino de notificações
+da Início, "Enviar diariamente" do Versículo do Dia — ambos
+`disabled={true}` de verdade, sem fingir ser clicáveis). Corrigido:
+os dois viraram `disabled` de verdade, mesmo padrão. `Alert` (import
+não usado mais) removido; `ATALHOS_MOCK` renomeado pra
+`ATALHOS_EM_BREVE`, já que não simula mais um clique falso. Testado ao
+vivo: `aria-disabled="true"` confirmado no DOM, clicar não dispara
+mais nenhum alerta.
+
 ### 9.5 Pesquisa: busca por palavra na Bíblia inteira `✅`
 **Funcionalidade:** resolvido junto com a migração pro SQLite (ver
 2.6) — índice de texto completo virou uma tabela virtual FTS5 do

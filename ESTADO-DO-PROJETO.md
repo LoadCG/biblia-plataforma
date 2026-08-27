@@ -45,7 +45,7 @@ referências mais citadas em comparativos de 2026.
 | Design/UX 2026 | Tipografia cuidada, modo escuro, Dynamic Type, tela inicial sem feed de comparação social | Modo escuro completo, fonte ajustável, identidade visual própria (não copiada) — ver auditorias de UI já feitas |
 | Confiabilidade | Bible Streak citado por "pontuação clara e progresso de badge confiável" como diferencial | Bugs reais de confiabilidade corrigidos recentemente (Service Worker, layout do Modo Foco) — ver seção abaixo |
 | SEO/descoberta | Apps estabelecidos têm anos de indexação; sites de conteúdo bíblico competem por tráfego orgânico de busca | App é uma SPA sem HTML por rota — **lacuna real**, item 7.1 do backlog, adiado por risco técnico (ver `TODO.md`) |
-| Widgets/OS nativo | YouVersion tem widget de tela inicial, notificação diária | Nenhum widget nativo; nada publicado nas lojas ainda (decisão consciente) |
+| Widgets/OS nativo | YouVersion tem widget de tela inicial, notificação diária | Nenhum widget nativo; nada publicado nas lojas ainda — pretendido pro futuro, app nativo ainda não está pronto |
 
 **Leitura honesta desse quadro:** nas áreas onde o projeto decidiu
 competir (leitura offline confiável, identidade visual própria,
@@ -92,9 +92,13 @@ traduções licenciadas, notificações push), a distância é grande e
 - Só 2 planos de leitura, sem devocional (texto de reflexão por dia,
   não só a referência) — plano de leitura "cru" é bem mais raso que o
   que o nicho oferece.
-- Sem lembrete/notificação nenhuma, nem local (decisão fechada, mas
-  vale registrar que isso é o maior fator de retenção citado pelo
-  nicho — "reduz fricção, ajuda a manter o streak").
+- Lembrete diário local existe e funciona **só no nativo** (ver
+  `FUNCIONALIDADES.md` 9.7/9.10) — sem efeito real hoje porque o app
+  nativo não está publicado em nenhuma loja ainda. No web (o único
+  lugar com usuários reais) é impossível sem um servidor (Web Push
+  exige backend), decisão consciente de não ter. Maior fator de
+  retenção citado pelo nicho ("reduz fricção, ajuda a manter o
+  streak") continua fora de alcance até o app nativo ser publicado.
 - TTS do sistema em vez de narração dedicada — funcional, mas distante
   da experiência de audiolivro que apps de áudio (Dwell, Bible Gateway)
   oferecem.
@@ -115,14 +119,20 @@ traduções licenciadas, notificações push), a distância é grande e
   o app não aparece em busca orgânica do Google pra "resumo de
   Gênesis" ou similar, ao contrário do site antigo (estático) que o
   projeto substituiu.
-- Sem presença em loja de app — decisão fechada, mas significa que a
-  única forma de descoberta é o link direto.
+- Sem presença em loja de app — **não é mais "não por enquanto" sem
+  prazo**: confirmado em 2026-08-27 que a intenção é publicar um dia,
+  só que o app nativo ainda não está pronto pra isso e falta entender
+  o processo de publicação em si (certificados, build assinado,
+  revisão da loja). Fica registrado como intenção real, não decisão de
+  nunca fazer — mas sem entrar na lista priorizada abaixo até o app
+  nativo estar pronto o bastante pra essa conversa fazer sentido.
 
 ## Próximos passos priorizados (realista pro contexto do projeto)
 
 Ordenados por impacto real vs. esforço, respeitando as decisões já
-fechadas (sem conta, sem lojas, sem notificação, sem trocar tradução).
-Nenhum item aqui reabre essas decisões.
+fechadas (sem conta, sem notificação real no web, sem trocar
+tradução) e a intenção declarada de publicar o app nativo algum dia
+(ver acima). Nenhum item aqui reabre as decisões fechadas.
 
 1. **Onboarding leve na primeira abertura** — 2-3 telas ou um destaque
    guiado mostrando Planos/Grifos/Medalhas na primeira vez que o app

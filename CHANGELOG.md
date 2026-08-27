@@ -3,6 +3,22 @@
 Todas as mudanças notáveis feitas no projeto serão documentadas neste arquivo.
 O formato é baseado no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/).
 
+## [Unreleased] - 2026-08-27
+
+### Corrigido (distinção web/nativo pra lembretes)
+- **Sino "Notificações" (Início) e botão "Envie-me diariamente"
+  (card do Versículo do Dia) somem no web** (`FUNCIONALIDADES.md`
+  9.2/9.10): pedido do usuário depois de perguntar por que os
+  lembretes ainda não funcionam de verdade — Web Push exigiria um
+  servidor que o projeto não tem por decisão, então um placeholder
+  "em breve" sem previsão real só confundia; melhor não mostrar nada.
+  No **nativo**, onde o lembrete diário já é 100% real e local
+  (`core/notifications/`, só sem app publicado em loja ainda), os dois
+  pontos de entrada agora levam pro toggle de verdade em
+  Configurações, em vez de ficarem desabilitados sem função.
+  `Platform.OS !== "web"` decide em cada ponto. Testado ao vivo no
+  web: nenhum dos dois aparece mais no DOM.
+
 ## [Unreleased] - 2026-08-24
 
 ### Documentação

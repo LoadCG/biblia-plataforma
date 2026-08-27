@@ -1,6 +1,6 @@
 import { Link, router } from "expo-router";
 import { useEffect, useMemo, useState } from "react";
-import { Pressable, ScrollView, Text, View } from "react-native";
+import { Platform, Pressable, ScrollView, Text, View } from "react-native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { CardConquistas } from "../../components/CardConquistas";
 import { CardStreak } from "../../components/CardStreak";
@@ -101,15 +101,26 @@ export default function Inicio() {
           </Text>
           <View className="flex-row items-center gap-3">
             <BotaoTema />
-            <Pressable
-              disabled
-              accessibilityRole="button"
-              accessibilityLabel="Notificações (em breve)"
-              accessibilityState={{ disabled: true }}
-              className="w-8 h-8 items-center justify-center opacity-40"
-            >
-              <MaterialIcons name="notifications-none" size={24} className="text-cor-texto dark:text-cor-texto-dark" />
-            </Pressable>
+            {/* Notificações não são possíveis no web sem um servidor
+                (Web Push exige backend pra disparar o push no horário
+                certo — o projeto não tem, por decisão, ver TODO.md),
+                então o sino nem aparece lá — um placeholder "em breve"
+                sem previsão real de virar algo só confundiria. No
+                nativo, o lembrete diário já é 100% real e local (sem
+                servidor nenhum, ver core/notifications/), só ainda sem
+                app publicado em loja pra alguém usar — o sino leva
+                direto pro toggle de verdade em Configurações, em vez
+                de ser um ícone morto. */}
+            {Platform.OS !== "web" ? (
+              <Pressable
+                onPress={() => router.push("/configuracoes")}
+                accessibilityRole="link"
+                accessibilityLabel="Lembrete diário de leitura"
+                className="w-8 h-8 items-center justify-center active:opacity-60"
+              >
+                <MaterialIcons name="notifications-none" size={24} className="text-cor-texto dark:text-cor-texto-dark" />
+              </Pressable>
+            ) : null}
           </View>
         </View>
 

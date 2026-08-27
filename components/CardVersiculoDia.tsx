@@ -1,6 +1,6 @@
 import { router } from "expo-router";
 import { useEffect, useState } from "react";
-import { ActivityIndicator, Pressable, Text, View } from "react-native";
+import { ActivityIndicator, Platform, Pressable, Text, View } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { buscarReferencia } from "../core/biblia/BibliaAPI";
@@ -188,16 +188,23 @@ export function CardVersiculoDia() {
               </Pressable>
             </View>
 
-            <Pressable
-              disabled
-              accessibilityRole="button"
-              accessibilityLabel="Enviar versículo diariamente (em breve)"
-              accessibilityState={{ disabled: true }}
-              className="self-end bg-black/5 dark:bg-white/10 rounded-full px-3.5 py-1.5 items-center justify-center flex-row gap-1.5 opacity-40"
-            >
-              <MaterialIcons name="notifications-none" size={14} color={corIconePadrao} />
-              <Text className="text-cor-texto dark:text-white text-xs font-semibold">Envie-me diariamente (em breve)</Text>
-            </Pressable>
+            {/* Mesmo raciocínio do sino da Início: sem servidor não dá
+                pra mandar push no web (Web Push exige backend, ver
+                TODO.md), então some de lá — um "em breve" sem previsão
+                real só confundiria. No nativo o lembrete diário já é
+                real (core/notifications/), leva pro toggle de verdade
+                em Configurações em vez de ficar desabilitado. */}
+            {Platform.OS !== "web" ? (
+              <Pressable
+                onPress={() => router.push("/configuracoes")}
+                accessibilityRole="link"
+                accessibilityLabel="Ativar lembrete diário de leitura"
+                className="self-end bg-black/5 dark:bg-white/10 rounded-full px-3.5 py-1.5 items-center justify-center flex-row gap-1.5 active:opacity-70"
+              >
+                <MaterialIcons name="notifications-none" size={14} color={corIconePadrao} />
+                <Text className="text-cor-texto dark:text-white text-xs font-semibold">Lembrete diário</Text>
+              </Pressable>
+            ) : null}
           </View>
         </View>
       </LinearGradient>

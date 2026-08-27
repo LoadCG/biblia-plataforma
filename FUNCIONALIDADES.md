@@ -1651,13 +1651,22 @@ próprio, descrição e barra de progresso (`Conquista` estendida com
 precisou ser instalado (não vinha incluso). Testado com dado real
 injetado: streak de 2 dias mostrando mensagem certa, 2/6 conquistas
 calculadas corretamente (Primeiro Passo + Pentateuco completo).
-**UX/UI:** botão "🔔 Envie-me diariamente" no card do versículo do dia
-aparece desabilitado, com aviso "em breve" — a ação real (notificação
-diária) fica em backlog explícito (9.10), depende de conta + backend
-com agendamento. **Bug corrigido durante a implementação:** animar o
-componente `Svg` diretamente (em vez de um `Animated.View` por fora)
-gerava erro de console no web e quebrava a renderização — corrigido,
-registrado como padrão a seguir em `PLANO-NAVEGACAO.md`.
+**UX/UI:** botão "🔔 Envie-me diariamente" no card do versículo do dia e
+o sino "Notificações" no topo (2026-08-27, decisão do usuário depois
+de perguntar por que os lembretes ainda não funcionam de verdade):
+antes apareciam desabilitados em toda plataforma com aviso "em breve" —
+agora **somem completamente no web** (`Platform.OS !== "web"`), já que
+Web Push exigiria um servidor que o projeto não tem por decisão (ver
+`TODO.md`), e um "em breve" sem previsão real só confundia. No
+**nativo**, os dois viraram links de verdade pro toggle "Lembrete
+diário" já funcional em Configurações (ver 9.7/9.10) — em vez de
+ícones mortos, refletem a capacidade real que já existe lá (só sem
+distribuição em loja ainda). Testado ao vivo no web: nenhum dos dois
+aparece mais no DOM. **Bug corrigido durante a implementação [dos
+cards originais]:** animar o componente `Svg` diretamente (em vez de
+um `Animated.View` por fora) gerava erro de console no web e quebrava
+a renderização — corrigido, registrado como padrão a seguir em
+`PLANO-NAVEGACAO.md`.
 
 ### 9.3 Bíblia: última leitura + navegação fixa `✅`
 **Funcionalidade:** aba Bíblia abre direto no último capítulo lido
@@ -1938,16 +1947,22 @@ definida. Item fechado, fora do radar até o usuário pedir de novo (ver
 **Funcionalidade:** o pedido original era Web Push (site) ou push de
 verdade via servidor — isso continua não implementado, deliberadamente
 adiado, e dependeria de conta de usuário + backend (ver
-`PLANO-PLATAFORMA.md`). **Mas** existe um "Lembrete diário" **local**
-funcional no nativo (ver 9.7) — não é especificamente "versículo do
-dia", é um lembrete genérico de leitura, e não usa servidor nenhum
-(`expo-notifications`, agendado no próprio dispositivo). ⚠️
-Inconsistência com a decisão registrada em `TODO.md` de não fazer nem
-essa versão simplificada — ver lá pra o usuário confirmar a intenção.
-**UX/UI:** botão "Envie-me diariamente" na Início (9.2) continua
-`disabled` como aviso de "em breve" — não foi ligado ao lembrete local
-que já existe em Configurações; são dois pontos de entrada
-desconectados hoje.
+`PLANO-PLATAFORMA.md`). Existe um "Lembrete diário" **local** funcional
+no nativo (ver 9.7) — não é especificamente "versículo do dia", é um
+lembrete genérico de leitura, e não usa servidor nenhum
+(`expo-notifications`, agendado no próprio dispositivo).
+
+**Decisão do usuário (2026-08-27), depois de perguntar por que os
+lembretes ainda não funcionam de verdade:** confirmado — o app nativo
+um dia vai ser publicado, ainda não está pronto pra isso. Até lá, o
+lembrete local nativo **fica como está** (é real, só sem distribuição
+em loja pra alguém usar). No **web**, onde Web Push exigiria um
+servidor que não existe, os pontos de entrada viraram invisíveis em
+vez de "em breve" sem previsão real — ver 9.2. Distinção por
+plataforma feita com `Platform.OS !== "web"` nos dois pontos de
+entrada (sino da Início, botão do card de Versículo do Dia), agora
+levando pro toggle de verdade em Configurações no nativo, em vez de
+ficarem desabilitados sem função.
 
 ---
 

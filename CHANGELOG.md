@@ -5,6 +5,35 @@ O formato é baseado no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.
 
 ## [Unreleased] - 2026-08-24
 
+### Documentação
+- **Novo `ESTADO-DO-PROJETO.md`** — pedido do usuário: "atualizar toda
+  documentação com próximos passos e em qual etapa estamos, de modo
+  realista", comparando com apps do mesmo nicho. Pesquisa real feita
+  sobre YouVersion, Bible Gateway, Blue Letter Bible, Olive Tree e
+  Logos (estado 2026); tabela de benchmark por área (traduções, planos,
+  gamificação, comunidade, áudio, offline, estudo aprofundado, design,
+  confiabilidade, SEO, widgets), lacunas reais por categoria (design,
+  funcionalidades, confiabilidade, descoberta) e lista de próximos
+  passos priorizada, sem reabrir nenhuma decisão já fechada.
+- **`TODO.md` reescrito, enxuto** — o plano original (8 itens) e o
+  plano detalhado de 2026-08-19/20 estavam 100% concluídos, deixando o
+  arquivo como ruído histórico duplicando `CHANGELOG.md`. Agora só as
+  decisões fechadas (compactas) + ponteiro pro
+  `ESTADO-DO-PROJETO.md` como fonte viva do roadmap.
+- **Achado real na revisão: lembrete diário local existe e nunca foi
+  documentado** (`FUNCIONALIDADES.md` 9.7/9.10) —
+  `app/configuracoes.tsx` tem um toggle funcional que agenda uma
+  notificação local diária via `expo-notifications` (nativo), com
+  recusa educada no web. Isso contradiz a decisão registrada de "sem
+  notificação real, nem versão simplificada" — não alterado, só
+  documentado e sinalizado em `TODO.md` pra o usuário confirmar a
+  intenção real.
+- Fatos desatualizados corrigidos em `PLANO-PLATAFORMA.md`: repositório
+  já é público (dizia nada sobre isso), persistência migrou de
+  AsyncStorage puro pra SQLite no nativo, leitura bíblica busca local
+  primeiro (não fala mais direto com bible-api.com como caminho
+  principal).
+
 ### Corrigido
 - **Botões "Favoritos"/"Apoie" em Descubra fingiam ser clicáveis**
   (`FUNCIONALIDADES.md` 9.4): achado numa varredura pedida pelo usuário

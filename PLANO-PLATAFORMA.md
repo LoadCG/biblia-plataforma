@@ -76,9 +76,11 @@ interface GrifosRepository {
 }
 ```
 
-Hoje: implementação local (AsyncStorage). Depois: implementação com banco
-de dados (Supabase ou Firebase — decisão adiada até virar necessidade
-real), mesma assinatura. As telas nunca sabem qual está por trás.
+Hoje: implementação local — SQLite no nativo, AsyncStorage no web
+(migrado de AsyncStorage puro pro SQLite no nativo em 2026-08, ver
+`FUNCIONALIDADES.md`). Depois: implementação com banco de dados
+(Supabase ou Firebase — decisão adiada até virar necessidade real),
+mesma assinatura. As telas nunca sabem qual está por trás.
 Repositórios equivalentes para `ProgressoRepository` (capítulo lido) e
 `NotasRepository`. Um quarto, `LivrosLidosRepository`, foi adicionado
 depois — mesmo padrão, mas separado de propósito de `ProgressoRepository`:
@@ -260,11 +262,15 @@ não assume automaticamente.
 
 ### Decisão 11 — Leitura bíblica: busca, cache e rolagem até o versículo
 
-`core/biblia/BibliaAPI.ts` busca o texto na bible-api.com (tradução
-Almeida) e cacheia localmente por referência (capado em 200 entradas,
-mesma lógica do site antigo) — ainda fala direto com a API pelo cliente;
-o proxy de servidor (Decisão 4) continua planejado, não é bloqueante
-enquanto o uso for baixo.
+`core/biblia/BibliaAPI.ts` busca o texto local primeiro (JSON embutido
+no web, SQLite FTS5 no nativo — ver 7.3 do `FUNCIONALIDADES.md`,
+migração feita em 2026-08-19) e só cai pra bible-api.com como
+fallback se a busca local falhar por algum motivo inesperado — não é
+mais o caminho principal como era na decisão original. Cache local por
+referência (capado em 200 entradas) continua existindo pro caminho de
+fallback. O proxy de servidor (Decisão 4) segue não implementado, mas
+ficou menos urgente já que o app não depende mais da API externa no
+dia a dia.
 
 Bug real encontrado e corrigido durante o teste manual: a rolagem
 automática até o versículo pedido (`?versiculo=N`) não funcionava,
@@ -290,11 +296,14 @@ parte de resumos importar de verdade (ver checklist de funcionalidades).
 
 ### Decisão 13 — Repositório GitHub
 
-Repositório próprio (`LoadCG/biblia-plataforma`), privado, autoria de
-todos os commits como `LoadCG <cauangabrielresende@gmail.com>` (autor e
+Repositório próprio (`LoadCG/biblia-plataforma`), autoria de todos os
+commits como `LoadCG <cauangabrielresende@gmail.com>` (autor e
 committer), sem nenhum outro colaborador. Arquivos de configuração de
 ferramenta que vieram do template do Expo (`.claude/`, `CLAUDE.md`) foram
-removidos antes do primeiro push.
+removidos antes do primeiro push. **Atualização:** ficou público a
+partir de 2026-08-20 (auditoria de segredos feita antes — ver
+`TODO.md` — nenhum segredo foi commitado em nenhum momento do
+histórico).
 
 ### Decisão 14 — Referências bíblicas clicáveis no resumo (retomando plano do repositório antigo)
 

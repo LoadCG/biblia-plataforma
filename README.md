@@ -16,7 +16,7 @@ Uma plataforma bíblica completa, rápida e imersiva (Web + App), construída co
 
 Este projeto unifica a experiência de leitura bíblica, resumos teológicos, acompanhamento de progresso diário e medalhas num único código-fonte escalável, substituindo projetos fragmentados anteriores. O plano arquitetural original que guiou essa unificação está em [`PLANO-PLATAFORMA.md`](./PLANO-PLATAFORMA.md).
 
-Para visualizar o que já implementamos e o roadmap técnico (próximos passos estruturais), consulte o [`TODO.md`](./TODO.md), o checklist detalhado em [`FUNCIONALIDADES.md`](./FUNCIONALIDADES.md) e o nosso [`CHANGELOG.md`](./CHANGELOG.md).
+Pra saber em que etapa o projeto está de verdade e o que vem a seguir — comparado com o que apps do mesmo nicho (YouVersion, Bible Gateway, Blue Letter Bible, Olive Tree, Logos) já entregam — consulte o [`ESTADO-DO-PROJETO.md`](./ESTADO-DO-PROJETO.md). O checklist item a item fica em [`FUNCIONALIDADES.md`](./FUNCIONALIDADES.md), o histórico cronológico completo em [`CHANGELOG.md`](./CHANGELOG.md), e as decisões fechadas em [`TODO.md`](./TODO.md).
 
 ## Tecnologias
 

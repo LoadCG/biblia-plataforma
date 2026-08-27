@@ -9,6 +9,9 @@ Documento vivo. Cada item tem duas partes, sempre nesta ordem:
 
 `✅` concluído · `🔶` parcialmente feito · `⬜` não iniciado
 
+Pra saber em que etapa o projeto está e o que vem a seguir (comparado
+com apps do nicho), ver [`ESTADO-DO-PROJETO.md`](./ESTADO-DO-PROJETO.md).
+
 ---
 
 ## 1. Resumos históricos
@@ -1883,12 +1886,26 @@ pra "Cauan" e salvar atualiza a tela na hora; reload da página mantém
 ### 9.7 Tela "Configurações" `✅`
 **Funcionalidade:** tamanho de fonte, fonte serifada (lê/escreve
 `core/leitura/preferenciaFonte.ts`, mesmo módulo das telas de leitura,
-sem duplicar lógica) e tema, centralizados em `app/configuracoes.tsx`,
-agrupados em 3 seções (Leitura, Aparência, Dados). Alcançada por um
-ícone de engrenagem no topo e um card no fim da aba Você — não é aba
-própria.
-**UX/UI:** seção "Dados" tem placeholders "Em breve" pras preferências
-futuras (cores de grifo, contraste).
+sem duplicar lógica) e tema, agrupados em `app/configuracoes.tsx`, com
+mais 3 seções: "Notificações" (ver lembrete diário abaixo), "Dados"
+(placeholders "Em breve" pra cores de grifo/contraste, ainda não
+implementados) e "Meus dados" (exportar/apagar, ver 6.4).
+Alcançada por um ícone de engrenagem no topo e um card no fim da aba
+Você — não é aba própria.
+
+**Lembrete diário local — achado sem documentação (2026-08-24):**
+`app/configuracoes.tsx` tem um toggle "Lembrete diário" funcional de
+verdade (`core/notifications/notificacoes.ts` +
+`core/notifications/preferenciaNotificacao.ts`, via
+`expo-notifications`): agenda uma notificação local todo dia às 7h
+("Sua leitura de hoje já está esperando por você"), pede permissão do
+sistema antes, cancela ao desligar. No web, recusa educadamente com um
+`Alert` explicando que "notificações diárias funcionam no app
+instalado (Android/iOS)" — não falha silenciosamente. **Isso
+contradiz** a decisão registrada em `TODO.md` ("sem notificação real
+por enquanto, nem versão simplificada de lembrete local") — o código
+já existe e nunca tinha sido documentado aqui. Não alterado nem
+removido; ver `TODO.md` pra o usuário confirmar a intenção real.
 
 ### 9.8 Grifar em várias cores `✅`
 **Funcionalidade:** `Grifo` (`core/types/leitura.ts`) ganhou um campo
@@ -1917,15 +1934,20 @@ definida. Item fechado, fora do radar até o usuário pedir de novo (ver
 `TODO.md`, mesmo padrão das outras decisões 🔴).
 **UX/UI:** sem mudança visual — contraste atual já é adequado.
 
-### 9.10 Notificação diária do versículo do dia `⬜`
-**Funcionalidade:** backlog explícito, mencionado pelo usuário mas
-deliberadamente adiado. Precisa de: Web Push + Service Worker (site) ou
-`expo-notifications` (app), nos dois casos com um agendador do lado do
-servidor — depende de conta de usuário + backend, ainda "em aberto" no
-PLANO-PLATAFORMA.md.
-**UX/UI:** botão "Envie-me diariamente" já aparece na Início (9.2) como
-aviso de "em breve", pra comunicar que a intenção existe sem prometer o
-que ainda não funciona.
+### 9.10 Notificação diária do versículo do dia `🔶`
+**Funcionalidade:** o pedido original era Web Push (site) ou push de
+verdade via servidor — isso continua não implementado, deliberadamente
+adiado, e dependeria de conta de usuário + backend (ver
+`PLANO-PLATAFORMA.md`). **Mas** existe um "Lembrete diário" **local**
+funcional no nativo (ver 9.7) — não é especificamente "versículo do
+dia", é um lembrete genérico de leitura, e não usa servidor nenhum
+(`expo-notifications`, agendado no próprio dispositivo). ⚠️
+Inconsistência com a decisão registrada em `TODO.md` de não fazer nem
+essa versão simplificada — ver lá pra o usuário confirmar a intenção.
+**UX/UI:** botão "Envie-me diariamente" na Início (9.2) continua
+`disabled` como aviso de "em breve" — não foi ligado ao lembrete local
+que já existe em Configurações; são dois pontos de entrada
+desconectados hoje.
 
 ---
 

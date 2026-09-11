@@ -78,6 +78,7 @@ export default function ListaResumos() {
             </Text>
             <View className="relative">
               <TextInput
+                testID="busca-resumos"
                 accessibilityLabel="Buscar nos resumos"
                 accessibilityHint="Digite o nome de um livro ou uma palavra do resumo"
                 value={termo}
@@ -87,7 +88,7 @@ export default function ListaResumos() {
                 className="px-4 pr-12 py-3 rounded-full border border-cor-borda dark:border-cor-borda-dark bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark text-cor-texto dark:text-cor-texto-dark"
               />
               {termo ? (
-                <Pressable onPress={() => setTermo("")} accessibilityRole="button" accessibilityLabel="Limpar busca dos resumos" hitSlop={10} className="absolute right-3 top-1.5 h-9 w-9 items-center justify-center rounded-full active:opacity-60">
+                <Pressable testID="limpar-busca-resumos" onPress={() => setTermo("")} accessibilityRole="button" accessibilityLabel="Limpar busca dos resumos" hitSlop={10} className="absolute right-3 top-1.5 h-9 w-9 items-center justify-center rounded-full active:opacity-60">
                   <MaterialIcons name="close" size={20} color="#6b6257" />
                 </Pressable>
               ) : null}

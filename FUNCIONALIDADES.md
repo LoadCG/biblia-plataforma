@@ -2075,6 +2075,10 @@ A matriz de responsividade e a futura suíte de snapshots estão definidas em
 `PLANO-UX-INTERFACE-ETAPAS-16-A-20.md`; execução física e escolha da ferramenta
 continuam pendentes.
 
+O CI agora também executa `check:ui`, que protege alvos de toque, largura
+flexível, controles de limpeza, progresso semântico e IDs de automação. Esse
+gate estrutural não substitui screenshots reais.
+
 ### 13.5 Responsividade preventiva `🔶`
 Os cards de Estatísticas deixaram de impor largura mínima que causava overflow
 em telas estreitas, e a lista de Resumos ganhou limpeza rápida e rotulagem

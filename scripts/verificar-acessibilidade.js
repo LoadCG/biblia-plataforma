@@ -26,6 +26,7 @@ const contratos = [
   ["app/resumos/index.tsx", 'accessibilityLabel="Buscar nos resumos"'],
   ["app/resumos/index.tsx", 'accessibilityLabel="Limpar busca dos resumos"'],
   ["app/configuracoes.tsx", 'accessibilityRole="header"'],
+  ["app/resumos/index.tsx", 'accessibilityRole="header"'],
   ["components/EstadoVazio.tsx", 'accessibilityRole="summary"'],
   ["components/EstadoVazio.tsx", 'accessibilityLiveRegion="polite"'],
   ["components/Toast.tsx", 'accessibilityRole="alert"'],

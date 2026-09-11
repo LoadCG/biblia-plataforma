@@ -135,6 +135,7 @@ export default function Pesquisa() {
 
         <View className="relative">
           <TextInput
+            testID="busca-descubra"
             accessibilityLabel="Buscar na Bíblia e nos resumos"
             accessibilityHint="Digite uma palavra, vários termos ou uma frase entre aspas"
             value={termo}
@@ -148,6 +149,7 @@ export default function Pesquisa() {
           />
           {termo ? (
             <Pressable
+              testID="limpar-busca-descubra"
               onPress={() => setTermo("")}
               accessibilityRole="button"
               accessibilityLabel="Limpar busca"

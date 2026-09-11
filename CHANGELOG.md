@@ -40,6 +40,8 @@ O formato é baseado no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.
   para leitores de tela.
 - Cards de Estatísticas deixaram de impor largura mínima em telas estreitas;
   Resumos ganhou limpeza rápida e rotulagem acessível no campo de busca.
+- Adicionado `check:ui`, gate estrutural para detectar regressões de
+  responsividade, alvos de toque, controles de limpeza e IDs estáveis.
 - Novo plano de UX registra a matriz visual por dispositivo e a futura
   padronização de estados assíncronos.
 

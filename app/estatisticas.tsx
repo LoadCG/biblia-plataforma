@@ -42,7 +42,7 @@ export default function MinhasEstatisticas() {
             <ActivityIndicator />
           </View>
         ) : (
-          <View className="flex-row flex-wrap gap-3">
+          <View testID="estatisticas-grade" className="flex-row flex-wrap gap-3">
             <Cartao numero={estatisticas.livrosLidos} rotulo="livros lidos" />
             <Cartao numero={estatisticas.capitulosLidos} rotulo="capítulos lidos" />
             <Cartao numero={estatisticas.versiculosGrifados} rotulo="versículos grifados" />

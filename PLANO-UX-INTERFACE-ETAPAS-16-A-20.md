@@ -37,7 +37,10 @@ feedback, navegação e responsividade antes de novas features de produto.
 
 ## Etapa 20 — Regressão visual automatizada `⬜`
 
-- [ ] Selecionar ferramenta compatível com Expo SDK 57 e o pipeline atual.
+- [x] Criar um gate estrutural compatível com Expo SDK 57 para contratos de UI,
+  responsividade preventiva e IDs estáveis.
+- [ ] Selecionar ferramenta de screenshots compatível com Expo SDK 57 e o
+  pipeline atual.
 - [ ] Definir snapshots baseline para Início, Descubra, Salvo, Planos e Leitor.
 - [ ] Fixar tolerância de diferença e política de atualização dos baselines.
 - [ ] Integrar o job ao CI sem bloquear mudanças legítimas de conteúdo.

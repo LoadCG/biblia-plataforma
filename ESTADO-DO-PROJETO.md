@@ -153,6 +153,8 @@ tradução) e a intenção declarada de publicar o app nativo algum dia
 8. **Adicionar regressão visual automatizada** — selecionar ferramenta,
    baselines e tolerância depois da matriz visual manual.
 
+Plano operacional expandido: `PLANO-MESTRE-UX-ETAPAS-19-A-23.md`.
+
 ## Como manter este documento honesto
 
 Atualizar aqui quando: uma decisão de escopo mudar de verdade (ex.:

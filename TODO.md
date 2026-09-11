@@ -54,6 +54,9 @@ priorizada, comparada com o que apps do nicho (YouVersion, Bible
 Gateway, Blue Letter Bible, Olive Tree, Logos) entregam hoje, mantida
 atualizada conforme a etapa do projeto muda de verdade.
 
+Para execução detalhada, dependências e critérios de aceite, usar
+[`PLANO-MESTRE-UX-ETAPAS-19-A-23.md`](./PLANO-MESTRE-UX-ETAPAS-19-A-23.md).
+
 ## Como isso deve ser lido
 
 Ao começar qualquer item novo: documentar o que foi feito e testado em

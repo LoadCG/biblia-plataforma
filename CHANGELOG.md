@@ -44,6 +44,8 @@ O formato é baseado no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.
   responsividade, alvos de toque, controles de limpeza e IDs estáveis.
 - Novo plano de UX registra a matriz visual por dispositivo e a futura
   padronização de estados assíncronos.
+- Criado plano mestre operacional das etapas 19–23, com dependências,
+  procedimentos, critérios de aceite, evidências e gates externos.
 
 ## [Unreleased] - 2026-09-08
 

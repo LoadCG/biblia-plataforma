@@ -2075,6 +2075,12 @@ A matriz de responsividade e a futura suíte de snapshots estão definidas em
 `PLANO-UX-INTERFACE-ETAPAS-16-A-20.md`; execução física e escolha da ferramenta
 continuam pendentes.
 
+### 13.5 Responsividade preventiva `🔶`
+Os cards de Estatísticas deixaram de impor largura mínima que causava overflow
+em telas estreitas, e a lista de Resumos ganhou limpeza rápida e rotulagem
+acessível no campo de busca. A confirmação visual em múltiplas larguras ainda
+depende da matriz manual.
+
 ## Como usar este documento
 
 Ao começar qualquer item: mover de `⬜` para `🔶` (em andamento). Ao

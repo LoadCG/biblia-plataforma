@@ -38,6 +38,8 @@ O formato é baseado no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.
   viva; a barra mobile recebeu alvo mínimo de 44 px.
 - Toast global passou a anunciar mensagem, ação disponível e hint de interação
   para leitores de tela.
+- Cards de Estatísticas deixaram de impor largura mínima em telas estreitas;
+  Resumos ganhou limpeza rápida e rotulagem acessível no campo de busca.
 - Novo plano de UX registra a matriz visual por dispositivo e a futura
   padronização de estados assíncronos.
 

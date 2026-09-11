@@ -9,6 +9,7 @@ import { livros } from "../../core/content/livros";
 import type { Livro } from "../../core/content/tipos";
 import { livrosLidosRepository } from "../../core/repositories";
 import { useOwnerId } from "../../core/useOwnerId";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
 function CardLivro({ livro, lido, trecho }: { livro: Livro; lido: boolean; trecho: string | null }) {
   const cores = coresDoGenero(livro.genero);
@@ -68,20 +69,29 @@ export default function ListaResumos() {
                 <Link href="/" className="text-cor-destaque dark:text-cor-destaque-dark text-sm mb-1">
                   ← Início
                 </Link>
-                <Text className="text-2xl font-bold text-cor-texto dark:text-cor-texto-dark">Estude por resumos</Text>
+                <Text accessibilityRole="header" className="text-2xl font-bold text-cor-texto dark:text-cor-texto-dark">Estude por resumos</Text>
               </View>
               <BotaoTema />
             </View>
             <Text className="text-sm text-cor-texto-suave dark:text-cor-texto-suave-dark mb-3">
               {lidos.length} de {livros.length} livros lidos
             </Text>
-            <TextInput
-              value={termo}
-              onChangeText={setTermo}
-              placeholder="Buscar por livro ou palavra no resumo..."
-              placeholderTextColor="#9ca3af"
-              className="px-4 py-3 rounded-full border border-cor-borda dark:border-cor-borda-dark bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark text-cor-texto dark:text-cor-texto-dark"
-            />
+            <View className="relative">
+              <TextInput
+                accessibilityLabel="Buscar nos resumos"
+                accessibilityHint="Digite o nome de um livro ou uma palavra do resumo"
+                value={termo}
+                onChangeText={setTermo}
+                placeholder="Buscar por livro ou palavra no resumo..."
+                placeholderTextColor="#9ca3af"
+                className="px-4 pr-12 py-3 rounded-full border border-cor-borda dark:border-cor-borda-dark bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark text-cor-texto dark:text-cor-texto-dark"
+              />
+              {termo ? (
+                <Pressable onPress={() => setTermo("")} accessibilityRole="button" accessibilityLabel="Limpar busca dos resumos" hitSlop={10} className="absolute right-3 top-1.5 h-9 w-9 items-center justify-center rounded-full active:opacity-60">
+                  <MaterialIcons name="close" size={20} color="#6b6257" />
+                </Pressable>
+              ) : null}
+            </View>
           </View>
         }
         ListEmptyComponent={<EstadoVazio titulo="Nenhum livro encontrado" descricao="Tente buscar por outro nome ou palavra." />}

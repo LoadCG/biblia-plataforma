@@ -24,7 +24,7 @@ const SOMBRA = { shadowColor: "#000", shadowOpacity: 0.06, shadowRadius: 4, shad
 function Secao({ titulo, children }: { titulo: string; children: React.ReactNode }) {
   return (
     <View className="mb-6">
-      <Text className="text-xs font-bold uppercase tracking-wide text-cor-texto-suave dark:text-cor-texto-suave-dark mb-2 px-1">
+      <Text accessibilityRole="header" className="text-xs font-bold uppercase tracking-wide text-cor-texto-suave dark:text-cor-texto-suave-dark mb-2 px-1">
         {titulo}
       </Text>
       <View className="rounded-2xl bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark shadow-sm overflow-hidden" style={SOMBRA}>
@@ -140,7 +140,7 @@ export default function Configuracoes() {
           </Link>
           <BotaoTema />
         </View>
-        <Text className="text-2xl font-bold text-cor-texto dark:text-cor-texto-dark mb-5">Configurações</Text>
+        <Text accessibilityRole="header" className="text-2xl font-bold text-cor-texto dark:text-cor-texto-dark mb-5">Configurações</Text>
 
         <Secao titulo="Leitura">
           <Linha>

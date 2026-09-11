@@ -26,6 +26,10 @@ feedback, navegação e responsividade antes de novas features de produto.
 
 ## Etapa 19 — Auditoria de responsividade `🔶`
 
+- [x] Remover `min-width` rígido dos cards de Estatísticas, evitando overflow
+  em viewport mobile estreito.
+- [x] Adicionar limpeza rápida ao campo de busca da lista de Resumos.
+- [x] Rotular o campo de busca e o título da lista de Resumos.
 - [ ] Testar 320, 375, 414 e tablet em claro/escuro.
 - [ ] Verificar clipping, overflow, densidade e ordem de foco.
 - [ ] Validar navegação lateral no desktop e barra inferior no mobile.
@@ -44,4 +48,3 @@ feedback, navegação e responsividade antes de novas features de produto.
 2. Escolher e configurar a ferramenta de snapshots após o gate visual manual.
 3. Não ampliar a superfície de componentes compartilhados sem atualizar os
    contratos de acessibilidade e os baselines.
-

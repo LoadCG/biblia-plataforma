@@ -15,7 +15,7 @@ function CardPlano({ plano, diasConcluidos }: { plano: PlanoLeitura; diasConclui
 
   return (
     <Link href={`/planos/${plano.id}`} asChild>
-      <Pressable accessibilityRole="link" accessibilityLabel={plano.titulo} className="rounded-2xl bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark px-4 py-4 mb-3 shadow-sm active:opacity-80" style={SOMBRA}>
+      <Pressable accessibilityRole="link" accessibilityLabel={`${plano.titulo}. ${concluido ? "Plano concluído" : "Continuar plano"}`} accessibilityHint="Abre o plano de leitura guiado" className="rounded-2xl bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark px-4 py-4 mb-3 shadow-sm active:opacity-80" style={SOMBRA}>
         <View className="flex-row items-start justify-between mb-1">
           <Text className="text-base font-bold text-cor-texto dark:text-cor-texto-dark flex-1 pr-2">{plano.titulo}</Text>
           {concluido ? <MaterialIcons name="check-circle" size={20} color="#287a45" /> : null}
@@ -24,7 +24,7 @@ function CardPlano({ plano, diasConcluidos }: { plano: PlanoLeitura; diasConclui
           {plano.descricao}
         </Text>
         <View className="flex-row items-center gap-2">
-          <View className="flex-1 h-1.5 rounded-full bg-cor-borda dark:bg-cor-borda-dark">
+          <View accessibilityRole="progressbar" accessibilityLabel={`Progresso de ${plano.titulo}`} accessibilityValue={{ min: 0, max: plano.duracaoDias, now: diasConcluidos, text: `${diasConcluidos} de ${plano.duracaoDias} dias` }} className="flex-1 h-1.5 rounded-full bg-cor-borda dark:bg-cor-borda-dark">
             <View className="h-1.5 rounded-full bg-cor-destaque dark:bg-cor-destaque-dark" style={{ width: `${progresso * 100}%` }} />
           </View>
           <Text className="text-[11px] font-semibold text-cor-texto-suave dark:text-cor-texto-suave-dark">
@@ -67,7 +67,7 @@ export default function Planos() {
           </Pressable>
           <BotaoTema />
         </View>
-        <Text className="text-2xl font-bold text-cor-texto dark:text-cor-texto-dark mb-1">Planos de leitura</Text>
+        <Text accessibilityRole="header" className="text-2xl font-bold text-cor-texto dark:text-cor-texto-dark mb-1">Planos de leitura</Text>
         <Text className="text-sm text-cor-texto-suave dark:text-cor-texto-suave-dark mb-5">
           Trilhas guiadas pela Bíblia, um dia de cada vez.
         </Text>

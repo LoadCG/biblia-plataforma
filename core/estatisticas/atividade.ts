@@ -4,7 +4,7 @@
 import { grifosRepository, notasRepository, pesquisasFavoritasRepository, versiculosSalvosRepository } from "../repositories";
 
 export type ItemAtividade =
-  | { tipo: "grifo"; livroSlug: string; capitulo: number; versiculo: number; criadoEm: string }
+  | { tipo: "grifo"; livroSlug: string; capitulo: number; versiculo: number; cor?: string; criadoEm: string }
   | { tipo: "nota"; livroSlug: string; capitulo: number; versiculo: number; texto: string; criadoEm: string }
   | { tipo: "pesquisa"; termo: string; criadoEm: string }
   | { tipo: "salvo"; livroSlug: string; capitulo: number; versiculo: number; criadoEm: string };
@@ -23,6 +23,7 @@ export async function carregarAtividade(ownerId: string): Promise<ItemAtividade[
       livroSlug: g.livroSlug,
       capitulo: g.capitulo,
       versiculo: g.versiculo,
+      cor: g.cor,
       criadoEm: g.criadoEm,
     })),
     ...notas.map((n) => ({

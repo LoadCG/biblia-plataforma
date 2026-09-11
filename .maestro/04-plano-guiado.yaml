@@ -1,0 +1,14 @@
+appId: com.cauangabriel.bibliaplataforma
+name: Início de uma sessão guiada
+---
+- launchApp:
+    clearState: true
+- tapOn: "Continuar"
+- tapOn: "Continuar"
+- tapOn: "Explorar planos"
+- assertVisible: "Planos de leitura"
+- tapOn: "Semana da Sabedoria"
+- assertVisible: "PRÓXIMO PASSO.*"
+- tapOn: "Começar leitura de hoje"
+- assertVisible: "Provérbios 1"
+- assertVisible: "Concluir e avançar"

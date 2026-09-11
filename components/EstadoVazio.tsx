@@ -11,9 +11,9 @@ type Props = {
 // está vazio.
 export function EstadoVazio({ titulo, descricao }: Props) {
   return (
-    <View className="items-center justify-center py-10 px-6">
-      <Text className="text-cor-texto dark:text-cor-texto-dark font-semibold text-center mb-1">{titulo}</Text>
-      <Text className="text-sm text-cor-texto-suave dark:text-cor-texto-suave-dark text-center">{descricao}</Text>
+    <View accessibilityRole="summary" className="items-center justify-center py-10 px-6">
+      <Text accessibilityRole="header" className="text-cor-texto dark:text-cor-texto-dark font-semibold text-center mb-1">{titulo}</Text>
+      <Text accessibilityLiveRegion="polite" className="text-sm text-cor-texto-suave dark:text-cor-texto-suave-dark text-center">{descricao}</Text>
     </View>
   );
 }

@@ -3,6 +3,56 @@
 Todas as mudanças notáveis feitas no projeto serão documentadas neste arquivo.
 O formato é baseado no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/).
 
+## [Unreleased] - 2026-09-10
+
+### Adicionado
+- Pipeline de CI com instalação reproduzível, validação de conteúdo,
+  TypeScript, Jest, Expo Doctor e gates de acessibilidade, Maestro e SEO.
+- Exportação estática híbrida: HTML e metadados por rota para 66 resumos e 2
+  planos, com fallback interativo restrito ao leitor bíblico.
+- Quatro jornadas Maestro para onboarding, leitura/Salvo, busca e plano guiado.
+- Contratos automatizados e semântica adicional de acessibilidade nas jornadas
+  críticas.
+- Configuração nativa de identificadores/versionamento e perfis EAS de
+  desenvolvimento, preview e produção.
+
+### Corrigido
+- Mismatch de hidratação no layout responsivo das abas durante renderização
+  estática web.
+- Onboarding interceptando deep links no primeiro acesso antes da restauração
+  de estado do Expo Router.
+
+### Validado
+- Export estático com 94 rotas, conteúdo editorial pré-renderizado e clean URLs.
+- Bundles locais Android e iOS gerados com sucesso no Expo SDK 57.
+- Árvore de acessibilidade inspecionada em Resumos, Busca e Leitor.
+
+### Usabilidade e interface
+- Descubra ganhou limpeza rápida do campo de busca e anúncio acessível do
+  carregamento.
+- Salvo ganhou limpeza rápida e reset contextual de filtros/seleção.
+- Cards de Planos passaram a expor progresso semântico e intenção de navegação.
+- Estados de carregamento e erros recuperáveis das superfícies bíblicas críticas
+  passaram a expor feedback semântico para leitores de tela.
+- Estados vazios passaram a expor resumo, cabeçalho e orientação como região
+  viva; a barra mobile recebeu alvo mínimo de 44 px.
+- Toast global passou a anunciar mensagem, ação disponível e hint de interação
+  para leitores de tela.
+- Novo plano de UX registra a matriz visual por dispositivo e a futura
+  padronização de estados assíncronos.
+
+## [Unreleased] - 2026-09-08
+
+### Adicionado e aprimorado
+- Corrigido parsing de referências de planos, isolamento por `ownerId`,
+  exclusão/exportação de preferências e concorrência da busca.
+- Dependências alinhadas ao Expo SDK 57; Expo Doctor passou em 21/21.
+- Planos transformados em sessões guiadas com 21 devocionais e retomada.
+- Adicionado onboarding versionado e dicas contextuais.
+- Busca ganhou relevância, frases, filtros, paginação e destaque.
+- Salvo ganhou pesquisa, ordenação, seleção em lote e coleções persistentes.
+- Suíte ampliada e estabilizada com exit code 0.
+
 ## [Unreleased] - 2026-08-27
 
 ### Corrigido (distinção web/nativo pra lembretes)

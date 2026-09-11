@@ -14,6 +14,8 @@ import { ModalNota } from "./ModalNota";
 type Props = {
   item: ItemAtividade;
   onMudou: () => void;
+  selecionado?: boolean;
+  onSelecionar?: () => void;
 };
 
 // Um item de Salvo/Atividade — grifo, nota ou pesquisa favoritada — com
@@ -21,7 +23,7 @@ type Props = {
 // quanto pelo botão direito do mouse no web (onContextMenu; RN Web
 // repassa esse prop pro elemento DOM mesmo sem estar nos tipos do RN,
 // por isso o cast).
-export function CardAtividade({ item, onMudou }: Props) {
+export function CardAtividade({ item, onMudou, selecionado, onSelecionar }: Props) {
   const ownerId = useOwnerId();
   const [menuAberto, setMenuAberto] = useState(false);
   const [editando, setEditando] = useState(false);
@@ -72,6 +74,14 @@ export function CardAtividade({ item, onMudou }: Props) {
       className="flex-row items-start justify-between rounded-2xl bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark px-4 py-3 mb-2 shadow-sm"
       style={{ shadowColor: "#000", shadowOpacity: 0.06, shadowRadius: 4, shadowOffset: { width: 0, height: 1 } }}
     >
+      {onSelecionar ? (
+        <Pressable onPress={onSelecionar} accessibilityRole="checkbox" accessibilityState={{ checked: !!selecionado }} accessibilityLabel={`Selecionar ${referencia ?? "pesquisa"}`}
+          // @ts-expect-error extensão ARIA do react-native-web
+          accessibilityChecked={!!selecionado}
+          className={`w-7 h-7 rounded-full border mr-3 items-center justify-center active:opacity-70 ${selecionado ? "bg-cor-destaque dark:bg-cor-destaque-dark border-cor-destaque dark:border-cor-destaque-dark" : "border-cor-borda dark:border-cor-borda-dark"}`}>
+          <Text className={selecionado ? "text-white dark:text-cor-texto font-bold" : "text-transparent"}>✓</Text>
+        </Pressable>
+      ) : null}
       <View className="flex-1 mr-2">
         <Text className="text-cor-texto dark:text-cor-texto-dark text-sm">
           {item.tipo === "grifo"

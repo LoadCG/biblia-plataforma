@@ -56,9 +56,9 @@ export function PopoverVersiculo({ referencia, refCapitulo, onFechar }: Props) {
           </View>
 
           {erro ? (
-            <Text className="text-cor-texto-suave dark:text-cor-texto-suave-dark">{erro}</Text>
+            <Text accessibilityRole="alert" className="text-cor-texto-suave dark:text-cor-texto-suave-dark">{erro}</Text>
           ) : !dados ? (
-            <ActivityIndicator />
+            <ActivityIndicator accessibilityLabel="Carregando referência bíblica" />
           ) : (
             <ScrollView>
               <Text className="text-cor-texto dark:text-cor-texto-dark leading-6">

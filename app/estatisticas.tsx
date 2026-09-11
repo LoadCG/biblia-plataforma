@@ -1,6 +1,6 @@
 import { Link } from "expo-router";
 import { useEffect, useState } from "react";
-import { ScrollView, Text, View } from "react-native";
+import { ActivityIndicator, ScrollView, Text, View } from "react-native";
 import { BotaoTema } from "../components/BotaoTema";
 import { calcularEstatisticas, formatarMinutos, type Estatisticas } from "../core/estatisticas/estatisticas";
 import { useOwnerId } from "../core/useOwnerId";
@@ -32,12 +32,16 @@ export default function MinhasEstatisticas() {
           </Link>
           <BotaoTema />
         </View>
-        <Text className="text-2xl font-bold text-cor-texto dark:text-cor-texto-dark mb-1">Minhas estatísticas</Text>
+        <Text accessibilityRole="header" className="text-2xl font-bold text-cor-texto dark:text-cor-texto-dark mb-1">Minhas estatísticas</Text>
         <Text className="text-sm text-cor-texto-suave dark:text-cor-texto-suave-dark mb-5">
           Um resumo do seu ritmo de leitura, só pra você.
         </Text>
 
-        {!estatisticas ? null : (
+        {!estatisticas ? (
+          <View accessibilityRole="progressbar" accessibilityLabel="Carregando estatísticas" className="items-center py-10">
+            <ActivityIndicator />
+          </View>
+        ) : (
           <View className="flex-row flex-wrap gap-3">
             <Cartao numero={estatisticas.livrosLidos} rotulo="livros lidos" />
             <Cartao numero={estatisticas.capitulosLidos} rotulo="capítulos lidos" />

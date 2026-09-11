@@ -72,9 +72,9 @@ export default function EscolherVersiculo() {
 
       <View className="px-4 pt-4 pb-10 max-w-2xl w-full mx-auto">
         {erro ? (
-          <Text className="text-red-500 text-center mt-8">{erro}</Text>
+          <Text accessibilityRole="alert" className="text-red-500 text-center mt-8">{erro}</Text>
         ) : !dados ? (
-          <ActivityIndicator className="mt-8" />
+          <ActivityIndicator accessibilityLabel="Carregando versículos" className="mt-8" />
         ) : (
           <>
             <Text className="text-xs text-cor-texto-suave dark:text-cor-texto-suave-dark mb-4 px-1">

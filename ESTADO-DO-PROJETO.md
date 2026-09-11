@@ -1,4 +1,4 @@
-# Estado do projeto e próximos passos (2026-08-24)
+# Estado do projeto e próximos passos (2026-09-10)
 
 Este é o documento de referência pra responder duas perguntas: **em
 que etapa estamos de verdade** (sem otimismo nem pessimismo) e **o que
@@ -36,16 +36,16 @@ referências mais citadas em comparativos de 2026.
 | Área | O que o nicho entrega | Bíblia Plataforma hoje |
 |---|---|---|
 | Traduções | YouVersion: centenas de traduções, 1400+ Bíblias, 1200+ idiomas (Plataforma própria lançada em 2026) | Só Almeida ACF — **decisão consciente**, não lacuna técnica (ver `TODO.md`) |
-| Planos de leitura | YouVersion: 100 mil+ planos, de 3 dias a plurianuais, com devocionais e vídeo | 2 planos curados, estáticos, sem devocional/vídeo |
+| Planos de leitura | YouVersion: 100 mil+ planos, de 3 dias a plurianuais, com devocionais e vídeo | 2 planos guiados e curados, com 21 devocionais, pergunta diária e retomada persistente |
 | Streak e gamificação | YouVersion reforçou "Community Plans" com streaks sociais em 2026; apps como Bible Streak têm pontuação/badges dedicados | Streak individual + 6 medalhas por marco do cânon — sólido, mas sem componente social |
 | Comunidade | YouVersion: camada de Amigos, pedidos de oração, comentar/grifar junto com quem você conhece | Nenhuma — **decisão consciente** (sem conta = sem comunidade possível ainda) |
 | Áudio | Bible Gateway destacado por qualidade de áudio pra "ouvir enquanto lê"; Dwell foca 100% em áudio com faixas de sono | TTS do sistema operacional (`Ouvir capítulo em voz alta`) — funcional, mas não é narração profissional |
 | Offline | Citado como parte central de retenção em 2026 ("reduz fricção, ajuda a manter o streak") | Forte: Bíblia inteira embutida, leitura e busca funcionam 100% offline (web e nativo) — ver `FUNCIONALIDADES.md` 7.3 |
 | Estudo aprofundado | Blue Letter Bible/Logos: léxico, interlinear, concordância, comentários | Fora de escopo — público-alvo declarado é "leitura", não estudo acadêmico de idioma original |
 | Design/UX 2026 | Tipografia cuidada, modo escuro, Dynamic Type, tela inicial sem feed de comparação social | Modo escuro completo, fonte ajustável, identidade visual própria (não copiada) — ver auditorias de UI já feitas |
-| Confiabilidade | Bible Streak citado por "pontuação clara e progresso de badge confiável" como diferencial | Bugs reais de confiabilidade corrigidos recentemente (Service Worker, layout do Modo Foco) — ver seção abaixo |
-| SEO/descoberta | Apps estabelecidos têm anos de indexação; sites de conteúdo bíblico competem por tráfego orgânico de busca | App é uma SPA sem HTML por rota — **lacuna real**, item 7.1 do backlog, adiado por risco técnico (ver `TODO.md`) |
-| Widgets/OS nativo | YouVersion tem widget de tela inicial, notificação diária | Nenhum widget nativo; nada publicado nas lojas ainda — pretendido pro futuro, app nativo ainda não está pronto |
+| Confiabilidade | Bible Streak citado por "pontuação clara e progresso de badge confiável" como diferencial | CI versionado, suíte unitária, contratos de acessibilidade/SEO/Maestro e exports por plataforma; o primeiro run remoto e o E2E em dispositivo ainda são gates externos |
+| SEO/descoberta | Apps estabelecidos têm anos de indexação; sites de conteúdo bíblico competem por tráfego orgânico de busca | 66 resumos e 2 planos possuem HTML/metadados por rota; leitor permanece interativo por fallback híbrido restrito |
+| Widgets/OS nativo | YouVersion tem widget de tela inicial, notificação diária | Configuração e bundles locais Android/iOS validados; sem widget, build assinado ou publicação em loja |
 
 **Leitura honesta desse quadro:** nas áreas onde o projeto decidiu
 competir (leitura offline confiável, identidade visual própria,
@@ -79,19 +79,17 @@ traduções licenciadas, notificações push), a distância é grande e
 ## Lacunas reais, por categoria
 
 ### Design
-- Onboarding/primeiro uso inexistente — quem abre o app pela primeira
-  vez cai direto na Início sem nenhuma introdução ao que o app oferece
-  (Planos, Grifos, Medalhas). Apps do nicho geralmente têm 2-3 telas de
-  boas-vindas ou um tour guiado.
+- O onboarding versionado e as dicas contextuais já cobrem o primeiro uso;
+  falta validar a ordem de foco e os anúncios em leitor de tela físico.
 - Nenhum widget de tela inicial (nativo) — mas publicar nativo em si já
   é decisão fechada por ora.
 - Tela "Sobre o projeto" existe mas não linka pro portfólio/autor de
   forma proeminente (o app é peça de portfólio — vale considerar).
 
 ### Funcionalidades
-- Só 2 planos de leitura, sem devocional (texto de reflexão por dia,
-  não só a referência) — plano de leitura "cru" é bem mais raso que o
-  que o nicho oferece.
+- O catálogo continua deliberadamente pequeno (2 planos), embora agora tenha
+  21 devocionais, perguntas diárias e retomada persistente. A lacuna restante
+  é amplitude editorial, não profundidade mecânica.
 - Lembrete diário local existe e funciona **só no nativo** (ver
   `FUNCIONALIDADES.md` 9.7/9.10) — sem efeito real hoje porque o app
   nativo não está publicado em nenhuma loja ainda. No web (o único
@@ -104,21 +102,18 @@ traduções licenciadas, notificações push), a distância é grande e
   oferecem.
 
 ### Confiabilidade
-- Sem CI automatizado (`tsc`/`jest` rodam manualmente a cada sessão,
-  não em pipeline) — funciona porque a disciplina de sempre rodar
-  antes de commitar tem se mantido, mas é um ponto único de falha
-  (depende de lembrar).
-- Sem testes E2E de verdade (Maestro/Detox, item 5 do plano original,
-  nunca retomado) — só testes unitários das regras de negócio.
-- SEO estático adiado por risco real (rotas dinâmicas quebrando em
-  produção sem ambiente de teste seguro) — continua sem solução, não
-  só sem prioridade.
+- O pipeline de CI e seus gates estão versionados; falta observar o primeiro
+  run verde no GitHub após envio das alterações.
+- Quatro jornadas Maestro estão definidas e validadas estruturalmente, mas
+  ainda precisam rodar contra um binário instalado em dispositivo/emulador.
+- A inspeção web de acessibilidade foi concluída; NVDA/VoiceOver/TalkBack em
+  dispositivo físico continuam como gate humano.
 
 ### Descoberta/crescimento
-- Sem nenhuma estratégia de SEO ativa (SPA pura, sem HTML por rota) —
-  o app não aparece em busca orgânica do Google pra "resumo de
-  Gênesis" ou similar, ao contrário do site antigo (estático) que o
-  projeto substituiu.
+- A estratégia híbrida de SEO está implementada localmente: páginas
+  editoriais são pré-renderizadas e `/biblia/*` preserva a experiência
+  interativa. Falta validar o comportamento no Preview Deployment antes da
+  promoção para produção e acompanhar indexação após o deploy.
 - Sem presença em loja de app — **não é mais "não por enquanto" sem
   prazo**: confirmado em 2026-08-27 que a intenção é publicar um dia,
   só que o app nativo ainda não está pronto pra isso e falta entender
@@ -129,33 +124,34 @@ traduções licenciadas, notificações push), a distância é grande e
 
 ## Próximos passos priorizados (realista pro contexto do projeto)
 
+> Atualização de 2026-09-10: além das cinco etapas funcionais anteriores, foram
+> implementados CI, SEO híbrido, cenários Maestro, hardening de acessibilidade,
+> prontidão de build nativo e dois ciclos de usabilidade para Busca, Salvo,
+> Planos, estados vazios, navegação e Toast. Evidências em
+> `PLANO-EXECUCAO-ETAPAS-6-A-10.md`, `PLANO-UX-INTERFACE-ETAPAS-11-A-15.md` e
+> `PLANO-UX-INTERFACE-ETAPAS-16-A-20.md`.
+
 Ordenados por impacto real vs. esforço, respeitando as decisões já
 fechadas (sem conta, sem notificação real no web, sem trocar
 tradução) e a intenção declarada de publicar o app nativo algum dia
 (ver acima). Nenhum item aqui reabre as decisões fechadas.
 
-1. **Onboarding leve na primeira abertura** — 2-3 telas ou um destaque
-   guiado mostrando Planos/Grifos/Medalhas na primeira vez que o app
-   abre. Maior lacuna de design encontrada no benchmark, e a mais
-   barata de resolver (não depende de backend).
-2. **Enriquecer os planos de leitura existentes com devocional curto**
-   — um parágrafo de reflexão por dia, não só a referência bíblica.
-   Eleva os 2 planos que já existem sem precisar de mais planos.
-3. **CI básico** (GitHub Actions rodando `tsc`+`jest` em cada push) —
-   barato de configurar, remove a dependência de lembrar de rodar
-   manualmente, primeira rede de segurança real de confiabilidade.
-4. **Retomar a decisão do SEO estático (item 7.1) com um ambiente de
-   teste seguro** — usar preview deploy do Vercel (não produção direto)
-   pra finalmente testar `generateStaticParams` sem risco. Maior
-   lacuna de crescimento orgânico, tecnicamente resolúvel sem mudar
-   nenhuma decisão de produto.
-5. **Teste de leitor de tela real** (VoiceOver/NVDA) — único item de
-   acessibilidade que segue bloqueado só por falta de dispositivo
-   físico, não por decisão.
-6. **Testes E2E da jornada principal** (Maestro) — item 5 do plano
-   original nunca retomado; baixa prioridade real (os testes unitários
-   + disciplina de teste manual ao vivo têm coberto bem até aqui), mas
-   fica registrado como dívida técnica conhecida.
+1. **Executar acessibilidade física** — validar foco, ordem de leitura e
+   anúncios com NVDA, VoiceOver e TalkBack, registrando plataforma/versão.
+2. **Rodar Maestro contra binários nativos** — executar as quatro jornadas em
+   Android e, quando houver host compatível, iOS; corrigir flakiness observada.
+3. **Validar CI e SEO remotamente** — confirmar o primeiro workflow verde e
+   testar clean URLs/deep links em um Preview Deployment do Vercel.
+4. **Gerar builds EAS assinados de preview** — somente quando conta e
+   credenciais forem disponibilizadas e a retomada da publicação for autorizada.
+5. **Revisar editorialmente os 21 devocionais** — validação humana de conteúdo,
+   tom e coerência teológica antes de tratar o material como definitivo.
+6. **Tratar vulnerabilidades de dependências sem upgrade forçado** — avaliar os
+   avisos do `npm audit` por explorabilidade real e compatibilidade com Expo 57.
+7. **Executar a matriz visual de usabilidade** — testar as larguras e temas
+   definidos nas etapas 14–15 do plano de UX, com evidência em dispositivos.
+8. **Adicionar regressão visual automatizada** — selecionar ferramenta,
+   baselines e tolerância depois da matriz visual manual.
 
 ## Como manter este documento honesto
 

@@ -1,0 +1,47 @@
+# Plano de evolução de usabilidade e interface — etapas 16 a 20
+
+Atualizado em 2026-09-10. Este ciclo consolida padrões transversais de
+feedback, navegação e responsividade antes de novas features de produto.
+
+## Etapa 16 — Estados vazios orientativos `✅`
+
+- [x] Tornar o container do estado vazio identificável como resumo.
+- [x] Expor o título como cabeçalho semântico.
+- [x] Anunciar a orientação do estado vazio como região viva `polite`.
+- [x] Manter a linguagem orientada à próxima ação, sem alterar conteúdo.
+
+## Etapa 17 — Navegação com alvos de toque consistentes `✅`
+
+- [x] Garantir altura mínima de 44 px nos gatilhos da barra mobile.
+- [x] Preservar estados selecionado/inativo e contraste dos ícones.
+- [x] Manter o layout desktop/sidebar sem alterar a árvore de rotas.
+- [x] Cobrir o contrato de tamanho mínimo no gate de acessibilidade.
+
+## Etapa 18 — Toast acessível e acionável `✅`
+
+- [x] Expor mensagens como alerta polido para leitores de tela.
+- [x] Incluir a ação disponível no nome acessível do Toast.
+- [x] Adicionar hint para a ação de desfazer/confirmar.
+- [x] Preservar duração diferenciada e comportamento de dismiss.
+
+## Etapa 19 — Auditoria de responsividade `🔶`
+
+- [ ] Testar 320, 375, 414 e tablet em claro/escuro.
+- [ ] Verificar clipping, overflow, densidade e ordem de foco.
+- [ ] Validar navegação lateral no desktop e barra inferior no mobile.
+- [ ] Registrar evidências por tela crítica.
+
+## Etapa 20 — Regressão visual automatizada `⬜`
+
+- [ ] Selecionar ferramenta compatível com Expo SDK 57 e o pipeline atual.
+- [ ] Definir snapshots baseline para Início, Descubra, Salvo, Planos e Leitor.
+- [ ] Fixar tolerância de diferença e política de atualização dos baselines.
+- [ ] Integrar o job ao CI sem bloquear mudanças legítimas de conteúdo.
+
+## Próximos gates
+
+1. Executar a matriz visual em navegador/dispositivo real.
+2. Escolher e configurar a ferramenta de snapshots após o gate visual manual.
+3. Não ampliar a superfície de componentes compartilhados sem atualizar os
+   contratos de acessibilidade e os baselines.
+

@@ -1,0 +1,17 @@
+appId: com.cauangabriel.bibliaplataforma
+name: Leitura e salvamento de versículo
+---
+- launchApp:
+    clearState: true
+- tapOn: "Pular apresentação"
+- tapOn: "Bíblia"
+- assertVisible: "Escolha um livro"
+- tapOn: "Gênesis"
+- tapOn:
+    id: "capitulo-1"
+- assertVisible: "Gênesis 1"
+- tapOn:
+    id: "versiculo-1"
+- tapOn: "Salvar"
+- tapOn: "Você"
+- assertVisible: "Gênesis 1:1"

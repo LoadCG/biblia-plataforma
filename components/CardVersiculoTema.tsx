@@ -44,9 +44,9 @@ export function CardVersiculoTema({ referencia }: { referencia: string }) {
       style={{ shadowColor: "#000", shadowOpacity: 0.06, shadowRadius: 4, shadowOffset: { width: 0, height: 1 } }}
     >
       {erro ? (
-        <Text className="text-cor-texto-suave dark:text-cor-texto-suave-dark">{erro}</Text>
+        <Text accessibilityRole="alert" className="text-cor-texto-suave dark:text-cor-texto-suave-dark">{erro}</Text>
       ) : !dados ? (
-        <ActivityIndicator />
+        <ActivityIndicator accessibilityLabel="Carregando versículo" />
       ) : (
         <>
           <Text className="text-cor-texto dark:text-cor-texto-dark italic leading-6">{dados.texto}</Text>

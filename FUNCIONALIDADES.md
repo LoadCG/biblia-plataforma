@@ -1966,6 +1966,115 @@ ficarem desabilitados sem função.
 
 ---
 
+## 10. Ciclo funcional de aprofundamento (2026-09-08)
+
+### 10.1 Hardening de dados e navegação `✅`
+Parser bíblico compartilhado, isolamento web do progresso de planos por
+`ownerId`, cancelamento lógico da busca e política integral de dados locais.
+
+### 10.2 Sessões guiadas de planos `✅`
+Os dois planos existentes agora possuem reflexão e pergunta por dia, CTA de
+próximo passo, retomada persistente e avanço sequencial dentro do leitor.
+
+### 10.3 Onboarding contextual `✅`
+Primeiro uso versionado com três passos, opção de pular/reabrir e dicas
+descartáveis nas superfícies principais.
+
+### 10.4 Busca de segunda geração `✅`
+Ranking de relevância, termos múltiplos, frase exata, filtros por livro e
+testamento, paginação, highlight e acesso a pesquisas favoritas.
+
+### 10.5 Organização de Salvo `✅`
+Busca, filtros combinados, ordem canônica, agrupamento por livro, seleção em
+lote com undo e coleções equivalentes no web/SQLite.
+
+Checklist e evidências completos: `PLANO-EXECUCAO-5-ETAPAS.md`.
+
+---
+
+## 11. Confiabilidade, descoberta e distribuição (2026-09-10)
+
+### 11.1 Integração contínua `✅`
+GitHub Actions executa instalação determinística, verificação do conteúdo
+derivado, TypeScript, Jest, contratos de acessibilidade/Maestro, Expo Doctor,
+export web e auditoria do HTML estático. O bundle é preservado como artefato
+de diagnóstico quando o job falha.
+
+### 11.2 SEO estático híbrido `✅`
+As 66 páginas de resumo e os dois planos guiados geram HTML com metadados
+específicos. O leitor não multiplica 1.189 capítulos no build: deep links
+`/biblia/*` usam fallback SPA restrito. A exportação local produziu 94 rotas e
+foi validada em navegador com clean URLs e sem erros de hidratação.
+
+### 11.3 Jornadas Maestro `🔶`
+Quatro fluxos cobrem onboarding, leitura/Salvo, busca e plano guiado, com IDs
+estáveis e gate estrutural automatizado. Falta executar a suíte em binário
+nativo instalado para encerrar o item.
+
+### 11.4 Acessibilidade operacional `🔶`
+Cabeçalhos, formulários, progresso, radios, live regions e ações críticas
+receberam semântica explícita. Os contratos automatizados e a inspeção web
+passaram; testes físicos com NVDA/VoiceOver/TalkBack seguem pendentes.
+
+### 11.5 Prontidão nativa/EAS `🔶`
+Identificadores, scheme, versões e perfis EAS estão configurados. Os exports
+locais Android e iOS passaram no Expo SDK 57. Builds assinados, smoke test em
+dispositivo e submissão às lojas dependem de credenciais e autorização.
+
+Checklist e evidências: `PLANO-EXECUCAO-ETAPAS-6-A-10.md`.
+
+---
+
+## 12. Usabilidade e interface — ciclo 2 (2026-09-10)
+
+### 12.1 Busca com limpeza explícita `✅`
+Descubra agora exibe um botão de limpar dentro do campo quando há texto. A
+ação reduz o custo de voltar ao estado inicial, mantém área de toque adequada e
+possui label acessível. O estado de busca em andamento também é anunciado.
+
+### 12.2 Salvo com reset de filtros `✅`
+Salvo ganhou limpeza rápida do termo e uma ação contextual "Limpar filtros"
+que restaura busca, filtro, ordenação, coleção e seleção em lote de uma vez.
+O undo das exclusões continua preservado.
+
+### 12.3 Progresso de planos semântico `✅`
+Os cards de planos expõem progresso como `progressbar`, com valor atual, limite
+e texto legível. O nome do card comunica se o plano está concluído ou pode ser
+continuado, com hint explícito de navegação.
+
+### 12.4 Auditoria visual por dispositivo `🔶`
+As larguras, temas e plataformas da matriz estão definidas em
+`PLANO-UX-INTERFACE-ETAPAS-11-A-15.md`, mas aguardam execução visual em
+ambiente real.
+
+### 12.5 Sistema unificado de estados `🔶`
+O primeiro recorte adicionou feedback semântico aos carregamentos e erros das
+superfícies críticas (Leitor, seleção de versículo, referências, Bíblia inicial
+e Estatísticas). Ainda falta uniformizar loading, erro recuperável, estado
+vazio, toast e confirmação de ações entre todas as telas.
+
+---
+
+## 13. Usabilidade e interface — ciclo 3 (2026-09-10)
+
+### 13.1 Estados vazios orientativos `✅`
+O componente compartilhado `EstadoVazio` agora expõe resumo, cabeçalho e
+orientação como região viva. A linguagem existente foi preservada para não
+alterar o conteúdo editorial das telas.
+
+### 13.2 Navegação mobile com alvo mínimo `✅`
+Os gatilhos da barra inferior agora possuem altura mínima de 44 px, reduzindo
+toques acidentais sem alterar a navegação headless ou a sidebar desktop.
+
+### 13.3 Toast acessível `✅`
+O Toast global anuncia sua mensagem como alerta polido e inclui a ação
+disponível no nome acessível. A ação opcional também possui hint explícito.
+
+### 13.4 Auditoria visual e regressão `🔶`
+A matriz de responsividade e a futura suíte de snapshots estão definidas em
+`PLANO-UX-INTERFACE-ETAPAS-16-A-20.md`; execução física e escolha da ferramenta
+continuam pendentes.
+
 ## Como usar este documento
 
 Ao começar qualquer item: mover de `⬜` para `🔶` (em andamento). Ao

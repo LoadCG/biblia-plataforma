@@ -72,6 +72,32 @@ export function initDB() {
       UNIQUE(ownerId, planoId, diaConcluido)
     );
 
+    CREATE TABLE IF NOT EXISTS sessoes_planos (
+      ownerId TEXT NOT NULL,
+      planoId TEXT NOT NULL,
+      dia INTEGER NOT NULL,
+      indiceAtual INTEGER NOT NULL,
+      referenciasConcluidas TEXT NOT NULL,
+      atualizadoEm TEXT NOT NULL,
+      PRIMARY KEY(ownerId, planoId, dia)
+    );
+
+    CREATE TABLE IF NOT EXISTS colecoes (
+      id TEXT PRIMARY KEY,
+      ownerId TEXT NOT NULL,
+      nome TEXT NOT NULL,
+      cor TEXT,
+      criadoEm TEXT NOT NULL,
+      atualizadoEm TEXT NOT NULL
+    );
+    CREATE TABLE IF NOT EXISTS colecoes_associacoes (
+      ownerId TEXT NOT NULL,
+      colecaoId TEXT NOT NULL,
+      itemChave TEXT NOT NULL,
+      PRIMARY KEY(ownerId, colecaoId, itemChave),
+      FOREIGN KEY(colecaoId) REFERENCES colecoes(id) ON DELETE CASCADE
+    );
+
     CREATE TABLE IF NOT EXISTS perfil (
       ownerId TEXT PRIMARY KEY,
       nome TEXT NOT NULL,

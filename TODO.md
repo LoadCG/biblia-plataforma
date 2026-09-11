@@ -38,10 +38,11 @@ busca global, reformulação visual de Descubra e de Você) estão todos
   mostrar "em breve" sem previsão real — distinção feita por
   `Platform.OS`, e no nativo esses mesmos pontos agora levam pro
   toggle de verdade em Configurações. Ver `FUNCIONALIDADES.md` 9.2/9.10.
-- **SEO estático (pré-renderização por rota)** (7.1) — investigado a
-  fundo, não ativado por risco de quebrar rotas dinâmicas em produção
-  sem um ambiente de teste seguro. Ver `ESTADO-DO-PROJETO.md` pro
-  próximo passo realista (testar num preview deploy do Vercel antes).
+- **SEO estático (pré-renderização por rota)** (7.1) — implementação
+  híbrida concluída em 2026-09-10: 66 resumos e 2 planos geram HTML por
+  rota; `/biblia/*` mantém fallback interativo restrito. O Preview
+  Deployment do Vercel continua como gate antes da promoção. Ver
+  `PLANO-EXECUCAO-ETAPAS-6-A-10.md`.
 - **Modo escuro AMOLED** (9.9) — fechado. Não é bug de acessibilidade
   (contraste atual já passa WCAG AA), é só uma ideia de tema sem
   direção de design definida.

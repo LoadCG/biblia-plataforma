@@ -12,9 +12,13 @@ import {
   planosRepository,
   progressoRepository,
   versiculosSalvosRepository,
+  colecoesRepository,
 } from "../repositories";
 import { PERFIL_PADRAO, type Perfil } from "../repositories/PerfilRepository";
 import type { Grifo, Nota, PesquisaFavorita, CapituloLido, VersiculoSalvo } from "../types/leitura";
+import type { AssociacaoColecao, Colecao } from "../repositories/ColecoesRepository";
+import type { SessaoPlano } from "../repositories/PlanosRepository";
+import { apagarEstadoUsuario, coletarEstadoUsuario } from "../storage/estadoUsuario";
 
 export type DadosPessoais = {
   exportadoEm: string;
@@ -26,6 +30,10 @@ export type DadosPessoais = {
   pesquisasFavoritas: PesquisaFavorita[];
   versiculosSalvos: VersiculoSalvo[];
   planos: { planoId: string; diasConcluidos: number[] }[];
+  preferenciasLocais: Record<string, string | null>;
+  colecoes: Colecao[];
+  associacoesColecoes: AssociacaoColecao[];
+  sessoesPlanos: SessaoPlano[];
 };
 
 export async function coletarDadosPessoais(ownerId: string): Promise<DadosPessoais> {
@@ -48,6 +56,9 @@ export async function coletarDadosPessoais(ownerId: string): Promise<DadosPessoa
     )
   ).filter((p) => p.diasConcluidos.length > 0);
 
+  const preferenciasLocais = await coletarEstadoUsuario();
+  const [colecoes, associacoesColecoes] = await Promise.all([colecoesRepository.listar(ownerId), colecoesRepository.listarAssociacoes(ownerId)]);
+  const sessoesPlanos = (await Promise.all(planosLeitura.flatMap((plano) => plano.dias.map((dia) => planosRepository.obterSessao(ownerId, plano.id, dia.dia))))).filter((sessao): sessao is SessaoPlano => sessao !== null);
   return {
     exportadoEm: new Date().toISOString(),
     perfil,
@@ -58,6 +69,10 @@ export async function coletarDadosPessoais(ownerId: string): Promise<DadosPessoa
     pesquisasFavoritas,
     versiculosSalvos,
     planos,
+    preferenciasLocais,
+    colecoes,
+    associacoesColecoes,
+    sessoesPlanos,
   };
 }
 
@@ -84,5 +99,8 @@ export async function apagarDadosPessoais(ownerId: string, dados: DadosPessoais)
     ...dados.planos.map((p) =>
       Promise.all(p.diasConcluidos.map((dia) => planosRepository.alternarDiaConcluido(ownerId, p.planoId, dia)))
     ),
+    colecoesRepository.apagarTudo(ownerId),
+    ...planosLeitura.flatMap((plano) => plano.dias.map((dia) => planosRepository.removerSessao(ownerId, plano.id, dia.dia))),
   ]);
+  await apagarEstadoUsuario();
 }

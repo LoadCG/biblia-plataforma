@@ -19,7 +19,7 @@ export default function BibliaTab() {
 
   return (
     <View className="flex-1 items-center justify-center bg-cor-fundo dark:bg-cor-fundo-dark">
-      <ActivityIndicator />
+      <ActivityIndicator accessibilityLabel="Abrindo sua última leitura" />
     </View>
   );
 }

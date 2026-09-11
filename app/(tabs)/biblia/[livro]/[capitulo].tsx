@@ -16,8 +16,11 @@ import { Modal } from "react-native";
 import { buscarReferencia } from "../../../../core/biblia/BibliaAPI";
 import type { CapituloTexto } from "../../../../core/biblia/tipos";
 import { livros, obterLivro, obterResumo } from "../../../../core/content/livros";
+import { obterDiaPlano, obterPlano } from "../../../../core/content/planos";
+import { hrefReferenciaBiblica } from "../../../../core/biblia/parseReferencia";
 import { TextoComReferencias } from "../../../../components/TextoComReferencias";
 import { CartaoVersiculoImagem } from "../../../../components/CartaoVersiculoImagem";
+import { DicaContextual } from "../../../../components/DicaContextual";
 import { coresDoGenero, descricaoDoGenero } from "../../../../core/content/genero";
 import {
   carregarFonteSerifada,
@@ -29,7 +32,7 @@ import {
   TAMANHOS_FONTE,
 } from "../../../../core/leitura/preferenciaFonte";
 import { salvarUltimaLeitura } from "../../../../core/leitura/ultimaLeitura";
-import { grifosRepository, notasRepository, progressoRepository, versiculosSalvosRepository } from "../../../../core/repositories";
+import { grifosRepository, notasRepository, planosRepository, progressoRepository, versiculosSalvosRepository } from "../../../../core/repositories";
 import { falarCapitulo, pararAudio, suportaAudio } from "../../../../core/leitura/audio";
 import { alternarTema, useColorScheme } from "../../../../core/theme";
 import { gerarImagemVersiculo } from "../../../../core/util/gerarImagemVersiculo";
@@ -41,10 +44,14 @@ import { useArrastarParaRolar } from "../../../../core/util/useArrastarParaRolar
 import { useOwnerId } from "../../../../core/useOwnerId";
 
 export default function Leitura() {
-  const params = useLocalSearchParams<{ livro: string; capitulo: string; versiculo?: string }>();
+  const params = useLocalSearchParams<{ livro: string; capitulo: string; versiculo?: string; planoId?: string; diaPlano?: string; indicePlano?: string }>();
   const livro = obterLivro(params.livro ?? "");
   const capitulo = parseInt(params.capitulo ?? "", 10);
   const versiculoAlvo = params.versiculo ? parseInt(params.versiculo, 10) : null;
+  const numeroDiaPlano = params.diaPlano ? parseInt(params.diaPlano, 10) : null;
+  const indicePlano = params.indicePlano ? parseInt(params.indicePlano, 10) : 0;
+  const planoEmAndamento = params.planoId ? obterPlano(params.planoId) : undefined;
+  const diaEmAndamento = params.planoId && numeroDiaPlano ? obterDiaPlano(params.planoId, numeroDiaPlano) : undefined;
   const ownerId = useOwnerId();
   const { colorScheme } = useColorScheme();
   const escuro = colorScheme === "dark";
@@ -333,6 +340,31 @@ export default function Leitura() {
     if (!ownerId || !livro) return;
     const ativo = await progressoRepository.alternar(ownerId, { livroSlug: livro.slug, capitulo });
     setCapituloLido(ativo);
+  }
+
+  async function concluirLeituraDoPlano() {
+    if (!ownerId || !livro || !planoEmAndamento || !diaEmAndamento || numeroDiaPlano === null) return;
+    const referenciaAtual = diaEmAndamento.referencias[indicePlano];
+    if (!referenciaAtual) return;
+    const sessao = await planosRepository.obterSessao(ownerId, planoEmAndamento.id, numeroDiaPlano);
+    const concluidas = Array.from(new Set([...(sessao?.referenciasConcluidas ?? []), referenciaAtual]));
+    await progressoRepository.definirVarios(ownerId, [{ livroSlug: livro.slug, capitulo }], true);
+    setCapituloLido(true);
+
+    const proximoIndice = indicePlano + 1;
+    if (proximoIndice >= diaEmAndamento.referencias.length) {
+      await planosRepository.definirDiaConcluido(ownerId, planoEmAndamento.id, numeroDiaPlano, true);
+      await planosRepository.removerSessao(ownerId, planoEmAndamento.id, numeroDiaPlano);
+      mostrarToast(`Dia ${numeroDiaPlano} concluído`);
+      router.replace(`/planos/${planoEmAndamento.id}`);
+      return;
+    }
+
+    await planosRepository.salvarSessao(ownerId, planoEmAndamento.id, numeroDiaPlano, proximoIndice, concluidas);
+    const href = hrefReferenciaBiblica(diaEmAndamento.referencias[proximoIndice]);
+    if (!href) return;
+    const separador = href.includes("?") ? "&" : "?";
+    router.replace(`${href}${separador}planoId=${encodeURIComponent(planoEmAndamento.id)}&diaPlano=${numeroDiaPlano}&indicePlano=${proximoIndice}`);
   }
 
   async function salvarNota(texto: string) {
@@ -644,6 +676,7 @@ export default function Leitura() {
         contentContainerStyle={{ paddingTop: alturaHeader + 8 }}
       >
         <View className="px-5 pb-32 max-w-2xl w-full mx-auto">
+          <DicaContextual id="leitor" titulo="Faça destaques enquanto lê" descricao="Toque em um versículo para selecionar. Depois você pode grifar, salvar, anotar, copiar ou compartilhar." />
           {erro ? (
             <View className="items-start gap-3">
               <Text className="text-cor-texto-suave dark:text-cor-texto-suave-dark">{erro}</Text>
@@ -657,7 +690,7 @@ export default function Leitura() {
               </Pressable>
             </View>
           ) : !dados ? (
-            <View className="mt-4 gap-4 opacity-50">
+            <View accessibilityRole="progressbar" accessibilityLabel="Carregando capítulo" accessibilityLiveRegion="polite" className="mt-4 gap-4 opacity-50">
               <View className="h-4 bg-cor-borda dark:bg-cor-borda-dark rounded w-3/4" />
               <View className="h-4 bg-cor-borda dark:bg-cor-borda-dark rounded w-full" />
               <View className="h-4 bg-cor-borda dark:bg-cor-borda-dark rounded w-5/6" />
@@ -675,6 +708,7 @@ export default function Leitura() {
               return (
                 <View key={v.numero} onLayout={(e) => aoMedirVersiculo(v.numero, e.nativeEvent.layout.y)} className={`mb-0.5 -mx-2 ${destaqueAlvo && v.numero !== versiculoAlvo ? "opacity-30" : ""}`}>
                   <Pressable
+                    testID={`versiculo-${v.numero}`}
                     onPress={() => selecionarVersiculo(v.numero)}
                     accessibilityRole="checkbox"
                     accessibilityLabel={`Versículo ${v.numero}${grifado ? ", grifado" : ""}`}
@@ -732,6 +766,18 @@ export default function Leitura() {
           )}
 
           {!erro && dados ? (
+            <>
+            {planoEmAndamento && diaEmAndamento ? (
+              <View className="rounded-2xl border border-cor-destaque dark:border-cor-destaque-dark bg-cor-destaque-fundo dark:bg-cor-destaque-fundo-dark px-4 py-4 mt-6">
+                <Text className="text-xs font-bold uppercase tracking-wide text-cor-destaque dark:text-cor-destaque-dark">{planoEmAndamento.titulo} · Dia {diaEmAndamento.dia}</Text>
+                <Text className="text-base font-bold text-cor-texto dark:text-cor-texto-dark mt-1">Leitura {indicePlano + 1} de {diaEmAndamento.referencias.length}</Text>
+                <Pressable onPress={concluirLeituraDoPlano} accessibilityRole="button" className="rounded-full bg-cor-destaque dark:bg-cor-destaque-dark px-4 py-3 items-center mt-3 active:opacity-80">
+                  <Text className="text-white dark:text-cor-texto font-bold">
+                    {indicePlano + 1 >= diaEmAndamento.referencias.length ? "Concluir dia" : "Concluir e avançar"}
+                  </Text>
+                </Pressable>
+              </View>
+            ) : null}
             <Pressable
               onPress={alternarCapituloLido}
               accessibilityRole="checkbox"
@@ -749,6 +795,7 @@ export default function Leitura() {
                 {capituloLido ? "✓ Capítulo lido" : "Marcar capítulo como lido"}
               </Text>
             </Pressable>
+            </>
           ) : null}
         </View>
       </ScrollView>
@@ -892,18 +939,19 @@ export default function Leitura() {
                   setVersiculoEditandoNota(primeiro);
                 }}
                 accessibilityRole="button"
+                accessibilityLabel="Adicionar anotação aos versículos selecionados"
                 className="flex-row items-center justify-center gap-1 bg-cor-borda dark:bg-cor-borda-dark px-4 py-2 rounded-lg active:opacity-70"
               >
                 <MaterialIcons name="edit" size={18} className="text-cor-texto dark:text-cor-texto-dark" />
                 <Text className="text-cor-texto dark:text-cor-texto-dark font-semibold text-sm">Anotação</Text>
               </Pressable>
 
-              <Pressable onPress={copiarVersiculos} accessibilityRole="button" className="flex-row items-center justify-center gap-1 bg-cor-borda dark:bg-cor-borda-dark px-4 py-2 rounded-lg active:opacity-70">
+              <Pressable onPress={copiarVersiculos} accessibilityRole="button" accessibilityLabel="Copiar versículos selecionados" className="flex-row items-center justify-center gap-1 bg-cor-borda dark:bg-cor-borda-dark px-4 py-2 rounded-lg active:opacity-70">
                 <MaterialIcons name="content-copy" size={18} className="text-cor-texto dark:text-cor-texto-dark" />
                 <Text className="text-cor-texto dark:text-cor-texto-dark font-semibold text-sm">Copiar</Text>
               </Pressable>
 
-              <Pressable onPress={compartilharVersiculos} accessibilityRole="button" className={`flex-row items-center justify-center gap-1 bg-cor-borda dark:bg-cor-borda-dark px-4 py-2 rounded-lg active:opacity-70 ${versiculosSelecionados.size === 1 ? "" : "mr-6"}`}>
+              <Pressable onPress={compartilharVersiculos} accessibilityRole="button" accessibilityLabel="Compartilhar versículos selecionados" className={`flex-row items-center justify-center gap-1 bg-cor-borda dark:bg-cor-borda-dark px-4 py-2 rounded-lg active:opacity-70 ${versiculosSelecionados.size === 1 ? "" : "mr-6"}`}>
                 <MaterialIcons name="share" size={18} className="text-cor-texto dark:text-cor-texto-dark" />
                 <Text className="text-cor-texto dark:text-cor-texto-dark font-semibold text-sm">Compartilhar</Text>
               </Pressable>

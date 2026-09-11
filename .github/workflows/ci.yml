@@ -1,0 +1,50 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality:
+    name: TypeScript, testes e Expo Doctor
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Instalar dependências reproduzíveis
+        run: npm ci
+
+      - name: Verificar conteúdo derivado
+        run: npm run check:content
+
+      - name: Validar projeto
+        run: npm run validate
+
+      - name: Gerar site estático
+        run: npm run export:web
+
+      - name: Verificar HTML por rota e metadados
+        run: npm run check:static
+
+      - name: Preservar diagnóstico do bundle em falhas
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: static-export-diagnostic
+          path: dist
+          if-no-files-found: ignore
+          retention-days: 3

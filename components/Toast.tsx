@@ -46,6 +46,9 @@ export function Toast() {
     >
       <Animated.View
         pointerEvents="auto"
+        accessibilityRole="alert"
+        accessibilityLiveRegion="polite"
+        accessibilityLabel={payload.acaoLabel ? `${payload.mensagem}. Ação disponível: ${payload.acaoLabel}` : payload.mensagem}
         className={`flex-row items-center gap-3 bg-cor-texto dark:bg-cor-texto-dark py-2 rounded-full shadow-md max-w-[90%] ${
           payload.acaoLabel ? "pl-4 pr-2" : "px-4"
         }`}
@@ -60,6 +63,7 @@ export function Toast() {
             }}
             accessibilityRole="button"
             accessibilityLabel={payload.acaoLabel}
+            accessibilityHint="Ativa a ação antes que o aviso desapareça"
             className="px-3 py-1.5 rounded-full bg-cor-fundo/15 dark:bg-cor-fundo-dark/15 active:opacity-70"
           >
             <Text className="text-cor-fundo dark:text-cor-fundo-dark text-sm font-bold">{payload.acaoLabel}</Text>

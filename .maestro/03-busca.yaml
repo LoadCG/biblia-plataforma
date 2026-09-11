@@ -1,0 +1,18 @@
+appId: com.cauangabriel.bibliaplataforma
+name: Busca bíblica e filtro por testamento
+---
+- launchApp:
+    clearState: true
+- tapOn: "Pular apresentação"
+- tapOn: "Descubra"
+- tapOn: "Buscar na Bíblia e nos resumos"
+- inputText: "sabedoria"
+- extendedWaitUntil:
+    visible: ".*resultados encontrados"
+    timeout: 10000
+- assertVisible: "Na Bíblia.*"
+- tapOn: "Novo Testamento"
+- extendedWaitUntil:
+    visible: ".*resultados encontrados"
+    timeout: 10000
+- assertVisible: "Novo Testamento"

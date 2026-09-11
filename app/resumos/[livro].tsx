@@ -1,4 +1,5 @@
 import { Link, Stack, useLocalSearchParams } from "expo-router";
+import Head from "expo-router/head";
 import { useEffect, useState } from "react";
 import { NativeScrollEvent, NativeSyntheticEvent, Pressable, ScrollView, Text, View } from "react-native";
 import { coresDoGenero, descricaoDoGenero } from "../../core/content/genero";
@@ -17,6 +18,10 @@ import { useOwnerId } from "../../core/useOwnerId";
 import { BotaoTema } from "../../components/BotaoTema";
 import { TextoComReferencias } from "../../components/TextoComReferencias";
 import { Tooltip } from "../../components/Tooltip";
+
+export function generateStaticParams() {
+  return livros.map((livro) => ({ livro: livro.slug }));
+}
 
 export default function ResumoLivro() {
   const { livro: slug } = useLocalSearchParams<{ livro: string }>();
@@ -84,6 +89,15 @@ export default function ResumoLivro() {
 
   return (
     <View className="flex-1 bg-cor-fundo dark:bg-cor-fundo-dark">
+      <Head>
+        <title>{`Resumo de ${resumo.nome} — Bíblia Plataforma`}</title>
+        <meta
+          name="description"
+          content={`Contexto histórico, autoria, estrutura e principais temas do livro de ${resumo.nome}.`}
+        />
+        <meta property="og:title" content={`Resumo de ${resumo.nome}`} />
+        <meta property="og:description" content={`Entenda o livro de ${resumo.nome} antes de começar a leitura.`} />
+      </Head>
       <Stack.Screen options={{ title: resumo.nome }} />
       <View className="h-0.5 bg-cor-borda dark:bg-cor-borda-dark">
         <View className="h-0.5 bg-cor-destaque dark:bg-cor-destaque-dark" style={{ width: `${progresso * 100}%` }} />
@@ -152,7 +166,7 @@ export default function ResumoLivro() {
             <Text className={`text-[10px] ${cores.texto}`}>ⓘ</Text>
           </View>
         </Tooltip>
-        <Text className="text-4xl font-extrabold text-cor-texto dark:text-cor-texto-dark mb-2 leading-tight">
+        <Text accessibilityRole="header" className="text-4xl font-extrabold text-cor-texto dark:text-cor-texto-dark mb-2 leading-tight">
           {resumo.nome}
         </Text>
         <Text className="text-sm text-cor-texto-suave dark:text-cor-texto-suave-dark mb-5">
@@ -202,7 +216,7 @@ export default function ResumoLivro() {
 
         {resumo.secoes.map((secao) => (
           <View key={secao.id} className="mb-8">
-            <Text className="text-xl font-bold text-cor-texto dark:text-cor-texto-dark mb-3">{secao.titulo}</Text>
+            <Text accessibilityRole="header" className="text-xl font-bold text-cor-texto dark:text-cor-texto-dark mb-3">{secao.titulo}</Text>
             {secao.lista
               ? secao.itens.map((item, i) => (
                   <TextoComReferencias

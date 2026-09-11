@@ -1,0 +1,14 @@
+appId: com.cauangabriel.bibliaplataforma
+name: Onboarding e entrada no aplicativo
+---
+- launchApp:
+    clearState: true
+- assertVisible: "Sua Bíblia, sempre disponível"
+- tapOn: "Continuar"
+- assertVisible: "Guarde o que importa"
+- tapOn: "Continuar"
+- assertVisible: "Caminhe um dia de cada vez"
+- tapOn: "Começar a ler"
+- assertVisible: "Bíblia"
+- assertVisible: "Descubra"
+- assertVisible: "Você"

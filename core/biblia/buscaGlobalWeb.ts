@@ -9,7 +9,9 @@
 // `import()` dinâmico — não polui o bundle inicial) e cacheado no módulo
 // depois da primeira busca.
 import { carregarBibliaJson } from "./bibliaLocalWeb";
-import type { ResultadoBuscaGlobal } from "./BibliaAPI";
+import type { OpcoesBuscaGlobal, ResultadoBuscaGlobal } from "./BibliaAPI";
+import { livros } from "../content/livros";
+import { normalizarBusca, pontuarResultado } from "./relevanciaBusca";
 
 type ItemIndice = {
   abbrev: string;
@@ -20,12 +22,6 @@ type ItemIndice = {
   textoNormalizado: string;
 };
 
-const LIMITE_RESULTADOS = 50;
-const REGEX_DIACRITICOS = /[̀-ͯ]/g;
-
-function normalizar(texto: string): string {
-  return texto.normalize("NFD").replace(REGEX_DIACRITICOS, "").toLowerCase();
-}
 
 let indicePromise: Promise<ItemIndice[]> | null = null;
 
@@ -45,7 +41,7 @@ async function obterIndice(): Promise<ItemIndice[]> {
               capitulo: cIndex + 1,
               versiculo: vIndex + 1,
               texto,
-              textoNormalizado: normalizar(texto),
+              textoNormalizado: normalizarBusca(texto),
             });
           }
         }
@@ -56,23 +52,29 @@ async function obterIndice(): Promise<ItemIndice[]> {
   return indicePromise;
 }
 
-export async function buscarGlobalWeb(termoBruto: string): Promise<ResultadoBuscaGlobal[]> {
-  const termo = normalizar(termoBruto.trim());
+export async function buscarGlobalWeb(termoBruto: string, opcoes: OpcoesBuscaGlobal = {}): Promise<ResultadoBuscaGlobal[]> {
+  const termo = normalizarBusca(termoBruto).replace(/^"|"$/g, "");
+  const fraseExata = termoBruto.trim().startsWith('"') && termoBruto.trim().endsWith('"');
   if (!termo) return [];
 
   const indice = await obterIndice();
   const resultados: ResultadoBuscaGlobal[] = [];
   for (const item of indice) {
-    if (item.textoNormalizado.includes(termo)) {
+    const livro = livros.find((l) => l.abreviacao === item.abbrev);
+    const tokens = termo.split(" ").filter(Boolean);
+    const corresponde = fraseExata ? item.textoNormalizado.includes(termo) : tokens.every((token) => item.textoNormalizado.includes(token));
+    if ((!opcoes.livroSlug || livro?.slug === opcoes.livroSlug) && (!opcoes.testamento || livro?.testamento === opcoes.testamento) && corresponde) {
       resultados.push({
         livroSlug: item.abbrev,
         nomeLivro: item.nome,
         capitulo: item.capitulo,
         versiculo: item.versiculo,
         texto: item.texto,
+        relevancia: pontuarResultado(item.texto, termoBruto),
       });
-      if (resultados.length >= LIMITE_RESULTADOS) break;
     }
   }
-  return resultados;
+  resultados.sort((a, b) => (b.relevancia ?? 0) - (a.relevancia ?? 0) || a.capitulo - b.capitulo || a.versiculo - b.versiculo);
+  const inicio = opcoes.offset ?? 0;
+  return resultados.slice(inicio, inicio + (opcoes.limite ?? 50));
 }

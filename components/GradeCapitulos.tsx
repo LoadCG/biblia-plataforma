@@ -66,6 +66,7 @@ export function GradeCapitulos({
         return (
           <View key={n} style={{ width: `${100 / colunas}%` }} className="p-1">
             <Pressable
+              testID={`${rotulo.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")}-${n}`}
               // No web, o toque (com ou sem arraste) é tratado inteiramente
               // pelo useSelecaoArrasto (pointerdown/up no container) — dar
               // onPress aqui também faria a seleção alternar duas vezes por

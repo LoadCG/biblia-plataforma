@@ -7,6 +7,7 @@ import { CardAtividade } from "../../components/CardAtividade";
 import { EstadoVazio } from "../../components/EstadoVazio";
 import { FogoStreak } from "../../components/FogoStreak";
 import { ModalPerfil } from "../../components/ModalPerfil";
+import { DicaContextual } from "../../components/DicaContextual";
 import { obterLivro } from "../../core/content/livros";
 import { calcularConquistas, type Conquista } from "../../core/content/conquistas";
 import { carregarAtividade, chaveAtividade, type ItemAtividade } from "../../core/estatisticas/atividade";
@@ -139,6 +140,8 @@ export default function Voce() {
             )}
           </View>
         </Pressable>
+
+        <DicaContextual id="voce" titulo="Seu progresso é privado" descricao="Notas, salvos, leituras e medalhas ficam associados a um identificador anônimo deste dispositivo. Você pode exportar ou apagar tudo nas Configurações." />
 
         {editandoPerfil ? (
           <ModalPerfil

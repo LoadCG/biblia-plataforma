@@ -1,4 +1,4 @@
-import type { PlanosRepository, DiaPlanoConcluido } from "../PlanosRepository";
+import type { PlanosRepository, DiaPlanoConcluido, SessaoPlano } from "../PlanosRepository";
 import { db } from "../../db/database";
 
 export const sqlitePlanosRepository: PlanosRepository = {
@@ -24,6 +24,17 @@ export const sqlitePlanosRepository: PlanosRepository = {
     return true;
   },
 
+  async definirDiaConcluido(ownerId, planoId, dia, concluido) {
+    if (!concluido) {
+      await db.runAsync(`DELETE FROM progresso_planos WHERE ownerId = ? AND planoId = ? AND diaConcluido = ?`, [ownerId, planoId, dia]);
+      return;
+    }
+    await db.runAsync(
+      `INSERT OR IGNORE INTO progresso_planos (ownerId, planoId, diaConcluido, concluidoEm) VALUES (?, ?, ?, ?)`,
+      [ownerId, planoId, dia, new Date().toISOString()]
+    );
+  },
+
   async listarDiasConcluidos(ownerId, planoId) {
     const resultados = await db.getAllAsync<{ diaConcluido: number }>(
       `SELECT diaConcluido FROM progresso_planos WHERE ownerId = ? AND planoId = ? ORDER BY diaConcluido ASC`,
@@ -38,5 +49,27 @@ export const sqlitePlanosRepository: PlanosRepository = {
       [ownerId, planoId]
     );
     return resultado?.concluidoEm ?? null;
+  },
+
+  async obterSessao(ownerId, planoId, dia) {
+    const registro = await db.getFirstAsync<Omit<SessaoPlano, "referenciasConcluidas"> & { referenciasConcluidas: string }>(
+      `SELECT * FROM sessoes_planos WHERE ownerId = ? AND planoId = ? AND dia = ?`, [ownerId, planoId, dia]
+    );
+    if (!registro) return null;
+    return { ...registro, referenciasConcluidas: JSON.parse(registro.referenciasConcluidas) as string[] };
+  },
+
+  async salvarSessao(ownerId, planoId, dia, indiceAtual, referenciasConcluidas) {
+    await db.runAsync(
+      `INSERT INTO sessoes_planos (ownerId, planoId, dia, indiceAtual, referenciasConcluidas, atualizadoEm)
+       VALUES (?, ?, ?, ?, ?, ?)
+       ON CONFLICT(ownerId, planoId, dia) DO UPDATE SET indiceAtual = excluded.indiceAtual,
+       referenciasConcluidas = excluded.referenciasConcluidas, atualizadoEm = excluded.atualizadoEm`,
+      [ownerId, planoId, dia, indiceAtual, JSON.stringify(referenciasConcluidas), new Date().toISOString()]
+    );
+  },
+
+  async removerSessao(ownerId, planoId, dia) {
+    await db.runAsync(`DELETE FROM sessoes_planos WHERE ownerId = ? AND planoId = ? AND dia = ?`, [ownerId, planoId, dia]);
   },
 };

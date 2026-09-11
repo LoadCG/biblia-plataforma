@@ -4,8 +4,8 @@
 // bundle por ~500KB à toa quando só MaterialIcons é usado.
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { Tabs, TabList, TabSlot, TabTrigger, type TabTriggerSlotProps } from "expo-router/ui";
-import { forwardRef } from "react";
-import { Pressable, Text, useWindowDimensions, View } from "react-native";
+import { forwardRef, startTransition, useEffect } from "react";
+import { Platform, Pressable, Text, useWindowDimensions, View } from "react-native";
 import { useColorScheme } from "../../core/theme";
 
 // Este projeto não tem @react-navigation/bottom-tabs disponível como
@@ -68,7 +68,7 @@ const BotaoAba = forwardRef<View, BotaoAbaProps>(({ rotulo, icone, sidebar, isFo
           ? `flex-row items-center gap-3 rounded-xl px-3.5 py-2.5 mb-1 active:opacity-70 ${
               isFocused ? "bg-cor-destaque-fundo dark:bg-cor-destaque-fundo-dark" : ""
             }`
-          : "flex-1 flex-col items-center justify-center py-1.5 active:opacity-60"
+          : "min-h-[44px] flex-1 flex-col items-center justify-center py-2 active:opacity-60"
       }
     >
       <MaterialIcons name={icone} size={sidebar ? 22 : 26} color={isFocused ? cores.ativo : cores.inativo} />
@@ -109,9 +109,21 @@ export function useNavbar() {
 export default function TabsLayout() {
   const { width } = useWindowDimensions();
   const { colorScheme } = useColorScheme();
-  const sidebar = width >= BREAKPOINT_DESKTOP;
+  const [hidratado, setHidratado] = useState(Platform.OS !== "web");
+  const sidebar = hidratado && width >= BREAKPOINT_DESKTOP;
   const cores = colorScheme === "dark" ? CORES.dark : CORES.light;
   const [oculta, setOculta] = useState(false);
+
+  useEffect(() => {
+    startTransition(() => setHidratado(true));
+  }, []);
+
+  // A largura real não existe no render estático. Um shell neutro
+  // garante a mesma árvore no servidor e no primeiro render do cliente;
+  // a navegação responsiva é montada imediatamente após a hidratação.
+  if (Platform.OS === "web" && !hidratado) {
+    return <View style={{ flex: 1, backgroundColor: cores.fundo }} />;
+  }
 
   return (
     <NavbarContext.Provider value={{ oculta, setOculta }}>

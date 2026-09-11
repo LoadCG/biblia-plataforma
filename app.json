@@ -3,11 +3,14 @@
     "name": "biblia-plataforma",
     "slug": "biblia-plataforma",
     "version": "1.0.0",
+    "scheme": "bibliaplataforma",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "automatic",
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.cauangabriel.bibliaplataforma",
+      "buildNumber": "1"
     },
     "android": {
       "adaptiveIcon": {
@@ -16,10 +19,13 @@
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "package": "com.cauangabriel.bibliaplataforma",
+      "versionCode": 1
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/favicon.png",
+      "output": "static"
     },
     "plugins": [
       "expo-router",

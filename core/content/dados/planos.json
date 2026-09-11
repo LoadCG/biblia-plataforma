@@ -5,20 +5,20 @@
     "descricao": "Uma jornada pelas boas novas de Jesus através de Mateus, Marcos, Lucas e João.",
     "duracaoDias": 14,
     "dias": [
-      { "dia": 1, "referencias": ["Mateus 1", "Mateus 2"] },
-      { "dia": 2, "referencias": ["Mateus 5", "Mateus 6", "Mateus 7"] },
-      { "dia": 3, "referencias": ["Mateus 26", "Mateus 27", "Mateus 28"] },
-      { "dia": 4, "referencias": ["Marcos 1", "Marcos 2"] },
-      { "dia": 5, "referencias": ["Marcos 8", "Marcos 9"] },
-      { "dia": 6, "referencias": ["Marcos 15", "Marcos 16"] },
-      { "dia": 7, "referencias": ["Lucas 1", "Lucas 2"] },
-      { "dia": 8, "referencias": ["Lucas 10", "Lucas 15"] },
-      { "dia": 9, "referencias": ["Lucas 22", "Lucas 23", "Lucas 24"] },
-      { "dia": 10, "referencias": ["João 1", "João 3"] },
-      { "dia": 11, "referencias": ["João 14", "João 15", "João 16", "João 17"] },
-      { "dia": 12, "referencias": ["João 18", "João 19"] },
-      { "dia": 13, "referencias": ["João 20", "João 21"] },
-      { "dia": 14, "referencias": ["Atos 1", "Atos 2"] }
+      { "dia": 1, "titulo": "A promessa chega", "reflexao": "Mateus apresenta Jesus dentro da história de Israel: o Messias prometido entra numa família real, atravessada por graça e restauração. Leia observando como Deus age por meio de pessoas e acontecimentos concretos.", "pergunta": "Que detalhe da chegada de Jesus renova sua esperança hoje?", "referencias": ["Mateus 1", "Mateus 2"] },
+      { "dia": 2, "titulo": "O Reino por dentro", "reflexao": "No Sermão do Monte, Jesus desloca a fé da aparência para o coração. Suas palavras descrevem uma vida moldada por confiança, reconciliação e amor prático.", "pergunta": "Qual ensinamento pede uma resposta concreta sua?", "referencias": ["Mateus 5", "Mateus 6", "Mateus 7"] },
+      { "dia": 3, "titulo": "A cruz e a vitória", "reflexao": "A paixão e a ressurreição são o centro do evangelho. A aparente derrota da cruz se torna o lugar onde amor, justiça e esperança se encontram.", "pergunta": "Como a ressurreição muda a forma de encarar suas perdas?", "referencias": ["Mateus 26", "Mateus 27", "Mateus 28"] },
+      { "dia": 4, "titulo": "O começo da missão", "reflexao": "Marcos apresenta Jesus em movimento, anunciando o Reino e chamando pessoas comuns para segui-lo. O discipulado começa com atenção e resposta.", "pergunta": "O que você precisa deixar para seguir com mais inteireza?", "referencias": ["Marcos 1", "Marcos 2"] },
+      { "dia": 5, "titulo": "Ver com clareza", "reflexao": "Os discípulos reconhecem quem Jesus é, mas ainda precisam compreender o caminho do serviço e da cruz. Fé madura envolve enxergar tanto a glória quanto o custo do discipulado.", "pergunta": "Em qual área sua visão sobre Jesus precisa amadurecer?", "referencias": ["Marcos 8", "Marcos 9"] },
+      { "dia": 6, "titulo": "O Servo vence", "reflexao": "Marcos encerra mostrando que o Servo entrega a própria vida e vence a morte. O túmulo vazio transforma medo em chamado para testemunhar.", "pergunta": "Que medo pode ser respondido pela esperança do túmulo vazio?", "referencias": ["Marcos 15", "Marcos 16"] },
+      { "dia": 7, "titulo": "Boas-novas aos humildes", "reflexao": "Lucas destaca pessoas simples recebendo a notícia do Salvador. Deus visita seu povo de modo surpreendente e convida à confiança.", "pergunta": "Onde você percebe Deus agindo de forma discreta?", "referencias": ["Lucas 1", "Lucas 2"] },
+      { "dia": 8, "titulo": "Amor que se aproxima", "reflexao": "O bom samaritano e o pai do filho perdido revelam um amor que atravessa fronteiras, procura quem se afastou e restaura dignidade.", "pergunta": "De quem você pode se aproximar com misericórdia?", "referencias": ["Lucas 10", "Lucas 15"] },
+      { "dia": 9, "titulo": "Da mesa ao caminho", "reflexao": "Lucas acompanha Jesus da última ceia à cruz e ao encontro com discípulos desanimados. O Ressuscitado transforma confusão em entendimento e missão.", "pergunta": "Que parte da sua história precisa ser relida à luz da esperança?", "referencias": ["Lucas 22", "Lucas 23", "Lucas 24"] },
+      { "dia": 10, "titulo": "Vida e novo nascimento", "reflexao": "João apresenta o Verbo que se fez carne e oferece vida nova. A fé não é apenas informação religiosa, mas resposta pessoal à luz de Deus.", "pergunta": "O que significa nascer de novo na sua rotina atual?", "referencias": ["João 1", "João 3"] },
+      { "dia": 11, "titulo": "Permanecer", "reflexao": "Na despedida aos discípulos, Jesus promete presença, paz e o Espírito. Fruto duradouro nasce de permanecer nele e amar em comunidade.", "pergunta": "Que prática ajuda você a permanecer em Cristo?", "referencias": ["João 14", "João 15", "João 16", "João 17"] },
+      { "dia": 12, "titulo": "Amor até o fim", "reflexao": "João narra a entrega consciente de Jesus. Mesmo sob violência e rejeição, ele completa sua missão com fidelidade e amor.", "pergunta": "Como a fidelidade de Jesus sustenta você em tempos difíceis?", "referencias": ["João 18", "João 19"] },
+      { "dia": 13, "titulo": "Restauração e envio", "reflexao": "O Ressuscitado encontra pessoas com dúvidas, medo e culpa. Ele oferece paz, restaura Pedro e envia seus seguidores ao mundo.", "pergunta": "Onde você precisa receber restauração antes de seguir adiante?", "referencias": ["João 20", "João 21"] },
+      { "dia": 14, "titulo": "Uma história que continua", "reflexao": "A ascensão não encerra a missão de Jesus: o Espírito capacita a comunidade a testemunhar. O evangelho agora segue por meio de pessoas transformadas.", "pergunta": "Qual é seu próximo passo como testemunha do evangelho?", "referencias": ["Atos 1", "Atos 2"] }
     ]
   },
   {
@@ -27,13 +27,13 @@
     "descricao": "7 dias imerso nos livros poéticos e sapienciais para fortalecer a mente e o espírito.",
     "duracaoDias": 7,
     "dias": [
-      { "dia": 1, "referencias": ["Provérbios 1", "Provérbios 2", "Provérbios 3"] },
-      { "dia": 2, "referencias": ["Salmos 1", "Salmos 23", "Salmos 91"] },
-      { "dia": 3, "referencias": ["Eclesiastes 3", "Eclesiastes 11", "Eclesiastes 12"] },
-      { "dia": 4, "referencias": ["Provérbios 4", "Provérbios 8"] },
-      { "dia": 5, "referencias": ["Salmos 119:1-32"] },
-      { "dia": 6, "referencias": ["Jó 38", "Jó 42"] },
-      { "dia": 7, "referencias": ["Tiago 1", "Tiago 3"] }
+      { "dia": 1, "titulo": "O início da sabedoria", "reflexao": "Provérbios apresenta a sabedoria como um caminho aprendido na reverência a Deus, na escuta e na disciplina. Pequenas decisões repetidas formam uma vida inteira.", "pergunta": "Qual decisão de hoje pode ser orientada pela sabedoria?", "referencias": ["Provérbios 1", "Provérbios 2", "Provérbios 3"] },
+      { "dia": 2, "titulo": "Confiança em cada estação", "reflexao": "Os salmos dão linguagem à confiança: estabilidade, cuidado e refúgio não dependem da ausência de perigo, mas da presença fiel de Deus.", "pergunta": "Que preocupação você pode transformar em oração?", "referencias": ["Salmos 1", "Salmos 23", "Salmos 91"] },
+      { "dia": 3, "titulo": "Tempo e propósito", "reflexao": "Eclesiastes reconhece os ritmos da vida e os limites humanos. Sabedoria também é receber o presente com gratidão e responsabilidade.", "pergunta": "O que esta estação pede que você aceite ou faça?", "referencias": ["Eclesiastes 3", "Eclesiastes 11", "Eclesiastes 12"] },
+      { "dia": 4, "titulo": "Guardar o coração", "reflexao": "A sabedoria bíblica não é passiva: ela chama, orienta caminhos e pede vigilância interior. O coração guardado direciona palavras, escolhas e relacionamentos.", "pergunta": "Que influência merece mais atenção no seu coração?", "referencias": ["Provérbios 4", "Provérbios 8"] },
+      { "dia": 5, "titulo": "Formados pela Palavra", "reflexao": "O salmista deseja aprender, guardar e praticar a Palavra. Conhecimento se torna sabedoria quando molda a direção dos passos.", "pergunta": "Qual verso você quer levar consigo ao longo do dia?", "referencias": ["Salmos 119:1-32"] },
+      { "dia": 6, "titulo": "Humildade diante do mistério", "reflexao": "A resposta de Deus a Jó amplia seu horizonte. Nem toda dor recebe explicação imediata, mas a grandeza divina convida a uma confiança humilde.", "pergunta": "Onde você precisa trocar controle por confiança?", "referencias": ["Jó 38", "Jó 42"] },
+      { "dia": 7, "titulo": "Sabedoria que se torna prática", "reflexao": "Tiago conecta fé, perseverança, palavras e atitudes. A sabedoria do alto aparece no modo como tratamos pessoas e atravessamos provações.", "pergunta": "Qual atitude tornará sua fé visível nesta semana?", "referencias": ["Tiago 1", "Tiago 3"] }
     ]
   }
 ]

@@ -3,6 +3,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { db, garantirBaseBiblia } from "../db/database";
 import type { CapituloTexto, VersiculoTexto } from "./tipos";
 import { comFila } from "../repositories/local/fila";
+import { livros } from "../content/livros";
+import { pontuarResultado } from "./relevanciaBusca";
 
 const isWeb = Platform.OS === "web";
 const BASE_URL = "https://bible-api.com/";
@@ -114,8 +116,6 @@ async function buscarWeb(ref: string): Promise<CapituloTexto> {
   throw ultimoErro;
 }
 
-import { livros } from "../content/livros";
-
 // Função para buscar um capítulo ou versículo específico
 export async function buscarReferencia(ref: string): Promise<CapituloTexto> {
   if (isWeb) {
@@ -205,33 +205,52 @@ export type ResultadoBuscaGlobal = {
   capitulo: number;
   versiculo: number;
   texto: string;
+  relevancia?: number;
+};
+
+export type OpcoesBuscaGlobal = {
+  livroSlug?: string;
+  testamento?: "Antigo Testamento" | "Novo Testamento";
+  limite?: number;
+  offset?: number;
 };
 
 // Implementação da busca global usando FTS5 (Full-Text Search) no
 // nativo; no web, busca em memória sobre o JSON embutido (ver
 // buscaGlobalWeb.ts — SQLite/WASM no navegador foi evitado de propósito).
-export async function buscarGlobal(query: string): Promise<ResultadoBuscaGlobal[]> {
+export async function buscarGlobal(query: string, opcoes: OpcoesBuscaGlobal = {}): Promise<ResultadoBuscaGlobal[]> {
   if (isWeb) {
     const { buscarGlobalWeb } = await import("./buscaGlobalWeb");
-    return buscarGlobalWeb(query);
+    return buscarGlobalWeb(query, opcoes);
   }
 
   await garantirBaseBiblia();
 
   // Usa snippet para destacar, ou apenas retorna o texto. Retornaremos o texto normal para não quebrar UI existente.
   // FTS5 MATCH sintaxe: 
-  const termo = `"${query.replace(/"/g, '""')}"*`; // Prefixo simples
+  const consultaLimpa = query.trim();
+  const fraseExata = consultaLimpa.startsWith('"') && consultaLimpa.endsWith('"');
+  const semAspas = consultaLimpa.replace(/^"|"$/g, "").replace(/"/g, '""');
+  const termo = fraseExata
+    ? `"${semAspas}"`
+    : semAspas.split(/\s+/).filter(Boolean).map((token) => `"${token}"*`).join(" AND ");
   
   try {
-    return await db.getAllAsync<ResultadoBuscaGlobal>(
-      `SELECT livroSlug, nomeLivro, capitulo, versiculo, texto FROM biblia_fts WHERE texto MATCH ? ORDER BY rank LIMIT 50`,
+    const candidatos = await db.getAllAsync<ResultadoBuscaGlobal>(
+      `SELECT livroSlug, nomeLivro, capitulo, versiculo, texto FROM biblia_fts WHERE texto MATCH ? ORDER BY rank LIMIT 300`,
       [termo]
     );
+    return candidatos
+      .filter((item) => !opcoes.livroSlug || item.livroSlug === opcoes.livroSlug || livros.find((l) => l.slug === opcoes.livroSlug)?.abreviacao === item.livroSlug)
+      .filter((item) => !opcoes.testamento || livros.find((l) => l.abreviacao === item.livroSlug)?.testamento === opcoes.testamento)
+      .map((item) => ({ ...item, relevancia: pontuarResultado(item.texto, query) }))
+      .sort((a, b) => (b.relevancia ?? 0) - (a.relevancia ?? 0) || a.capitulo - b.capitulo || a.versiculo - b.versiculo)
+      .slice(opcoes.offset ?? 0, (opcoes.offset ?? 0) + (opcoes.limite ?? 50));
   } catch (e) {
     // Caso de falha no FTS (query mal formada), fallback para LIKE
     return await db.getAllAsync<ResultadoBuscaGlobal>(
-      `SELECT livroSlug, nomeLivro, capitulo, versiculo, texto FROM biblia_text WHERE texto LIKE ? LIMIT 50`,
-      [`%${query}%`]
+      `SELECT livroSlug, nomeLivro, capitulo, versiculo, texto FROM biblia_text WHERE texto LIKE ? LIMIT ? OFFSET ?`,
+      [`%${query}%`, opcoes.limite ?? 50, opcoes.offset ?? 0]
     );
   }
 }

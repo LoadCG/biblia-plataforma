@@ -1,4 +1,4 @@
-import { Link } from "expo-router";
+import { Link, router } from "expo-router";
 import { useEffect, useState } from "react";
 import { Alert, Modal, Platform, Pressable, ScrollView, Share, Text, View } from "react-native";
 import { BotaoTema } from "../components/BotaoTema";
@@ -17,6 +17,7 @@ import { alternarTema, useColorScheme } from "../core/theme";
 import { apagarDadosPessoais, coletarDadosPessoais } from "../core/util/dadosPessoais";
 import { mostrarToast } from "../core/util/toast";
 import { useOwnerId } from "../core/useOwnerId";
+import { reiniciarOnboarding } from "../core/leitura/onboarding";
 
 const SOMBRA = { shadowColor: "#000", shadowOpacity: 0.06, shadowRadius: 4, shadowOffset: { width: 0, height: 1 } };
 
@@ -297,6 +298,12 @@ export default function Configuracoes() {
         </Secao>
 
         <Secao titulo="Sobre">
+          <Linha>
+            <Pressable onPress={async () => { await reiniciarOnboarding(); router.push("/onboarding"); }} accessibilityRole="button" className="flex-row items-center justify-between active:opacity-70">
+              <View><Text className="text-cor-texto dark:text-cor-texto-dark font-semibold">Rever apresentação</Text><Text className="text-xs text-cor-texto-suave dark:text-cor-texto-suave-dark mt-0.5">Veja novamente os recursos principais</Text></View>
+              <Text className="text-cor-texto-suave dark:text-cor-texto-suave-dark">→</Text>
+            </Pressable>
+          </Linha>
           <Linha ultima>
             <Link href="/sobre" asChild>
               <Pressable accessibilityRole="link" className="flex-row items-center justify-between active:opacity-70">

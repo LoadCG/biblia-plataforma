@@ -1,5 +1,9 @@
 # Plano de melhorias de UI — componente por componente
 
+> **Classificação documental:** auditoria histórica. Use o plano mestre atual
+> para novas mudanças e mantenha este arquivo como registro do diagnóstico
+> original.
+
 > **Status (2026-08-18):** todos os itens 🔴 e todos os 🟡 de baixo
 > risco já foram implementados, testados ao vivo e commitados — ver
 > marcação `[feito]` em cada item. Os 🟡 restantes (contador de

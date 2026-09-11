@@ -155,6 +155,8 @@ tradução) e a intenção declarada de publicar o app nativo algum dia
 
 Plano operacional expandido: `PLANO-MESTRE-UX-ETAPAS-19-A-23.md`.
 
+Próximo ciclo editorial: `PLANO-CONTEUDO-ETAPAS-24-A-28.md`.
+
 ## Como manter este documento honesto
 
 Atualizar aqui quando: uma decisão de escopo mudar de verdade (ex.:

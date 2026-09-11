@@ -1,5 +1,10 @@
 # Plano: navegação por abas e redesenho de UI (inspirado no app de Bíblia mais baixado)
 
+> **Classificação documental:** histórico. As decisões implementadas deste
+> plano foram absorvidas pelo código e pelos roadmaps atuais. Para o próximo
+> trabalho, consulte [`DOCUMENTACAO.md`](./DOCUMENTACAO.md) e
+> [`PLANO-MESTRE-UX-ETAPAS-19-A-23.md`](./PLANO-MESTRE-UX-ETAPAS-19-A-23.md).
+
 Status: **planejamento** — nada deste documento está implementado ainda.
 
 Este documento substitui a primeira versão do plano de navegação (4

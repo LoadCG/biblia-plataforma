@@ -1,5 +1,9 @@
 # Relatório de Integração de Back-end (Autônomo)
 
+> **Classificação documental:** relatório histórico. O estado vigente da
+> arquitetura está em [`PLANO-PLATAFORMA.md`](./PLANO-PLATAFORMA.md) e o índice
+> geral em [`DOCUMENTACAO.md`](./DOCUMENTACAO.md).
+
 ## 1. Integração com Banco de Dados (Substituição de Mocks)
 - **Instalado o `expo-sqlite`**: Foi adicionada a dependência oficial para prover um banco de dados relacional offline e rápido.
 - **`core/db/database.ts` Criado**: O utilitário central para gerenciar a conexão com o SQLite.

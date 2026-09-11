@@ -1,5 +1,8 @@
 # Log do agente de front-end
 
+> **Classificação documental:** log histórico de implementação. O estado atual
+> e as próximas tarefas estão em [`DOCUMENTACAO.md`](./DOCUMENTACAO.md).
+
 Sessão de trabalho focada 100% em UI/UX, sem tocar rotas, chamadas de
 API, banco de dados ou lógica de negócio. Nenhum commit foi feito —
 tudo abaixo está só no working tree.

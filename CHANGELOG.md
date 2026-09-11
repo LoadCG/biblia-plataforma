@@ -48,6 +48,9 @@ O formato é baseado no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.
   procedimentos, critérios de aceite, evidências e gates externos.
 - Organização documental centralizada em `DOCUMENTACAO.md` e criado o plano
   editorial das etapas 24–28 para novos planos, resumos e curadoria.
+- Plano editorial 24–28 expandido com personas, portfólio de conteúdo, backlog
+  por lotes C0–C3, templates, rubrica de revisão, versionamento, métricas e
+  cadência de publicação.
 
 ## [Unreleased] - 2026-09-08
 

@@ -175,6 +175,182 @@ renderização passam pelos gates automatizados e revisão humana.
 - [ ] Atualizar changelog e cobertura editorial.
 - [ ] Promover para produção somente após aprovação do lote.
 
+---
+
+## Estratégia de portfólio editorial
+
+### Personas prioritárias
+
+| Persona | Necessidade | Formato principal | Risco a evitar |
+|---|---|---|---|
+| Iniciante | começar sem sobrecarga | plano de 7 dias e resumos curtos | linguagem técnica sem explicação |
+| Leitor regular | manter consistência | planos de 14/30 dias | carga diária imprevisível |
+| Leitor temático | estudar um assunto | trilhas por tema com referências | seleção arbitrária de versículos |
+| Leitor de contexto | entender um livro | resumo estruturado e referências | afirmar consenso onde há debate |
+| Usuário recorrente | retomar de onde parou | progresso, histórico e próximo passo | perder estado ou repetir conteúdo |
+
+### Portfólio mínimo recomendado
+
+O catálogo deve crescer em camadas, com uma hipótese explícita por item:
+
+1. **Entrada:** “Primeiros passos” (7 dias), carga baixa e referências curtas.
+2. **Formação:** “Evangelhos essenciais” (14 dias), narrativa contínua.
+3. **Prática:** “Salmos para cada dia” (30 dias), recorrência e reflexão.
+4. **Panorama:** “Bíblia em 90 dias” (90 dias), somente após validar o modelo.
+
+Cada proposta precisa declarar objetivo, público, carga diária, livros cobertos,
+critério de conclusão e motivo editorial para existir. Não criar um plano apenas
+para aumentar a contagem do catálogo.
+
+## Backlog editorial priorizado
+
+### Lote C0 — fundação `P0`
+
+- [ ] Definir schema, manifesto editorial e vocabulário controlado.
+- [ ] Inventariar os 66 resumos e os planos existentes.
+- [ ] Criar checklist de revisão e política de fontes.
+- [ ] Escolher dois revisores responsáveis pelo primeiro lote.
+
+### Lote C1 — ganho rápido `P0`
+
+- [ ] Revisar Gênesis, Salmos, Provérbios, Mateus, João e Romanos.
+- [ ] Corrigir inconsistências estruturais nos resumos desses livros.
+- [ ] Criar o plano de 7 dias com conteúdo aprovado.
+- [ ] Validar o fluxo completo em preview antes de ampliar o lote.
+
+### Lote C2 — profundidade `P1`
+
+- [ ] Revisar Êxodo, Isaías, Jeremias, Lucas, Atos e Apocalipse.
+- [ ] Criar um plano temático de 14 dias com referências cruzadas.
+- [ ] Adicionar metadados de temas e termos de busca.
+- [ ] Testar descoberta por Busca e páginas SEO.
+
+### Lote C3 — escala controlada `P1`
+
+- [ ] Revisar os demais livros por gênero, não por volume uniforme.
+- [ ] Criar o plano de 30 dias somente após o C1/C2 passarem nos gates.
+- [ ] Avaliar recomendações relacionadas com curadoria explícita.
+- [ ] Medir conclusão, abandono e retomada de forma agregada e sem PII.
+
+## Templates editoriais
+
+### Ficha de plano
+
+```text
+id:
+titulo:
+descricao_curta:
+objetivo:
+publico:
+duracao_dias:
+carga_diaria_minutos:
+livros_cobertos:
+tags:
+versao_editorial:
+status: rascunho | revisao | aprovado | publicado | arquivado
+revisor:
+```
+
+Cada dia deve conter: título curto, referências válidas, reflexão opcional,
+pergunta de aplicação e próximo passo. A carga deve ser verificável pela
+quantidade de capítulos/versículos, não apenas declarada no texto.
+
+### Ficha de resumo
+
+```text
+livro:
+genero:
+testamento:
+contexto_historico:
+contexto_literario:
+estrutura:
+temas_principais:
+palavras_chave:
+referencias_relacionadas:
+incertezas_editoriais:
+versao_editorial:
+revisor:
+```
+
+O resumo deve responder: o que é o livro, como está organizado, quais temas
+aparecem e como começar a leitura. Não deve substituir comentário exegético nem
+apresentar interpretação particular como fato consensual.
+
+### Ficha de devocional
+
+```text
+dia:
+titulo:
+reflexao: 80–180 palavras
+pergunta: 1 pergunta aberta
+proximo_passo: 1 ação concreta e não coercitiva
+referencias:
+fonte_ou_observacao:
+status:
+revisor:
+```
+
+Evitar promessas de cura, aconselhamento clínico, culpa, manipulação emocional
+ou afirmações de autoridade espiritual não atribuídas.
+
+## Rubrica de revisão editorial
+
+Pontuar cada dimensão de 0 a 2: `0` falha, `1` precisa revisão, `2` aprovado.
+
+| Dimensão | Pergunta de avaliação |
+|---|---|
+| Fidelidade | O texto respeita as referências e não inventa fatos? |
+| Clareza | Uma pessoa fora do contexto entende a proposta? |
+| Estrutura | Há começo, desenvolvimento e próximo passo identificáveis? |
+| Linguagem | O tom é acolhedor, preciso e sem jargão desnecessário? |
+| Inclusão | Evita generalizações, culpa e pressupostos sobre a pessoa? |
+| Rastreabilidade | Fonte, revisor, versão e incertezas estão registrados? |
+| Produto | O conteúdo cabe no tempo e no fluxo da tela? |
+
+**Regra de aprovação:** nenhum item crítico pode receber 0; média mínima 1,7;
+qualquer dimensão abaixo de 2 exige comentário do revisor.
+
+## Pipeline editorial e versionamento
+
+1. **Proposta:** registrar hipótese, público, objetivo e escopo.
+2. **Rascunho:** produzir em arquivo fonte, sem alterar derivados.
+3. **Revisão estrutural:** schema, referências, slugs e campos obrigatórios.
+4. **Revisão editorial:** duas passagens independentes e rubrica preenchida.
+5. **Preview:** gerar conteúdo derivado, exportar web e revisar UI.
+6. **Aprovação:** registrar revisor, versão, data e decisão.
+7. **Publicação:** promover lote inteiro; não misturar rascunhos com aprovados.
+8. **Pós-publicação:** monitorar erros, feedback e necessidade de correção.
+
+### Política de versões
+
+- Alteração factual ou estrutural: incrementar versão maior do item.
+- Correção textual sem mudança de sentido: incrementar versão menor.
+- Correção de typo em fonte publicada: registrar no changelog editorial.
+- Nunca apagar silenciosamente uma versão publicada; arquivar e substituir.
+- O JSON derivado deve ser reproduzível a partir das fontes e do manifesto.
+
+## Métricas de conteúdo
+
+As métricas devem ser agregadas e opcionais, sem capturar texto pessoal nem
+criar dependência de backend:
+
+- cobertura: livros, planos, dias e devocionais aprovados;
+- qualidade: média da rubrica e pendências por lote;
+- descoberta: buscas que encontram resumo/plano relevante;
+- ativação: início e conclusão do primeiro dia;
+- retenção: retomada do próximo dia, sem tratar streak como obrigação;
+- estabilidade: falhas de parsing, referências inválidas e erros de renderização.
+
+Não usar conclusão, streak ou abandono como julgamento moral do leitor. Métricas
+servem para melhorar clareza, carga e descoberta do conteúdo.
+
+## Cadência de execução
+
+- **Ciclo semanal:** um lote pequeno de conteúdo + revisão + preview.
+- **Checkpoint quinzenal:** revisar métricas agregadas e priorização.
+- **Release mensal:** publicar somente lotes aprovados e documentados.
+- **Retrospectiva:** registrar o que gerou retrabalho e ajustar o template.
+
 ## Definition of Done do ciclo de conteúdo
 
 - [ ] Schema e taxonomia aprovados.
@@ -183,4 +359,3 @@ renderização passam pelos gates automatizados e revisão humana.
 - [ ] Devocionais com revisão e versionamento editorial.
 - [ ] Gates automatizados e revisão humana registrados.
 - [ ] Documentação, changelog e cobertura atualizados no mesmo commit.
-

@@ -63,10 +63,10 @@ as duas leituras humanas nem altera o status do conteúdo.
 
 ### Checklist
 
-- [ ] Selecionar `plano-primeiros-passos-7-dias.md` como piloto funcional.
+- [x] Selecionar o plano de 7 dias existente como piloto funcional (`sabedoria-7`).
 - [ ] Conferir progressão, carga diária e equilíbrio entre testamentos.
 - [ ] Validar cada referência contra a base ACF.
-- [ ] Definir objetivo, público, duração e critério de conclusão.
+- [x] Definir público e duração no contrato editorial de compatibilidade.
 - [ ] Integrar somente após aprovação editorial independente.
 - [ ] Testar início, retomada, conclusão e estado vazio no web e nativo.
 - [ ] Verificar acessibilidade, deep link e persistência offline.

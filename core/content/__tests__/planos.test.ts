@@ -21,4 +21,14 @@ describe("planos guiados", () => {
   it("resolve um dia pelo identificador do plano", () => {
     expect(obterDiaPlano("sabedoria-7", 5)?.referencias).toContain("Salmos 119:1-32");
   });
+
+  it("expõe contrato editorial estável para o plano publicado", () => {
+    expect(obterPlano("sabedoria-7")?.editorial).toEqual({
+      id: "plano:sabedoria-7",
+      versao: 1,
+      status: "publicado",
+      tags: ["plano-de-leitura", "curto"],
+      publico: "iniciante",
+    });
+  });
 });

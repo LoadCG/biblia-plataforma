@@ -16,5 +16,7 @@ de compatibilidade e podem ser obtidos por `metadadosLegadosDoLivro`.
 
 ## Regra de publicação
 
-Somente itens com `status: publicado` podem ser expostos no catálogo. A versão
+Somente itens com `status: publicado` podem ser expostos no catálogo. Os dois
+planos legados recebem metadados de compatibilidade em `core/content/planos.ts`;
+novos planos deverão declarar os campos na fonte antes da integração. A versão
 deve ser rastreável ao arquivo-fonte e à decisão registrada na fila de revisão.

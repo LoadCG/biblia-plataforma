@@ -18,7 +18,20 @@ export type PlanoLeitura = {
   editorial?: MetadadosEditoriais;
 };
 
-export const planosLeitura: PlanoLeitura[] = planosJson;
+function metadadosPlanoLegado(id: string, duracaoDias: number): MetadadosEditoriais {
+  return {
+    id: `plano:${id}`,
+    versao: 1,
+    status: "publicado",
+    tags: ["plano-de-leitura", duracaoDias <= 7 ? "curto" : "formacao"],
+    publico: duracaoDias <= 7 ? "iniciante" : "regular",
+  };
+}
+
+export const planosLeitura: PlanoLeitura[] = planosJson.map((plano) => ({
+  ...plano,
+  editorial: metadadosPlanoLegado(plano.id, plano.duracaoDias),
+}));
 
 export function obterPlano(id: string): PlanoLeitura | undefined {
   return planosLeitura.find((p) => p.id === id);

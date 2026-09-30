@@ -16,6 +16,8 @@ export type ResultadoBusca = {
   // resultado NÃO foi o nome do livro — evita redundância ("Mateus"
   // encontrado por nome não precisa de trecho justificando por quê).
   trecho: string | null;
+  score: number;
+  camposCoincidentes: Array<"titulo" | "alias" | "tema" | "conteudo">;
 };
 
 const REGEX_DIACRITICOS = new RegExp("[̀-ͯ]", "g");
@@ -134,22 +136,24 @@ export function buscarLivros(termoBruto: string): ResultadoBusca[] {
     termo = ALIAS_MAP[termo];
   }
 
-  if (!termo) return resumosCompletos.map((livro) => ({ livro, trecho: null }));
+  if (!termo) return resumosCompletos.map((livro) => ({ livro, trecho: null, score: 0, camposCoincidentes: [] }));
 
   const termosBusca = SINONIMOS_TEMATICOS[termo] ?? [termo];
 
-  const porNome: ResultadoBusca[] = [];
-  const porConteudo: ResultadoBusca[] = [];
+  const resultados: ResultadoBusca[] = [];
 
   for (const resumo of resumosCompletos) {
     if (normalizar(resumo.nome).includes(termo)) {
-      porNome.push({ livro: resumo, trecho: null });
+      resultados.push({ livro: resumo, trecho: null, score: normalizar(resumo.nome) === termo ? 1000 : 700, camposCoincidentes: ["titulo"] });
       continue;
     }
     const termoEncontrado = termosBusca.find((candidato) => encontrarTrecho(resumo, candidato));
     const trecho = termoEncontrado ? encontrarTrecho(resumo, termoEncontrado) : null;
-    if (trecho) porConteudo.push({ livro: resumo, trecho });
+    if (trecho) {
+      const score = termoEncontrado === termo ? 300 : 220;
+      resultados.push({ livro: resumo, trecho, score, camposCoincidentes: [termoEncontrado === termo ? "conteudo" : "tema"] });
+    }
   }
 
-  return [...porNome, ...porConteudo];
+  return resultados.sort((a, b) => b.score - a.score || a.livro.numero - b.livro.numero || a.livro.slug.localeCompare(b.livro.slug));
 }

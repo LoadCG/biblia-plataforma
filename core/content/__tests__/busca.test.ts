@@ -11,4 +11,11 @@ describe("busca editorial", () => {
     expect(resultados.length).toBeGreaterThan(0);
     expect(resultados.some(({ trecho }) => trecho !== null)).toBe(true);
   });
+
+  it("ordena resultados de forma determinística e explica o campo", () => {
+    const resultados = buscarLivros("esperança");
+    expect(resultados.every((resultado) => resultado.score > 0)).toBe(true);
+    expect(resultados.every((resultado) => resultado.camposCoincidentes.length > 0)).toBe(true);
+    expect(resultados).toEqual(buscarLivros("esperança"));
+  });
 });

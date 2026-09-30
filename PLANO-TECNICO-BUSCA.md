@@ -130,7 +130,7 @@ depender da ordem incidental de iteração de um objeto.
 
 - [ ] Extrair `ConsultaBusca` e `ResultadoBusca` para módulo próprio.
 - [ ] Versionar aliases, sinônimos, stopwords e pesos em manifesto.
-- [ ] Criar códigos de motivo: `titulo`, `alias`, `tema`, `conteudo`, `referencia`.
+- [x] Criar códigos de motivo: `titulo`, `alias`, `tema`, `conteudo`.
 - [ ] Definir limites de entrada e mensagens de estado.
 - [ ] Criar fixtures determinísticas para consultas críticas.
 
@@ -145,7 +145,7 @@ depender da ordem incidental de iteração de um objeto.
 
 ### Fase C — ranking e consulta
 
-- [ ] Implementar ranking ponderado e desempates estáveis.
+- [x] Implementar ranking inicial ponderado e desempates estáveis para resumos.
 - [ ] Suportar consulta de múltiplos tokens.
 - [ ] Suportar aliases e sinônimos sem duplicar resultados.
 - [ ] Adicionar busca por referência `Livro capítulo:versículo`.

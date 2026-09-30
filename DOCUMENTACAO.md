@@ -65,6 +65,8 @@ na raiz para preservar links históricos, mas estão classificados por finalidad
   o inventário de cobertura.
 - `npm run check:revisao-editorial`: verifica a governança mínima dos rascunhos
   sem aprová-los ou integrá-los ao catálogo.
+- `npm run check:piloto-editorial`: pré-valida estrutura, referências-chave e
+  marcadores de incerteza do piloto de Gênesis.
 - `npm run export:web`: gera o export web estático.
 - `npm run check:static`: valida rotas e metadados SEO exportados.
 - `npm run check:ui`: protege contratos estruturais de responsividade.

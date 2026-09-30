@@ -3,7 +3,7 @@ const path = require("path");
 
 const diretorio = path.resolve(__dirname, "..", "docs", "revisao-editorial");
 const arquivos = fs.readdirSync(diretorio)
-  .filter((nome) => nome.endsWith(".md") && nome !== "INDICE.md")
+  .filter((nome) => nome.endsWith(".md") && nome !== "INDICE.md" && !nome.endsWith("-validacao.md"))
   .sort();
 if (arquivos.length === 0) throw new Error("Nenhum rascunho editorial encontrado.");
 

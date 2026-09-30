@@ -61,6 +61,7 @@
     "check:static": "node scripts/verificar-export-estatico.js",
     "check:editorial": "node scripts/relatorio-cobertura-editorial.js",
     "check:revisao-editorial": "node scripts/verificar-revisao-editorial.js",
+    "check:piloto-editorial": "node scripts/verificar-piloto-editorial.js",
     "relatorio:editorial": "node scripts/relatorio-cobertura-editorial.js",
     "gerar-conteudo": "node scripts/gerar-conteudo.js"
   },

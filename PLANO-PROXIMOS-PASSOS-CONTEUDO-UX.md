@@ -49,11 +49,15 @@ depender de parsing do texto renderizado. `npm run validate` permanece verde.
 - [ ] Fazer revisão de clareza, tom, inclusão e legibilidade.
 - [ ] Registrar decisão: aprovado, aprovado com ajustes ou devolvido.
 - [ ] Atualizar o índice de revisão sem alterar o catálogo antes da aprovação.
+- [x] Executar pré-validação estrutural e de referências-chave do piloto.
 
 ### Critério de aceite
 
 O piloto possui duas leituras registradas, pendências resolvidas e decisão
 explícita. Se aprovado, o arquivo fonte é a única origem da integração.
+
+Pré-validação automatizada: `npm run check:piloto-editorial`. Ela não substitui
+as duas leituras humanas nem altera o status do conteúdo.
 
 ## Onda 3 — primeiro plano de leitura
 

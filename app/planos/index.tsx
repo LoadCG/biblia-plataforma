@@ -33,6 +33,11 @@ function CardPlano({ plano, diasConcluidos, desktop }: { plano: PlanoLeitura; di
             <Text className="text-xs text-cor-texto-suave dark:text-cor-texto-suave-dark mt-0.5" numberOfLines={3}>
               {plano.descricao}
             </Text>
+            <View accessibilityLabel={`${plano.duracaoDias} dias, público ${plano.editorial?.publico ?? "geral"}`} className="flex-row items-center gap-2 mt-2">
+              <Text className="text-[11px] font-semibold text-cor-destaque dark:text-cor-destaque-dark">{plano.duracaoDias} dias</Text>
+              <Text aria-hidden={true} className="text-[11px] text-cor-texto-suave dark:text-cor-texto-suave-dark">•</Text>
+              <Text className="text-[11px] text-cor-texto-suave dark:text-cor-texto-suave-dark capitalize">{plano.editorial?.publico ?? "geral"}</Text>
+            </View>
           </View>
         </View>
         <View className="flex-row items-center gap-2">

@@ -10,6 +10,7 @@ const contratos = [
   ["app/estatisticas.tsx", ["testID=\"estatisticas-grade\"", "min-w-0", "flex-row flex-wrap"]],
   ["app/planos/index.tsx", ["accessibilityRole=\"progressbar\"", "accessibilityValue"]],
   ["app/planos/[id].tsx", ["Carregando progresso do plano", "Não foi possível carregar seu progresso", "disabled={acaoEmAndamento !== null}"]],
+  ["app/planos/index.tsx", ["accessibilityLabel={`${plano.duracaoDias} dias, público ${plano.editorial?.publico ?? \"geral\"}`}"]],
 ];
 
 for (const [arquivo, trechos] of contratos) {

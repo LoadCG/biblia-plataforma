@@ -14,6 +14,23 @@ executáveis, com dependências e critérios objetivos de saída.
   documental no mesmo commit.
 - Nenhum release é promovido sem preview, build reproduzível e rollback claro.
 
+## Ordem de prioridade aprovada
+
+| Prioridade | Frente | Motivo |
+|---|---|---|
+| P0 | Contrato, manifesto, relações e gates | Sem identidade e rastreabilidade não há publicação segura |
+| P1 | Plano de 7 dias e revisão do piloto | Validar o fluxo ponta a ponta com escopo pequeno |
+| P1 | Lotes C1/C2, busca e SEO | Melhorar valor de descoberta após o contrato |
+| P2 | Plano de 14 e 30 dias | Escalar somente após validar a operação curta |
+| P2 | Matriz UX, responsividade e leitores de tela | Consolidar qualidade antes do preview |
+| P0 | Preview, build remoto e release | Gate final obrigatório para promoção |
+
+### Execução iniciada
+
+- [x] Tipar relações editoriais e validar IDs, duplicidades, destinos e motivos.
+- [ ] Gerar manifesto completo para todos os conteúdos.
+- [ ] Integrar relações aprovadas ao catálogo.
+
 ## Ordem macro e dependências
 
 ```text

@@ -119,6 +119,14 @@ const ALIAS_MAP: Record<string, string> = {
   "apocalipse": "apocalipse"
 };
 
+const SINONIMOS_TEMATICOS: Record<string, string[]> = {
+  "esperanca": ["esperanca", "promessa", "consolo", "renovacao"],
+  "oracao": ["oracao", "clama", "suplic", "louvor"],
+  "justica": ["justica", "pobre", "oprim", "misericord"],
+  "sabedoria": ["sabedoria", "prudencia", "entendimento", "ensino"],
+  "libertacao": ["libertacao", "libertar", "resgate", "livramento"],
+};
+
 export function buscarLivros(termoBruto: string): ResultadoBusca[] {
   let termo = normalizar(termoBruto.trim());
   
@@ -128,6 +136,8 @@ export function buscarLivros(termoBruto: string): ResultadoBusca[] {
 
   if (!termo) return resumosCompletos.map((livro) => ({ livro, trecho: null }));
 
+  const termosBusca = SINONIMOS_TEMATICOS[termo] ?? [termo];
+
   const porNome: ResultadoBusca[] = [];
   const porConteudo: ResultadoBusca[] = [];
 
@@ -136,7 +146,8 @@ export function buscarLivros(termoBruto: string): ResultadoBusca[] {
       porNome.push({ livro: resumo, trecho: null });
       continue;
     }
-    const trecho = encontrarTrecho(resumo, termo);
+    const termoEncontrado = termosBusca.find((candidato) => encontrarTrecho(resumo, candidato));
+    const trecho = termoEncontrado ? encontrarTrecho(resumo, termoEncontrado) : null;
     if (trecho) porConteudo.push({ livro: resumo, trecho });
   }
 

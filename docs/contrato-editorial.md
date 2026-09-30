@@ -14,6 +14,9 @@ de compatibilidade e podem ser obtidos por `metadadosLegadosDoLivro`.
 | `tags` | valores controlados, em minúsculas, sem duplicidade |
 | `publico` | `iniciante`, `regular`, `tematico` ou `contexto`, quando aplicável |
 
+Os sinônimos de busca são controlados em `core/content/busca.ts`; cada expansão
+deve ser curta, revisável e capaz de produzir um trecho contextual verificável.
+
 ## Regra de publicação
 
 Somente itens com `status: publicado` podem ser expostos no catálogo. Os dois

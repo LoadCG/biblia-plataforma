@@ -161,6 +161,7 @@ revisão independente e fluxo de retomada comprovado.
 ### 3.3 Busca e descoberta
 
 - [ ] Criar índice de termos por nome, abreviação, gênero, tema e sinônimo.
+- [x] Criar vocabulário inicial de sinônimos temáticos controlados.
 - [ ] Normalizar acentos, plural, hífen e variações ortográficas.
 - [ ] Priorizar correspondência exata de livro antes de conteúdo amplo.
 - [ ] Exibir trecho contextual sem duplicar o título.

@@ -21,6 +21,7 @@ na raiz para preservar links históricos, mas estão classificados por finalidad
 | [`PLANO-CONTEUDO-ETAPAS-24-A-28.md`](./PLANO-CONTEUDO-ETAPAS-24-A-28.md) | Planos de leitura, resumos, curadoria e qualidade editorial | próximo ciclo de conteúdo |
 | [`PLANO-PROXIMOS-PASSOS-CONTEUDO-UX.md`](./PLANO-PROXIMOS-PASSOS-CONTEUDO-UX.md) | Execução por ondas, aprovação editorial e publicação | plano ativo |
 | [`PLANO-EXECUCAO-COMPLETO-CONTEUDO-UX-RELEASE.md`](./PLANO-EXECUCAO-COMPLETO-CONTEUDO-UX-RELEASE.md) | Detalhamento operacional de conteúdo, UX, SEO, preview e release | plano detalhado |
+| [`PLANO-TECNICO-BUSCA.md`](./PLANO-TECNICO-BUSCA.md) | Arquitetura, ranking, índice, acessibilidade e benchmark da busca | plano técnico |
 | [`PLANO-UX-INTERFACE-ETAPAS-16-A-20.md`](./PLANO-UX-INTERFACE-ETAPAS-16-A-20.md) | Alvos de toque, Toast, responsividade e gate estrutural | ciclo anterior |
 | [`PLANO-UX-INTERFACE-ETAPAS-11-A-15.md`](./PLANO-UX-INTERFACE-ETAPAS-11-A-15.md) | Busca, Salvo, Planos e estados transitórios iniciais | histórico recente |
 | [`PLANO-EXECUCAO-ETAPAS-6-A-10.md`](./PLANO-EXECUCAO-ETAPAS-6-A-10.md) | CI, SEO, Maestro, acessibilidade e EAS | histórico recente |

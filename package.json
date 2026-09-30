@@ -52,7 +52,7 @@
     "web": "expo start --web",
     "test": "jest --runInBand",
     "typecheck": "tsc --noEmit",
-    "validate": "npm run typecheck && npm test && npm run check:a11y && npm run check:e2e && npm run check:ui && npm run check:editorial && npx expo-doctor",
+    "validate": "npm run typecheck && npm test && npm run check:a11y && npm run check:e2e && npm run check:ui && npm run check:editorial && npm run check:revisao-editorial && npx expo-doctor",
     "export:web": "expo export --platform web",
     "check:content": "npm run gerar-conteudo && git diff --exit-code -- core/content/dados/livros.json",
     "check:a11y": "node scripts/verificar-acessibilidade.js",
@@ -60,6 +60,7 @@
     "check:ui": "node scripts/verificar-ui-responsiva.js",
     "check:static": "node scripts/verificar-export-estatico.js",
     "check:editorial": "node scripts/relatorio-cobertura-editorial.js",
+    "check:revisao-editorial": "node scripts/verificar-revisao-editorial.js",
     "relatorio:editorial": "node scripts/relatorio-cobertura-editorial.js",
     "gerar-conteudo": "node scripts/gerar-conteudo.js"
   },

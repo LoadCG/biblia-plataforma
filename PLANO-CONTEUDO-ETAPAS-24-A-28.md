@@ -69,6 +69,8 @@ pré-requisitos para inventariar ou revisar conteúdo localmente.
 
 **Evidência:** [`docs/cobertura-editorial.md`](./docs/cobertura-editorial.md),
 gerado por `npm run relatorio:editorial`.
+Fila de revisão humana: [`docs/revisao-editorial/INDICE.md`](./docs/revisao-editorial/INDICE.md).
+Gate de governança: `npm run check:revisao-editorial`.
 
 ### 24.2 Contrato de dados `🔶`
 

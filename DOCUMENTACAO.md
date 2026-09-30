@@ -48,6 +48,8 @@ na raiz para preservar links históricos, mas estão classificados por finalidad
   deve ser editado manualmente.
 - [`docs/cobertura-editorial.md`](./docs/cobertura-editorial.md) registra o
   inventário estrutural gerado por `npm run relatorio:editorial`.
+- [`docs/revisao-editorial/INDICE.md`](./docs/revisao-editorial/INDICE.md)
+  organiza a fila de rascunhos aguardando revisão humana independente.
 
 ## Qualidade e operação
 
@@ -58,6 +60,8 @@ na raiz para preservar links históricos, mas estão classificados por finalidad
 - `npm run check:content`: verifica conteúdo derivado sem drift.
 - `npm run check:editorial`: valida fontes, derivados, seções e planos e atualiza
   o inventário de cobertura.
+- `npm run check:revisao-editorial`: verifica a governança mínima dos rascunhos
+  sem aprová-los ou integrá-los ao catálogo.
 - `npm run export:web`: gera o export web estático.
 - `npm run check:static`: valida rotas e metadados SEO exportados.
 - `npm run check:ui`: protege contratos estruturais de responsividade.

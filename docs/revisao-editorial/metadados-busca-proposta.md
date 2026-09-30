@@ -1,6 +1,8 @@
 # Proposta de metadados editoriais e termos de busca
 
 - **Status:** proposta conceitual; não integrada ao schema ou à interface
+- **Revisores humanos:** pendentes
+- **Pendências:** validação editorial e técnica antes da implementação
 - **Escopo inicial:** 12 resumos revisados nos lotes C1/C2 e dois planos em
   rascunho (7 e 14 dias)
 - **Data:** 2026-09-28

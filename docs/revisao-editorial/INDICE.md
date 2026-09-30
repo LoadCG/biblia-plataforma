@@ -14,6 +14,7 @@ qualquer integração em `core/content/dados`.
 | 4 | [`plano-primeiros-passos-7-dias.md`](./plano-primeiros-passos-7-dias.md) | Plano introdutório | rascunho | Validar progressão e referências |
 | 5 | [`plano-justica-cuidado-esperanca-14-dias.md`](./plano-justica-cuidado-esperanca-14-dias.md) | Plano temático | rascunho | Validar equilíbrio temático |
 | 6 | [`metadados-busca-proposta.md`](./metadados-busca-proposta.md) | Taxonomia e busca | proposta | Revisar vocabulário e schema |
+| 7 | [`plano-formacao-30-dias.md`](./plano-formacao-30-dias.md) | Especificação de plano de 30 dias | rascunho | Definir referências e revisar carga |
 
 ## Critério de saída
 

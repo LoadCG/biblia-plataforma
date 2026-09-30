@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import { Animated, Easing } from "react-native";
 import Svg, { Path } from "react-native-svg";
+import { useMovimentoReduzido } from "../core/util/useMovimentoReduzido";
 
 type Props = {
   ativo: boolean;
@@ -12,9 +13,11 @@ type Props = {
 // depender de Lottie/asset externo, só Animated + react-native-svg.
 export function FogoStreak({ ativo, tamanho = 48 }: Props) {
   const escala = useRef(new Animated.Value(1)).current;
+  const movimentoReduzido = useMovimentoReduzido();
 
   useEffect(() => {
-    if (!ativo) {
+    if (!ativo || movimentoReduzido) {
+      escala.stopAnimation();
       escala.setValue(1);
       return;
     }
@@ -26,7 +29,7 @@ export function FogoStreak({ ativo, tamanho = 48 }: Props) {
     );
     loop.start();
     return () => loop.stop();
-  }, [ativo, escala]);
+  }, [ativo, escala, movimentoReduzido]);
 
   return (
     <Animated.View style={{ transform: [{ scale: escala }] }}>

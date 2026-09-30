@@ -2,6 +2,7 @@ import { router } from "expo-router";
 import { useState } from "react";
 import { Modal, Pressable, Text, View } from "react-native";
 import type { Conquista } from "../core/content/conquistas";
+import { IconeConquista } from "./IconeConquista";
 
 export function CardConquistas({ conquistas }: { conquistas: Conquista[] }) {
   // Mostra apenas 3 medalhas de destaque por enquanto
@@ -32,7 +33,7 @@ export function CardConquistas({ conquistas }: { conquistas: Conquista[] }) {
                     : 'bg-cor-borda dark:bg-cor-borda-dark border-transparent'
                 }`}
               >
-                <Text style={{ fontSize: 30, opacity: completa ? 1 : 0.4 }}>{c.icone}</Text>
+                <IconeConquista conquistaId={c.id} conquistada={completa} />
                 {!completa && (
                   <View className="absolute bottom-1 bg-cor-fundo/80 dark:bg-cor-fundo-dark/80 px-2 rounded-full">
                     <Text className="text-[10px] text-cor-texto dark:text-cor-texto-dark font-bold">{c.progressoAtual}</Text>

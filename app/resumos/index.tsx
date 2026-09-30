@@ -10,6 +10,7 @@ import type { Livro } from "../../core/content/tipos";
 import { livrosLidosRepository } from "../../core/repositories";
 import { useOwnerId } from "../../core/useOwnerId";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { mostrarToast } from "../../core/util/toast";
 
 function CardLivro({ livro, lido, trecho }: { livro: Livro; lido: boolean; trecho: string | null }) {
   const cores = coresDoGenero(livro.genero);
@@ -48,7 +49,11 @@ export default function ListaResumos() {
 
   useEffect(() => {
     if (!ownerId) return;
-    livrosLidosRepository.listar(ownerId).then(setLidos);
+    let ativo = true;
+    livrosLidosRepository.listar(ownerId)
+      .then((itens) => { if (ativo) setLidos(itens); })
+      .catch(() => { if (ativo) mostrarToast("Não foi possível carregar seu progresso de leitura"); });
+    return () => { ativo = false; };
   }, [ownerId]);
 
   const lidosSet = useMemo(() => new Set(lidos), [lidos]);

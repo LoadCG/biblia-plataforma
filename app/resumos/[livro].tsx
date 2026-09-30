@@ -18,6 +18,7 @@ import { useOwnerId } from "../../core/useOwnerId";
 import { BotaoTema } from "../../components/BotaoTema";
 import { TextoComReferencias } from "../../components/TextoComReferencias";
 import { Tooltip } from "../../components/Tooltip";
+import { mostrarToast } from "../../core/util/toast";
 
 export function generateStaticParams() {
   return livros.map((livro) => ({ livro: livro.slug }));
@@ -41,25 +42,36 @@ export default function ResumoLivro() {
   function ajustarFonte(delta: number) {
     setIndiceFonte((atual) => {
       const novo = Math.min(TAMANHOS_FONTE.length - 1, Math.max(0, atual + delta));
-      salvarIndiceFonte(novo);
+      salvarIndiceFonte(novo).catch(() => mostrarToast("Não foi possível salvar o tamanho da fonte"));
       return novo;
     });
   }
 
   useEffect(() => {
     if (!ownerId || !slug) return;
-    livrosLidosRepository.estaLido(ownerId, slug).then(setLido);
+    livrosLidosRepository.estaLido(ownerId, slug)
+      .then(setLido)
+      .catch(() => mostrarToast("Não foi possível carregar o progresso deste livro"));
   }, [ownerId, slug]);
 
   useEffect(() => {
-    carregarIndiceFonte().then(setIndiceFonte);
-    carregarFonteSerifada().then(setFonteSerifada);
+    let ativo = true;
+    Promise.all([carregarIndiceFonte(), carregarFonteSerifada()])
+      .then(([indice, serifada]) => {
+        if (!ativo) return;
+        setIndiceFonte(indice);
+        setFonteSerifada(serifada);
+      })
+      .catch(() => {
+        if (ativo) mostrarToast("Não foi possível carregar as preferências de leitura");
+      });
+    return () => { ativo = false; };
   }, []);
 
   function alternarFonteSerifada() {
     setFonteSerifada((atual) => {
       const novo = !atual;
-      salvarFonteSerifada(novo);
+      salvarFonteSerifada(novo).catch(() => mostrarToast("Não foi possível salvar a preferência de fonte"));
       return novo;
     });
   }

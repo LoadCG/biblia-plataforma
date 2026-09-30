@@ -153,6 +153,31 @@ tradução) e a intenção declarada de publicar o app nativo algum dia
 8. **Adicionar regressão visual automatizada** — selecionar ferramenta,
    baselines e tolerância depois da matriz visual manual.
 
+### Execução revisada por marcos
+
+Para evitar manter duas listas concorrentes, a execução detalhada fica nos
+roadmaps operacionais. A ordem recomendada é:
+
+1. **Marco atual — fundação editorial mensurável:** inventário reproduzível
+   dos 66 resumos e 2 planos; o gerador/checagem inicial está em
+   `scripts/relatorio-cobertura-editorial.js`. A validação atual é estrutural,
+   não editorial e não valida os limites das referências bíblicas.
+2. **Marco web — qualidade que não depende de credenciais:** executar a matriz
+   responsiva manual, corrigir P0/P1 e confirmar um CI remoto verde. O Preview
+   Vercel é tentado quando a quota estiver disponível.
+3. **Marco editorial piloto — em paralelo:** fechar schema/taxonomia mínimos e
+   produzir apenas um lote curto com revisão independente; QA estrutural e
+   revisão humana são gates daquele lote, não uma etapa tardia após expansão.
+4. **Marco transversal:** inventariar estados e migrar feedback de forma
+   incremental; criar snapshots após a auditoria visual manual.
+5. **Marco nativo — condicionado a ambiente:** gerar build instalável e então
+   executar Maestro, leitores de tela, performance e smoke test. Credenciais e
+   publicação em loja continuam dependências futuras, não bloqueiam o web.
+
+Os critérios e a decomposição ficam em `PLANO-MESTRE-UX-ETAPAS-19-A-23.md` e
+`PLANO-CONTEUDO-ETAPAS-24-A-28.md`. Datas anteriores desses documentos são
+marcos de registro, não prova de que um gate externo foi concluído.
+
 Plano operacional expandido: `PLANO-MESTRE-UX-ETAPAS-19-A-23.md`.
 
 Próximo ciclo editorial: `PLANO-CONTEUDO-ETAPAS-24-A-28.md`.

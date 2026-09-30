@@ -28,21 +28,28 @@ export default function EscolherLivro() {
     // na URL), abre esse livro direto — não o último lido, que pode ser
     // outro (ex.: usuário navegando por capítulos antigos).
     if (livroParaAbrir) return;
-    carregarUltimaLeitura().then((ultima) => {
-      if (ultima) setLivroExpandido(ultima.livroSlug);
-    });
+    let ativo = true;
+    carregarUltimaLeitura()
+      .then((ultima) => { if (ativo && ultima) setLivroExpandido(ultima.livroSlug); })
+      .catch(() => { if (ativo) mostrarToast("Não foi possível recuperar sua última leitura"); });
+    return () => { ativo = false; };
   }, [livroParaAbrir]);
 
   useEffect(() => {
     if (!ownerId) return;
-    progressoRepository.listarTodos(ownerId).then((itens) => {
-      const porLivro: Record<string, Set<number>> = {};
-      for (const item of itens) {
-        if (!porLivro[item.livroSlug]) porLivro[item.livroSlug] = new Set();
-        porLivro[item.livroSlug].add(item.capitulo);
-      }
-      setLidosPorLivro(porLivro);
-    });
+    let ativo = true;
+    progressoRepository.listarTodos(ownerId)
+      .then((itens) => {
+        if (!ativo) return;
+        const porLivro: Record<string, Set<number>> = {};
+        for (const item of itens) {
+          if (!porLivro[item.livroSlug]) porLivro[item.livroSlug] = new Set();
+          porLivro[item.livroSlug].add(item.capitulo);
+        }
+        setLidosPorLivro(porLivro);
+      })
+      .catch(() => { if (ativo) mostrarToast("Não foi possível carregar o progresso dos livros"); });
+    return () => { ativo = false; };
   }, [ownerId]);
 
   const listaFiltrada = useMemo(() => {

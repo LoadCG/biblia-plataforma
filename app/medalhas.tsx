@@ -2,9 +2,11 @@ import { Link } from "expo-router";
 import { useEffect, useMemo, useState } from "react";
 import { ScrollView, Text, View } from "react-native";
 import { BotaoTema } from "../components/BotaoTema";
+import { IconeConquista } from "../components/IconeConquista";
 import { calcularConquistas, type Conquista } from "../core/content/conquistas";
 import { livrosLidosRepository } from "../core/repositories";
 import { useOwnerId } from "../core/useOwnerId";
+import { mostrarToast } from "../core/util/toast";
 
 function LinhaConquista({ conquista }: { conquista: Conquista }) {
   const progresso = conquista.progressoTotal > 0 ? Math.min(1, conquista.progressoAtual / conquista.progressoTotal) : 0;
@@ -25,7 +27,7 @@ function LinhaConquista({ conquista }: { conquista: Conquista }) {
             : "bg-cor-borda dark:bg-cor-borda-dark border-transparent"
         }`}
       >
-        <Text style={{ fontSize: 26, opacity: completa ? 1 : 0.4 }}>{conquista.icone}</Text>
+        <IconeConquista conquistaId={conquista.id} conquistada={completa} tamanho={26} />
       </View>
 
       <View className="flex-1">
@@ -57,7 +59,11 @@ export default function Medalhas() {
 
   useEffect(() => {
     if (!ownerId) return;
-    livrosLidosRepository.listar(ownerId).then(setLidos);
+    let ativo = true;
+    livrosLidosRepository.listar(ownerId)
+      .then((itens) => { if (ativo) setLidos(itens); })
+      .catch(() => { if (ativo) mostrarToast("Não foi possível carregar seu progresso para as medalhas"); });
+    return () => { ativo = false; };
   }, [ownerId]);
 
   const conquistas = useMemo(() => calcularConquistas(new Set(lidos)), [lidos]);

@@ -2,6 +2,7 @@ import { router } from "expo-router";
 import { useEffect } from "react";
 import { ActivityIndicator, View } from "react-native";
 import { carregarUltimaLeitura } from "../../../core/leitura/ultimaLeitura";
+import { mostrarToast } from "../../../core/util/toast";
 
 // A aba Bíblia não tem conteúdo próprio — abre direto no último
 // capítulo lido. Se a pessoa nunca leu nada ainda (primeira vez no
@@ -14,6 +15,9 @@ export default function BibliaTab() {
       } else {
         router.replace("/biblia/escolher");
       }
+    }).catch(() => {
+      mostrarToast("Não foi possível recuperar sua última leitura");
+      router.replace("/biblia/escolher");
     });
   }, []);
 

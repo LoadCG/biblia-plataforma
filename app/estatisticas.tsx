@@ -1,7 +1,9 @@
 import { Link } from "expo-router";
 import { useEffect, useState } from "react";
-import { ActivityIndicator, ScrollView, Text, View } from "react-native";
+import { ScrollView, Text, View } from "react-native";
 import { BotaoTema } from "../components/BotaoTema";
+import { EstadoCarregando } from "../components/EstadoCarregando";
+import { EstadoErro } from "../components/EstadoErro";
 import { calcularEstatisticas, formatarMinutos, type Estatisticas } from "../core/estatisticas/estatisticas";
 import { useOwnerId } from "../core/useOwnerId";
 
@@ -17,11 +19,21 @@ function Cartao({ numero, rotulo }: { numero: string | number; rotulo: string })
 export default function MinhasEstatisticas() {
   const ownerId = useOwnerId();
   const [estatisticas, setEstatisticas] = useState<Estatisticas | null>(null);
+  const [erro, setErro] = useState(false);
+  const [tentativa, setTentativa] = useState(0);
 
   useEffect(() => {
     if (!ownerId) return;
-    calcularEstatisticas(ownerId).then(setEstatisticas);
-  }, [ownerId]);
+    let ativo = true;
+    setEstatisticas(null);
+    setErro(false);
+    calcularEstatisticas(ownerId).then((valor) => {
+      if (ativo) setEstatisticas(valor);
+    }).catch(() => {
+      if (ativo) setErro(true);
+    });
+    return () => { ativo = false; };
+  }, [ownerId, tentativa]);
 
   return (
     <ScrollView className="flex-1 bg-cor-fundo dark:bg-cor-fundo-dark">
@@ -37,10 +49,10 @@ export default function MinhasEstatisticas() {
           Um resumo do seu ritmo de leitura, só pra você.
         </Text>
 
-        {!estatisticas ? (
-          <View accessibilityRole="progressbar" accessibilityLabel="Carregando estatísticas" className="items-center py-10">
-            <ActivityIndicator />
-          </View>
+        {!estatisticas && erro ? (
+          <EstadoErro titulo="Não foi possível carregar suas estatísticas" descricao="Tente novamente. Seus dados continuam guardados neste dispositivo." aoTentarNovamente={() => setTentativa((valor) => valor + 1)} />
+        ) : !estatisticas ? (
+          <EstadoCarregando rotulo="Carregando estatísticas" />
         ) : (
           <View testID="estatisticas-grade" className="flex-row flex-wrap gap-3">
             <Cartao numero={estatisticas.livrosLidos} rotulo="livros lidos" />

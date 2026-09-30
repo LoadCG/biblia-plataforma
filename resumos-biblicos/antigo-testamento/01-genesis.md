@@ -1,30 +1,30 @@
 # Gênesis — Livro 1 de 66
 
 ## 📋 Ficha Rápida
-- **Autor:** Tradicionalmente atribuído a Moisés (visão conservadora, baseada em textos como Êxodo 17:14 e João 5:46). A crítica acadêmica moderna (hipótese documentária) propõe múltiplas fontes editadas séculos depois; este resumo segue a posição tradicional de autoria mosaica.
-- **Data provável de escrita:** cerca de 1445-1405 a.C., durante a peregrinação de Israel no deserto, após o Êxodo do Egito.
-- **Período histórico narrado:** desde a criação do mundo até cerca de 1800 a.C., cobrindo a era dos patriarcas (Abraão, Isaque, Jacó, José).
-- **Gênero literário:** narrativa histórica com genealogias, e alguns trechos poéticos (ex: bênção de Jacó em Gênesis 49).
-- **Local/contexto de origem:** escrito no deserto do Sinai, tendo como pano de fundo geográfico a Mesopotâmia (região entre os rios Tigre e Eufrates, atual Iraque), Canaã (atual Israel/Palestina) e o Egito.
-- **Conexão com o livro anterior:** é o primeiro livro da Bíblia, fundamento de toda a narrativa bíblica.
+- **Autor:** O livro não identifica seu autor. A tradição judaico-cristã associa a Torá a Moisés; estudos acadêmicos discutem a transmissão e a composição de Gênesis em diferentes etapas, sem consenso simples sobre um autor individual.
+- **Data provável de escrita:** Não informada pelo próprio livro. A atribuição tradicional relaciona sua origem ao período de Moisés; propostas acadêmicas situam a formação e a edição do texto em etapas, com datas debatidas.
+- **Período histórico narrado:** Dos relatos sobre a origem do mundo até a morte de José no Egito. As narrativas patriarcais evocam um passado ancestral, mas o texto não fornece uma cronologia que permita fixar com segurança datas absolutas para esses episódios.
+- **Gênero literário:** Abertura da Torá que reúne narrativas de origem e de ancestrais, genealogias, histórias familiares e trechos poéticos, como a bênção de Jacó (Gênesis 49).
+- **Local/contexto de origem:** As narrativas se passam em lugares da Mesopotâmia, de Canaã e do Egito. O livro não informa um único local de redação; sua formação é objeto de debate.
+- **Conexão com o livro anterior:** É o primeiro livro da Bíblia e abre a narrativa da Torá.
 
 ## 🌍 Pano de Fundo Histórico
-Gênesis narra eventos que antecedem os grandes impérios conhecidos da história documentada, mas o pano de fundo cultural dos patriarcas é o mundo da Mesopotâmia antiga (berço de civilizações como Suméria, Acádia e Babilônia) e do Egito das pirâmides. Ur dos Caldeus, cidade natal de Abraão, era um centro urbano avançado na Mesopotâmia (sul do atual Iraque), com templos e comércio organizado. Canaã, para onde Abraão migra, era ocupada por diversos povos cananeus, numa região correspondente hoje a Israel, Palestina, Líbano e partes da Jordânia e Síria. O Egito, onde a história de José se desenrola, já era uma civilização estabelecida havia séculos, governada por faraós, com uma economia baseada no rio Nilo.
+Gênesis reúne relatos ambientados na Mesopotâmia, em Canaã e no Egito antigo. O texto menciona lugares como Ur dos Caldeus, Harã, Siquém e Hebrom, além do vale do Nilo na história de José. Esses cenários ajudam a acompanhar as migrações e relações entre famílias e povos. A ambientação literária, por si só, não determina quando cada episódio aconteceu nem confirma a historicidade de personagens; datas, autoria e formação do livro são discutidas por tradições religiosas e pela pesquisa acadêmica.
 
 ## ⏳ Linha do Tempo e Cronologia
-Gênesis cobre o maior espaço de tempo de qualquer livro bíblico: da criação (sem data fixada) até a morte de José, por volta de 1800 a.C. Estrutura-se em duas grandes partes: capítulos 1-11 (história primitiva: criação, queda, dilúvio, Torre de Babel — sem cronologia humana precisa) e capítulos 12-50 (era patriarcal: Abraão por volta de 2000-1825 a.C., Isaque, Jacó e José até cerca de 1800 a.C.).
+O livro organiza-se em dois grandes movimentos. Seus onze primeiros capítulos apresentam relatos sobre a criação, a humanidade, o dilúvio e a dispersão dos povos. A partir do chamado de Abraão, a narrativa acompanha as famílias de Sara e Isaque, Rebeca e Jacó, chegando à história de José no Egito. Essa divisão descreve a sequência narrativa do livro, não uma cronologia absoluta: Gênesis não oferece datas verificáveis para a criação ou para a vida dos patriarcas.
 
 ## ✍️ Autor e Propósito
-Moisés teria escrito Gênesis para o povo de Israel recém-liberto da escravidão no Egito, explicando suas origens, a origem do mundo e do pecado, e principalmente as promessas de Deus a Abraão (terra, descendência e bênção) que fundamentam a identidade de Israel como povo escolhido. O objetivo é mostrar que o Deus que os libertou do Egito é o mesmo Criador de tudo e o mesmo que fez aliança com seus antepassados.
+Gênesis não nomeia seu autor. A tradição judaica e cristã vincula a Torá a Moisés, enquanto estudos acadêmicos propõem diferentes histórias de transmissão, composição e edição. Em sua forma final, Gênesis abre a Torá e liga relatos sobre as origens do mundo e da humanidade à história ancestral de Israel. As promessas de descendência, terra e bênção feitas a Abraão orientam boa parte da narrativa a partir de Gênesis 12 e conectam essa história à ida da família de Jacó para o Egito.
 
 ## 📖 Resumo do Conteúdo
-Deus cria o universo e a humanidade (Adão e Eva) em perfeição (caps. 1-2); o pecado entra no mundo pela desobediência no Éden (cap. 3); a violência humana cresce (Caim e Abel, cap. 4) até o dilúvio, quando Deus salva Noé e sua família em uma arca (caps. 6-9); a humanidade se dispersa após a Torre de Babel (cap. 11). A partir do capítulo 12, Deus chama Abraão para deixar Ur e ir a Canaã, prometendo-lhe uma grande nação, uma terra e bênção para todas as famílias da terra. A narrativa segue Isaque, depois Jacó (que tem 12 filhos, origem das tribos de Israel) e culmina na história de José, vendido como escravo pelos irmãos, mas que se torna governador do Egito e salva sua família da fome, reunindo-a no Egito.
+Nos onze primeiros capítulos, Gênesis apresenta a criação e o descanso do sétimo dia, a vida de Adão e Eva no jardim e sua saída, a história de Caim e Abel, genealogias, o dilúvio e a dispersão dos povos após Babel. A partir do capítulo 12, Deus chama Abraão e promete fazer dele uma grande nação, dar uma terra a seus descendentes e levar bênção a outros povos. A narrativa passa por Sara e Isaque, pela família de Isaque e Rebeca e pelos conflitos entre Jacó, Esaú e os filhos de Jacó. Nos capítulos finais, José é vendido pelos irmãos, chega ao Egito e passa a administrar os recursos do país durante a fome. Mais tarde, a família se reúne no Egito. O livro termina com José ainda ali e com a expectativa de que Deus conduzirá seus descendentes de volta à terra prometida, preparando a continuação da narrativa em Êxodo.
 
 ## 💡 Curiosidades e Conexões
-- Achados arqueológicos em Ebla e Mari (Síria) confirmam nomes e costumes semelhantes aos dos patriarcas, apoiando a plausibilidade histórica do período.
-- Relatos de dilúvio e criação também aparecem em outras culturas mesopotâmicas (como a Epopeia de Gilgamesh), mas o relato bíblico se distingue por apresentar um só Deus soberano, não vários deuses rivais.
-- O nome "Israel" (dado a Jacó) significa "aquele que luta com Deus", origem do nome da nação.
-- A descida da família de Jacó ao Egito prepara o cenário para o livro de Êxodo, que começa séculos depois.
+- A fórmula “estas são as origens/gerações de” aparece em pontos de transição do livro — por exemplo, em Gênesis 2:4, Gênesis 5:1 e Gênesis 6:9 — e ajuda a encadear relatos de criação, genealogias e histórias familiares.
+- Gênesis compartilha motivos com narrativas antigas do Oriente Próximo. A Epopeia de Gilgamesh, por exemplo, preserva um relato de dilúvio. Comparar esses textos ajuda a estudar como diferentes povos narravam origens e catástrofes; a semelhança, isoladamente, não demonstra dependência direta nem comprova um evento histórico específico.
+- Em Gênesis 32:28, o próprio relato relaciona o nome “Israel” à luta de Jacó com Deus e com os homens. A explicação funciona como jogo narrativo que liga o nome à cena e ao personagem.
+- Gênesis termina no Egito: José morre ali e pede que seus descendentes levem seus ossos quando Deus os visitar (Gênesis 50:24-26). Êxodo retoma a vida dos israelitas no Egito.
 
 ## 🎯 Por Que Isso Importa Hoje
-Gênesis responde às perguntas mais básicas da existência: de onde viemos e por que o mundo tem sofrimento. As promessas feitas a Abraão continuam moldando a fé cristã, que se vê como herdeira espiritual dessa bênção através de Cristo.
+Gênesis põe em cena perguntas sobre criação, responsabilidade humana, violência, pertencimento, promessa e reconciliação. Para leitores cristãos, o Novo Testamento retoma a promessa de bênção a outros povos e a relaciona a Jesus (Gálatas 3:8-16). Essa é uma leitura cristã da continuidade bíblica; as tradições judaicas também leem a aliança com Abraão em seus próprios contextos e não são substituídas por este resumo.

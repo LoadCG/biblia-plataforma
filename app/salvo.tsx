@@ -4,6 +4,8 @@ import { Alert, Platform, Pressable, ScrollView, Text, TextInput, View } from "r
 import { BotaoTema } from "../components/BotaoTema";
 import { CardAtividade } from "../components/CardAtividade";
 import { EstadoVazio } from "../components/EstadoVazio";
+import { EstadoCarregando } from "../components/EstadoCarregando";
+import { EstadoErro } from "../components/EstadoErro";
 import { carregarAtividade, chaveAtividade, type ItemAtividade } from "../core/estatisticas/atividade";
 import { useOwnerId } from "../core/useOwnerId";
 import { obterLivro } from "../core/content/livros";
@@ -32,6 +34,9 @@ export default function Salvo() {
   const { filtro: filtroInicial } = useLocalSearchParams<{ filtro?: string }>();
   const ownerId = useOwnerId();
   const [atividade, setAtividade] = useState<ItemAtividade[]>([]);
+  const [carregando, setCarregando] = useState(true);
+  const [erroAoCarregar, setErroAoCarregar] = useState(false);
+  const [tentativa, setTentativa] = useState(0);
   const [filtro, setFiltro] = useState<Filtro>(() => filtroValido(filtroInicial));
   const [termo, setTermo] = useState("");
   const [ordem, setOrdem] = useState<"recentes" | "biblica">("recentes");
@@ -44,14 +49,25 @@ export default function Salvo() {
   const [nomeColecao, setNomeColecao] = useState("");
 
   const carregar = useCallback(async () => {
-    if (!ownerId) return;
-    const [itens, cols, associacoesCarregadas] = await Promise.all([carregarAtividade(ownerId), colecoesRepository.listar(ownerId), colecoesRepository.listarAssociacoes(ownerId)]);
-    setAtividade(itens); setColecoes(cols); setAssociacoes(associacoesCarregadas);
+    if (!ownerId) {
+      setCarregando(true);
+      return;
+    }
+    setCarregando(true);
+    setErroAoCarregar(false);
+    try {
+      const [itens, cols, associacoesCarregadas] = await Promise.all([carregarAtividade(ownerId), colecoesRepository.listar(ownerId), colecoesRepository.listarAssociacoes(ownerId)]);
+      setAtividade(itens); setColecoes(cols); setAssociacoes(associacoesCarregadas);
+    } catch {
+      setErroAoCarregar(true);
+    } finally {
+      setCarregando(false);
+    }
   }, [ownerId]);
 
   useEffect(() => {
     carregar();
-  }, [carregar]);
+  }, [carregar, tentativa]);
 
   const chavesColecao = new Set(associacoes.filter((item) => !colecaoFiltro || item.colecaoId === colecaoFiltro).map((item) => item.itemChave));
   const filtrados = (filtro === "todos" ? atividade : atividade.filter((item) => item.tipo === filtro))
@@ -71,24 +87,55 @@ export default function Salvo() {
 
   async function criarColecao() {
     if (!ownerId || !novaColecao.trim()) return;
-    await colecoesRepository.criar(ownerId, novaColecao); setNovaColecao(""); await carregar();
+    try {
+      await colecoesRepository.criar(ownerId, novaColecao);
+      setNovaColecao("");
+      await carregar();
+      mostrarToast("Coleção criada");
+    } catch {
+      mostrarToast("Não foi possível criar a coleção. Tente novamente.");
+    }
   }
 
   async function salvarNomeColecao() {
     if (!ownerId || !editandoColecao || !nomeColecao.trim()) return;
-    await colecoesRepository.renomear(ownerId, editandoColecao.id, nomeColecao);
-    setEditandoColecao(null); setNomeColecao(""); await carregar();
+    try {
+      await colecoesRepository.renomear(ownerId, editandoColecao.id, nomeColecao);
+      setEditandoColecao(null); setNomeColecao("");
+      await carregar();
+      mostrarToast("Coleção atualizada");
+    } catch {
+      mostrarToast("Não foi possível salvar o nome. Ele continua no campo para você tentar novamente.");
+    }
   }
 
   function confirmarRemocaoColecao(colecao: Colecao) {
-    const remover = async () => { if (!ownerId) return; await colecoesRepository.remover(ownerId, colecao.id); if (colecaoFiltro === colecao.id) setColecaoFiltro(null); setEditandoColecao(null); await carregar(); };
+    const remover = async () => {
+      if (!ownerId) return;
+      try {
+        await colecoesRepository.remover(ownerId, colecao.id);
+        if (colecaoFiltro === colecao.id) setColecaoFiltro(null);
+        setEditandoColecao(null);
+        await carregar();
+        mostrarToast("Coleção excluída; seus itens foram preservados");
+      } catch {
+        mostrarToast("Não foi possível excluir a coleção. Tente novamente.");
+      }
+    };
     if (Platform.OS === "web") { if (window.confirm(`Excluir a coleção "${colecao.nome}"? Os itens salvos serão preservados.`)) remover(); return; }
     Alert.alert("Excluir coleção?", "Os itens salvos serão preservados.", [{ text: "Cancelar", style: "cancel" }, { text: "Excluir", style: "destructive", onPress: remover }]);
   }
 
   async function associarSelecionados(colecaoId: string) {
     if (!ownerId || selecionados.size === 0) return;
-    await colecoesRepository.associar(ownerId, colecaoId, [...selecionados]); setSelecionados(new Set()); await carregar(); mostrarToast("Itens adicionados à coleção");
+    try {
+      await colecoesRepository.associar(ownerId, colecaoId, [...selecionados]);
+      setSelecionados(new Set());
+      await carregar();
+      mostrarToast("Itens adicionados à coleção");
+    } catch {
+      mostrarToast("Não foi possível adicionar os itens. A seleção continua ativa para tentar novamente.");
+    }
   }
 
   async function excluirItem(item: ItemAtividade) {
@@ -113,10 +160,33 @@ export default function Salvo() {
     if (!ownerId) return;
     const removidos = atividade.filter((item) => selecionados.has(chaveAtividade(item)));
     const associacoesRemovidas = associacoes.filter((item) => selecionados.has(item.itemChave));
-    await Promise.all(removidos.map(excluirItem));
-    await Promise.all(colecoes.map((colecao) => colecoesRepository.desassociar(ownerId, colecao.id, [...selecionados])));
-    setSelecionados(new Set()); await carregar();
-    mostrarToast(`${removidos.length} itens excluídos`, { acaoLabel: "Desfazer", onAcao: async () => { await Promise.all(removidos.map(restaurarItem)); for (const colecao of colecoes) { const chaves = associacoesRemovidas.filter((a) => a.colecaoId === colecao.id).map((a) => a.itemChave); if (chaves.length) await colecoesRepository.associar(ownerId, colecao.id, chaves); } await carregar(); } });
+    try {
+      await Promise.all(removidos.map(excluirItem));
+      await Promise.all(colecoes.map((colecao) => colecoesRepository.desassociar(ownerId, colecao.id, [...selecionados])));
+      setSelecionados(new Set());
+      await carregar();
+      mostrarToast(`${removidos.length} itens excluídos`, {
+        acaoLabel: "Desfazer",
+        onAcao: async () => {
+          try {
+            await Promise.all(removidos.map(restaurarItem));
+            for (const colecao of colecoes) {
+              const chaves = associacoesRemovidas.filter((a) => a.colecaoId === colecao.id).map((a) => a.itemChave);
+              if (chaves.length) await colecoesRepository.associar(ownerId, colecao.id, chaves);
+            }
+            await carregar();
+            mostrarToast("Exclusão desfeita");
+          } catch {
+            await carregar();
+            mostrarToast("Não foi possível desfazer tudo. Confira a lista atualizada.");
+          }
+        },
+      });
+    } catch {
+      setSelecionados(new Set());
+      await carregar();
+      mostrarToast("A exclusão foi interrompida. Atualizei a lista; confira os itens antes de tentar novamente.");
+    }
   }
 
   function limparFiltros() {
@@ -205,7 +275,11 @@ export default function Salvo() {
         ) : null}
 
         <Text accessibilityLiveRegion="polite" className="sr-only">{filtrados.length} itens salvos exibidos</Text>
-        {filtrados.length === 0 ? (
+        {erroAoCarregar ? (
+          <EstadoErro titulo="Não foi possível carregar seus itens salvos" descricao="Tente novamente. Suas anotações e coleções continuam guardadas neste dispositivo." aoTentarNovamente={() => setTentativa((valor) => valor + 1)} />
+        ) : carregando ? (
+          <EstadoCarregando rotulo="Carregando itens salvos" />
+        ) : filtrados.length === 0 ? (
           <EstadoVazio
             titulo="Nada aqui ainda"
             descricao="Grife, anote ou favorite uma busca durante a leitura pra ver aqui."

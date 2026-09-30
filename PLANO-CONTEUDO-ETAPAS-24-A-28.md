@@ -17,32 +17,69 @@ licenciamento, performance offline ou qualidade dos dados derivados.
 
 | ID | Entrega | Prioridade | Dependência | Resultado |
 |---|---|---:|---|---|
-| 24.x | Modelo editorial e taxonomia | P0 | nenhuma | contrato de conteúdo |
-| 25.x | Novos planos de leitura | P1 | 24.x | catálogo ampliado |
-| 26.x | Resumos melhorados | P0 | 24.x | profundidade por livro |
-| 27.x | Devocionais e curadoria | P1 | 24–26.x | experiência guiada |
-| 28.x | QA editorial e publicação | P0 | 25–27.x | conteúdo confiável |
+| 24.x | Inventário, contrato e taxonomia | P0 | nenhuma | conteúdo atual mensurado e modelo versionável |
+| 25.x | Primeiro lote de planos | P1 | 24.x; revisão humana | plano pequeno validado ponta a ponta |
+| 26.x | Primeiro lote de resumos | P1 | 24.x; revisão humana | resumos prioritários com estrutura e fontes revisadas |
+| 27.x | Devocionais e curadoria | P1 | 24.x; fluxo de revisão | conteúdo guiado rastreável e aprovado |
+| 28.x | QA editorial contínuo | P0 | inicia em 24.x e acompanha cada lote | conteúdo confiável antes de cada publicação |
+
+## Ordem de execução revisada
+
+As trilhas de UX/confiabilidade (etapas 19–23) e conteúdo (24–28) podem
+avançar em paralelo após a fundação. A publicação de conteúdo depende do gate
+editorial da etapa 28, enquanto as telas e os planos existentes continuam
+disponíveis. Builds nativos e Preview Vercel são gates de distribuição, não
+pré-requisitos para inventariar ou revisar conteúdo localmente.
+
+1. **24.1 inventário** → publicar e manter `docs/cobertura-editorial.md`.
+2. **24.2 contrato mínimo** → registrar campos obrigatórios e validações sem
+   migrar todos os dados antes de validar o primeiro lote.
+3. **28.1 QA automatizado** → validar estrutura e referências antes de renderizar.
+4. **24.3 e 27.1–27.2 revisão editorial** → critérios, fontes, incertezas,
+   responsável e versão para cada lote.
+5. **26.1–26.3 lote piloto de resumos** e **25.1–25.3 plano piloto de 7 dias**
+   → produzir pequenos lotes e obter revisão humana independente.
+6. **28.2–28.3 preview e publicação** → publicar somente material aprovado;
+   avaliar o ciclo antes de ampliar para planos de 14/30 dias e mais livros.
+
+### Definição de pronto por etapa
+
+- **24 — Fundação:** inventário reproduzível; contrato documentado; taxonomia
+  compatível com o conteúdo vigente; itens sem dado inventado e com IDs/fontes.
+- **25 — Planos:** carga diária medida; referências existentes no cânon; dias
+  completos e sequenciais; retomada testada; revisão independente registrada.
+- **26 — Resumos:** template aplicado por lote; afirmações contestáveis sinalizam
+  incerteza; referências e links conferidos; renderização e busca verificadas.
+- **27 — Devocionais:** reflexão, pergunta e próximo passo separados; fonte e
+  status rastreáveis; revisão de clareza, tom e segurança concluída.
+- **28 — QA/publicação:** schema e integridade automatizados; rubrica humana
+  registrada; preview verificado; changelog e cobertura atualizados.
 
 ---
 
 ## Etapa 24 — Modelo editorial e taxonomia
 
-### 24.1 Inventário do conteúdo atual `⬜`
+### 24.1 Inventário do conteúdo atual `🔶`
 
-- [ ] Catalogar os 66 resumos por tamanho, estrutura e cobertura temática.
-- [ ] Catalogar os 2 planos existentes, dias, referências e devocionais.
-- [ ] Identificar campos ausentes, inconsistências de nomenclatura e duplicatas.
-- [ ] Registrar quais conteúdos são fonte, derivados ou somente apresentação.
+- [x] Catalogar os 66 resumos por estrutura, testamento e cobertura básica.
+- [x] Catalogar os 2 planos existentes, 21 dias e suas referências.
+- [x] Identificar duplicidade de IDs/slugs e divergência entre fontes/derivados.
+- [x] Gerar `docs/cobertura-editorial.md` como inventário reproduzível.
+- [ ] Completar análise de profundidade, equilíbrio por gênero e cobertura temática.
 
-**Evidência:** relatório de cobertura versionado em `docs/` ou no próprio plano.
+**Evidência:** [`docs/cobertura-editorial.md`](./docs/cobertura-editorial.md),
+gerado por `npm run relatorio:editorial`.
 
-### 24.2 Contrato de dados `⬜`
+### 24.2 Contrato de dados `🔶`
 
-- [ ] Definir schema para resumo: contexto, estrutura, temas e referências.
-- [ ] Definir schema para plano: público, duração, objetivo, dias e tags.
+- [x] Validar schema estrutural derivado dos resumos: metadados, ficha e seis
+  seções editoriais.
+- [x] Validar schema atual de plano: ID, duração, dias, referências, reflexão
+  e pergunta.
+- [ ] Evoluir schema para público, objetivo, tags, versão editorial e status.
 - [ ] Definir schema para devocional: reflexão, pergunta, CTA e revisão.
 - [ ] Definir IDs estáveis, slug, versão editorial e status de publicação.
-- [ ] Adicionar validação automatizada sem acoplar conteúdo à UI.
+- [x] Adicionar validação automatizada sem acoplar conteúdo à UI.
 
 ### 24.3 Taxonomia e navegação `⬜`
 
@@ -207,9 +244,13 @@ para aumentar a contagem do catálogo.
 ### Lote C0 — fundação `P0`
 
 - [ ] Definir schema, manifesto editorial e vocabulário controlado.
-- [ ] Inventariar os 66 resumos e os planos existentes.
+- [x] Inventariar estruturalmente os 66 resumos e os planos existentes com script reproduzível.
 - [ ] Criar checklist de revisão e política de fontes.
 - [ ] Escolher dois revisores responsáveis pelo primeiro lote.
+
+O inventário é produzido por `npm run relatorio:editorial` e validado no CI por
+`npm run check:editorial`. Ele verifica cobertura estrutural; não substitui
+revisão de conteúdo, validação de referências bíblicas ou aprovação teológica.
 
 ### Lote C1 — ganho rápido `P0`
 
@@ -218,12 +259,32 @@ para aumentar a contagem do catálogo.
 - [ ] Criar o plano de 7 dias com conteúdo aprovado.
 - [ ] Validar o fluxo completo em preview antes de ampliar o lote.
 
+**Propostas em revisão (2026-09-28):** primeira revisão editorial de Gênesis e
+um plano piloto de 7 dias estão preparados em `docs/revisao-editorial/`.
+Continuam fora do status aprovado/publicado até leitura humana independente;
+somente o resumo revisado foi regenerado no JSON derivado nesta proposta.
+
+**Continuação do lote C1 (2026-09-28):** Salmos, Provérbios, Mateus, João e
+Romanos receberam uma primeira revisão factual/editorial. As propostas e fontes
+estão em `docs/revisao-editorial/lote-c1-primeiros-cinco-livros.md`. Os cinco
+resumos foram regenerados em `core/content/dados/livros.json`; continuam como
+rascunhos até revisão humana independente e conferência visual no aplicativo.
+
 ### Lote C2 — profundidade `P1`
 
 - [ ] Revisar Êxodo, Isaías, Jeremias, Lucas, Atos e Apocalipse.
 - [ ] Criar um plano temático de 14 dias com referências cruzadas.
 - [ ] Adicionar metadados de temas e termos de busca.
 - [ ] Testar descoberta por Busca e páginas SEO.
+
+**Propostas preparadas (2026-09-28):** a primeira revisão dos seis resumos e
+um plano temático de 14 dias estão registrados em `docs/revisao-editorial/`.
+As referências do plano foram validadas contra a base ACF local (28 trechos,
+183 versículos, 8–19 por dia). Os conteúdos seguem em rascunho; pendem revisão
+humana independente e inspeção visual antes de qualquer integração/publicação.
+A taxonomia e os termos de busca associados também foram estruturados como
+proposta em `docs/revisao-editorial/metadados-busca-proposta.md`; ainda não
+foram integrados ao schema ou à busca do app.
 
 ### Lote C3 — escala controlada `P1`
 

@@ -1,30 +1,30 @@
 # Apocalipse — Livro 66 de 66
 
 ## 📋 Ficha Rápida
-- **Autor:** tradicionalmente o apóstolo João, exilado na ilha de Patmos (1:9) (posição conservadora, apoiada por testemunho antigo da igreja); alguns estudiosos, notando diferenças de estilo grego em relação ao evangelho e às cartas de João, propõem um "João, o Ancião" diferente do apóstolo — debate reconhecido, mas sem consenso que desafie a tradição predominante.
-- **Data provável de escrita:** cerca de 95 d.C., durante o reinado do imperador romano Domiciano (posição majoritária, inclusive conservadora); uma posição minoritária propõe data mais antiga, cerca de 68-69 d.C., sob Nero.
-- **Período histórico narrado:** visões proféticas e simbólicas sobre a situação presente das igrejas da Ásia Menor e sobre o futuro, até a consumação final da história.
-- **Gênero literário:** literatura apocalíptica — visões simbólicas complexas, também com elementos de carta e profecia.
-- **Local/contexto de origem:** escrito na ilha de Patmos (Grécia), endereçado a sete igrejas específicas da província romana da Ásia (atual Turquia ocidental).
-- **Conexão com o livro anterior:** encerra todo o cânon bíblico, retomando e resolvendo temas iniciados em Gênesis — queda, exílio do Éden, promessa messiânica — culminando na visão de uma nova criação restaurada.
+- **Autoria:** o texto identifica seu autor como João (1:1, 4, 9), sem chamá-lo de apóstolo. A tradição cristã por vezes o identifica com o apóstolo João; essa identificação e a relação com os outros escritos joaninos são debatidas.
+- **Data de composição:** muitas propostas situam a obra no fim do século I, frequentemente durante o reinado de Domiciano; uma data anterior, no período de Nero, também é defendida. O debate não está encerrado.
+- **Período histórico narrado:** visões simbólicas dirigidas a comunidades da Ásia romana, que articulam sua situação presente e a esperança de juízo e renovação.
+- **Gênero literário:** apocalipse e profecia em forma de carta; o livro foi preparado para leitura comunitária (1:3–4).
+- **Contexto:** o autor relata estar na ilha de Patmos “por causa da palavra de Deus e do testemunho de Jesus” (1:9). As circunstâncias concretas e a extensão da perseguição às comunidades são debatidas.
+- **Conexão com o livro anterior:** vem depois de Judas e encerra o cânon cristão na ordem mais comum. Retoma imagens de outros textos bíblicos, sem que isso signifique uma sequência única aceita por todas as tradições.
 
 ## 🌍 Pano de Fundo Histórico
-As sete igrejas mencionadas (Éfeso, Esmirna, Pérgamo, Tiatira, Sardes, Filadélfia e Laodiceia) eram cidades reais e importantes da província romana da Ásia, enfrentando pressão para participar do culto ao imperador romano, uma prática religiosa-política central para demonstrar lealdade a Roma. Recusar-se a isso, como faziam os cristãos, podia gerar marginalização social, econômica e, em alguns casos, perseguição direta — contexto que ilumina boa parte da simbologia do livro sobre resistência a poderes opressores.
+As sete comunidades nomeadas nos capítulos 2–3 estavam em cidades da província romana da Ásia. O livro usa imagens de poder, culto, riqueza e lealdade política para criticar as estruturas que competem com a fidelidade a Deus e ao Cordeiro. A relação dessa crítica com o culto imperial e com condições locais é importante, mas as evidências não sustentam uma descrição simples de perseguição imperial uniforme a todos os cristãos sob Domiciano. As mensagens também apontam conflitos e desafios específicos em cada comunidade.
 
 ## ⏳ Linha do Tempo e Cronologia
-João recebe as visões enquanto exilado em Patmos, provavelmente como forma de punição por sua pregação cristã. O livro se estrutura em torno de mensagens presentes às sete igrejas (caps. 2-3), seguidas de visões que descrevem tanto realidades espirituais contemporâneas ao autor quanto eventos futuros culminando no retorno de Cristo, no julgamento final e numa nova criação (caps. 4-22).
+Depois da visão inicial, o livro apresenta mensagens às sete comunidades (caps. 1–3), cenas do trono e séries de selos, trombetas e taças (caps. 4–16), e visões de conflito, queda da “Babilônia”, juízo e renovação (caps. 17–22). As imagens não formam necessariamente uma cronologia linear: leitores e tradições cristãs interpretam de modos diferentes como as visões se relacionam com passado, presente e futuro.
 
-## ✍️ Autor e Propósito
-João escreve para encorajar cristãos perseguidos ou pressionados a comprometer sua fé, revelando que, apesar das aparências de poder dos impérios terrenos, Deus e o Cordeiro (Cristo) já reinam soberanamente sobre a história e trarão justiça final e restauração completa.
+## ✍️ Autoria e Propósito
+João escreve às comunidades para oferecer advertência, resistência e esperança por meio de visões simbólicas. A obra denuncia poderes que exigem lealdade última e apresenta Deus e o Cordeiro como dignos de adoração. A linguagem apocalíptica combina imagens das Escrituras de Israel e do mundo antigo; identificar seus símbolos exige atenção ao contexto histórico e literário, não apenas procurar equivalentes modernos.
 
 ## 📖 Resumo do Conteúdo
-O livro abre com uma visão de Cristo glorificado, seguida de mensagens específicas a sete igrejas, cada uma recebendo elogios, correções ou advertências conforme sua situação espiritual particular (caps. 1-3). Segue-se uma visão do trono celestial e de um Cordeiro (Cristo) digno de abrir um rolo selado com sete selos, desencadeando uma série de julgamentos simbólicos — selos, trombetas e taças — que descrevem conflito cósmico entre o bem e o mal (caps. 4-16). O livro descreve a queda de uma grande potência opressora simbolizada como "Babilônia" (interpretada por muitos comentaristas antigos e modernos como referência a Roma), seguida do retorno triunfante de Cristo, o julgamento final e o aprisionamento definitivo de Satanás (caps. 17-20). O livro — e toda a Bíblia — termina com uma visão magnífica de uma "nova Jerusalém", nova criação onde Deus habitará diretamente com seu povo, sem mais choro, dor ou morte (caps. 21-22).
+O livro abre com uma visão de Cristo e mensagens dirigidas às comunidades de Éfeso, Esmirna, Pérgamo, Tiatira, Sardes, Filadélfia e Laodiceia (caps. 1–3). Depois, uma visão do trono e do Cordeiro conduz às séries de selos, trombetas e taças, intercaladas por cânticos e visões (caps. 4–16). A imagem de Babilônia representa uma ordem opressora que cai; seguem-se visões de conflito, julgamento e vitória divina (caps. 17–20). A conclusão mostra novos céus e nova terra, a Nova Jerusalém e a promessa de presença divina sem morte, luto ou dor (caps. 21–22).
 
 ## 💡 Curiosidades e Conexões
-- Existem quatro escolas principais de interpretação de Apocalipse — preterista, historicista, futurista e idealista —, refletindo a complexidade genuína da literatura apocalíptica; tradições pentecostais costumam favorecer leituras futuristas.
-- Ruínas das sete cidades mencionadas nos capítulos 2-3 foram identificadas e escavadas na Turquia moderna, confirmando detalhes específicos de cada mensagem (como a referência à água morna de Laodiceia, cidade sem fontes próprias de água quente ou fria).
-- O número "666" (13:18), associado à "besta", é um dos símbolos mais debatidos da Bíblia; uma proposta acadêmica comum liga o valor numérico das letras hebraicas do nome "Nero César" a esse número, sem consenso definitivo.
-- Apocalipse é o livro do Novo Testamento com mais alusões ao Antigo Testamento, embora quase nunca cite diretamente — preferindo ecoar imagens de Gênesis, Êxodo, Salmos, Isaías, Ezequiel e Daniel.
+- O livro se descreve como revelação, profecia e carta, e usa padrões de sete: comunidades, selos, trombetas e taças.
+- “Babilônia” é frequentemente interpretada como uma referência simbólica a Roma no contexto do primeiro século, embora a imagem também funcione como crítica mais ampla a impérios e cidades opressoras.
+- O número 666 (13:18) recebeu diversas interpretações. Uma proposta conhecida o relaciona, por cálculo de letras, a “Nero César”; a variante 616 em alguns testemunhos antigos também participa do debate. A identificação não deve ser apresentada como consenso definitivo.
+- As leituras preterista, futurista, historicista e idealista são categorias comuns na história da interpretação, mas não esgotam as abordagens existentes nem correspondem de modo uniforme a denominações cristãs.
 
 ## 🎯 Por Que Isso Importa Hoje
-Apocalipse garante que, apesar de qualquer aparência de vitória do mal ou de poderes opressores no presente, Deus já é soberano sobre a história e trará justiça e restauração completa — uma esperança que sustentou cristãos perseguidos desde o primeiro século até hoje.
+Apocalipse reúne denúncia do poder opressor, chamado à perseverança e esperança de renovação. Sua linguagem não deve ser usada para marcar pessoas contemporâneas como inimigas ou prever datas; a aplicação pede leitura atenta às comunidades originais e respeito às diferenças entre interpretações cristãs.

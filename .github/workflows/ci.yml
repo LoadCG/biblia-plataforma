@@ -31,6 +31,9 @@ jobs:
       - name: Verificar conteúdo derivado
         run: npm run check:content
 
+      - name: Verificar cobertura editorial
+        run: npm run check:editorial
+
       - name: Validar projeto
         run: npm run validate
 

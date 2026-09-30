@@ -1,30 +1,30 @@
 # Atos — Livro 44 de 66
 
 ## 📋 Ficha Rápida
-- **Autor:** Lucas, o mesmo autor do terceiro evangelho, sendo Atos seu segundo volume (cf. At 1:1, referindo-se ao "primeiro tratado").
-- **Data provável de escrita:** cerca de 62-64 d.C. (posição conservadora, já que o livro termina com Paulo ainda preso em Roma, sem mencionar sua morte, ocorrida por volta de 64-67 d.C.); críticos propõem datas posteriores.
-- **Período histórico narrado:** desde a ascensão de Jesus até a prisão domiciliar de Paulo em Roma, cerca de 30-62 d.C.
-- **Gênero literário:** narrativa histórica, continuação direta do evangelho de Lucas.
-- **Local/contexto de origem:** eventos em Jerusalém, Judeia, Samaria e depois por todo o Mediterrâneo — Ásia Menor, Grécia e Roma.
-- **Conexão com o livro anterior:** continuação direta do evangelho de João em posição canônica, mas narrativamente é a sequência do evangelho de Lucas, começando onde ele termina (a ascensão).
+- **Autoria:** Atos não identifica seu autor pelo nome. A obra é o segundo volume do mesmo autor anônimo de Lucas (Atos 1:1); a tradição cristã associa ambos a Lucas, companheiro de Paulo. Autoria, data, gênero e valor histórico são debatidos.
+- **Data de composição:** propostas variam; uma faixa recorrente na pesquisa é aproximadamente 80–90 d.C., enquanto datas anteriores e posteriores também são defendidas. O final com Paulo vivo não basta para provar que a obra foi escrita antes de sua morte.
+- **Período histórico narrado:** da ascensão de Jesus à chegada de Paulo a Roma, segundo a narrativa de Atos.
+- **Gênero literário:** narrativa antiga de expansão do movimento de Jesus; sua relação com historiografia, biografia e outros gêneros antigos é discutida.
+- **Contexto:** a narrativa se desloca de Jerusalém para regiões da Judeia, Samaria e Mediterrâneo, terminando em Roma.
+- **Conexão com o livro anterior:** apesar de vir depois de João na ordem cristã, continua diretamente o Evangelho de Lucas, cujo final retoma no início.
 
 ## 🌍 Pano de Fundo Histórico
-Atos narra a expansão inicial do cristianismo dentro do Império Romano, que fornecia, paradoxalmente, boas condições para essa expansão: estradas bem construídas, relativa paz (Pax Romana) e uma língua comum (o grego koiné). Ao mesmo tempo, os cristãos enfrentavam oposição tanto de autoridades judaicas (que viam o movimento como uma seita herética) quanto, gradualmente, do próprio governo romano, à medida que o cristianismo se distanciava do judaísmo, religião oficialmente tolerada pelos romanos.
+Atos narra a expansão do movimento de Jesus em cidades e províncias do Império Romano, em contextos judaicos e greco-romanos diversos. O texto registra conflitos com autoridades locais, tensões internas e relações variadas com o poder imperial. Não é adequado resumir o judaísmo como um bloco que rejeitou o cristianismo: os primeiros seguidores de Jesus eram judeus, e os debates sobre a entrada de gentios ocorrem dentro desse movimento e de sua relação com as Escrituras de Israel.
 
 ## ⏳ Linha do Tempo e Cronologia
-O livro cobre cerca de 30 anos: a descida do Espírito Santo no Pentecostes (cerca de 30 d.C.), o crescimento da igreja em Jerusalém, a perseguição e dispersão, a conversão de Paulo (~34-36 d.C.), suas três viagens missionárias pelo Mediterrâneo, e sua prisão final em Roma (~60-62 d.C.).
+O livro começa com a ascensão e o Pentecostes (caps. 1–2), segue com a comunidade em Jerusalém e episódios envolvendo Estêvão e Filipe (caps. 3–8), a conversão de Saulo e a inclusão de Cornélio (caps. 9–12), e a atividade missionária de Paulo e seus colaboradores (caps. 13–21). A última parte acompanha a prisão de Paulo, audiências, viagem marítima e chegada a Roma (caps. 21–28). Datas precisas para vários episódios não são fornecidas; as cronologias são reconstruídas em diálogo com cartas de Paulo e outras fontes.
 
-## ✍️ Autor e Propósito
-Lucas documenta como o Espírito Santo capacitou os apóstolos, especialmente Pedro e depois Paulo, a espalhar o evangelho "em Jerusalém, em toda a Judeia e Samaria, e até os confins da terra" (1:8), mostrando a expansão do cristianismo do contexto exclusivamente judeu para um movimento verdadeiramente internacional, incluindo gentios.
+## ✍️ Autoria e Propósito
+Atos descreve como testemunhas anunciam Jesus e como o movimento atravessa fronteiras geográficas, sociais e étnicas. Atos 1:8 fornece um programa narrativo que vai de Jerusalém à Judeia, Samaria e “até aos confins da terra”. O livro oferece uma representação teológica da expansão cristã e deve ser comparado com outras fontes antigas — inclusive as cartas de Paulo — quando usado para reconstruir história.
 
 ## 📖 Resumo do Conteúdo
-O livro começa com a ascensão de Jesus e a descida do Espírito Santo sobre os discípulos no Pentecostes, marcando o nascimento da igreja (caps. 1-2). Pedro lidera a igreja inicial em Jerusalém, que cresce apesar da perseguição, incluindo o martírio de Estêvão (caps. 3-7). A perseguição espalha os cristãos para além de Jerusalém, e o evangelho começa a alcançar samaritanos e gentios, incluindo a conversão dramática de Saulo (mais tarde chamado Paulo) a caminho de Damasco (caps. 8-9). Pedro recebe uma visão que confirma a inclusão dos gentios sem exigência de se tornarem judeus primeiro (cap. 10), decisão formalizada depois no Concílio de Jerusalém (cap. 15). A partir do capítulo 13, o foco muda para Paulo e suas três viagens missionárias pelo Mediterrâneo — Ásia Menor, Grécia, ilhas do Egeu —, fundando igrejas em cidades como Corinto, Éfeso e Filipos. O livro termina com a prisão de Paulo, sua apelação a César, uma tempestade e naufrágio a caminho de Roma, e sua chegada final à capital do império, ainda pregando livremente enquanto aguardava julgamento (caps. 21-28).
+Após a ascensão, os discípulos recebem o Espírito no Pentecostes e a comunidade cresce em Jerusalém (caps. 1–5). O discurso e a morte de Estêvão antecedem a dispersão de seguidores; Filipe anuncia a mensagem na Samaria e ao oficial etíope, enquanto Saulo se torna seguidor de Jesus (caps. 6–9). Pedro encontra Cornélio, e a inclusão de gentios passa a ser debatida entre os discípulos (caps. 10–12). Os capítulos 13–20 acompanham viagens missionárias de Paulo e colaboradores, com passagens por cidades da Ásia Menor e da Grécia e debates sobre a relação dos gentios com a Lei. O capítulo 15 narra uma reunião em Jerusalém sobre essa questão. A parte final acompanha Paulo preso em Jerusalém e Cesareia, sua apelação a César, o naufrágio e sua chegada a Roma, onde continua a anunciar a mensagem (caps. 21–28).
 
 ## 💡 Curiosidades e Conexões
-- Atos é a única narrativa histórica detalhada sobre os primeiros 30 anos do cristianismo, tornando-se fonte primária essencial para entender a formação da igreja primitiva.
-- Lucas demonstra precisão notável em detalhes históricos verificáveis — títulos exatos de autoridades locais (procônsules, políticos), rotas marítimas e geografia —, algo reconhecido até por historiadores seculares como o arqueólogo William Ramsay.
-- O Concílio de Jerusalém (cap. 15) é considerado o primeiro grande concílio da história da igreja, decidindo uma questão teológica central sobre a relação entre fé em Cristo e a Lei mosaica.
-- O livro termina de forma abrupta, sem narrar a morte de Paulo, o que muitos estudiosos conservadores interpretam como sinal de que Atos foi escrito antes desse evento ocorrer.
+- Atos e Lucas compartilham destinatário literário, prólogo e vocabulário. Atos 1:1 chama Lucas de “primeiro tratado”, sem nomear seu autor.
+- As chamadas passagens “nós” (por exemplo, Atos 16:10–17) usam primeira pessoa do plural. Sua relação com um diário de viagem, uma fonte ou uma técnica narrativa é discutida.
+- A obra circulou em mais de uma forma textual antiga; manuscritos como o Códice de Bezae apresentam uma versão mais extensa em várias passagens. Isso é relevante para estudos do texto e da edição.
+- Atos termina com Paulo em Roma, pregando sob custódia. Esse encerramento pode cumprir uma função literária e teológica; o silêncio sobre acontecimentos posteriores não determina sozinho a data de composição.
 
 ## 🎯 Por Que Isso Importa Hoje
-Atos mostra o poder transformador do Espírito Santo levando o evangelho a atravessar barreiras étnicas, sociais e geográficas, servindo de modelo para a missão da igreja em qualquer época.
+Atos mostra comunidades tentando atravessar fronteiras e resolver desacordos sobre pertencimento, prática e convivência. Sua narrativa pode inspirar reflexão sobre hospitalidade e missão, mas não deve ser transformada sem mediação em um modelo político ou eclesial único para toda época.

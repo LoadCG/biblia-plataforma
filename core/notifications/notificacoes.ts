@@ -40,14 +40,15 @@ export async function cancelarTodosLembretes() {
 }
 
 /**
- * Agenda um lembrete diário num horário fixo (hora e minuto).
+ * Agenda um lembrete diário num horário fixo (hora e minuto). Retorna
+ * false se estiver no web ou se a permissão não for concedida.
  * Exemplo: 07:00 da manhã.
  */
 export async function agendarLembreteDiario(hora: number, minuto: number, titulo: string, corpo: string) {
-  if (Platform.OS === "web") return;
+  if (Platform.OS === "web") return false;
 
   const temPermissao = await pedirPermissaoNotificacoes();
-  if (!temPermissao) return;
+  if (!temPermissao) return false;
 
   // Cancela anteriores para não duplicar se o usuário alterar o horário
   await cancelarTodosLembretes();
@@ -64,4 +65,5 @@ export async function agendarLembreteDiario(hora: number, minuto: number, titulo
       minute: minuto,
     },
   });
+  return true;
 }

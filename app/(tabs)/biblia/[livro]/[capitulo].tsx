@@ -1,6 +1,6 @@
 import { Link, router, useLocalSearchParams } from "expo-router";
 import { useEffect, useRef, useState, useMemo } from "react";
-import { ActivityIndicator, Animated, Image, NativeSyntheticEvent, NativeScrollEvent, Pressable, ScrollView, Text, View, Share, LayoutAnimation, Platform, UIManager } from "react-native";
+import { ActivityIndicator, Animated, Image, NativeSyntheticEvent, NativeScrollEvent, Pressable, ScrollView, Text, useWindowDimensions, View, Share, LayoutAnimation, Platform, UIManager } from "react-native";
 import * as Clipboard from "expo-clipboard";
 import * as Sharing from "expo-sharing";
 import { captureRef } from "react-native-view-shot";
@@ -43,7 +43,10 @@ import { scrollSuave } from "../../../../core/util/scrollSuave";
 import { useArrastarParaRolar } from "../../../../core/util/useArrastarParaRolar";
 import { useOwnerId } from "../../../../core/useOwnerId";
 
+const ALTURA_AREA_NAVEGACAO_CAPITULO = 80;
+
 export default function Leitura() {
+  const desktop = useWindowDimensions().width >= 1024;
   const params = useLocalSearchParams<{ livro: string; capitulo: string; versiculo?: string; planoId?: string; diaPlano?: string; indicePlano?: string }>();
   const livro = obterLivro(params.livro ?? "");
   const capitulo = parseInt(params.capitulo ?? "", 10);
@@ -156,14 +159,23 @@ export default function Leitura() {
   }, [anterior, proximo]);
 
   useEffect(() => {
-    carregarIndiceFonte().then(setIndiceFonte);
-    carregarFonteSerifada().then(setFonteSerifada);
+    let ativo = true;
+    Promise.all([carregarIndiceFonte(), carregarFonteSerifada()])
+      .then(([indice, serifada]) => {
+        if (!ativo) return;
+        setIndiceFonte(indice);
+        setFonteSerifada(serifada);
+      })
+      .catch(() => {
+        if (ativo) mostrarToast("Não foi possível carregar as preferências de leitura");
+      });
+    return () => { ativo = false; };
   }, []);
 
   function ajustarFonte(delta: number) {
     setIndiceFonte((atual) => {
       const novo = Math.min(TAMANHOS_FONTE.length - 1, Math.max(0, atual + delta));
-      salvarIndiceFonte(novo);
+      salvarIndiceFonte(novo).catch(() => mostrarToast("Não foi possível salvar o tamanho da fonte"));
       return novo;
     });
   }
@@ -171,7 +183,7 @@ export default function Leitura() {
   function alternarFonteSerifada() {
     setFonteSerifada((atual) => {
       const novo = !atual;
-      salvarFonteSerifada(novo);
+      salvarFonteSerifada(novo).catch(() => mostrarToast("Não foi possível salvar a preferência de fonte"));
       return novo;
     });
   }
@@ -194,16 +206,26 @@ export default function Leitura() {
 
   useEffect(() => {
     if (!ownerId || !livro) return;
-    grifosRepository.listarPorCapitulo(ownerId, livro.slug, capitulo).then((itens) => {
-      setGrifos(new Map(itens.map((g) => [g.versiculo, g.cor])));
+    let ativo = true;
+    setGrifos(new Map());
+    setSalvos(new Set());
+    setNotas(new Map());
+    setCapituloLido(false);
+    Promise.all([
+      grifosRepository.listarPorCapitulo(ownerId, livro.slug, capitulo),
+      progressoRepository.estaLido(ownerId, { livroSlug: livro.slug, capitulo }),
+      notasRepository.listarPorCapitulo(ownerId, livro.slug, capitulo),
+      versiculosSalvosRepository.listarPorCapitulo(ownerId, livro.slug, capitulo),
+    ]).then(([grifosCarregados, lido, notasCarregadas, salvosCarregados]) => {
+      if (!ativo) return;
+      setGrifos(new Map(grifosCarregados.map((g) => [g.versiculo, g.cor])));
+      setCapituloLido(lido);
+      setNotas(new Map(notasCarregadas.map((n) => [n.versiculo, n.texto])));
+      setSalvos(new Set(salvosCarregados.map((s) => s.versiculo)));
+    }).catch(() => {
+      if (ativo) mostrarToast("Não foi possível carregar seus grifos, notas e salvos deste capítulo.");
     });
-    progressoRepository.estaLido(ownerId, { livroSlug: livro.slug, capitulo }).then(setCapituloLido);
-    notasRepository.listarPorCapitulo(ownerId, livro.slug, capitulo).then((itens) => {
-      setNotas(new Map(itens.map((n) => [n.versiculo, n.texto])));
-    });
-    versiculosSalvosRepository.listarPorCapitulo(ownerId, livro.slug, capitulo).then((itens) => {
-      setSalvos(new Set(itens.map((s) => s.versiculo)));
-    });
+    return () => { ativo = false; };
   }, [ownerId, livro, capitulo]);
 
   const jaRolou = useRef(false);
@@ -327,72 +349,95 @@ export default function Leitura() {
 
   async function alternarGrifo(numeroVersiculo: number, cor?: string) {
     if (!ownerId || !livro) return;
-    const ativo = await grifosRepository.alternar(ownerId, { livroSlug: livro.slug, capitulo, versiculo: numeroVersiculo }, cor);
-    setGrifos((atual) => {
-      const novo = new Map(atual);
-      if (ativo) novo.set(numeroVersiculo, cor);
-      else novo.delete(numeroVersiculo);
-      return novo;
-    });
+    try {
+      const ativo = await grifosRepository.alternar(ownerId, { livroSlug: livro.slug, capitulo, versiculo: numeroVersiculo }, cor);
+      setGrifos((atual) => {
+        const novo = new Map(atual);
+        if (ativo) novo.set(numeroVersiculo, cor);
+        else novo.delete(numeroVersiculo);
+        return novo;
+      });
+    } catch {
+      mostrarToast("Não foi possível salvar o grifo. Tente novamente.");
+    }
   }
 
   async function alternarCapituloLido() {
     if (!ownerId || !livro) return;
-    const ativo = await progressoRepository.alternar(ownerId, { livroSlug: livro.slug, capitulo });
-    setCapituloLido(ativo);
+    try {
+      const ativo = await progressoRepository.alternar(ownerId, { livroSlug: livro.slug, capitulo });
+      setCapituloLido(ativo);
+    } catch {
+      mostrarToast("Não foi possível atualizar o progresso deste capítulo. Tente novamente.");
+    }
   }
 
   async function concluirLeituraDoPlano() {
     if (!ownerId || !livro || !planoEmAndamento || !diaEmAndamento || numeroDiaPlano === null) return;
-    const referenciaAtual = diaEmAndamento.referencias[indicePlano];
-    if (!referenciaAtual) return;
-    const sessao = await planosRepository.obterSessao(ownerId, planoEmAndamento.id, numeroDiaPlano);
-    const concluidas = Array.from(new Set([...(sessao?.referenciasConcluidas ?? []), referenciaAtual]));
-    await progressoRepository.definirVarios(ownerId, [{ livroSlug: livro.slug, capitulo }], true);
-    setCapituloLido(true);
+    try {
+      const referenciaAtual = diaEmAndamento.referencias[indicePlano];
+      if (!referenciaAtual) return;
+      const sessao = await planosRepository.obterSessao(ownerId, planoEmAndamento.id, numeroDiaPlano);
+      const concluidas = Array.from(new Set([...(sessao?.referenciasConcluidas ?? []), referenciaAtual]));
+      await progressoRepository.definirVarios(ownerId, [{ livroSlug: livro.slug, capitulo }], true);
+      setCapituloLido(true);
 
-    const proximoIndice = indicePlano + 1;
-    if (proximoIndice >= diaEmAndamento.referencias.length) {
-      await planosRepository.definirDiaConcluido(ownerId, planoEmAndamento.id, numeroDiaPlano, true);
-      await planosRepository.removerSessao(ownerId, planoEmAndamento.id, numeroDiaPlano);
-      mostrarToast(`Dia ${numeroDiaPlano} concluído`);
-      router.replace(`/planos/${planoEmAndamento.id}`);
-      return;
+      const proximoIndice = indicePlano + 1;
+      if (proximoIndice >= diaEmAndamento.referencias.length) {
+        await planosRepository.definirDiaConcluido(ownerId, planoEmAndamento.id, numeroDiaPlano, true);
+        await planosRepository.removerSessao(ownerId, planoEmAndamento.id, numeroDiaPlano);
+        mostrarToast(`Dia ${numeroDiaPlano} concluído`);
+        router.replace(`/planos/${planoEmAndamento.id}`);
+        return;
+      }
+
+      await planosRepository.salvarSessao(ownerId, planoEmAndamento.id, numeroDiaPlano, proximoIndice, concluidas);
+      const href = hrefReferenciaBiblica(diaEmAndamento.referencias[proximoIndice]);
+      if (!href) {
+        mostrarToast("A próxima referência deste plano não está disponível.");
+        return;
+      }
+      const separador = href.includes("?") ? "&" : "?";
+      router.replace(`${href}${separador}planoId=${encodeURIComponent(planoEmAndamento.id)}&diaPlano=${numeroDiaPlano}&indicePlano=${proximoIndice}`);
+    } catch {
+      mostrarToast("Não foi possível atualizar sua sessão. Tente novamente.");
     }
-
-    await planosRepository.salvarSessao(ownerId, planoEmAndamento.id, numeroDiaPlano, proximoIndice, concluidas);
-    const href = hrefReferenciaBiblica(diaEmAndamento.referencias[proximoIndice]);
-    if (!href) return;
-    const separador = href.includes("?") ? "&" : "?";
-    router.replace(`${href}${separador}planoId=${encodeURIComponent(planoEmAndamento.id)}&diaPlano=${numeroDiaPlano}&indicePlano=${proximoIndice}`);
   }
 
   async function salvarNota(texto: string) {
     if (!ownerId || !livro || versiculoEditandoNota === null) return;
     const ref = { livroSlug: livro.slug, capitulo, versiculo: versiculoEditandoNota };
-    if (texto) {
-      await notasRepository.salvar(ownerId, ref, texto);
-      setNotas((atual) => new Map(atual).set(versiculoEditandoNota, texto));
-    } else {
-      await notasRepository.remover(ownerId, ref);
+    try {
+      if (texto) {
+        await notasRepository.salvar(ownerId, ref, texto);
+        setNotas((atual) => new Map(atual).set(versiculoEditandoNota, texto));
+      } else {
+        await notasRepository.remover(ownerId, ref);
+        setNotas((atual) => {
+          const novo = new Map(atual);
+          novo.delete(versiculoEditandoNota);
+          return novo;
+        });
+      }
+      setVersiculoEditandoNota(null);
+    } catch {
+      mostrarToast("Não foi possível salvar a nota. Ela continua aberta para você tentar novamente.");
+    }
+  }
+
+  async function removerNota() {
+    if (!ownerId || !livro || versiculoEditandoNota === null) return;
+    try {
+      await notasRepository.remover(ownerId, { livroSlug: livro.slug, capitulo, versiculo: versiculoEditandoNota });
       setNotas((atual) => {
         const novo = new Map(atual);
         novo.delete(versiculoEditandoNota);
         return novo;
       });
+      setVersiculoEditandoNota(null);
+    } catch {
+      mostrarToast("Não foi possível remover a nota. Tente novamente.");
     }
-    setVersiculoEditandoNota(null);
-  }
-
-  async function removerNota() {
-    if (!ownerId || !livro || versiculoEditandoNota === null) return;
-    await notasRepository.remover(ownerId, { livroSlug: livro.slug, capitulo, versiculo: versiculoEditandoNota });
-    setNotas((atual) => {
-      const novo = new Map(atual);
-      novo.delete(versiculoEditandoNota);
-      return novo;
-    });
-    setVersiculoEditandoNota(null);
   }
 
   function selecionarVersiculo(numero: number) {
@@ -612,7 +657,20 @@ export default function Leitura() {
           const novaAltura = e.nativeEvent.layout.height;
           setAlturaHeader((atual) => (Math.abs(atual - novaAltura) > 0.5 ? novaAltura : atual));
         }}
-        style={{ transform: [{ translateY: headerTranslateY }], position: "absolute", top: 2, left: 0, right: 0, zIndex: 20 }}
+        style={{
+          transform: [{ translateY: headerTranslateY }],
+          position: "absolute",
+          top: 2,
+          left: 0,
+          right: 0,
+          zIndex: 20,
+          // Animated.View não aplica as classes NativeWind do container
+          // no DOM web; sem valores explícitos, o cabeçalho ficava
+          // transparente e o texto rolava por trás dos controles.
+          backgroundColor: escuro ? "#1b1712" : "#faf8f4",
+          borderBottomWidth: 1,
+          borderBottomColor: escuro ? "#3a3226" : "#e6ded0",
+        }}
         className="bg-cor-fundo dark:bg-cor-fundo-dark border-b border-cor-borda dark:border-cor-borda-dark"
       >
         <View className="px-3 py-2 flex-row items-center justify-between">
@@ -662,7 +720,7 @@ export default function Leitura() {
         </View>
 
         {abaAtual === "texto" ? (
-          <Text className="text-2xl font-bold text-cor-texto dark:text-cor-texto-dark text-center pt-1 pb-3">
+          <Text className="text-2xl lg:text-3xl font-bold text-cor-texto dark:text-cor-texto-dark text-center pt-1 pb-3" style={desktop ? { fontFamily: FAMILIA_SERIFADA } : undefined}>
             {livro?.nome} {capitulo}
           </Text>
         ) : null}
@@ -672,11 +730,11 @@ export default function Leitura() {
         onScroll={aoRolar}
         scrollEventThrottle={16}
         className="flex-1"
-        style={{ display: abaAtual === "texto" ? "flex" : "none" }}
+        style={{ display: abaAtual === "texto" ? "flex" : "none", marginBottom: ALTURA_AREA_NAVEGACAO_CAPITULO }}
         contentContainerStyle={{ paddingTop: alturaHeader + 8 }}
       >
         <View className="px-5 pb-32 max-w-2xl w-full mx-auto">
-          <DicaContextual id="leitor" titulo="Faça destaques enquanto lê" descricao="Toque em um versículo para selecionar. Depois você pode grifar, salvar, anotar, copiar ou compartilhar." />
+          {!desktop ? <DicaContextual id="leitor" titulo="Faça destaques enquanto lê" descricao="Toque em um versículo para selecionar. Depois você pode grifar, salvar, anotar, copiar ou compartilhar." /> : null}
           {erro ? (
             <View className="items-start gap-3">
               <Text className="text-cor-texto-suave dark:text-cor-texto-suave-dark">{erro}</Text>
@@ -731,7 +789,7 @@ export default function Leitura() {
                     >
                       <Text
                         className="text-cor-texto-suave dark:text-cor-texto-suave-dark font-bold opacity-50"
-                        style={{ fontSize: tamanhoFonte * 0.60, verticalAlign: "top" }}
+                        style={{ fontSize: tamanhoFonte * 0.60, verticalAlign: "top", color: desktop ? (escuro ? "#e0a75e" : "#8a5a2b") : undefined }}
                       >
                         {"  "}
                         {v.numero}{" "}
@@ -802,7 +860,7 @@ export default function Leitura() {
 
 
       {abaAtual === "resumo" && resumo && (
-        <ScrollView className="flex-1" contentContainerStyle={{ paddingTop: alturaHeader + 8 }}>
+        <ScrollView className="flex-1" style={{ marginBottom: ALTURA_AREA_NAVEGACAO_CAPITULO }} contentContainerStyle={{ paddingTop: alturaHeader + 8 }}>
           <View className="px-5 pb-32 max-w-2xl w-full mx-auto">
             <Tooltip titulo={resumo.genero} descricao={descricaoDoGenero(resumo.genero)}>
               <View className={`self-start flex-row items-center gap-1 px-3 py-1 rounded-full mb-3 ${coresDoGenero(resumo.genero).bg}`}>
@@ -848,7 +906,8 @@ export default function Leitura() {
 
       {/* Barra de Seleção Múltipla */}
       {versiculosSelecionados.size > 0 && (
-        <View className="absolute bottom-0 left-0 right-0 bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark border-t border-cor-borda dark:border-cor-borda-dark shadow-lg pb-4 z-50">
+        <View className={`absolute bottom-0 left-0 right-0 items-center z-50 ${desktop ? "px-5 pb-5" : "bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark border-t border-cor-borda dark:border-cor-borda-dark pb-4"}`}>
+          <View className={`${desktop ? "w-full max-w-[560px] rounded-3xl border border-cor-borda dark:border-cor-borda-dark bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark shadow-xl" : "w-full"}`}>
           <View className="px-5 py-3 border-b border-cor-borda dark:border-cor-borda-dark flex-row justify-between items-center">
             <Text className="text-cor-texto dark:text-cor-texto-dark font-bold">
               {livro.nome} {capitulo}:{Math.min(...Array.from(versiculosSelecionados))}
@@ -864,10 +923,10 @@ export default function Leitura() {
               <MaterialIcons name="close" size={24} className="text-cor-texto-suave dark:text-cor-texto-suave-dark" />
             </Pressable>
           </View>
-          <ScrollView ref={refBarraSelecao} horizontal showsHorizontalScrollIndicator={false} className="px-5 py-3">
-            <View className="flex-row items-center gap-4">
+          <ScrollView ref={refBarraSelecao} horizontal showsHorizontalScrollIndicator={false} className={desktop ? "px-3 py-2" : "px-5 py-3"}>
+            <View className={`flex-row items-center ${desktop ? "gap-1" : "gap-4"}`}>
               {/* Cores */}
-              <View className="flex-row items-center gap-2 mr-2">
+              <View className={`flex-row items-center ${desktop ? "gap-1 mr-1" : "gap-2 mr-2"}`}>
                 {(() => {
                   const primeiroGrifado = Array.from(versiculosSelecionados).find(v => grifos.has(v));
                   const corAtual = primeiroGrifado ? grifos.get(primeiroGrifado) || "bg-cor-grifo dark:bg-cor-grifo-dark" : null;
@@ -891,7 +950,7 @@ export default function Leitura() {
                         accessibilityState={{ checked: isDesfazer }}
                         // @ts-expect-error accessibilityChecked é uma extensão do react-native-web, não existe nos tipos do React Native
                         accessibilityChecked={isDesfazer}
-                        className="w-11 h-11 -m-1.5 items-center justify-center active:opacity-70"
+                        className="w-11 h-11 items-center justify-center active:opacity-70"
                       >
                         <View className={`w-8 h-8 rounded-full ${corBolinha} shadow-sm items-center justify-center`}>
                           {isDesfazer && <MaterialIcons name="close" size={18} color="rgba(0,0,0,0.5)" />}
@@ -905,7 +964,7 @@ export default function Leitura() {
                     onPress={() => setMostrarTodasCores(true)}
                     accessibilityRole="button"
                     accessibilityLabel="Ver todas as cores de grifo"
-                    className="w-11 h-11 -m-1.5 items-center justify-center active:opacity-70"
+                    className="w-11 h-11 items-center justify-center active:opacity-70"
                   >
                     <View className="w-8 h-8 rounded-full bg-cor-borda dark:bg-cor-borda-dark items-center justify-center">
                       <MaterialIcons name="more-horiz" size={20} className="text-cor-texto dark:text-cor-texto-dark" />
@@ -925,10 +984,10 @@ export default function Leitura() {
                     accessibilityState={{ checked: todosSalvos }}
                     // @ts-expect-error accessibilityChecked é uma extensão do react-native-web, não existe nos tipos do React Native
                     accessibilityChecked={todosSalvos}
-                    className="flex-row items-center justify-center gap-1 bg-cor-borda dark:bg-cor-borda-dark px-4 py-2 rounded-lg active:opacity-70"
+                    className={`items-center justify-center active:opacity-70 ${desktop ? "w-11 h-11 rounded-full bg-cor-destaque-fundo dark:bg-cor-destaque-fundo-dark" : "flex-row gap-1 bg-cor-borda dark:bg-cor-borda-dark px-4 py-2 rounded-lg"}`}
                   >
                     <MaterialIcons name={todosSalvos ? "bookmark" : "bookmark-border"} size={18} className="text-cor-texto dark:text-cor-texto-dark" />
-                    <Text className="text-cor-texto dark:text-cor-texto-dark font-semibold text-sm">{todosSalvos ? "Salvo" : "Salvar"}</Text>
+                    {!desktop ? <Text className="text-cor-texto dark:text-cor-texto-dark font-semibold text-sm">{todosSalvos ? "Salvo" : "Salvar"}</Text> : null}
                   </Pressable>
                 );
               })()}
@@ -940,30 +999,31 @@ export default function Leitura() {
                 }}
                 accessibilityRole="button"
                 accessibilityLabel="Adicionar anotação aos versículos selecionados"
-                className="flex-row items-center justify-center gap-1 bg-cor-borda dark:bg-cor-borda-dark px-4 py-2 rounded-lg active:opacity-70"
+                className={`items-center justify-center active:opacity-70 ${desktop ? "w-11 h-11 rounded-full bg-cor-borda dark:bg-cor-borda-dark" : "flex-row gap-1 bg-cor-borda dark:bg-cor-borda-dark px-4 py-2 rounded-lg"}`}
               >
                 <MaterialIcons name="edit" size={18} className="text-cor-texto dark:text-cor-texto-dark" />
-                <Text className="text-cor-texto dark:text-cor-texto-dark font-semibold text-sm">Anotação</Text>
+                {!desktop ? <Text className="text-cor-texto dark:text-cor-texto-dark font-semibold text-sm">Anotação</Text> : null}
               </Pressable>
 
-              <Pressable onPress={copiarVersiculos} accessibilityRole="button" accessibilityLabel="Copiar versículos selecionados" className="flex-row items-center justify-center gap-1 bg-cor-borda dark:bg-cor-borda-dark px-4 py-2 rounded-lg active:opacity-70">
+              <Pressable onPress={copiarVersiculos} accessibilityRole="button" accessibilityLabel="Copiar versículos selecionados" className={`items-center justify-center active:opacity-70 ${desktop ? "w-11 h-11 rounded-full bg-cor-borda dark:bg-cor-borda-dark" : "flex-row gap-1 bg-cor-borda dark:bg-cor-borda-dark px-4 py-2 rounded-lg"}`}>
                 <MaterialIcons name="content-copy" size={18} className="text-cor-texto dark:text-cor-texto-dark" />
-                <Text className="text-cor-texto dark:text-cor-texto-dark font-semibold text-sm">Copiar</Text>
+                {!desktop ? <Text className="text-cor-texto dark:text-cor-texto-dark font-semibold text-sm">Copiar</Text> : null}
               </Pressable>
 
-              <Pressable onPress={compartilharVersiculos} accessibilityRole="button" accessibilityLabel="Compartilhar versículos selecionados" className={`flex-row items-center justify-center gap-1 bg-cor-borda dark:bg-cor-borda-dark px-4 py-2 rounded-lg active:opacity-70 ${versiculosSelecionados.size === 1 ? "" : "mr-6"}`}>
+              <Pressable onPress={compartilharVersiculos} accessibilityRole="button" accessibilityLabel="Compartilhar versículos selecionados" className={`items-center justify-center active:opacity-70 ${desktop ? "w-11 h-11 rounded-full bg-cor-borda dark:bg-cor-borda-dark" : `flex-row gap-1 bg-cor-borda dark:bg-cor-borda-dark px-4 py-2 rounded-lg ${versiculosSelecionados.size === 1 ? "" : "mr-6"}`}`}>
                 <MaterialIcons name="share" size={18} className="text-cor-texto dark:text-cor-texto-dark" />
-                <Text className="text-cor-texto dark:text-cor-texto-dark font-semibold text-sm">Compartilhar</Text>
+                {!desktop ? <Text className="text-cor-texto dark:text-cor-texto-dark font-semibold text-sm">Compartilhar</Text> : null}
               </Pressable>
 
               {versiculosSelecionados.size === 1 ? (
-                <Pressable onPress={gerarImagemDoVersiculoSelecionado} accessibilityRole="button" className="flex-row items-center justify-center gap-1 bg-cor-borda dark:bg-cor-borda-dark px-4 py-2 rounded-lg mr-6 active:opacity-70">
+                <Pressable onPress={gerarImagemDoVersiculoSelecionado} accessibilityRole="button" accessibilityLabel="Criar imagem deste versículo" className={`items-center justify-center active:opacity-70 ${desktop ? "w-11 h-11 rounded-full bg-cor-borda dark:bg-cor-borda-dark" : "flex-row gap-1 bg-cor-borda dark:bg-cor-borda-dark px-4 py-2 rounded-lg mr-6"}`}>
                   <MaterialIcons name="image" size={18} className="text-cor-texto dark:text-cor-texto-dark" />
-                  <Text className="text-cor-texto dark:text-cor-texto-dark font-semibold text-sm">Imagem</Text>
+                  {!desktop ? <Text className="text-cor-texto dark:text-cor-texto-dark font-semibold text-sm">Imagem</Text> : null}
                 </Pressable>
               ) : null}
             </View>
           </ScrollView>
+          </View>
         </View>
       )}
 
@@ -986,9 +1046,9 @@ export default function Leitura() {
               disabled={!anterior}
               accessibilityRole="button"
               accessibilityLabel="Capítulo anterior"
-              className={`w-10 h-10 items-center justify-center rounded-full ${anterior ? "active:opacity-60" : "opacity-30"}`}
+              className={`w-11 h-11 items-center justify-center rounded-full ${anterior ? "active:opacity-60" : "opacity-30"}`}
             >
-              <Text className="text-lg text-cor-texto dark:text-cor-texto-dark">←</Text>
+              <MaterialIcons name="chevron-left" size={24} className="text-cor-texto dark:text-cor-texto-dark" />
             </Pressable>
 
           <Link href={{ pathname: "/biblia/escolher", params: { livro: livro.slug } }} asChild>
@@ -1004,9 +1064,9 @@ export default function Leitura() {
             disabled={!proximo}
             accessibilityRole="button"
             accessibilityLabel="Próximo capítulo"
-            className={`w-10 h-10 items-center justify-center rounded-full ${proximo ? "active:opacity-60" : "opacity-30"}`}
+            className={`w-11 h-11 items-center justify-center rounded-full ${proximo ? "active:opacity-60" : "opacity-30"}`}
           >
-            <Text className="text-lg text-cor-texto dark:text-cor-texto-dark">→</Text>
+            <MaterialIcons name="chevron-right" size={24} className="text-cor-texto dark:text-cor-texto-dark" />
           </Pressable>
         </View>
       </View>

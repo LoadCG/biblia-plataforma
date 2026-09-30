@@ -46,12 +46,18 @@ na raiz para preservar links históricos, mas estão classificados por finalidad
   resumos.
 - `core/content/dados/livros.json` é derivado por `npm run gerar-conteudo` e não
   deve ser editado manualmente.
+- [`docs/cobertura-editorial.md`](./docs/cobertura-editorial.md) registra o
+  inventário estrutural gerado por `npm run relatorio:editorial`.
 
 ## Qualidade e operação
 
 - `npm run validate`: TypeScript, Jest, acessibilidade, Maestro, UI estrutural
   e Expo Doctor.
+- `npm run relatorio:editorial`: gera inventário estrutural dos resumos e planos
+  em `docs/cobertura-editorial.md`; não substitui revisão humana.
 - `npm run check:content`: verifica conteúdo derivado sem drift.
+- `npm run check:editorial`: valida fontes, derivados, seções e planos e atualiza
+  o inventário de cobertura.
 - `npm run export:web`: gera o export web estático.
 - `npm run check:static`: valida rotas e metadados SEO exportados.
 - `npm run check:ui`: protege contratos estruturais de responsividade.
@@ -65,4 +71,3 @@ na raiz para preservar links históricos, mas estão classificados por finalidad
 3. Histórico de implementação: atualizar `CHANGELOG.md`.
 4. Próximas tarefas: atualizar o roadmap ativo e este índice.
 5. Não duplicar roadmap em `TODO.md`; manter apenas decisões fechadas e ponte.
-

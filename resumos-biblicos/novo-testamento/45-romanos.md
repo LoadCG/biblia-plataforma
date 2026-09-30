@@ -1,30 +1,30 @@
 # Romanos — Livro 45 de 66
 
 ## 📋 Ficha Rápida
-- **Autor:** o apóstolo Paulo, amplamente aceito até por críticos como autor genuíno desta carta.
-- **Data provável de escrita:** cerca de 57 d.C., ao final da terceira viagem missionária de Paulo, escrita provavelmente em Corinto.
-- **Período histórico narrado:** não é narrativa; é uma carta doutrinária, refletindo o contexto da igreja em Roma naquele momento.
-- **Gênero literário:** epístola (carta) teológica e doutrinária.
-- **Local/contexto de origem:** escrita de Corinto (Grécia), endereçada à igreja em Roma, capital do Império Romano.
-- **Conexão com o livro anterior:** situa-se cronologicamente perto do final da narrativa de Atos, escrita pouco antes da viagem final de Paulo a Jerusalém e Roma.
+- **Autoria:** Paulo se identifica como remetente (1:1); a autoria paulina é amplamente aceita na pesquisa.
+- **Data de composição:** provavelmente em meados do século I, perto do fim das viagens missionárias descritas em Atos. Uma data em torno de 56–58 d.C. e a cidade de Corinto são propostas comuns, não dados explicitados no cabeçalho da carta.
+- **Período histórico narrado:** não é narrativa; é uma carta dirigida a comunidades cristãs em Roma.
+- **Gênero literário:** carta antiga com argumentação teológica, exortações e saudações pessoais.
+- **Contexto:** Paulo escreve a grupos cristãos em Roma que não havia visitado. A presença de judeus e gentios e as relações entre eles são importantes para a carta, mas a composição social precisa da comunidade é debatida.
+- **Conexão com o livro anterior:** vem após Atos na ordem cristã. Romanos 15–16 menciona planos de viagem, Jerusalém e uma missão posterior à Espanha.
 
 ## 🌍 Pano de Fundo Histórico
-Roma era a capital e o centro do Império Romano, com uma igreja já estabelecida antes mesmo de qualquer apóstolo tê-la visitado diretamente, provavelmente formada por judeus e prosélitos presentes no Pentecostes (Atos 2) e por conversos posteriores. A comunidade cristã romana incluía tanto judeus quanto gentios, e Paulo escreve em parte para preparar terreno para uma futura visita pessoal e para uma possível base de apoio a uma missão à Espanha (15:24).
+Paulo escreve para apresentar sua mensagem, estabelecer relação com os destinatários e comunicar seus planos de viagem (1:10–15; 15:22–29). A carta aborda repetidamente as relações entre judeus e gentios, a Lei, a fé, a consciência e a vida comunitária. Não se sabe como a igreja romana começou; Atos 2 não permite afirmar que seus fundadores foram os visitantes presentes no Pentecostes.
 
 ## ⏳ Linha do Tempo e Cronologia
-A carta é escrita perto do fim da terceira viagem missionária de Paulo, antes de sua viagem final a Jerusalém, onde seria preso — eventos narrados no final de Atos (caps. 20-28) —, portanto pouco antes de sua prisão e eventual chegada a Roma como prisioneiro, alguns anos depois.
+Romanos é geralmente situada no período das viagens missionárias de Paulo, antes de sua ida a Jerusalém com a coleta mencionada nos capítulos 15–16. Atos descreve uma sequência compatível com esse cenário, mas a cronologia exata e a localização da escrita são reconstruídas a partir de indícios da carta e de outras fontes.
 
-## ✍️ Autor e Propósito
-Paulo escreve a exposição mais sistemática de sua teologia sobre o evangelho, explicando como judeus e gentios são igualmente pecadores diante de Deus e igualmente salvos pela fé em Jesus Cristo, não por obras da Lei, buscando unir uma igreja potencialmente dividida entre esses dois grupos.
+## ✍️ Autoria e Propósito
+Paulo expõe e aplica sua compreensão do evangelho a uma comunidade que ainda não havia visitado. A carta trata da condição humana, da justiça de Deus, da fé, da Lei, da vida no Espírito e do lugar de Israel. A expressão “obras da Lei” deve ser interpretada em seu debate acadêmico e contexto judaico; não significa que o judaísmo possa ser resumido como tentativa de conquistar salvação por mérito.
 
 ## 📖 Resumo do Conteúdo
-Paulo começa afirmando que o evangelho é "poder de Deus para a salvação de todo aquele que crê" (1:16), e argumenta que toda a humanidade — gentios e judeus — está sob pecado e culpada diante de Deus (caps. 1-3). Segue-se a explicação central de que a justificação (ser declarado justo por Deus) vem pela fé, ilustrada pelo exemplo de Abraão, que creu antes mesmo de receber a circuncisão (caps. 3-4). Paulo explica os benefícios dessa justificação — paz com Deus, nova vida livre do domínio do pecado, vida no Espírito (caps. 5-8), num dos trechos mais lidos de toda carta, terminando com a afirmação de que nada pode separar o crente do amor de Deus (cap. 8). Os capítulos 9-11 tratam do lugar de Israel no plano de Deus, e os capítulos 12-16 aplicam essa teologia à vida prática — relacionamento com o governo, amor mútuo, liberdade de consciência sobre questões disputáveis, terminando com saudações pessoais.
+Paulo apresenta o evangelho como poder de Deus para a salvação de quem crê (1:16–17) e argumenta que gentios e judeus estão envolvidos em sua discussão sobre pecado e justiça (1:18–3:20). Em seguida, desenvolve a justificação pela fé e usa Abraão como exemplo (3:21–4:25). Os capítulos 5–8 abordam reconciliação, nova vida, conflito com o pecado e vida no Espírito. Nos capítulos 9–11, Paulo reflete sobre Israel e a fidelidade de Deus. A parte final reúne exortações sobre serviço, relações com autoridades, acolhimento mútuo e divergências de consciência (12:1–15:13), além de planos de viagem, saudações e recomendações (15:14–16:27).
 
 ## 💡 Curiosidades e Conexões
-- Romanos é considerada por muitos teólogos, desde Agostinho até Lutero, a exposição mais completa e influente do evangelho em toda a Bíblia, tendo papel central em avivamentos e reformas ao longo da história da igreja.
-- A carta foi provavelmente ditada por Paulo a um escriba chamado Tércio, que se identifica pessoalmente no texto (16:22), prática comum na Antiguidade.
-- Romanos 1:16-17 cita diretamente Habacuque 2:4 ("o justo viverá pela fé"), conectando o tema central da carta a uma promessa profética do Antigo Testamento.
-- A carta é endereçada a uma igreja que Paulo ainda não havia visitado, tornando-a uma introdução mais formal e sistemática de sua teologia do que suas outras cartas, escritas para igrejas que ele já conhecia pessoalmente.
+- Em 16:22, Tércio se identifica como quem escreveu a carta enquanto Paulo a ditava, um exemplo explícito de secretário na produção do texto.
+- Romanos 1:17 cita Habacuque 2:4. A forma e o sentido dessa citação participam do argumento de Paulo sobre justiça e fé.
+- Paulo recomenda Febe, de Cencreia, e envia saudações a diversas pessoas em Roma (16:1–16), mostrando que a carta teológica também está ligada a relações e redes concretas.
+- A carta trata de questões específicas de sua situação e, ao mesmo tempo, desenvolve temas amplos. A pesquisa atual considera ambos os aspectos, em vez de tratá-la apenas como um manual sistemático de doutrina.
 
 ## 🎯 Por Que Isso Importa Hoje
-Romanos estabelece o fundamento de que a salvação é dom gratuito de Deus, recebido pela fé e não conquistado por méritos próprios, uma verdade central para toda a fé cristã evangélica.
+Romanos oferece uma reflexão cristã sobre graça, fé, vida no Espírito, comunidade e esperança. Sua leitura exige atenção ao argumento completo — especialmente aos capítulos 9–11 e às relações entre judeus e gentios — para evitar transformar passagens isoladas em caricaturas do judaísmo ou em respostas universais para toda questão contemporânea.

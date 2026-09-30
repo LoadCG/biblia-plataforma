@@ -1,30 +1,30 @@
 # Isaías — Livro 23 de 66
 
 ## 📋 Ficha Rápida
-- **Autor:** o profeta Isaías, filho de Amoz (posição tradicional, que defende autoria única para todo o livro). A crítica acadêmica moderna propõe múltiplos autores — um "Isaías histórico" (caps. 1-39), um "Dêutero-Isaías" anônimo do período do exílio (caps. 40-55) e às vezes um "Trito-Isaías" pós-exílico (caps. 56-66) —, principalmente por causa das profecias detalhadas sobre Ciro (cap. 45) antes de seu nascimento. Este resumo segue a posição conservadora de autoria única, que entende essas profecias como previsão sobrenatural genuína, citando a visão crítica como debate relevante.
-- **Data provável de escrita:** ministério de Isaías entre cerca de 740-680 a.C.
-- **Período histórico narrado:** reinados de Uzias, Jotão, Acaz e Ezequias em Judá, com profecias que se estendem ao exílio babilônico e além.
-- **Gênero literário:** profecia, com seções em prosa e poesia.
-- **Local/contexto de origem:** Jerusalém, reino de Judá.
-- **Conexão com o livro anterior:** inicia a seção dos profetas maiores, escritos durante e após a monarquia dividida.
+- **Autoria:** o livro se apresenta sob a figura profética de Isaías, filho de Amoz. A tradição judaica e cristã o associa a esse profeta; muitos estudos acadêmicos descrevem uma formação em etapas, com material de diferentes períodos. A unidade literária e teológica do livro também é objeto de estudo.
+- **Data de composição:** Isaías 1–39 contém material ligado ao século VIII a.C.; capítulos 40–55 se situam no horizonte do exílio babilônico, e 56–66 refletem questões da restauração. A história de composição não se reduz a uma data única.
+- **Período histórico narrado:** oráculos e narrativas relacionados a Judá, à Assíria, ao exílio babilônico e à restauração.
+- **Gênero literário:** profecia, poesia, oráculos contra nações e narrativas em prosa.
+- **Contexto:** Jerusalém e Judá aparecem como cenários importantes, junto a perspectivas literárias de exílio e retorno.
+- **Conexão com o livro anterior:** vem depois de Cantares na ordem cristã e abre a seção dos profetas maiores nessa organização.
 
 ## 🌍 Pano de Fundo Histórico
-Isaías profetiza durante a ascensão do Império Assírio (Mesopotâmia, atual norte do Iraque), que destrói o reino do Norte (Israel) em 722 a.C. e ameaça diretamente Judá sob o rei Senaqueribe. O livro também olha à frente para a queda de Judá para a Babilônia (586 a.C., mais de um século depois de Isaías) e para a libertação por meio do rei persa Ciro, que permitiria o retorno do exílio em 539 a.C.
+Isaías 1–39 situa muitas de suas mensagens no período de expansão assíria e nas crises políticas de Judá, incluindo a campanha de Senaqueribe em 701 a.C. As seções posteriores voltam-se ao exílio e à restauração; Isaías 44–45 nomeia Ciro, rei da Pérsia, como instrumento de libertação. Como essas seções se relacionam com a atividade do profeta do século VIII, com seus discípulos e com a edição do livro é uma questão debatida. As leituras judaicas e cristãs recebem o livro em seus próprios contextos interpretativos.
 
 ## ⏳ Linha do Tempo e Cronologia
-O ministério de Isaías começa por volta de 740 a.C. ("no ano da morte do rei Uzias", 6:1) e atravessa os reinados de Jotão, Acaz e Ezequias, incluindo o cerco assírio de Jerusalém sob Senaqueribe (701 a.C.). As profecias sobre a queda da Babilônia e o retorno do exílio (caps. 40-55) descrevem eventos que só se cumpririam cerca de 150-200 anos depois.
+O capítulo 1 situa a visão nos dias dos reis Uzias, Jotão, Acaz e Ezequias; o capítulo 6 associa o chamado profético ao ano da morte de Uzias. Os capítulos 36–39 narram a ameaça assíria nos dias de Ezequias. A partir do capítulo 40, o livro muda de cenário e tom, com consolo dirigido a pessoas exiladas e promessas de retorno. Essa organização literária não fornece uma cronologia completa da formação do livro.
 
-## ✍️ Autor e Propósito
-Isaías chama Judá ao arrependimento diante da ameaça assíria e, mais adiante no livro, oferece consolo e esperança para um povo que ainda seria exilado, anunciando tanto juízo pela idolatria quanto restauração e a vinda de um Servo Sofredor que traria salvação.
+## ✍️ Autoria e Propósito
+O livro denuncia injustiça, violência e infidelidade, anuncia juízo e apresenta esperança de restauração. Imagens de Sião, do Servo e de uma nova criação articulam suas diversas seções. A tradição cristã lê certos textos — entre eles Isaías 7:14 e 52:13–53:12 — em relação a Jesus; a interpretação judaica não compartilha necessariamente essa leitura, e os sentidos históricos e literários desses poemas são debatidos.
 
 ## 📖 Resumo do Conteúdo
-Os capítulos 1-39 alternam entre denúncias contra a injustiça e idolatria de Judá, oráculos contra nações estrangeiras, e promessas messiânicas em meio a crises políticas — incluindo o famoso sinal de Emanuel dado ao rei Acaz (cap. 7) e a libertação de Jerusalém do cerco assírio sob Ezequias (caps. 36-37). A partir do capítulo 40, o tom muda para consolo: Deus promete restaurar seu povo do exílio babilônico, chama o persa Ciro pelo nome como seu instrumento de libertação (cap. 45), e apresenta os quatro "Cânticos do Servo", culminando no capítulo 53, que descreve um servo que sofre e morre pelos pecados do povo. O livro termina com visões de restauração final e novos céus e nova terra (caps. 56-66).
+Os capítulos 1–12 reúnem denúncias contra Judá e Jerusalém, vocação profética e oráculos em meio a crises políticas; incluem o sinal de Emanuel no confronto com Acaz (cap. 7). Os capítulos 13–27 trazem oráculos contra nações e poemas sobre juízo e esperança. Os capítulos 28–35 voltam às escolhas políticas de Judá e à confiança em Deus. Nos capítulos 36–39, a ameaça assíria a Jerusalém é narrada junto a episódios da vida de Ezequias. Os capítulos 40–55 anunciam consolo e retorno do exílio e apresentam poemas do Servo. Os capítulos 56–66 abordam culto, justiça, conflitos e esperança de restauração, culminando na imagem de novos céus e nova terra.
 
 ## 💡 Curiosidades e Conexões
-- O Grande Rolo de Isaías, encontrado entre os Manuscritos do Mar Morto em Qumrã (datado de cerca de 125 a.C.), é praticamente idêntico ao texto hebraico usado hoje, demonstrando a extraordinária preservação do texto ao longo de mais de mil anos.
-- Isaías 53 é citado no Novo Testamento como cumprido na morte de Jesus (Atos 8, At 8:32-35) e é um dos textos mais debatidos entre judeus e cristãos quanto à identidade do "Servo Sofredor".
-- O Prisma de Senaqueribe, artefato assírio, narra o cerco a Jerusalém (701 a.C.) da perspectiva assíria, complementando o relato bíblico.
-- Isaías é o profeta mais citado no Novo Testamento, incluindo por Jesus, que leu Isaías 61 na sinagoga de Nazaré (Lucas 4).
+- O Grande Rolo de Isaías, encontrado em Qumrã, é uma cópia antiga extensa do livro. Sua comparação com outros testemunhos textuais evidencia continuidade e também variantes; não deve ser resumida como identidade perfeita com uma edição moderna.
+- Isaías 52:13–53:12 é conhecido como um dos poemas do Servo. O texto é central em leituras cristãs sobre Jesus e em interpretações judaicas diversas sobre o Servo; sua identidade e contexto são debatidos.
+- O Prisma de Senaqueribe registra a campanha assíria contra Judá do ponto de vista real assírio. Ele menciona a campanha e o cerco de Ezequias, mas não descreve a tomada de Jerusalém; comparar perspectivas não significa que todos os detalhes narrativos sejam idênticos.
+- O Novo Testamento retoma Isaías com frequência para construir argumentos sobre Jesus e a missão cristã. Essa recepção é uma parte importante da história interpretativa do livro.
 
 ## 🎯 Por Que Isso Importa Hoje
-Isaías mostra um Deus que julga o pecado com seriedade, mas que também promete restauração e envia um Salvador — cumprido, segundo a fé cristã, em Jesus Cristo.
+Isaías confronta o uso da religião para encobrir injustiça e articula juízo, consolo e esperança. A leitura cristã vê em algumas de suas imagens uma prefiguração de Jesus; uma leitura cuidadosa também considera o contexto histórico, a forma poética e a tradição judaica do livro.

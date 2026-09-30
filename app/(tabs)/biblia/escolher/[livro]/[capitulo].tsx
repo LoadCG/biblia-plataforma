@@ -1,13 +1,16 @@
 import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
-import { ActivityIndicator, Pressable, Text, View } from "react-native";
+import { Pressable, Text, View } from "react-native";
 import { BotaoTema } from "../../../../../components/BotaoTema";
+import { EstadoCarregando } from "../../../../../components/EstadoCarregando";
+import { EstadoErro } from "../../../../../components/EstadoErro";
 import { GradeCapitulos } from "../../../../../components/GradeCapitulos";
 import { buscarReferencia } from "../../../../../core/biblia/BibliaAPI";
 import type { CapituloTexto } from "../../../../../core/biblia/tipos";
 import { obterLivro } from "../../../../../core/content/livros";
 import { grifosRepository } from "../../../../../core/repositories";
 import { mensagemErroAmigavel } from "../../../../../core/util/erroAmigavel";
+import { mostrarToast } from "../../../../../core/util/toast";
 import { useOwnerId } from "../../../../../core/useOwnerId";
 
 // Tela de escolher um versículo específico dentro de um capítulo (ver
@@ -26,22 +29,27 @@ export default function EscolherVersiculo() {
 
   const [dados, setDados] = useState<CapituloTexto | null>(null);
   const [erro, setErro] = useState<string | null>(null);
+  const [tentativa, setTentativa] = useState(0);
   const [grifados, setGrifados] = useState<Set<number>>(new Set());
 
   useEffect(() => {
     if (!livro || !capitulo) return;
+    let ativo = true;
     setDados(null);
     setErro(null);
     buscarReferencia(`${livro.nome} ${capitulo}`)
-      .then(setDados)
-      .catch((e) => setErro(mensagemErroAmigavel(e)));
-  }, [livro?.slug, capitulo]);
+      .then((valor) => { if (ativo) setDados(valor); })
+      .catch((e) => { if (ativo) setErro(mensagemErroAmigavel(e)); });
+    return () => { ativo = false; };
+  }, [livro?.slug, capitulo, tentativa]);
 
   useEffect(() => {
     if (!ownerId || !livro) return;
-    grifosRepository.listarPorCapitulo(ownerId, livro.slug, capitulo).then((itens) => {
-      setGrifados(new Set(itens.map((g) => g.versiculo)));
-    });
+    let ativo = true;
+    grifosRepository.listarPorCapitulo(ownerId, livro.slug, capitulo)
+      .then((itens) => { if (ativo) setGrifados(new Set(itens.map((g) => g.versiculo))); })
+      .catch(() => { if (ativo) mostrarToast("Não foi possível carregar os grifos deste capítulo"); });
+    return () => { ativo = false; };
   }, [ownerId, livro?.slug, capitulo]);
 
   if (!livro || !capitulo) {
@@ -72,9 +80,9 @@ export default function EscolherVersiculo() {
 
       <View className="px-4 pt-4 pb-10 max-w-2xl w-full mx-auto">
         {erro ? (
-          <Text accessibilityRole="alert" className="text-red-500 text-center mt-8">{erro}</Text>
+          <EstadoErro titulo="Não foi possível carregar os versículos" descricao={erro} aoTentarNovamente={() => setTentativa((valor) => valor + 1)} />
         ) : !dados ? (
-          <ActivityIndicator accessibilityLabel="Carregando versículos" className="mt-8" />
+          <EstadoCarregando rotulo="Carregando versículos" className="mt-8" />
         ) : (
           <>
             <Text className="text-xs text-cor-texto-suave dark:text-cor-texto-suave-dark mb-4 px-1">

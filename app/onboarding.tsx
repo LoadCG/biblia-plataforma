@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Pressable, Text, View } from "react-native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { concluirOnboarding } from "../core/leitura/onboarding";
+import { mostrarToast } from "../core/util/toast";
 
 const PASSOS = [
   { icone: "auto-stories" as const, titulo: "Sua Bíblia, sempre disponível", texto: "Leia e pesquise toda a Bíblia mesmo sem conexão. Ajuste fonte e tema para o seu ritmo." },
@@ -13,7 +14,14 @@ const PASSOS = [
 export default function Onboarding() {
   const [passo, setPasso] = useState(0);
   const atual = PASSOS[passo];
-  async function finalizar(destino: "/" | "/planos") { await concluirOnboarding(); router.replace(destino); }
+  async function finalizar(destino: "/" | "/planos") {
+    try {
+      await concluirOnboarding();
+      router.replace(destino);
+    } catch {
+      mostrarToast("Não foi possível salvar a conclusão da apresentação");
+    }
+  }
   return (
     <View className="flex-1 bg-cor-fundo dark:bg-cor-fundo-dark px-6 py-10 items-center justify-center">
       <View className="w-full max-w-md">

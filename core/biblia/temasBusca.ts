@@ -7,6 +7,7 @@ import type { IdTema } from "../../components/IlustracaoTema";
 export type Tema = {
   id: IdTema;
   titulo: string;
+  descricao: string;
   /** Emoji só como rótulo de acessibilidade/fallback — o card usa a
    * ilustração SVG própria (`IlustracaoTema`), não este emoji cru
    * (ver `components/IlustracaoTema.tsx`). */
@@ -22,6 +23,7 @@ export const TEMAS_BUSCA: Tema[] = [
   {
     id: "amor",
     titulo: "Amor",
+    descricao: "Cuidado, presença e amor que acolhe.",
     icone: "❤️",
     corBg: "#f8e1df",
     corBgDark: "#3a2624",
@@ -32,6 +34,7 @@ export const TEMAS_BUSCA: Tema[] = [
   {
     id: "cura",
     titulo: "Cura",
+    descricao: "Palavras para atravessar o tempo de restauração.",
     icone: "🌿",
     corBg: "#dff0e5",
     corBgDark: "#1e3527",
@@ -42,6 +45,7 @@ export const TEMAS_BUSCA: Tema[] = [
   {
     id: "ansiedade",
     titulo: "Ansiedade",
+    descricao: "Encontre descanso em dias difíceis.",
     icone: "🕊️",
     corBg: "#e2eef0",
     corBgDark: "#1c2f32",
@@ -52,6 +56,7 @@ export const TEMAS_BUSCA: Tema[] = [
   {
     id: "raiva",
     titulo: "Raiva",
+    descricao: "Um caminho de calma para o coração.",
     icone: "🔥",
     corBg: "#f3e6d3",
     corBgDark: "#3a2c18",
@@ -62,6 +67,7 @@ export const TEMAS_BUSCA: Tema[] = [
   {
     id: "alegria",
     titulo: "Alegria",
+    descricao: "Lembretes de gratidão e esperança.",
     icone: "☀️",
     corBg: "#ebe4f6",
     corBgDark: "#2c2438",
@@ -72,6 +78,7 @@ export const TEMAS_BUSCA: Tema[] = [
   {
     id: "perdao",
     titulo: "Perdão",
+    descricao: "Recomeço, graça e reconciliação.",
     icone: "🤍",
     corBg: "#f2e2f1",
     corBgDark: "#332030",
@@ -82,6 +89,7 @@ export const TEMAS_BUSCA: Tema[] = [
   {
     id: "esperanca",
     titulo: "Esperança",
+    descricao: "Promessas para firmar os próximos passos.",
     icone: "🌅",
     corBg: "#e7edf9",
     corBgDark: "#1f2a3d",
@@ -92,10 +100,11 @@ export const TEMAS_BUSCA: Tema[] = [
   {
     id: "sabedoria",
     titulo: "Sabedoria",
+    descricao: "Direção para escolhas do cotidiano.",
     icone: "📖",
     corBg: "#fdf1b8",
     corBgDark: "#4a3f14",
-    corTexto: "#caa000",
+    corTexto: "#806000",
     corTextoDark: "#e0c34a",
     referencias: ["Tiago 1:5", "Provérbios 3:5-6", "Provérbios 9:10", "Colossenses 3:16"],
   },

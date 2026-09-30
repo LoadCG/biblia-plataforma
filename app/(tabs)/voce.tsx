@@ -6,6 +6,7 @@ import { BotaoTema } from "../../components/BotaoTema";
 import { CardAtividade } from "../../components/CardAtividade";
 import { EstadoVazio } from "../../components/EstadoVazio";
 import { FogoStreak } from "../../components/FogoStreak";
+import { IconeConquista } from "../../components/IconeConquista";
 import { ModalPerfil } from "../../components/ModalPerfil";
 import { DicaContextual } from "../../components/DicaContextual";
 import { obterLivro } from "../../core/content/livros";
@@ -19,6 +20,7 @@ import { PERFIL_PADRAO, type Perfil } from "../../core/repositories/PerfilReposi
 import { useColorScheme } from "../../core/theme";
 import { useArrastarParaRolar } from "../../core/util/useArrastarParaRolar";
 import { useOwnerId } from "../../core/useOwnerId";
+import { mostrarToast } from "../../core/util/toast";
 
 const SOMBRA = { shadowColor: "#000", shadowOpacity: 0.06, shadowRadius: 4, shadowOffset: { width: 0, height: 1 } };
 
@@ -50,7 +52,12 @@ function MedalhaCarrossel({ conquista }: { conquista: Conquista }) {
         className="w-16 h-16 rounded-full items-center justify-center mb-2"
         style={{ backgroundColor: conquista.conquistada ? cores.destaque : cores.borda }}
       >
-        <Text style={{ fontSize: 26, opacity: conquista.conquistada ? 1 : 0.4 }}>{conquista.icone}</Text>
+        <IconeConquista
+          conquistaId={conquista.id}
+          conquistada={conquista.conquistada}
+          tamanho={26}
+          className={conquista.conquistada ? "text-white dark:text-cor-texto" : "text-cor-destaque dark:text-cor-destaque-dark"}
+        />
       </View>
       <Text numberOfLines={1} className="text-xs font-bold text-cor-texto dark:text-cor-texto-dark text-center mb-1.5">
         {conquista.titulo}
@@ -82,18 +89,22 @@ export default function Voce() {
 
   const carregarTudo = useCallback(async () => {
     if (!ownerId) return;
-    const [lidos, progresso, ativ, compart, perfilCarregado] = await Promise.all([
-      livrosLidosRepository.listar(ownerId),
-      progressoRepository.listarTodos(ownerId),
-      carregarAtividade(ownerId),
-      carregarCompartilhamentos(),
-      perfilRepository.obter(ownerId),
-    ]);
-    setSequencia(calcularSequenciaAtual(progresso.map((p) => p.lidoEm)));
-    setConquistas(calcularConquistas(new Set(lidos)));
-    setAtividade(ativ);
-    setCompartilhamentos(compart);
-    setPerfil(perfilCarregado);
+    try {
+      const [lidos, progresso, ativ, compart, perfilCarregado] = await Promise.all([
+        livrosLidosRepository.listar(ownerId),
+        progressoRepository.listarTodos(ownerId),
+        carregarAtividade(ownerId),
+        carregarCompartilhamentos(),
+        perfilRepository.obter(ownerId),
+      ]);
+      setSequencia(calcularSequenciaAtual(progresso.map((p) => p.lidoEm)));
+      setConquistas(calcularConquistas(new Set(lidos)));
+      setAtividade(ativ);
+      setCompartilhamentos(compart);
+      setPerfil(perfilCarregado);
+    } catch {
+      mostrarToast("Não foi possível carregar alguns dados do seu perfil");
+    }
   }, [ownerId]);
 
   useEffect(() => {

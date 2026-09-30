@@ -4,6 +4,7 @@
 // cada abertura do app.
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { colorScheme, useColorScheme } from "nativewind";
+import { mostrarToast } from "./util/toast";
 
 const CHAVE_TEMA = "tema-preferido";
 
@@ -16,7 +17,9 @@ export function alternarTema(): void {
   const atual = colorScheme.get();
   const proximo = atual === "dark" ? "light" : "dark";
   colorScheme.set(proximo);
-  AsyncStorage.setItem(CHAVE_TEMA, proximo).catch(() => {});
+  AsyncStorage.setItem(CHAVE_TEMA, proximo).catch(() => {
+    mostrarToast("O tema mudou, mas não foi possível salvá-lo para a próxima abertura");
+  });
 }
 
 export { useColorScheme };

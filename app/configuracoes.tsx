@@ -1,6 +1,6 @@
 import { Link, router } from "expo-router";
 import { useEffect, useState } from "react";
-import { Alert, Modal, Platform, Pressable, ScrollView, Share, Text, View } from "react-native";
+import { Modal, Platform, Pressable, ScrollView, Share, Text, View } from "react-native";
 import { BotaoTema } from "../components/BotaoTema";
 import {
   carregarFonteSerifada,
@@ -52,47 +52,83 @@ export default function Configuracoes() {
   const [exportando, setExportando] = useState(false);
   const [confirmarApagar, setConfirmarApagar] = useState(false);
   const [apagando, setApagando] = useState(false);
+  const [salvandoPreferencias, setSalvandoPreferencias] = useState(false);
+  const [alterandoLembrete, setAlterandoLembrete] = useState(false);
 
   useEffect(() => {
-    carregarIndiceFonte().then(setIndiceFonte);
-    carregarFonteSerifada().then(setFonteSerifada);
-    lembreteDiarioAtivo().then(setLembreteAtivo);
+    let ativo = true;
+    Promise.all([carregarIndiceFonte(), carregarFonteSerifada(), lembreteDiarioAtivo()])
+      .then(([indice, serifada, lembrete]) => {
+        if (!ativo) return;
+        setIndiceFonte(indice);
+        setFonteSerifada(serifada);
+        setLembreteAtivo(lembrete);
+      })
+      .catch(() => {
+        if (ativo) mostrarToast("Não foi possível carregar todas as configurações");
+      });
+    return () => { ativo = false; };
   }, []);
 
   async function alternarLembreteDiario() {
+    if (alterandoLembrete) return;
     if (Platform.OS === "web") {
-      Alert.alert("Não disponível no navegador", "Notificações diárias funcionam no app instalado (Android/iOS).");
+      mostrarToast("Notificações diárias funcionam no app instalado (Android/iOS)");
       return;
     }
     const novo = !lembreteAtivo;
-    if (novo) {
-      await agendarLembreteDiario(
-        HORARIO_LEMBRETE_PADRAO.hora,
-        HORARIO_LEMBRETE_PADRAO.minuto,
-        "Versículo do dia",
-        "Sua leitura de hoje já está esperando por você."
-      );
-    } else {
-      await cancelarTodosLembretes();
+    setAlterandoLembrete(true);
+    try {
+      if (novo) {
+        const agendado = await agendarLembreteDiario(
+          HORARIO_LEMBRETE_PADRAO.hora,
+          HORARIO_LEMBRETE_PADRAO.minuto,
+          "Versículo do dia",
+          "Sua leitura de hoje já está esperando por você."
+        );
+        if (!agendado) {
+          mostrarToast("Permita notificações nas configurações do dispositivo para ativar o lembrete");
+          return;
+        }
+      } else {
+        await cancelarTodosLembretes();
+      }
+      await salvarLembreteDiarioAtivo(novo);
+      setLembreteAtivo(novo);
+    } catch {
+      mostrarToast("Não foi possível atualizar o lembrete diário");
+    } finally {
+      setAlterandoLembrete(false);
     }
-    salvarLembreteDiarioAtivo(novo);
-    setLembreteAtivo(novo);
   }
 
-  function ajustarFonte(delta: number) {
-    setIndiceFonte((atual) => {
-      const novo = Math.min(TAMANHOS_FONTE.length - 1, Math.max(0, atual + delta));
-      salvarIndiceFonte(novo);
-      return novo;
-    });
+  async function ajustarFonte(delta: number) {
+    if (salvandoPreferencias) return;
+    const novo = Math.min(TAMANHOS_FONTE.length - 1, Math.max(0, indiceFonte + delta));
+    if (novo === indiceFonte) return;
+    setSalvandoPreferencias(true);
+    try {
+      await salvarIndiceFonte(novo);
+      setIndiceFonte(novo);
+    } catch {
+      mostrarToast("Não foi possível salvar o tamanho da fonte");
+    } finally {
+      setSalvandoPreferencias(false);
+    }
   }
 
-  function alternarFonteSerifada() {
-    setFonteSerifada((atual) => {
-      const novo = !atual;
-      salvarFonteSerifada(novo);
-      return novo;
-    });
+  async function alternarFonteSerifada() {
+    if (salvandoPreferencias) return;
+    const novo = !fonteSerifada;
+    setSalvandoPreferencias(true);
+    try {
+      await salvarFonteSerifada(novo);
+      setFonteSerifada(novo);
+    } catch {
+      mostrarToast("Não foi possível salvar a preferência de fonte");
+    } finally {
+      setSalvandoPreferencias(false);
+    }
   }
 
   async function exportarMeusDados() {
@@ -113,6 +149,8 @@ export default function Configuracoes() {
       } else {
         await Share.share({ message: json });
       }
+    } catch {
+      mostrarToast("Não foi possível exportar seus dados");
     } finally {
       setExportando(false);
     }
@@ -121,13 +159,17 @@ export default function Configuracoes() {
   async function apagarMeusDados() {
     if (!ownerId || apagando) return;
     setApagando(true);
+    let apagado = false;
     try {
       const dados = await coletarDadosPessoais(ownerId);
       await apagarDadosPessoais(ownerId, dados);
+      apagado = true;
       mostrarToast("Todos os seus dados foram apagados");
+    } catch {
+      mostrarToast("Não foi possível apagar todos os dados. Tente novamente.");
     } finally {
       setApagando(false);
-      setConfirmarApagar(false);
+      if (apagado) setConfirmarApagar(false);
     }
   }
 
@@ -148,7 +190,7 @@ export default function Configuracoes() {
             <View className="flex-row items-center gap-2">
               <Pressable
                 onPress={() => ajustarFonte(-1)}
-                disabled={indiceFonte === 0}
+                disabled={indiceFonte === 0 || salvandoPreferencias}
                 accessibilityRole="button"
                 accessibilityLabel="Diminuir tamanho da fonte"
                 className="w-10 h-10 items-center justify-center rounded-full border border-cor-borda dark:border-cor-borda-dark active:opacity-60"
@@ -161,7 +203,7 @@ export default function Configuracoes() {
               </Pressable>
               <Pressable
                 onPress={() => ajustarFonte(1)}
-                disabled={indiceFonte === TAMANHOS_FONTE.length - 1}
+                disabled={indiceFonte === TAMANHOS_FONTE.length - 1 || salvandoPreferencias}
                 accessibilityRole="button"
                 accessibilityLabel="Aumentar tamanho da fonte"
                 className="w-10 h-10 items-center justify-center rounded-full border border-cor-borda dark:border-cor-borda-dark active:opacity-60"
@@ -184,6 +226,7 @@ export default function Configuracoes() {
           <Linha ultima>
             <Pressable
               onPress={alternarFonteSerifada}
+              disabled={salvandoPreferencias}
               accessibilityRole="switch"
               accessibilityLabel="Fonte serifada"
               accessibilityState={{ checked: fonteSerifada }}
@@ -231,6 +274,7 @@ export default function Configuracoes() {
           <Linha ultima>
             <Pressable
               onPress={alternarLembreteDiario}
+              disabled={alterandoLembrete}
               accessibilityRole="switch"
               accessibilityLabel="Lembrete diário"
               accessibilityState={{ checked: lembreteAtivo }}
@@ -299,7 +343,14 @@ export default function Configuracoes() {
 
         <Secao titulo="Sobre">
           <Linha>
-            <Pressable onPress={async () => { await reiniciarOnboarding(); router.push("/onboarding"); }} accessibilityRole="button" className="flex-row items-center justify-between active:opacity-70">
+            <Pressable onPress={async () => {
+              try {
+                await reiniciarOnboarding();
+                router.push("/onboarding");
+              } catch {
+                mostrarToast("Não foi possível reiniciar a apresentação");
+              }
+            }} accessibilityRole="button" className="flex-row items-center justify-between active:opacity-70">
               <View><Text className="text-cor-texto dark:text-cor-texto-dark font-semibold">Rever apresentação</Text><Text className="text-xs text-cor-texto-suave dark:text-cor-texto-suave-dark mt-0.5">Veja novamente os recursos principais</Text></View>
               <Text className="text-cor-texto-suave dark:text-cor-texto-suave-dark">→</Text>
             </Pressable>

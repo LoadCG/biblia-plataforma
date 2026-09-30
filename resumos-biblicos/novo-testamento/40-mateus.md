@@ -1,30 +1,30 @@
 # Mateus — Livro 40 de 66
 
 ## 📋 Ficha Rápida
-- **Autor:** tradicionalmente o apóstolo Mateus (também chamado Levi), ex-cobrador de impostos e um dos doze discípulos de Jesus; a crítica moderna debate a autoria apostólica direta, mas a posição conservadora a mantém, apoiada por testemunho antigo unânime da igreja primitiva.
-- **Data provável de escrita:** entre cerca de 50-70 d.C., antes da destruição do templo de Jerusalém em 70 d.C. (posição conservadora); alguns críticos propõem datas posteriores, até 80-90 d.C.
-- **Período histórico narrado:** o nascimento, ministério, morte e ressurreição de Jesus, cerca de 6 a.C. a 30 d.C.
-- **Gênero literário:** evangelho — biografia teológica.
-- **Local/contexto de origem:** provavelmente escrito para uma comunidade judaico-cristã, possivelmente na Síria/Antioquia ou na própria Judeia.
-- **Conexão com o livro anterior:** inicia o Novo Testamento, retomando diretamente temas messiânicos deixados em aberto por Malaquias, cerca de 400 anos de silêncio profético depois.
+- **Autoria:** o evangelho não identifica seu autor no próprio texto. A tradição cristã antiga o associa ao apóstolo Mateus; a relação entre essa tradição e a composição do texto é discutida pelos estudiosos.
+- **Data de composição:** não há consenso absoluto. Uma proposta acadêmica frequente situa sua composição nas últimas décadas do século I, muitas vezes por volta de 80–90 d.C.; outras cronologias são defendidas.
+- **Período histórico narrado:** da narrativa do nascimento de Jesus à sua morte e ressurreição. Datas exatas e duração do ministério não são estabelecidas por Mateus de modo suficiente para uma cronologia precisa.
+- **Gênero literário:** evangelho — narrativa antiga que apresenta a vida e os ensinamentos de Jesus com propósito teológico.
+- **Contexto:** o evangelho dialoga intensamente com as Escrituras de Israel. Sua comunidade, local de composição e público original são debatidos; não se deve reduzi-los a um único grupo ou cidade.
+- **Conexão com o livro anterior:** na ordem cristã, abre o Novo Testamento e faz uso amplo de temas e textos das Escrituras de Israel.
 
 ## 🌍 Pano de Fundo Histórico
-Jesus nasce e vive sob a ocupação do Império Romano, que dominava a Judeia através de reis clientes (como Herodes, o Grande) e depois de procuradores romanos diretos (como Pôncio Pilatos). A sociedade judaica estava dividida em grupos religiosos e políticos — fariseus (rigorosos guardiões da Lei), saduceus (elite sacerdotal ligada ao templo), zelotes (nacionalistas anti-romanos) e essênios (comunidade separatista, associada aos Manuscritos do Mar Morto). Havia forte expectativa messiânica de um libertador que restauraria o reino de Israel.
+As narrativas se passam sob o domínio romano, em regiões governadas por autoridades locais como Herodes, o Grande, e Pôncio Pilatos. Mateus recorre repetidamente às Escrituras de Israel e apresenta debates entre Jesus e outros grupos judaicos. Fariseus, saduceus e demais grupos eram diversos; descrições gerais não devem transformá-los em caricaturas nem tratar o judaísmo como um bloco uniforme. O texto termina com uma missão dirigida a todos os povos (28:19).
 
 ## ⏳ Linha do Tempo e Cronologia
-Mateus narra desde o nascimento de Jesus em Belém, durante o reinado de Herodes, o Grande (que morreu em 4 a.C., sugerindo que Jesus nasceu um pouco antes dessa data), passando por seu ministério público de cerca de três anos na Galileia e na Judeia, até sua crucificação e ressurreição em Jerusalém, provavelmente por volta de 30 ou 33 d.C.
+Mateus narra nascimento, ensinamentos, ações, morte e ressurreição de Jesus. O relato vincula seu nascimento ao reinado de Herodes, o Grande, mas não oferece uma cronologia moderna detalhada. O livro não permite, sozinho, fixar a duração do ministério público em três anos nem decidir entre todas as propostas de datação.
 
-## ✍️ Autor e Propósito
-Mateus escreve especialmente para leitores judeus, argumentando sistematicamente que Jesus é o Messias prometido no Antigo Testamento, o novo e maior Moisés, e o legítimo Rei da linhagem de Davi, usando dezenas de citações do Antigo Testamento para mostrar cumprimento profético.
+## ✍️ Autoria e Propósito
+O evangelho organiza ensinamentos e episódios em torno da identidade de Jesus, da justiça, do Reino dos céus e da formação de uma comunidade de discípulos. A tradição cristã associa a obra a Mateus; a pesquisa também investiga sua relação literária com Marcos e outras tradições. A apresentação de Jesus como Messias e cumprimento das Escrituras é central à perspectiva do próprio evangelho.
 
 ## 📖 Resumo do Conteúdo
-O evangelho abre com a genealogia de Jesus ligando-o a Abraão e Davi, e o relato de seu nascimento virginal em Belém (caps. 1-2). João Batista prepara o caminho, e Jesus é batizado e tentado no deserto (caps. 3-4). Segue-se o Sermão do Monte, o maior discurso de Jesus, com as Bem-Aventuranças e ensinos éticos fundamentais (caps. 5-7). Jesus realiza diversos milagres — curas, expulsão de demônios, controle sobre a natureza — e ensina através de parábolas sobre o Reino dos céus (caps. 8-13). Ele multiplica pães, anda sobre as águas, e é reconhecido por Pedro como o Cristo (caps. 14-17). Segue-se ensino sobre perdão, humildade e o julgamento final, e a jornada final a Jerusalém, marcada por confrontos com líderes religiosos (caps. 18-25). O livro culmina na Última Ceia, prisão, julgamento, crucificação de Jesus e sua ressurreição, terminando com a Grande Comissão — a ordem de fazer discípulos em todas as nações (caps. 26-28).
+O livro começa com genealogia e relatos do nascimento e da infância de Jesus (caps. 1–2). João Batista prepara o caminho; Jesus é batizado, tentado e inicia seu ministério (caps. 3–4). O Sermão do Monte reúne ensinamentos sobre o Reino, a justiça e a vida dos discípulos (caps. 5–7). Nos capítulos seguintes, narrativas de curas e outros feitos alternam-se com discursos e parábolas (caps. 8–13). A confissão de Pedro e os ensinamentos sobre discipulado e comunidade preparam a viagem a Jerusalém (caps. 14–20). Os capítulos 21–25 narram a entrada na cidade, confrontos, discursos e ensino sobre vigilância. A última ceia, prisão, julgamento, crucificação e ressurreição ocupam os capítulos 26–28, que terminam com a comissão aos discípulos.
 
 ## 💡 Curiosidades e Conexões
-- Mateus é o evangelho mais estruturado em torno de cinco grandes blocos de ensino, um possível paralelo intencional aos cinco livros de Moisés.
-- É o único evangelho a usar a expressão "Reino dos céus" (em vez de "Reino de Deus"), provavelmente por reverência judaica em evitar pronunciar o nome de Deus diretamente.
-- A fuga da família de Jesus para o Egito (cap. 2) ecoa a história de Israel descendo ao Egito em Gênesis, um padrão que Mateus explora repetidamente.
-- Manuscritos gregos antigos do Novo Testamento, como o Códice Sinaítico e o Códice Vaticano (século IV d.C.), preservam o texto de Mateus com notável consistência.
+- O livro reúne cinco grandes discursos de Jesus, cada um encerrado por uma fórmula narrativa. Alguns intérpretes veem nessa organização uma relação intencional com os cinco livros da Torá; trata-se de uma hipótese literária, não de um fato explicitado pelo texto.
+- “Reino dos céus” é uma expressão característica de Mateus, mas o evangelho também usa “Reino de Deus” (por exemplo, 12:28; 19:24; 21:31, 43). A diferença não deve ser explicada como se Mateus evitasse sempre pronunciar o nome de Deus.
+- A ida da família de Jesus ao Egito (capítulo 2) aproxima a narrativa de temas do Êxodo e da história de Israel. Mateus explicita algumas dessas conexões por meio de citações e alusões às Escrituras.
+- O capítulo 13 inclui parábolas sobre o Reino; a sequência permite observar como o evangelho combina narrativa, interpretação e ensino.
 
 ## 🎯 Por Que Isso Importa Hoje
-Mateus apresenta Jesus como o cumprimento de séculos de promessas do Antigo Testamento e chama todo leitor, judeu ou não, a reconhecê-lo como Rei e Salvador prometido.
+Mateus convida seus leitores a considerar a identidade de Jesus por meio de sua relação com as Escrituras de Israel, seus ensinamentos e suas ações. A afirmação de Jesus como Messias pertence à perspectiva cristã do evangelho e deve ser apresentada com respeito às diferentes leituras judaicas dessas mesmas Escrituras.

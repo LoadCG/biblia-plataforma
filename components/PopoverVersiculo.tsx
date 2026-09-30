@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
-import { ActivityIndicator, Modal, Pressable, ScrollView, Text, View } from "react-native";
+import { Modal, Pressable, ScrollView, Text, View } from "react-native";
+import { EstadoCarregando } from "./EstadoCarregando";
+import { EstadoErro } from "./EstadoErro";
 import { buscarReferencia } from "../core/biblia/BibliaAPI";
 import type { CapituloTexto } from "../core/biblia/tipos";
 import { mensagemErroAmigavel } from "../core/util/erroAmigavel";
@@ -21,18 +23,21 @@ export function PopoverVersiculo({ referencia, refCapitulo, onFechar }: Props) {
   const [refAtual, setRefAtual] = useState(referencia);
   const [dados, setDados] = useState<CapituloTexto | null>(null);
   const [erro, setErro] = useState<string | null>(null);
+  const [tentativa, setTentativa] = useState(0);
 
   useEffect(() => {
     setRefAtual(referencia);
   }, [referencia]);
 
   useEffect(() => {
+    let ativo = true;
     setDados(null);
     setErro(null);
     buscarReferencia(refAtual)
-      .then(setDados)
-      .catch((e) => setErro(mensagemErroAmigavel(e)));
-  }, [refAtual]);
+      .then((valor) => { if (ativo) setDados(valor); })
+      .catch((e) => { if (ativo) setErro(mensagemErroAmigavel(e)); });
+    return () => { ativo = false; };
+  }, [refAtual, tentativa]);
 
   return (
     <Modal visible transparent animationType="fade" onRequestClose={onFechar}>
@@ -56,9 +61,9 @@ export function PopoverVersiculo({ referencia, refCapitulo, onFechar }: Props) {
           </View>
 
           {erro ? (
-            <Text accessibilityRole="alert" className="text-cor-texto-suave dark:text-cor-texto-suave-dark">{erro}</Text>
+            <EstadoErro titulo="Referência indisponível" descricao={erro} aoTentarNovamente={() => setTentativa((valor) => valor + 1)} />
           ) : !dados ? (
-            <ActivityIndicator accessibilityLabel="Carregando referência bíblica" />
+            <EstadoCarregando rotulo="Carregando referência bíblica" className="py-4" />
           ) : (
             <ScrollView>
               <Text className="text-cor-texto dark:text-cor-texto-dark leading-6">

@@ -8,6 +8,7 @@ import { grifosRepository, notasRepository, pesquisasFavoritasRepository, versic
 import { linkVersiculo } from "../core/util/linkVersiculo";
 import { tempoRelativo } from "../core/util/tempoRelativo";
 import { useOwnerId } from "../core/useOwnerId";
+import { mostrarToast } from "../core/util/toast";
 import { MenuAcoes, type AcaoMenu } from "./MenuAcoes";
 import { ModalNota } from "./ModalNota";
 
@@ -33,18 +34,24 @@ export function CardAtividade({ item, onMudou, selecionado, onSelecionar }: Prop
   const link = livro && item.tipo !== "pesquisa" ? linkVersiculo(livro.slug, item.capitulo, item.versiculo) : null;
   const referenciaComLink = referencia ? `${referencia}${link ? `\n${link}` : ""}` : null;
 
-  async function excluir() {
-    if (!ownerId) return;
-    if (item.tipo === "grifo") {
-      await grifosRepository.alternar(ownerId, { livroSlug: item.livroSlug, capitulo: item.capitulo, versiculo: item.versiculo });
-    } else if (item.tipo === "nota") {
-      await notasRepository.remover(ownerId, { livroSlug: item.livroSlug, capitulo: item.capitulo, versiculo: item.versiculo });
-    } else if (item.tipo === "salvo") {
-      await versiculosSalvosRepository.alternar(ownerId, { livroSlug: item.livroSlug, capitulo: item.capitulo, versiculo: item.versiculo });
-    } else {
-      await pesquisasFavoritasRepository.alternar(ownerId, item.termo);
+  async function excluir(): Promise<boolean> {
+    if (!ownerId) return false;
+    try {
+      if (item.tipo === "grifo") {
+        await grifosRepository.alternar(ownerId, { livroSlug: item.livroSlug, capitulo: item.capitulo, versiculo: item.versiculo });
+      } else if (item.tipo === "nota") {
+        await notasRepository.remover(ownerId, { livroSlug: item.livroSlug, capitulo: item.capitulo, versiculo: item.versiculo });
+      } else if (item.tipo === "salvo") {
+        await versiculosSalvosRepository.alternar(ownerId, { livroSlug: item.livroSlug, capitulo: item.capitulo, versiculo: item.versiculo });
+      } else {
+        await pesquisasFavoritasRepository.alternar(ownerId, item.termo);
+      }
+      onMudou();
+      return true;
+    } catch {
+      mostrarToast("Não foi possível excluir este item. Tente novamente.");
+      return false;
     }
-    onMudou();
   }
 
   const acoes: AcaoMenu[] =
@@ -121,17 +128,20 @@ export function CardAtividade({ item, onMudou, selecionado, onSelecionar }: Prop
             // caso remove em vez de salvar uma nota vazia (achado
             // real, 2026-08-20, mesmo tratamento que já existia em
             // `salvarNota` na tela de leitura).
-            if (texto) {
-              await notasRepository.salvar(ownerId, ref, texto);
-            } else {
-              await notasRepository.remover(ownerId, ref);
+            try {
+              if (texto) {
+                await notasRepository.salvar(ownerId, ref, texto);
+              } else {
+                await notasRepository.remover(ownerId, ref);
+              }
+              setEditando(false);
+              onMudou();
+            } catch {
+              mostrarToast("Não foi possível salvar a nota. Ela continua aberta para você tentar novamente.");
             }
-            setEditando(false);
-            onMudou();
           }}
           onRemover={async () => {
-            await excluir();
-            setEditando(false);
+            if (await excluir()) setEditando(false);
           }}
         />
       ) : null}

@@ -5,14 +5,21 @@
 import { livros } from "./livros";
 
 export type Conquista = {
-  id: string;
+  id: IdConquista;
   titulo: string;
   descricao: string;
-  icone: string;
   progressoAtual: number;
   progressoTotal: number;
   conquistada: boolean;
 };
+
+export type IdConquista =
+  | "primeiro-livro"
+  | "pentateuco"
+  | "evangelhos"
+  | "antigo-testamento"
+  | "novo-testamento"
+  | "biblia-completa";
 
 const PENTATEUCO = ["01-genesis", "02-exodo", "03-levitico", "04-numeros", "05-deuteronomio"];
 const EVANGELHOS = ["40-mateus", "41-marcos", "42-lucas", "43-joao"];
@@ -35,7 +42,6 @@ export function calcularConquistas(lidos: Set<string>): Conquista[] {
       id: "primeiro-livro",
       titulo: "Primeiro Passo",
       descricao: "Leia o resumo de 1 livro da Bíblia.",
-      icone: "✓",
       progressoAtual: Math.min(noTotal, 1),
       progressoTotal: 1,
       conquistada: noTotal >= 1,
@@ -44,7 +50,6 @@ export function calcularConquistas(lidos: Set<string>): Conquista[] {
       id: "pentateuco",
       titulo: "Fundamentos da Fé",
       descricao: "Leia os 5 livros do Pentateuco (Gênesis a Deuteronômio).",
-      icone: "📜",
       progressoAtual: noPentateuco,
       progressoTotal: PENTATEUCO.length,
       conquistada: noPentateuco >= PENTATEUCO.length,
@@ -53,7 +58,6 @@ export function calcularConquistas(lidos: Set<string>): Conquista[] {
       id: "evangelhos",
       titulo: "Vida de Cristo",
       descricao: "Leia os 4 Evangelhos (Mateus, Marcos, Lucas e João).",
-      icone: "📖",
       progressoAtual: nosEvangelhos,
       progressoTotal: EVANGELHOS.length,
       conquistada: nosEvangelhos >= EVANGELHOS.length,
@@ -62,7 +66,6 @@ export function calcularConquistas(lidos: Set<string>): Conquista[] {
       id: "antigo-testamento",
       titulo: "Guardião da Aliança",
       descricao: "Leia todos os 39 livros do Antigo Testamento.",
-      icone: "🌍",
       progressoAtual: noAT,
       progressoTotal: SLUGS_AT.length,
       conquistada: noAT >= SLUGS_AT.length,
@@ -71,7 +74,6 @@ export function calcularConquistas(lidos: Set<string>): Conquista[] {
       id: "novo-testamento",
       titulo: "Testemunha do Evangelho",
       descricao: "Leia todos os 27 livros do Novo Testamento.",
-      icone: "✦",
       progressoAtual: noNT,
       progressoTotal: SLUGS_NT.length,
       conquistada: noNT >= SLUGS_NT.length,
@@ -80,7 +82,6 @@ export function calcularConquistas(lidos: Set<string>): Conquista[] {
       id: "biblia-completa",
       titulo: "Bíblia Completa",
       descricao: "Leia o resumo dos 66 livros da Bíblia.",
-      icone: "🎯",
       progressoAtual: noTotal,
       progressoTotal: livros.length,
       conquistada: noTotal >= livros.length,

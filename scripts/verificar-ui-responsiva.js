@@ -9,6 +9,7 @@ const contratos = [
   ["app/resumos/index.tsx", ["testID=\"busca-resumos\"", "testID=\"limpar-busca-resumos\""]],
   ["app/estatisticas.tsx", ["testID=\"estatisticas-grade\"", "min-w-0", "flex-row flex-wrap"]],
   ["app/planos/index.tsx", ["accessibilityRole=\"progressbar\"", "accessibilityValue"]],
+  ["app/planos/[id].tsx", ["Carregando progresso do plano", "Não foi possível carregar seu progresso", "disabled={acaoEmAndamento !== null}"]],
 ];
 
 for (const [arquivo, trechos] of contratos) {

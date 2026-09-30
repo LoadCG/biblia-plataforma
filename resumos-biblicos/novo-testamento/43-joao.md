@@ -1,30 +1,30 @@
 # João — Livro 43 de 66
 
 ## 📋 Ficha Rápida
-- **Autor:** tradicionalmente o apóstolo João, "o discípulo a quem Jesus amava" (posição conservadora, apoiada por testemunho antigo unânime); críticos modernos às vezes propõem um discípulo posterior da "comunidade joanina".
-- **Data provável de escrita:** cerca de 85-95 d.C., o mais tardio dos quatro evangelhos, já perto do fim da vida de João, provavelmente em Éfeso.
-- **Período histórico narrado:** o ministério, morte e ressurreição de Jesus, cerca de 27-30 d.C.
-- **Gênero literário:** evangelho — narrativa teológica com forte ênfase em discursos e sinais (milagres com significado simbólico).
-- **Local/contexto de origem:** provavelmente Éfeso, na Ásia Menor (atual Turquia), para uma comunidade cristã já enfrentando ensinos falsos sobre a natureza de Jesus.
-- **Conexão com o livro anterior:** cobre o mesmo período histórico dos três evangelhos sinóticos (Mateus, Marcos, Lucas), mas com estrutura, vocabulário e seleção de eventos bastante distintos.
+- **Autoria:** o texto associa o testemunho final ao “discípulo a quem Jesus amava” (21:24), sem nomeá-lo diretamente. A tradição cristã identifica esse discípulo com o apóstolo João; autoria, composição e papel de possíveis editores são debatidos.
+- **Data de composição:** propostas variam, com muitas introduções acadêmicas situando a forma final no fim do século I. A data exata e as etapas de composição permanecem discutidas.
+- **Período histórico narrado:** ministério, morte e ressurreição de Jesus. A narrativa menciona festas da Páscoa, mas isso não fixa, por si só, uma cronologia exata para toda a vida pública.
+- **Gênero literário:** evangelho — narrativa teológica com discursos, diálogos, sinais e cenas de conflito.
+- **Contexto:** apresenta debates sobre a identidade de Jesus e utiliza imagens e festas judaicas. Local de composição, público original e circunstâncias comunitárias são hipóteses debatidas; não se deve afirmar Éfeso ou um conflito específico como certo.
+- **Conexão com o livro anterior:** narra muitos episódios também presentes nos Sinóticos, mas seleciona e organiza o material de modo próprio.
 
 ## 🌍 Pano de Fundo Histórico
-Escrito décadas depois dos outros evangelhos, João reflete uma igreja já mais madura teologicamente, precisando responder a questionamentos sobre a verdadeira identidade de Jesus (algumas correntes já negavam sua plena humanidade ou divindade, um debate que se intensificaria no gnosticismo do século II). O templo de Jerusalém já havia sido destruído (70 d.C.), o que talvez explique por que João dá menos ênfase a instituições judaicas específicas do que os sinóticos.
+João situa grande parte da narrativa em ambientes judaicos e dá destaque a festas, práticas e lugares como o templo. Seu retrato teológico de conflitos entre Jesus e determinados interlocutores deve ser lido em seu contexto literário e histórico, sem generalizar acusações a todos os judeus. Hipóteses sobre a destruição do templo, uma “comunidade joanina” específica ou controvérsias posteriores não são explicações comprovadas pelo próprio evangelho.
 
 ## ⏳ Linha do Tempo e Cronologia
-João estrutura seu evangelho em torno de sete "sinais" (milagres) e vários discursos longos de Jesus, cobrindo aproximadamente três Páscoas (indicando um ministério de cerca de três anos, mais longo do que os outros evangelhos sugerem isoladamente), culminando na semana final em Jerusalém.
+O evangelho menciona diferentes festas, incluindo várias Páscoas, e narra viagens entre a Galileia e Jerusalém. Esses elementos ajudam a perceber a estrutura temporal do relato, mas não estabelecem uma duração exata do ministério. A seção final concentra-se na última ceia, prisão, julgamento, morte e aparições de Jesus ressuscitado.
 
-## ✍️ Autor e Propósito
-João declara seu propósito explicitamente: "estas coisas foram escritas para que creiais que Jesus é o Cristo, o Filho de Deus, e para que, crendo, tenhais vida em seu nome" (20:31), apresentando Jesus como a Palavra eterna de Deus feita carne.
+## ✍️ Autoria e Propósito
+João 20:30–31 declara que os sinais registrados pretendem levar os leitores à fé e à vida em nome de Jesus. O evangelho apresenta Jesus por meio de discursos, encontros e ações simbólicas. A identificação cristã de Jesus como Palavra divina encarnada é expressa no prólogo (1:1–18) e constitui uma leitura teológica central da obra.
 
 ## 📖 Resumo do Conteúdo
-O evangelho abre com um prólogo teológico profundo, identificando Jesus como "o Verbo" (a Palavra) que estava com Deus e era Deus desde o princípio, e que "se fez carne" (cap. 1). Seguem-se sete sinais que revelam a identidade de Jesus — transformar água em vinho, curar um oficial à distância, curar um paralítico, multiplicar pães, andar sobre as águas, curar um cego de nascença e ressuscitar Lázaro — cada um acompanhado de diálogos e discursos que exploram seu significado (caps. 2-11). João dedica cinco capítulos inteiros ao último discurso de Jesus a seus discípulos na noite antes de sua morte, incluindo a promessa do Espírito Santo (caps. 13-17). O livro termina com a prisão, julgamento, crucificação e ressurreição de Jesus, incluindo aparições pós-ressurreição, como a restauração de Pedro (caps. 18-21).
+O prólogo apresenta a Palavra que estava com Deus e se fez carne (1:1–18). João Batista testemunha sobre Jesus, e os primeiros discípulos começam a segui-lo (capítulo 1). Narrativas de sinais, como a transformação da água em vinho, a cura de pessoas e a ressurreição de Lázaro, alternam-se com diálogos e discursos sobre vida, luz, pão, liberdade e julgamento (caps. 2–12). Na última noite com os discípulos, Jesus lava-lhes os pés e ensina sobre serviço, amor e a vinda do Espírito (caps. 13–17). Os capítulos 18–20 narram prisão, julgamento, crucificação e ressurreição. O capítulo 21 apresenta uma aparição na Galileia e conclui com o testemunho sobre o discípulo amado.
 
 ## 💡 Curiosidades e Conexões
-- João contém sete declarações "Eu sou" de Jesus (pão da vida, luz do mundo, porta, bom pastor, ressurreição e vida, caminho/verdade/vida, videira verdadeira), ecoando o nome de Deus revelado a Moisés em Êxodo 3:14.
-- Cerca de 90% do material de João é exclusivo, sem paralelo direto nos três evangelhos sinóticos.
-- O Papiro P52, fragmento de João datado por paleógrafos entre 100-150 d.C., é um dos manuscritos do Novo Testamento mais antigos já encontrados, apoiando uma data de composição do evangelho ainda no século I.
-- João omite parábolas (comuns nos sinóticos) e a instituição da Ceia do Senhor na Última Ceia, focando em vez disso no lava-pés como exemplo de serviço (cap. 13).
+- As declarações “Eu sou” formam um recurso recorrente no evangelho. Algumas incluem imagens — pão da vida, luz do mundo, bom pastor, videira — e outras usam a expressão de modo mais direto. A relação com Êxodo 3:14 é uma leitura teológica importante, não uma equivalência que todos os intérpretes descrevem do mesmo modo.
+- Leitores frequentemente agrupam certos episódios como “sinais”; a quantidade exata depende de como se classifica cada passagem, então o número sete deve ser apresentado como uma organização interpretativa comum.
+- João narra o lava-pés (13:1–20) como gesto de serviço. Sua narrativa da última ceia não inclui a cena da instituição do pão e do cálice registrada nos Sinóticos e em 1 Coríntios.
+- O evangelho tem vocabulário, cenas e discursos próprios, além de episódios compartilhados com os outros evangelhos. Percentuais como “90% exclusivo” dependem do método de comparação e não são uma medida estável.
 
 ## 🎯 Por Que Isso Importa Hoje
-João apresenta com clareza única a divindade plena de Jesus e convida cada leitor a uma decisão pessoal de fé — crer nele não apenas como bom mestre, mas como o próprio Deus encarnado.
+João convida o leitor a refletir sobre quem é Jesus por meio dos sinais, discursos e encontros narrados. Para a fé cristã, o prólogo e a confissão de Tomé (20:28) expressam sua identidade divina; o resumo deve reconhecer que isso é uma afirmação teológica cristã, enquanto descreve o texto com precisão.

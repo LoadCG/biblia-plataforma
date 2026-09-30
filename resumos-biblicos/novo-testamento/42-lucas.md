@@ -1,30 +1,30 @@
 # Lucas — Livro 42 de 66
 
 ## 📋 Ficha Rápida
-- **Autor:** tradicionalmente Lucas, médico e companheiro de viagem do apóstolo Paulo, gentio (não judeu) convertido — o único autor bíblico claramente não-judeu.
-- **Data provável de escrita:** cerca de 60-62 d.C. (posição conservadora, ligada à composição de Atos, sua continuação); críticos propõem datas entre 70-90 d.C.
-- **Período histórico narrado:** desde o nascimento de João Batista e Jesus até a ascensão de Jesus, cerca de 6 a.C. a 30 d.C.
-- **Gênero literário:** evangelho — narrativa histórica cuidadosamente pesquisada (cf. Lc 1:1-4).
-- **Local/contexto de origem:** endereçado a "Teófilo", possivelmente um oficial romano ou patrono, sugerindo público gentio educado.
-- **Conexão com o livro anterior:** cobre o mesmo período de Mateus e Marcos, com ênfase própria; é o primeiro volume de uma obra em duas partes continuada em Atos.
+- **Autoria:** o evangelho não nomeia seu autor. A tradição cristã o associa a Lucas, companheiro de Paulo; essa identificação não é confirmada por uma assinatura no texto e é discutida na pesquisa.
+- **Data de composição:** muitas introduções acadêmicas propõem aproximadamente 85–95 d.C., embora a data exata e a possibilidade de outras propostas permaneçam em debate. Datas anteriores também são defendidas.
+- **Período histórico narrado:** começa com os anúncios do nascimento de João Batista e de Jesus e termina com a ascensão, na narrativa do livro.
+- **Gênero literário:** evangelho — narrativa antiga sobre Jesus, com prólogo, episódios, discursos e cenas de ensinamento.
+- **Contexto:** dedicado a Teófilo (1:3); sua identidade, o local de composição e o público original não são conhecidos com certeza.
+- **Conexão com o livro anterior:** vem depois de Marcos na ordem cristã e integra uma obra em dois volumes com Atos.
 
 ## 🌍 Pano de Fundo Histórico
-Lucas escreve com preocupação histórica explícita, situando os eventos dentro do contexto do Império Romano — menciona o censo de César Augusto (2:1) e o governo de Quirino na Síria, além de datar o início do ministério de João Batista pelo reinado de Tibério César (3:1). Essa ancoragem histórica detalhada é incomum entre os evangelhos e reflete o cuidado investigativo declarado pelo autor.
+O prólogo declara o propósito de apresentar um relato ordenado com base em tradições transmitidas (1:1–4). Isso é evidência da intenção do narrador, mas não permite equiparar diretamente seus métodos aos de um historiador moderno. O evangelho menciona autoridades e marcos políticos — como Augusto, Quirino e Tibério —; algumas referências cronológicas são discutidas, especialmente a relação entre o censo de Quirino e o nascimento de Jesus. O cenário romano convive com costumes e tradições judaicas que estruturam a narrativa.
 
 ## ⏳ Linha do Tempo e Cronologia
-Lucas começa antes do nascimento de Jesus, com o anúncio do nascimento de João Batista, depois o de Jesus, seguido do nascimento em Belém durante o censo de Augusto, a infância, o batismo por João, o ministério público de cerca de três anos, e termina com a crucificação, ressurreição e ascensão de Jesus.
+Lucas inicia com os anúncios e nascimentos de João Batista e Jesus, acompanha a infância de Jesus, seu ministério na Galileia e a viagem a Jerusalém, e termina com morte, ressurreição e ascensão. O evangelho não estabelece com precisão moderna a duração do ministério público nem resolve todas as questões sobre as datas do censo e do nascimento.
 
-## ✍️ Autor e Propósito
-Lucas escreve "para que tenhas plena certeza das coisas que te foram ensinadas" (1:4), oferecendo um relato ordenado e investigado cuidadosamente, com ênfase especial na compaixão de Jesus por marginalizados — pobres, mulheres, samaritanos, pecadores e gentios.
+## ✍️ Autoria e Propósito
+Lucas 1:1–4 apresenta o projeto de narrar os acontecimentos transmitidos por testemunhas e oferecer segurança a Teófilo sobre o que aprendeu. O livro dá destaque a temas como o Espírito, oração, reversão de expectativas, riqueza e pobreza, mulheres, estrangeiros e pessoas socialmente vulneráveis. Essas ênfases devem ser observadas no próprio texto, sem atribuí-las a uma suposta origem étnica ou profissão do autor.
 
 ## 📖 Resumo do Conteúdo
-O evangelho abre com os relatos paralelos do nascimento de João Batista e de Jesus, incluindo os cânticos de Maria (Magnificat) e Zacarias (caps. 1-2). Jesus é batizado, tentado no deserto, e inicia seu ministério na Galileia, lendo Isaías 61 na sinagoga de Nazaré como declaração de sua missão (caps. 3-4). Segue-se um ministério amplo de ensino e cura, com destaque para parábolas exclusivas de Lucas, como o Filho Pródigo, o Bom Samaritano e o Rico e Lázaro, todas centradas em misericórdia e reversão de expectativas sociais (caps. 5-19). A parte final narra a última semana em Jerusalém — confrontos com autoridades, a Última Ceia, a prisão, o julgamento perante Pilatos e Herodes, a crucificação e a ressurreição, terminando com a promessa do Espírito Santo e a ascensão de Jesus (caps. 20-24).
+Os capítulos 1–2 contam os anúncios e nascimentos de João Batista e Jesus, incluindo cânticos de Maria e Zacarias. Após batismo e tentação, Jesus inicia seu ministério e lê Isaías na sinagoga de Nazaré (caps. 3–4). Episódios de ensino e cura na Galileia incluem parábolas como o bom samaritano e o filho que retorna à casa do pai (caps. 5–9). Uma longa viagem a Jerusalém reúne ensinamentos sobre oração, bens, hospitalidade e discipulado (caps. 9–19). Os capítulos 20–21 narram debates e discursos em Jerusalém; os capítulos 22–24 acompanham a ceia, a prisão, o julgamento, a crucificação, a ressurreição e a ascensão.
 
 ## 💡 Curiosidades e Conexões
-- Lucas é o evangelho mais longo e, junto com Atos (do mesmo autor), representa a maior contribuição individual ao Novo Testamento em volume de texto.
-- É o único evangelho a registrar diversas parábolas centrais da tradição cristã, como o Bom Samaritano e o Filho Pródigo.
-- Lucas dá atenção incomum às mulheres (Isabel, Maria, a viúva de Naim, Marta e Maria) e aos pobres e marginalizados, refletindo talvez sua origem gentia e formação médica sensível ao sofrimento humano.
-- Historiadores clássicos elogiam a precisão de Lucas em detalhes políticos e geográficos verificáveis, como títulos exatos de governantes locais, o que reforça a confiabilidade histórica de seu método.
+- Lucas e Atos formam dois volumes dedicados a Teófilo, conectados por uma recapitulação da ascensão no início de Atos.
+- Parábolas como a do bom samaritano (10:25–37) e a do filho que retorna (15:11–32) são próprias da forma narrativa de Lucas entre os evangelhos canônicos.
+- O evangelho alterna cenas de homens e mulheres e inclui mulheres como personagens e testemunhas importantes. Esse padrão pode ser observado no texto sem precisar explicar a ênfase por uma biografia hipotética do autor.
+- A cronologia do censo de Quirino em Lucas 2:1–2 é debatida por causa de sua relação com outras referências históricas ao governo de Quirino e ao reinado de Herodes. O resumo deve tornar essa questão visível, em vez de apresentá-la como resolvida.
 
 ## 🎯 Por Que Isso Importa Hoje
-Lucas retrata Jesus como o Salvador que busca ativamente os excluídos e marginalizados, lembrando que o evangelho é, desde o início, uma boa notícia para todos, sem exceção de classe social ou origem.
+Lucas apresenta Jesus em encontros com pessoas de diferentes posições e histórias e convida à reflexão sobre compaixão, bens, hospitalidade e justiça. Suas cenas de sofrimento e esperança não devem ser usadas para prometer que a fé elimina dificuldades ou substitui apoio concreto.

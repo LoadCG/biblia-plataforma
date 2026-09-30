@@ -23,6 +23,43 @@ caixa por inferência: a conclusão exige a evidência indicada.
 | 22.x | Validação nativa e assistiva | P0 | build instalável | validação |
 | 23.x | Preview, release e observabilidade | P1 | quota/credenciais | distribuição |
 
+## Ordem de execução revisada
+
+As etapas são trilhas paralelas com gates explícitos. O trabalho web local pode
+começar sem EAS ou quota Vercel; validação em binário só começa quando houver
+build instalável; publicação não é pré-requisito para corrigir UX.
+
+1. **19 — validação web manual**: preparar dados/matriz, percorrer superfícies,
+   registrar defeitos e corrigir bloqueadores.
+2. **23.2 — CI remoto**: confirmar um workflow verde e registrar execução/commit.
+   Isso pode avançar em paralelo à etapa 19; gerar um run deliberadamente falho
+   não é necessário para provar o artefato diagnóstico.
+3. **21 — sistema de estados**: inventariar primeiro, definir API mínima e
+   migrar telas por grupos, com validação a cada grupo.
+4. **20 — snapshots web**: iniciar após a auditoria manual e correção P0/P1,
+   usando as telas/estados que já têm dados reproduzíveis.
+5. **22 — nativo e assistivo**: obter build instalável; executar Maestro,
+   VoiceOver/TalkBack e performance por plataforma, reportando separadamente
+   qualquer plataforma sem ambiente disponível.
+6. **23.1/23.3 — preview e distribuição**: validar preview quando a quota
+   existir; builds assinados só depois de conta/credenciais estarem disponíveis.
+7. **23.4 — observabilidade**: fechar versão/commit nos relatórios e rollback;
+   sem telemetria remota antes de decisão de produto.
+
+### Definição de pronto por etapa
+
+- **19:** todas as superfícies prioritárias percorridas nas larguras/temas
+  planejados; defeitos reproduzíveis com rota, viewport, passos e severidade;
+  P0/P1 corrigidos e revalidados.
+- **20:** snapshots estáveis em CI Linux, dados/locale/tamanho de tela fixos,
+  política de atualização aprovada e falha de comparação legível.
+- **21:** cada estado crítico tem feedback acessível; erro recuperável oferece
+  retry ou instrução; migração não altera conteúdo/copy sem necessidade.
+- **22:** cada jornada e tecnologia assistiva possui plataforma, build, passos,
+  resultado e defeitos registrados; gate parcial claramente declarado.
+- **23:** CI e preview comprovados por URL/commit; distribuição identifica
+  artefato, assinatura e resultado de smoke test; rollback reproduzível.
+
 ---
 
 ## Etapa 19 — Auditoria visual responsiva
@@ -37,6 +74,14 @@ caixa por inferência: a conclusão exige a evidência indicada.
 - [ ] Fixar dados determinísticos para Salvo, Planos e Estatísticas.
 
 **Evidência:** planilha ou Markdown com viewport, tema, plataforma e data.
+**Subetapas:** 19.1a registrar ambiente; 19.1b escolher viewports; 19.1c
+estabelecer dados e estado inicial; 19.1d criar registro de execução. Não
+reutilizar sessão com onboarding/progresso entre cenários sem anotar isso.
+
+**Registro inicial:** `docs/matriz-auditoria-responsiva.md`. Os viewports e
+casos foram especificados; inspeção visual permanece pendente até haver
+navegador de automação disponível. A matriz não deve ser marcada como executada
+com base apenas em contratos estruturais.
 
 ### 19.2 Início e navegação `⬜`
 
@@ -97,6 +142,13 @@ alcançáveis por toque/teclado.
 - [ ] Corrigir P0/P1 antes de iniciar snapshots.
 - [ ] Atualizar `FUNCIONALIDADES.md` com evidência, não apenas intenção.
 
+### 19.9 Relatório de saída `⬜`
+
+- [ ] Publicar matriz com casos executados e não executados.
+- [ ] Ligar cada defeito a rota, ambiente, reprodução, severidade e correção.
+- [ ] Reexecutar casos afetados após correção e marcar resultado.
+- [ ] Declarar limitações de acessibilidade que dependem de leitor de tela.
+
 ---
 
 ## Etapa 20 — Regressão visual automatizada
@@ -133,6 +185,13 @@ estáticas e interativas críticas; adicionar nativo somente após 22.x.
 - [ ] Ativar bloqueio após calibrar falsos positivos.
 - [ ] Documentar comando de atualização dos baselines.
 
+### 20.5 Calibrar sem criar ruído `⬜`
+
+- [ ] Rodar o job em pull requests sem bloquear durante uma rodada piloto.
+- [ ] Classificar divergências entre conteúdo, fonte/renderização e regressão.
+- [ ] Ajustar apenas flakiness comprovada; não elevar tolerância para ocultar defeito.
+- [ ] Ativar bloqueio após revisão dos falsos positivos e baselines.
+
 ---
 
 ## Etapa 21 — Sistema unificado de estados
@@ -144,10 +203,57 @@ estáticas e interativas críticas; adicionar nativo somente após 22.x.
 - [ ] Registrar copy atual, severidade, duração e ação de recuperação.
 - [ ] Identificar duplicação antes de criar novos componentes.
 
+**Inventário inicial:** `docs/inventario-estados-ui.md` (leitura estática,
+2026-09-28). Descobertas: Estatísticas e Salvo não expõem falha de carga;
+Planos pode exibir temporariamente progresso zero; Busca trata erro como estado
+vazio e ainda não oferece retry explícito.
+
+**Primeiro recorte implementado:** componentes compartilhados de carregamento
+e erro aplicados a Busca, Salvo, Planos e Estatísticas; revisão visual desses
+estados permanece pendente. `npm run validate` passa TypeScript, Jest, contratos
+de acessibilidade, Maestro estrutural e UI; Expo Doctor reporta 20/21 por 14
+dependências SDK 57 abaixo das versões atualmente esperadas. Registrar/planejar
+alinhamento das dependências como trabalho separado; não foi feito upgrade
+automático nesta etapa.
+
+**Segundo recorte:** seletor de versículos, CardVersiculoTema e PopoverVersiculo
+também usam estados comuns com retry e ignoram respostas antigas. O carregamento
+do CardVersiculoDia usa `EstadoCarregando`; seu erro em gradiente foi preservado.
+O retry da Busca agora repete os mesmos filtros sem incrementar a paginação.
+Ver `docs/inventario-estados-ui.md`. Testes (9 suítes/32 casos), TypeScript,
+contratos a11y, Maestro e UI passam; Expo Doctor permanece 20/21 pela mesma
+divergência de 14 versões de dependências.
+
+**Terceiro recorte:** detalhe de Plano distingue progresso carregando/erro/dados,
+oferece retry e apresenta feedback em falhas de iniciar sessão ou atualizar
+conclusão. Leitor passa a limpar e agrupar os dados pessoais por capítulo,
+descartar respostas tardias e notificar falhas do repositório. A validação visual
+segue pendente.
+
+**Quarto recorte:** no leitor, erros ao persistir grifo, progresso, nota ou avanço
+de sessão agora são comunicados. Falhas ao salvar/remover nota mantêm o modal
+aberto para permitir nova tentativa; nenhum estado local é atualizado antes da
+persistência correspondente.
+
+**Quinto recorte:** Salvo e `CardAtividade` comunicam falhas de escrita em
+coleções, associações, ações sobre itens e notas. Em exclusão em lote, que pode
+falhar parcialmente por envolver vários repositórios, a tela recarrega os dados
+e pede conferência sem oferecer um desfazer que talvez não restaure tudo.
+TypeScript, contratos de acessibilidade/UI e `git diff --check` passaram.
+
+**Sexto recorte:** Home, Configurações, perfil, onboarding, busca, seleção da
+Bíblia, medalhas e Versículo do Dia tratam falhas assíncronas restantes. O
+lembrete só é marcado como ativo após permissão, agendamento e persistência;
+preferências de leitura aguardam confirmação de gravação. Modais de perfil e
+nota mostram falha e permanecem disponíveis para nova tentativa. A inspeção
+visual continua pendente. TypeScript, contratos de acessibilidade/UI, cobertura
+editorial e `git diff --check` passaram; a suíte de testes não foi executada
+neste recorte.
+
 ### 21.2 API visual compartilhada `⬜`
 
-- [ ] Criar `EstadoCarregando` com label e variante visual.
-- [ ] Criar `EstadoErro` com mensagem amigável e retry opcional.
+- [x] Criar `EstadoCarregando` com label e variante visual.
+- [x] Criar `EstadoErro` com mensagem amigável e retry opcional.
 - [ ] Evoluir `EstadoVazio` com ação opcional sem quebrar consumidores atuais.
 - [ ] Definir tokens de severidade, espaçamento, borda e contraste.
 
@@ -165,6 +271,13 @@ estáticas e interativas críticas; adicionar nativo somente após 22.x.
 - [ ] Cada erro recuperável deve ter retry ou instrução objetiva.
 - [ ] Cada ação destrutiva deve ter confirmação e resultado observável.
 - [ ] Adicionar contratos e cenários Maestro para os estados críticos.
+
+### 21.5 Plano de migração/compatibilidade `⬜`
+
+- [ ] Definir API comum sem acoplar a plataforma a um componente nativo/web.
+- [ ] Migrar um grupo de telas por vez e observar as mensagens atuais.
+- [ ] Conferir acessibilidade, dark mode e layout estreito por estado.
+- [ ] Remover padrões duplicados apenas quando não houver consumidor restante.
 
 ---
 
@@ -199,6 +312,13 @@ estáticas e interativas críticas; adicionar nativo somente após 22.x.
 - [ ] Medir abertura do Leitor e troca de capítulo.
 - [ ] Medir busca local e atualização dos filtros.
 - [ ] Verificar jank durante rolagem e seleção múltipla.
+
+### 22.5 Relatório de cobertura do ambiente `⬜`
+
+- [ ] Registrar sistemas operacionais e versões efetivamente testadas.
+- [ ] Separar falha do produto de indisponibilidade de build/dispositivo.
+- [ ] Listar jornadas executadas e evidência de cada uma.
+- [ ] Manter iOS pendente sem marcar a etapa como completa se não houver host.
 
 ---
 
@@ -236,6 +356,13 @@ estáticas e interativas críticas; adicionar nativo somente após 22.x.
 - [ ] Documentar procedimento de rollback/redeploy.
 - [ ] Não adicionar telemetria remota sem decisão de produto e privacidade.
 
+### 23.5 Fechamento e rollback `⬜`
+
+- [ ] Associar preview/build ao commit e perfil de distribuição.
+- [ ] Registrar instrução de rollback/redeploy e responsável pela execução.
+- [ ] Separar bloqueio externo (quota/credencial) de defeito de produto.
+- [ ] Não considerar “deploy criado” como aceite: abrir e validar as rotas críticas.
+
 ---
 
 ## Definition of Done do plano
@@ -247,4 +374,3 @@ estáticas e interativas críticas; adicionar nativo somente após 22.x.
 - [ ] Preview Vercel validado após liberação de quota.
 - [ ] Build EAS preview assinado validado.
 - [ ] Documentação, changelog, commit e evidências atualizados na mesma entrega.
-

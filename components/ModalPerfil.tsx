@@ -2,12 +2,13 @@ import * as ImagePicker from "expo-image-picker";
 import { useState } from "react";
 import { Alert, Image, Modal, Pressable, Text, TextInput, View } from "react-native";
 import type { Perfil } from "../core/repositories/PerfilRepository";
+import { mostrarToast } from "../core/util/toast";
 
 type Props = {
   visivel: boolean;
   perfilAtual: Perfil;
   onFechar: () => void;
-  onSalvar: (perfil: Perfil) => void;
+  onSalvar: (perfil: Perfil) => void | Promise<void>;
 };
 
 // Editor de perfil local (nome + foto), sem conta — ver
@@ -16,33 +17,46 @@ type Props = {
 export function ModalPerfil({ visivel, perfilAtual, onFechar, onSalvar }: Props) {
   const [nome, setNome] = useState(perfilAtual.nome);
   const [avatarUri, setAvatarUri] = useState(perfilAtual.avatarUri);
+  const [salvando, setSalvando] = useState(false);
 
   async function escolherFoto() {
-    const permissao = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (!permissao.granted) {
-      Alert.alert("Permissão necessária", "Precisamos de acesso às suas fotos pra trocar o avatar.");
-      return;
+    try {
+      const permissao = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (!permissao.granted) {
+        Alert.alert("Permissão necessária", "Precisamos de acesso às suas fotos pra trocar o avatar.");
+        return;
+      }
+      const resultado = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ["images"],
+        allowsEditing: true,
+        aspect: [1, 1],
+        quality: 0.5,
+        base64: true,
+      });
+      if (resultado.canceled || !resultado.assets[0]) return;
+      const asset = resultado.assets[0];
+      setAvatarUri(asset.base64 ? `data:image/jpeg;base64,${asset.base64}` : asset.uri);
+    } catch {
+      mostrarToast("Não foi possível escolher uma foto");
     }
-    const resultado = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ["images"],
-      allowsEditing: true,
-      aspect: [1, 1],
-      quality: 0.5,
-      base64: true,
-    });
-    if (resultado.canceled || !resultado.assets[0]) return;
-    const asset = resultado.assets[0];
-    setAvatarUri(asset.base64 ? `data:image/jpeg;base64,${asset.base64}` : asset.uri);
   }
 
-  function salvar() {
+  async function salvar() {
+    if (salvando) return;
     const nomeFinal = nome.trim() || "Visitante";
-    onSalvar({ nome: nomeFinal, avatarUri });
+    setSalvando(true);
+    try {
+      await onSalvar({ nome: nomeFinal, avatarUri });
+    } catch {
+      mostrarToast("Não foi possível salvar seu perfil");
+    } finally {
+      setSalvando(false);
+    }
   }
 
   return (
     <Modal visible={visivel} transparent animationType="fade" onRequestClose={onFechar}>
-      <Pressable className="flex-1 items-center justify-center bg-black/40 px-6" onPress={onFechar}>
+      <Pressable className="flex-1 items-center justify-center bg-black/40 px-6" onPress={() => { if (!salvando) onFechar(); }}>
         <Pressable onPress={(e) => e.stopPropagation()} className="w-full max-w-sm rounded-2xl bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark p-6">
           <Text className="text-lg font-bold text-cor-texto dark:text-cor-texto-dark mb-4">Editar perfil</Text>
 
@@ -72,11 +86,11 @@ export function ModalPerfil({ visivel, perfilAtual, onFechar, onSalvar }: Props)
           />
 
           <View className="flex-row justify-end gap-2">
-            <Pressable onPress={onFechar} accessibilityRole="button" className="px-4 py-2 rounded-full border border-cor-borda dark:border-cor-borda-dark active:opacity-70">
+            <Pressable onPress={onFechar} disabled={salvando} accessibilityRole="button" className="px-4 py-2 rounded-full border border-cor-borda dark:border-cor-borda-dark active:opacity-70">
               <Text className="text-cor-texto dark:text-cor-texto-dark">Cancelar</Text>
             </Pressable>
-            <Pressable onPress={salvar} accessibilityRole="button" className="px-4 py-2 rounded-full bg-cor-destaque dark:bg-cor-destaque-dark active:opacity-70">
-              <Text className="text-white font-semibold">Salvar</Text>
+            <Pressable onPress={salvar} disabled={salvando} accessibilityRole="button" className={`px-4 py-2 rounded-full bg-cor-destaque dark:bg-cor-destaque-dark active:opacity-70 ${salvando ? "opacity-60" : ""}`}>
+              <Text className="text-white font-semibold">{salvando ? "Salvando..." : "Salvar"}</Text>
             </Pressable>
           </View>
         </Pressable>

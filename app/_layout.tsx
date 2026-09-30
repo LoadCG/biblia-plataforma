@@ -9,6 +9,7 @@ import { corrigirAlturaViewportMobile } from "../core/corrigirAlturaViewportMobi
 import { registrarServiceWorker } from "../core/registrarServiceWorker";
 import { restaurarTema } from "../core/theme";
 import { onboardingConcluido } from "../core/leitura/onboarding";
+import { mostrarToast } from "../core/util/toast";
 
 // Capturado antes de o Expo Router restaurar o estado de navegação. Em uma
 // exportação estática, ler o pathname só dentro do effect pode observar `/`
@@ -21,7 +22,7 @@ export default function RootLayout() {
   const segments = useSegments();
   const rotaEstrutural = segments.join("/");
   useEffect(() => {
-    restaurarTema();
+    restaurarTema().catch(() => mostrarToast("Não foi possível restaurar o tema salvo"));
     registrarServiceWorker();
     corrigirAlturaViewportMobile();
   }, []);
@@ -31,7 +32,9 @@ export default function RootLayout() {
       ? CAMINHO_INICIAL_WEB === "/"
       : rotaEstrutural === "(tabs)";
     if (!estaNaRaiz) return;
-    onboardingConcluido().then((concluido) => { if (!concluido) router.replace("/onboarding"); });
+    onboardingConcluido()
+      .then((concluido) => { if (!concluido) router.replace("/onboarding"); })
+      .catch(() => mostrarToast("Não foi possível verificar a apresentação inicial"));
   }, [rotaEstrutural]);
 
   return (

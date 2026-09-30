@@ -19,8 +19,8 @@ export async function carregarIndiceFonte(): Promise<number> {
   return indice >= 0 && indice < TAMANHOS_FONTE.length ? indice : INDICE_PADRAO;
 }
 
-export function salvarIndiceFonte(indice: number): void {
-  AsyncStorage.setItem(CHAVE_TAMANHO, String(indice)).catch(() => {});
+export function salvarIndiceFonte(indice: number): Promise<void> {
+  return AsyncStorage.setItem(CHAVE_TAMANHO, String(indice));
 }
 
 // Fonte serifada usa as fontes de sistema (Georgia no iOS/web, "serif"
@@ -40,6 +40,6 @@ export async function carregarFonteSerifada(): Promise<boolean> {
   return (await AsyncStorage.getItem(CHAVE_SERIFADA)) === "1";
 }
 
-export function salvarFonteSerifada(ativa: boolean): void {
-  AsyncStorage.setItem(CHAVE_SERIFADA, ativa ? "1" : "0").catch(() => {});
+export function salvarFonteSerifada(ativa: boolean): Promise<void> {
+  return AsyncStorage.setItem(CHAVE_SERIFADA, ativa ? "1" : "0");
 }

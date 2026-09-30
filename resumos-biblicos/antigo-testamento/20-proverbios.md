@@ -1,30 +1,30 @@
 # Provérbios — Livro 20 de 66
 
 ## 📋 Ficha Rápida
-- **Autor:** principalmente Salomão (caps. 1-29, com atribuição explícita em 1:1; 10:1; 25:1), com contribuições de "sábios" anônimos (22:17; 24:23), Agur (cap. 30) e o rei Lemuel (cap. 31).
-- **Data provável de escrita:** núcleo salomônico cerca de 970-930 a.C.; compilação final possivelmente sob o rei Ezequias (25:1 menciona que seus homens copiaram parte do material), por volta de 700 a.C.
-- **Período histórico narrado:** não é narrativa histórica; reflete a corte de Salomão e a tradição sapiencial de Israel.
-- **Gênero literário:** literatura de sabedoria — provérbios curtos e instruções.
-- **Local/contexto de origem:** Jerusalém, corte real, período da monarquia unida e depois dividida.
-- **Conexão com o livro anterior:** segue Salmos na sequência de livros poéticos e sapienciais.
+- **Autoria:** o livro reúne coleções diferentes. Os títulos associam seções a Salomão (1:1; 10:1; 25:1), aos sábios (22:17; 24:23), a Agur (capítulo 30) e ao rei Lemuel (31:1). Essas atribuições fazem parte da apresentação literária do livro e não resolvem, por si só, a história de composição de cada coleção.
+- **Data de composição:** o material pode ter sido reunido em etapas ao longo de um período amplo. Provérbios 25:1 atribui aos homens de Ezequias a cópia de uma coleção de ditos de Salomão; o versículo não data a composição de todo o livro.
+- **Período histórico narrado:** não é uma narrativa histórica contínua. Reflete tradições de sabedoria e instrução de Israel.
+- **Gênero literário:** literatura sapiencial — provérbios, instruções, poemas e discursos.
+- **Contexto:** as coleções se relacionam com a formação ética e religiosa, podendo dialogar com práticas de ensino familiar e cortesão do antigo Oriente Próximo. Um local único de origem não pode ser estabelecido para todo o livro.
+- **Conexão com o livro anterior:** vem depois de Salmos na ordem cristã e também integra a literatura poética e sapiencial.
 
 ## 🌍 Pano de Fundo Histórico
-Salomão era famoso internacionalmente por sua sabedoria (1 Reis 4:29-34), num contexto em que reis do antigo Oriente Próximo frequentemente patrocinavam coleções de provérbios e instruções — há paralelos egípcios, como a "Instrução de Amenemope", e mesopotâmicos com temas semelhantes, embora Provérbios centre a sabedoria explicitamente no "temor do Senhor" (1:7), diferente das fontes pagãs.
+Provérbios reúne formas de ensino conhecidas no antigo Oriente Próximo. Há paralelos entre Provérbios 22:17–24:22 e a Instrução de Amenemope, texto egípcio; a relação entre os textos e as possíveis tradições compartilhadas são debatidas. O livro apresenta sua própria moldura teológica: “o temor do Senhor” é associado ao conhecimento e à sabedoria (1:7; 9:10). Essa ênfase deve ser descrita sem caricaturar outras tradições religiosas.
 
 ## ⏳ Linha do Tempo e Cronologia
-O material foi originalmente composto no reinado de Salomão (~970-930 a.C.), com uma seção adicional copiada e organizada séculos depois, durante o reinado de Ezequias (cerca de 715-686 a.C.), conforme indicado no próprio texto.
+O livro preserva coleções que podem ter histórias e datas distintas. Provérbios 25:1 diz que os homens do rei Ezequias copiaram ditos atribuídos a Salomão, indicando uma etapa de transmissão e organização. Não é possível concluir a partir desse versículo que toda a obra tenha sido composta no reinado de Salomão ou que sua forma final tenha sido concluída naquele período.
 
-## ✍️ Autor e Propósito
-Salomão e outros sábios reúnem instruções práticas para formar o caráter, especialmente de jovens, unindo piedade e conduta prática nas áreas de trabalho, dinheiro, relacionamentos, fala e integridade.
+## ✍️ Autoria e Propósito
+As coleções apresentam instruções para cultivar discernimento, justiça, domínio próprio e responsabilidade. A figura de um pai ou mestre que instrui um jovem funciona como voz pedagógica em vários trechos. O livro aborda trabalho, recursos, fala, relações, poder e cuidado com pessoas vulneráveis.
 
 ## 📖 Resumo do Conteúdo
-Os capítulos 1-9 formam uma introdução mais longa, com apelos de um pai (ou figura sábia) a um filho para buscar a sabedoria, personificada como uma mulher que convida à vida, em contraste com a insensatez e a imoralidade, também personificadas. Os capítulos 10-29 reúnem centenas de provérbios curtos e independentes, cobrindo temas como trabalho e preguiça, riqueza e pobreza, domínio próprio, amizade, disciplina dos filhos, justiça e uso da língua. O capítulo 30 contém os ditos de Agur, e o capítulo 31 traz a instrução do rei Lemuel e o famoso poema da "mulher virtuosa" (ou "mulher excelente").
+Os capítulos 1–9 formam uma introdução em que a sabedoria é personificada como uma mulher que convida à vida, em contraste com a insensatez. Os capítulos 10–22:16 contêm provérbios atribuídos a Salomão; 22:17–24:22 reúne ditos dos sábios, seguidos por outra coleção atribuída a esses sábios (24:23–34). Os capítulos 25–29 são apresentados como provérbios de Salomão copiados pelos homens de Ezequias. O capítulo 30 traz as palavras de Agur, e o 31 reúne instruções atribuídas a Lemuel e um poema sobre uma mulher de força e competência. Entre os temas recorrentes estão justiça, trabalho, riqueza e pobreza, fala, amizade, disciplina e limites da sabedoria humana.
 
 ## 💡 Curiosidades e Conexões
-- A "Instrução de Amenemope", texto egípcio de sabedoria (cerca de 1300-1075 a.C.), tem paralelos textuais notáveis com Provérbios 22:17-24:22 — tema debatido por estudiosos quanto à direção da influência ou ao uso comum de uma tradição sapiencial regional.
-- Provérbios 31 é um acróstico no hebraico original: cada verso começa com uma letra sequencial do alfabeto.
-- A frase "o temor do Senhor é o princípio do conhecimento/da sabedoria" (1:7; 9:10) resume toda a filosofia do livro.
-- Muitos provérbios usam comparações com a natureza e o cotidiano (formigas, ferro afiando ferro) para ensinar princípios abstratos de forma memorável.
+- Provérbios 31:10–31 é um acróstico no hebraico: cada verso começa, na sequência, com uma letra do alfabeto hebraico.
+- “O temor do Senhor é o princípio do conhecimento” (1:7) e formulações próximas em 9:10 enquadram a reflexão do livro.
+- A comparação com a Instrução de Amenemope ajuda a estudar o intercâmbio e os repertórios compartilhados de sabedoria no antigo Oriente Próximo; paralelos não provam automaticamente dependência direta nem sua direção.
+- Imagens do cotidiano — como formigas, caminhos e palavras — tornam ideias éticas abstratas concretas e memoráveis.
 
 ## 🎯 Por Que Isso Importa Hoje
-Provérbios ensina que sabedoria prática para o dia a dia — dinheiro, trabalho, palavras, relacionamentos — nasce de uma relação correta e reverente com Deus, não apenas de inteligência ou experiência.
+Provérbios convida o leitor a avaliar como escolhas, palavras e relações afetam a vida em comunidade. Seus ditos são observações e instruções sapienciais, não fórmulas que garantem prosperidade ou resultados iguais em toda situação; devem ser lidos junto com outros gêneros bíblicos, inclusive lamentos e protestos contra a injustiça.

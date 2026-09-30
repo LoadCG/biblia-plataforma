@@ -1,6 +1,6 @@
 import { router } from "expo-router";
-import { useEffect, useState } from "react";
-import { ActivityIndicator, Platform, Pressable, Text, View } from "react-native";
+import { useEffect, useRef, useState } from "react";
+import { Animated, Easing, Platform, Pressable, Text, useWindowDimensions, View } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { buscarReferencia } from "../core/biblia/BibliaAPI";
@@ -13,8 +13,14 @@ import { useColorScheme } from "../core/theme";
 import { mensagemErroAmigavel } from "../core/util/erroAmigavel";
 import { linkVersiculo } from "../core/util/linkVersiculo";
 import { useOwnerId } from "../core/useOwnerId";
+import { mostrarToast } from "../core/util/toast";
 import { MenuAcoes, type AcaoMenu } from "./MenuAcoes";
 import { ModalNota } from "./ModalNota";
+import { EstadoCarregando } from "./EstadoCarregando";
+import { IlustracaoPeriodoDia } from "./IlustracaoPeriodoDia";
+import type { PeriodoDoDia } from "../core/util/periodoDoDia";
+import { useMovimentoReduzido } from "../core/util/useMovimentoReduzido";
+import { FAMILIA_SERIFADA } from "../core/leitura/preferenciaFonte";
 
 // Cores dos tokens de tema (tailwind.config.js) — precisam ser valores
 // reais aqui (não className) porque `LinearGradient` e o `color` do
@@ -31,7 +37,12 @@ const GRADIENTE_ERRO = {
 const COR_DESTAQUE = { claro: "#8a5a2b", escuro: "#e0a75e" };
 const COR_ICONE_PADRAO = { claro: "#2a241c", escuro: "white" };
 
-export function CardVersiculoDia() {
+type Props = {
+  periodoDoDia: PeriodoDoDia;
+};
+
+export function CardVersiculoDia({ periodoDoDia }: Props) {
+  const desktop = useWindowDimensions().width >= 1024;
   const [referencia] = useState(() => referenciaDoDia());
   const [dados, setDados] = useState<CapituloTexto | null>(null);
   const [carregando, setCarregando] = useState(true);
@@ -42,6 +53,8 @@ export function CardVersiculoDia() {
   const [notaAberta, setNotaAberta] = useState(false);
   const [notaTexto, setNotaTexto] = useState("");
   const [menuAberto, setMenuAberto] = useState(false);
+  const escalaAmem = useRef(new Animated.Value(1)).current;
+  const movimentoReduzido = useMovimentoReduzido();
   const { colorScheme } = useColorScheme();
   const escuro = colorScheme === "dark";
   const corDestaque = escuro ? COR_DESTAQUE.escuro : COR_DESTAQUE.claro;
@@ -51,7 +64,7 @@ export function CardVersiculoDia() {
     setCarregando(true);
     setErro(null);
     buscarReferencia(referencia)
-      .then(setDados)
+      .then((valor) => { setDados(valor); })
       .catch((e) => setErro(mensagemErroAmigavel(e)))
       .finally(() => setCarregando(false));
   }
@@ -60,13 +73,34 @@ export function CardVersiculoDia() {
 
   useEffect(() => {
     if (!ownerId || !ref) return;
-    versiculosSalvosRepository.estaSalvo(ownerId, ref).then(setSalvo);
-    notasRepository.buscar(ownerId, ref).then((nota) => setNotaTexto(nota?.texto ?? ""));
+    let ativo = true;
+    Promise.all([versiculosSalvosRepository.estaSalvo(ownerId, ref), notasRepository.buscar(ownerId, ref)])
+      .then(([estaSalvo, nota]) => {
+        if (!ativo) return;
+        setSalvo(estaSalvo);
+        setNotaTexto(nota?.texto ?? "");
+      })
+      .catch(() => {
+        if (ativo) mostrarToast("Não foi possível carregar suas ações neste versículo");
+      });
+    return () => { ativo = false; };
   }, [ownerId, ref?.livroSlug, ref?.capitulo, ref?.versiculo]);
 
   async function alternarAmem() {
     if (!ownerId || !ref) return;
-    setSalvo(await versiculosSalvosRepository.alternar(ownerId, ref));
+    try {
+      setSalvo(await versiculosSalvosRepository.alternar(ownerId, ref));
+      if (movimentoReduzido) return;
+      escalaAmem.stopAnimation();
+      escalaAmem.setValue(1);
+      const useNativeDriver = Platform.OS !== "web";
+      Animated.sequence([
+        Animated.timing(escalaAmem, { toValue: 1.14, duration: 100, easing: Easing.out(Easing.quad), useNativeDriver }),
+        Animated.timing(escalaAmem, { toValue: 1, duration: 130, easing: Easing.out(Easing.quad), useNativeDriver }),
+      ]).start();
+    } catch {
+      mostrarToast("Não foi possível salvar este versículo");
+    }
   }
 
   function textoParaCompartilhar(): string {
@@ -113,30 +147,48 @@ export function CardVersiculoDia() {
         colors={escuro ? GRADIENTE.escuro : GRADIENTE.claro}
         start={{ x: 0, y: 0 }}
         end={{ x: 0.3, y: 1 }}
-        className="w-full h-[450px]"
+        className="w-full min-h-[360px] lg:min-h-[440px]"
       >
 
         <View className="p-5 flex-1 justify-between">
           {/* Header do Card */}
-          <View>
-            <Text className="text-cor-texto/90 dark:text-white/90 text-xs font-semibold uppercase tracking-widest mb-1">
-              Versículo do Dia
-            </Text>
-            <Text className="text-cor-texto dark:text-white font-bold text-sm">
-              {carregando ? "Carregando..." : dados?.referencia}
-            </Text>
+          <View className="flex-row items-center justify-between">
+            <View className="flex-1 pr-4">
+              <Text className="text-cor-texto/90 dark:text-white/90 text-xs font-semibold uppercase tracking-widest mb-1">
+                Versículo do Dia
+              </Text>
+              <Text className="text-cor-texto dark:text-white font-bold text-sm">
+                {carregando ? "Carregando..." : dados?.referencia}
+              </Text>
+            </View>
+            {!desktop ? (
+              <View aria-hidden={true} className="w-[116px] h-[72px] flex-shrink-0 items-center justify-center">
+                <IlustracaoPeriodoDia periodoDoDia={periodoDoDia} escuro={escuro} />
+              </View>
+            ) : (
+              <Text className="text-xs text-cor-texto-suave dark:text-white/70">
+                {new Intl.DateTimeFormat("pt-BR", { day: "numeric", month: "short" }).format(new Date())}
+              </Text>
+            )}
           </View>
+
+          {desktop ? (
+            <View aria-hidden={true} className="w-full h-[138px] -mx-0.5 my-2 items-center justify-center">
+              <IlustracaoPeriodoDia periodoDoDia={periodoDoDia} escuro={escuro} panoramica />
+            </View>
+          ) : null}
 
           {/* Texto Bíblico */}
           <View className="flex-1 justify-center py-4">
             {carregando ? (
-              <ActivityIndicator color={corIconePadrao} />
+              <EstadoCarregando rotulo="Carregando versículo do dia" className="py-4" />
             ) : (
               <Text
                 className="text-cor-texto dark:text-white text-xl"
                 style={{
-                  fontFamily: "serif",
-                  lineHeight: 29,
+                  ...(desktop ? { fontFamily: FAMILIA_SERIFADA, fontSize: 25, lineHeight: 36 } : {}),
+                  fontFamily: desktop ? FAMILIA_SERIFADA : "serif",
+                  lineHeight: desktop ? 36 : 29,
                   ...(escuro
                     ? { textShadowColor: 'rgba(0, 0, 0, 0.4)', textShadowOffset: { width: 0, height: 1 }, textShadowRadius: 2 }
                     : {}),
@@ -160,7 +212,9 @@ export function CardVersiculoDia() {
                 accessibilityChecked={salvo}
                 className="flex-1 items-center py-1 active:opacity-60"
               >
-                <MaterialIcons name={salvo ? "favorite" : "favorite-border"} size={24} color={salvo ? corDestaque : corIconePadrao} />
+                <Animated.View style={{ transform: [{ scale: escalaAmem }] }}>
+                  <MaterialIcons name={salvo ? "favorite" : "favorite-border"} size={24} color={salvo ? corDestaque : corIconePadrao} />
+                </Animated.View>
                 <Text className="text-cor-texto-suave dark:text-white/80 text-xs mt-1">Amém</Text>
               </Pressable>
               <Pressable
@@ -219,20 +273,28 @@ export function CardVersiculoDia() {
           onFechar={() => setNotaAberta(false)}
           onSalvar={async (texto) => {
             if (!ownerId) return;
-            if (texto) {
-              await notasRepository.salvar(ownerId, ref, texto);
-              setNotaTexto(texto);
-            } else {
-              await notasRepository.remover(ownerId, ref);
-              setNotaTexto("");
+            try {
+              if (texto) {
+                await notasRepository.salvar(ownerId, ref, texto);
+                setNotaTexto(texto);
+              } else {
+                await notasRepository.remover(ownerId, ref);
+                setNotaTexto("");
+              }
+              setNotaAberta(false);
+            } catch {
+              mostrarToast("Não foi possível salvar a nota. Ela continua aberta para você tentar novamente.");
             }
-            setNotaAberta(false);
           }}
           onRemover={async () => {
             if (!ownerId) return;
-            await notasRepository.remover(ownerId, ref);
-            setNotaTexto("");
-            setNotaAberta(false);
+            try {
+              await notasRepository.remover(ownerId, ref);
+              setNotaTexto("");
+              setNotaAberta(false);
+            } catch {
+              mostrarToast("Não foi possível remover a nota. Tente novamente.");
+            }
           }}
         />
       ) : null}

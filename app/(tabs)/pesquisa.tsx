@@ -1,10 +1,12 @@
-import { Link, router } from "expo-router";
+import { Link, router, useLocalSearchParams } from "expo-router";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Pressable, ScrollView, Text, TextInput, View, ActivityIndicator } from "react-native";
+import { Pressable, ScrollView, Text, TextInput, useWindowDimensions, View } from "react-native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { BotaoTema } from "../../components/BotaoTema";
 import { CardVersiculoTema } from "../../components/CardVersiculoTema";
 import { EstadoVazio } from "../../components/EstadoVazio";
+import { EstadoCarregando } from "../../components/EstadoCarregando";
+import { EstadoErro } from "../../components/EstadoErro";
 import { IlustracaoTema } from "../../components/IlustracaoTema";
 import { buscarLivros } from "../../core/content/busca";
 import { livros } from "../../core/content/livros";
@@ -13,9 +15,11 @@ import { TEMAS_BUSCA, type Tema } from "../../core/biblia/temasBusca";
 import { pesquisasFavoritasRepository } from "../../core/repositories";
 import { useColorScheme } from "../../core/theme";
 import { mensagemErroAmigavel } from "../../core/util/erroAmigavel";
+import { mostrarToast } from "../../core/util/toast";
 import { useOwnerId } from "../../core/useOwnerId";
 import type { PesquisaFavorita } from "../../core/types/leitura";
 import { normalizarBusca } from "../../core/biblia/relevanciaBusca";
+import { FAMILIA_SERIFADA } from "../../core/leitura/preferenciaFonte";
 
 function TextoDestacado({ texto, termo }: { texto: string; termo: string }) {
   const tokens = normalizarBusca(termo).replace(/^"|"$/g, "").split(" ").filter(Boolean);
@@ -41,6 +45,7 @@ const ATALHOS_EM_BREVE: { id: string; rotulo: string; icone: keyof typeof Materi
 ];
 
 export default function Pesquisa() {
+  const parametros = useLocalSearchParams<{ tema?: string }>();
   const [termo, setTermo] = useState("");
   const [temaSelecionado, setTemaSelecionado] = useState<Tema | null>(null);
   const [favoritada, setFavoritada] = useState(false);
@@ -52,13 +57,31 @@ export default function Pesquisa() {
   const [limite, setLimite] = useState(50);
   const [favoritas, setFavoritas] = useState<PesquisaFavorita[]>([]);
   const [livroFiltro, setLivroFiltro] = useState<string | undefined>();
+  const [tentativaBusca, setTentativaBusca] = useState(0);
   
   const { colorScheme } = useColorScheme();
   const escuro = colorScheme === "dark";
+  const desktop = useWindowDimensions().width >= 1024;
   const ownerId = useOwnerId();
   const buscaAtiva = useRef(0);
 
-  useEffect(() => { if (ownerId) pesquisasFavoritasRepository.listarTodas(ownerId).then(setFavoritas); }, [ownerId, favoritada]);
+  useEffect(() => {
+    const idTema = Array.isArray(parametros.tema) ? parametros.tema[0] : parametros.tema;
+    if (!idTema) return;
+    const tema = TEMAS_BUSCA.find((item) => item.id === idTema);
+    if (!tema) return;
+    setTermo("");
+    setTemaSelecionado(tema);
+  }, [parametros.tema]);
+
+  useEffect(() => {
+    if (!ownerId) return;
+    let ativo = true;
+    pesquisasFavoritasRepository.listarTodas(ownerId)
+      .then((itens) => { if (ativo) setFavoritas(itens); })
+      .catch(() => { if (ativo) mostrarToast("Não foi possível carregar suas buscas favoritas"); });
+    return () => { ativo = false; };
+  }, [ownerId, favoritada]);
   useEffect(() => setLimite(50), [termo, testamento, livroFiltro]);
 
   const resultadosResumo = useMemo(() => (termo.trim() ? buscarLivros(termo) : []), [termo]);
@@ -73,6 +96,8 @@ export default function Pesquisa() {
     
     pesquisasFavoritasRepository.estaFavoritada(ownerId, termo).then((valor) => {
       if (buscaAtiva.current === idBusca) setFavoritada(valor);
+    }).catch(() => {
+      if (buscaAtiva.current === idBusca) mostrarToast("Não foi possível verificar se a busca está salva");
     });
     
     // Busca assíncrona na Bíblia
@@ -92,23 +117,38 @@ export default function Pesquisa() {
     }, 500); // debounce de 500ms
     
     return () => clearTimeout(timeout);
-  }, [ownerId, termo, testamento, livroFiltro, limite]);
+  }, [ownerId, termo, testamento, livroFiltro, limite, tentativaBusca]);
 
   async function alternarFavorita() {
     if (!ownerId || !termo.trim()) return;
-    setFavoritada(await pesquisasFavoritasRepository.alternar(ownerId, termo));
+    try {
+      setFavoritada(await pesquisasFavoritasRepository.alternar(ownerId, termo));
+    } catch {
+      mostrarToast("Não foi possível atualizar a busca favorita");
+    }
   }
 
   return (
     <View className="flex-1 bg-cor-fundo dark:bg-cor-fundo-dark">
-      <View className="px-4 pt-6 max-w-2xl w-full mx-auto">
-        <View className="flex-row items-center justify-between mb-4">
-          <Text accessibilityRole="header" className="text-2xl font-bold text-cor-texto dark:text-cor-texto-dark">Descubra</Text>
-          <BotaoTema />
+      <View className="px-4 pt-6 lg:pt-10 max-w-2xl lg:max-w-6xl w-full mx-auto">
+        <View className="flex-row items-center justify-between mb-4 lg:mb-8">
+          <View>
+            <Text accessibilityRole="header" className="text-2xl lg:text-4xl font-bold text-cor-texto dark:text-cor-texto-dark" style={desktop ? { fontFamily: FAMILIA_SERIFADA } : undefined}>Descubra</Text>
+            {desktop ? <Text className="text-base text-cor-texto-suave dark:text-cor-texto-suave-dark mt-1">Uma palavra para aquilo que você vive hoje.</Text> : null}
+          </View>
+          <View className="flex-row items-center gap-3">
+            {desktop ? (
+              <Pressable onPress={() => router.push("/planos")} accessibilityRole="link" className="flex-row items-center gap-2 rounded-full border border-cor-borda dark:border-cor-borda-dark bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark px-4 py-2.5 active:opacity-70">
+                <MaterialIcons name="event-note" size={18} color={escuro ? "#e0a75e" : "#8a5a2b"} />
+                <Text className="text-sm font-semibold text-cor-texto dark:text-cor-texto-dark">Planos de leitura</Text>
+              </Pressable>
+            ) : null}
+            <BotaoTema />
+          </View>
         </View>
 
         {!termo.trim() ? (
-          <View className="flex-row justify-between mb-4">
+          <View className="flex-row justify-between mb-4 lg:hidden">
             <Pressable
               onPress={() => router.push("/planos")}
               accessibilityRole="link"
@@ -134,6 +174,7 @@ export default function Pesquisa() {
         ) : null}
 
         <View className="relative">
+          {desktop ? <MaterialIcons name="search" size={21} color={escuro ? "#b3a894" : "#6b6153"} className="absolute left-4 top-3.5 z-10" /> : null}
           <TextInput
             testID="busca-descubra"
             accessibilityLabel="Buscar na Bíblia e nos resumos"
@@ -143,9 +184,9 @@ export default function Pesquisa() {
               setTermo(t);
               if (t.trim()) setTemaSelecionado(null);
             }}
-            placeholder="Buscar palavra na Bíblia ou nos resumos..."
+            placeholder="Buscar na Bíblia e nos resumos"
             placeholderTextColor="#9ca3af"
-            className="px-4 pr-12 py-3.5 rounded-full border border-cor-borda dark:border-cor-borda-dark bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark text-cor-texto dark:text-cor-texto-dark text-base"
+            className={`px-4 pr-12 py-3.5 rounded-full lg:rounded-2xl border border-cor-borda dark:border-cor-borda-dark bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark text-cor-texto dark:text-cor-texto-dark text-base ${desktop ? "pl-12" : ""}`}
           />
           {termo ? (
             <Pressable
@@ -215,7 +256,7 @@ export default function Pesquisa() {
       </View>
 
       <ScrollView className="flex-1">
-        <View className="px-4 pt-2 pb-10 max-w-2xl w-full mx-auto">
+        <View className={`px-4 pt-2 pb-10 ${desktop ? "max-w-6xl" : "max-w-2xl"} w-full mx-auto`}>
           {termo.trim() && !buscando ? (
             <Text accessibilityLiveRegion="polite" className="sr-only">
               {erroBusca
@@ -262,10 +303,10 @@ export default function Pesquisa() {
                   ))
                 )
               ) : (
-                buscando ? (
-                  <ActivityIndicator accessibilityLabel="Buscando resultados" size="large" className="mt-8" />
-                ) : erroBusca ? (
-                  <EstadoVazio titulo="Não foi possível buscar" descricao={erroBusca} />
+                erroBusca ? (
+                  <EstadoErro titulo="Não foi possível buscar" descricao={erroBusca} aoTentarNovamente={() => setTentativaBusca((valor) => valor + 1)} />
+                ) : buscando ? (
+                  <EstadoCarregando rotulo="Buscando resultados" className="mt-8" />
                 ) : resultadosBiblia.length === 0 ? (
                   <EstadoVazio titulo="Nenhum versículo encontrado" descricao="Tente outra palavra." />
                 ) : (
@@ -314,30 +355,44 @@ export default function Pesquisa() {
                   <View className="flex-row flex-wrap gap-2">{favoritas.slice(0, 8).map((item) => <Pressable key={item.termo} onPress={() => setTermo(item.termo)} accessibilityRole="button" className="px-3 py-2 rounded-full bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark border border-cor-borda dark:border-cor-borda-dark active:opacity-70"><Text className="text-xs font-semibold text-cor-texto dark:text-cor-texto-dark">★ {item.termo}</Text></Pressable>)}</View>
                 </View>
               ) : null}
-              <Text className="text-sm font-semibold text-cor-texto-suave dark:text-cor-texto-suave-dark mb-3">
-                Explore por tema
-              </Text>
+              <View className={`flex-row items-end justify-between ${desktop ? "mt-2 mb-4" : "mb-3"}`}>
+                <View>
+                  <Text className={desktop ? "text-xl font-bold text-cor-texto dark:text-cor-texto-dark" : "text-sm font-semibold text-cor-texto-suave dark:text-cor-texto-suave-dark"} style={desktop ? { fontFamily: FAMILIA_SERIFADA } : undefined}>
+                    Explore por tema
+                  </Text>
+                  {desktop ? <Text className="text-sm text-cor-texto-suave dark:text-cor-texto-suave-dark mt-1">Escolha uma categoria e encontre passagens relacionadas.</Text> : null}
+                </View>
+                {desktop ? <Text className="text-xs text-cor-texto-suave dark:text-cor-texto-suave-dark mb-1">{TEMAS_BUSCA.length} temas</Text> : null}
+              </View>
               <View className="flex-row flex-wrap justify-between">
                 {TEMAS_BUSCA.map((tema) => (
                   <Pressable
                     key={tema.id}
                     onPress={() => setTemaSelecionado(tema)}
                     accessibilityRole="button"
-                    accessibilityLabel={tema.titulo}
-                    style={{ backgroundColor: escuro ? tema.corBgDark : tema.corBg, width: "48%", height: 128 }}
-                    className="rounded-3xl mb-3 justify-end overflow-hidden active:opacity-80"
+                    accessibilityLabel={`${tema.titulo}. ${tema.descricao}`}
+                    style={{
+                      backgroundColor: desktop ? (escuro ? "#262019" : "#fffdf9") : (escuro ? tema.corBgDark : tema.corBg),
+                      borderColor: desktop ? (escuro ? "#3a3226" : "#e6ded0") : "transparent",
+                      borderWidth: desktop ? 1 : 0,
+                      width: desktop ? "23.5%" : "48%",
+                      height: desktop ? 188 : 128,
+                    }}
+                    className={`rounded-3xl mb-3 overflow-hidden active:opacity-80 ${desktop ? "p-5 justify-between" : "justify-end"}`}
                   >
                     <View
-                      style={{ position: "absolute", top: -10, right: -10, opacity: 0.5, transform: [{ rotate: "-12deg" }] }}
+                      style={desktop
+                        ? { alignSelf: "flex-end", opacity: 0.86, transform: [{ rotate: "-8deg" }] }
+                        : { position: "absolute", top: -10, right: -10, opacity: 0.5, transform: [{ rotate: "-12deg" }] }}
                     >
-                      <IlustracaoTema tema={tema.id} cor={escuro ? tema.corTextoDark : tema.corTexto} tamanho={72} />
+                      <IlustracaoTema tema={tema.id} cor={escuro ? tema.corTextoDark : tema.corTexto} tamanho={desktop ? 108 : 72} modoCena={desktop} />
                     </View>
-                    <Text
-                      style={{ color: escuro ? tema.corTextoDark : tema.corTexto }}
-                      className="text-lg font-extrabold px-4 pb-4"
-                    >
-                      {tema.titulo}
-                    </Text>
+                    <View>
+                      <Text style={{ color: escuro ? tema.corTextoDark : tema.corTexto }} className={desktop ? "text-lg font-bold" : "text-lg font-extrabold px-4 pb-4"}>
+                        {tema.titulo}
+                      </Text>
+                      {desktop ? <Text className="text-xs leading-5 text-cor-texto-suave dark:text-cor-texto-suave-dark mt-1">{tema.descricao}</Text> : null}
+                    </View>
                   </Pressable>
                 ))}
               </View>

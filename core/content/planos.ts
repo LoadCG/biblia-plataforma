@@ -1,4 +1,5 @@
 import planosJson from "./dados/planos.json";
+import type { MetadadosEditoriais } from "./tipos";
 
 export type DiaPlano = {
   dia: number;
@@ -14,6 +15,7 @@ export type PlanoLeitura = {
   descricao: string;
   duracaoDias: number;
   dias: DiaPlano[];
+  editorial?: MetadadosEditoriais;
 };
 
 export const planosLeitura: PlanoLeitura[] = planosJson;

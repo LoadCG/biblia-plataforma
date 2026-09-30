@@ -11,6 +11,17 @@ export type Livro = {
   testamento: "Antigo Testamento" | "Novo Testamento";
   capitulos: number;
   genero: string;
+  editorial?: MetadadosEditoriais;
+};
+
+export type StatusEditorial = "rascunho" | "em-revisao" | "aprovado" | "publicado" | "arquivado";
+
+export type MetadadosEditoriais = {
+  id: string;
+  versao: number;
+  status: StatusEditorial;
+  tags: string[];
+  publico?: "iniciante" | "regular" | "tematico" | "contexto";
 };
 
 export type FichaItem = {

@@ -51,6 +51,8 @@ na raiz para preservar links históricos, mas estão classificados por finalidad
   inventário estrutural gerado por `npm run relatorio:editorial`.
 - [`docs/revisao-editorial/INDICE.md`](./docs/revisao-editorial/INDICE.md)
   organiza a fila de rascunhos aguardando revisão humana independente.
+- [`docs/contrato-editorial.md`](./docs/contrato-editorial.md) define IDs,
+  versões, status e taxonomia controlada do conteúdo.
 
 ## Qualidade e operação
 

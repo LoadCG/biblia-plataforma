@@ -1,5 +1,5 @@
 import type { ComponentType } from "react";
-import { cssInterop } from "nativewind";
+import { cssInterop, useColorScheme } from "nativewind";
 import type { IconProps, IconWeight } from "phosphor-react-native";
 import { StyleSheet, type TextStyle } from "react-native";
 import { ArrowLeftIcon as ArrowLeft } from "phosphor-react-native/src/icons/ArrowLeft";
@@ -100,9 +100,10 @@ type Props = Omit<IconProps, "weight"> & {
 };
 
 function IconeUIBase({ name, weight, color, style, ...props }: Props) {
+  const { colorScheme } = useColorScheme();
   const Icone = ICONES[name];
   const peso: IconWeight = weight ?? (name === "favorite" || name === "note" || name === "bookmark" || name === "complete" || name === "verified" ? "fill" : "regular");
-  const corResolvida = color ?? String(StyleSheet.flatten(style as TextStyle | undefined)?.color ?? "#2a241c");
+  const corResolvida = color ?? String(StyleSheet.flatten(style as TextStyle | undefined)?.color ?? (colorScheme === "dark" ? "#ece5d8" : "#2a241c"));
   return <Icone {...props} style={style} color={corResolvida} weight={peso} aria-hidden="true" />;
 }
 

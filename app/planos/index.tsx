@@ -10,10 +10,13 @@ import { planosLeitura, type PlanoLeitura } from "../../core/content/planos";
 import { planosRepository } from "../../core/repositories";
 import { useOwnerId } from "../../core/useOwnerId";
 import { FAMILIA_SERIFADA } from "../../core/leitura/preferenciaFonte";
+import { useColorScheme } from "../../core/theme";
 
 const SOMBRA = { shadowColor: "#000", shadowOpacity: 0.06, shadowRadius: 4, shadowOffset: { width: 0, height: 1 } };
 
 function CardPlano({ plano, diasConcluidos, desktop }: { plano: PlanoLeitura; diasConcluidos: number; desktop: boolean }) {
+  const { colorScheme } = useColorScheme();
+  const escuro = colorScheme === "dark";
   const progresso = plano.duracaoDias > 0 ? Math.min(1, diasConcluidos / plano.duracaoDias) : 0;
   const concluido = diasConcluidos >= plano.duracaoDias;
   const icone = plano.id === "sabedoria-7" ? "wisdom" : "book-collection";
@@ -28,7 +31,7 @@ function CardPlano({ plano, diasConcluidos, desktop }: { plano: PlanoLeitura; di
           <View className="flex-1">
             <View className="flex-row items-start justify-between gap-2">
               <Text className="text-base font-bold text-cor-texto dark:text-cor-texto-dark flex-1">{plano.titulo}</Text>
-              {concluido ? <IconeUI name="complete" size={20} color="#287a45" /> : null}
+              {concluido ? <IconeUI name="complete" size={20} color={escuro ? "#7bd69a" : "#287a45"} /> : null}
             </View>
             <Text className="text-xs text-cor-texto-suave dark:text-cor-texto-suave-dark mt-0.5" numberOfLines={3}>
               {plano.descricao}

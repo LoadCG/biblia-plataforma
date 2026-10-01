@@ -1,5 +1,6 @@
 import { Modal, Pressable, Text, View } from "react-native";
 import { IconeUI, type IconeUINome } from "./icone/IconeUI";
+import { useColorScheme } from "../core/theme";
 
 export type AcaoMenu = {
   label: string;
@@ -20,6 +21,8 @@ type Props = {
 // inteira, só o do card específico (Revisão estratégica item 5 do
 // PLANO-NAVEGACAO.md).
 export function MenuAcoes({ acoes, aberto, onFechar }: Props) {
+  const { colorScheme } = useColorScheme();
+  const escuro = colorScheme === "dark";
   if (!aberto) return null;
 
   return (
@@ -45,11 +48,11 @@ export function MenuAcoes({ acoes, aberto, onFechar }: Props) {
                 <IconeUI
                   name={acao.icone}
                   size={20}
-                  color={acao.destrutiva ? "#dc2626" : undefined}
+                  color={acao.destrutiva ? (escuro ? "#f87171" : "#dc2626") : undefined}
                   className={acao.destrutiva ? "" : "text-cor-texto-suave dark:text-cor-texto-suave-dark"}
                 />
               ) : null}
-              <Text className={`text-base ${acao.destrutiva ? "text-red-600" : "text-cor-texto dark:text-cor-texto-dark"}`}>
+              <Text className={`text-base ${acao.destrutiva ? "text-red-600 dark:text-red-400" : "text-cor-texto dark:text-cor-texto-dark"}`}>
                 {acao.label}
               </Text>
             </Pressable>

@@ -23,9 +23,9 @@ import { useMovimentoReduzido } from "../core/util/useMovimentoReduzido";
 import { FAMILIA_SERIFADA } from "../core/leitura/preferenciaFonte";
 
 // Cores dos tokens de tema (tailwind.config.js) — precisam ser valores
-// reais aqui (não className) porque `LinearGradient` e o `color` do
-// IconeUI não aceitam classes Tailwind/dark: então este card,
-// diferente do resto do app, não muda de tema sozinho só com CSS.
+// reais aqui (não className) porque `LinearGradient` e as ações do
+// cartão precisam de paletas explícitas por tema. O IconeUI usa as
+// mesmas cores semânticas para manter os traços legíveis no escuro.
 const GRADIENTE = {
   claro: ["#f3e6d3", "#fdf9f2", "#faf8f4"] as const,
   escuro: ["#40331f", "#241d16", "#141210"] as const,

@@ -412,6 +412,13 @@ Home, Descubra, Planos, Salvos, Resumos, Perfil, conteúdo, identidade global, n
 - Revisão React/TypeScript: adaptador sem estado/hooks próprios, tipos explícitos para nomes/props, imports de ícone individuais e cores explícitas resolvidas das classes NativeWind antes de renderizar os caminhos SVG.
 - O diff confirma substituição completa de `@expo/vector-icons` nos componentes executáveis. A inspeção visual desktop e nativa não será declarada sem executar no navegador/aparelho; o refinamento deliberado do aplicativo móvel nativo continua adiado.
 
+### Correção — contraste dos ícones no tema escuro (2026-10-01)
+
+- Feedback do usuário identificou ícones escuros e pouco visíveis no modo escuro. A revisão encontrou cores fixas herdadas da implementação anterior em ações de fechar/limpar, destaque de plano concluído e um símbolo da Home, além de fallback escuro no adaptador quando a classe de cor não fornece valor resolvido.
+- O adaptador passou a usar fallback claro no tema escuro. As cores que precisavam de identidade específica passaram a usar valores explícitos por tema (incluindo filtro, fechar, conclusão de plano e ações destrutivas); tons de texto/tema escuro preservam os tokens definidos.
+- Verificações após o ajuste: `npm run typecheck`, `npm run check:a11y` (34 contratos), `npm run check:ui` (8 superfícies), `npm run export:web` (94 rotas) e `git diff --check` passaram. O export mantém os avisos conhecidos de notificações web e `localStorage` no Node.
+- A inspeção visual continua pendente e não é substituída pela compilação; não afirmamos uma conferência de cada superfície no navegador nesta correção.
+
 ## Registro do primeiro incremento — 2026-09-28
 
 - Auditoria parcial real em 1280×720: Início em claro/escuro; Descubra, Leitor e Planos em claro. Ver achados e limites em `docs/matriz-auditoria-responsiva.md`.

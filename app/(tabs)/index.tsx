@@ -252,7 +252,7 @@ export default function Inicio() {
               </View>
             </View>
             <View className="w-14 h-14 rounded-full bg-white/60 dark:bg-cor-texto/10 items-center justify-center border border-cor-borda dark:border-cor-texto/10">
-              <IconeUI name="book-collection" size={25} color={escuro ? "#2a241c" : "#8a5a2b"} />
+              <IconeUI name="book-collection" size={25} color={escuro ? "#e0a75e" : "#8a5a2b"} />
             </View>
           </Pressable>
         </Link>

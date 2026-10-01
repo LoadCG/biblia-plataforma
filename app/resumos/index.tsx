@@ -11,6 +11,7 @@ import { livrosLidosRepository } from "../../core/repositories";
 import { useOwnerId } from "../../core/useOwnerId";
 import { IconeUI } from "../../components/icone/IconeUI";
 import { mostrarToast } from "../../core/util/toast";
+import { useColorScheme } from "../../core/theme";
 
 function CardLivro({ livro, lido, trecho }: { livro: Livro; lido: boolean; trecho: string | null }) {
   const cores = coresDoGenero(livro.genero);
@@ -43,6 +44,8 @@ function CardLivro({ livro, lido, trecho }: { livro: Livro; lido: boolean; trech
 }
 
 export default function ListaResumos() {
+  const { colorScheme } = useColorScheme();
+  const escuro = colorScheme === "dark";
   const ownerId = useOwnerId();
   const [termo, setTermo] = useState("");
   const [lidos, setLidos] = useState<string[]>([]);
@@ -94,7 +97,7 @@ export default function ListaResumos() {
               />
               {termo ? (
                 <Pressable testID="limpar-busca-resumos" onPress={() => setTermo("")} accessibilityRole="button" accessibilityLabel="Limpar busca dos resumos" hitSlop={10} className="absolute right-3 top-1.5 h-9 w-9 items-center justify-center rounded-full active:opacity-60">
-                  <IconeUI name="close" size={20} color="#6b6257" />
+                  <IconeUI name="close" size={20} color={escuro ? "#b3a894" : "#6b6257"} />
                 </Pressable>
               ) : null}
             </View>

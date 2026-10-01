@@ -25,6 +25,7 @@ import { GlobeHemisphereWestIcon as GlobeHemisphereWest } from "phosphor-react-n
 import { HeartIcon as Heart } from "phosphor-react-native/src/icons/Heart";
 import { HouseIcon as House } from "phosphor-react-native/src/icons/House";
 import { ImageIcon as Image } from "phosphor-react-native/src/icons/Image";
+import { InfoIcon as Info } from "phosphor-react-native/src/icons/Info";
 import { LightbulbIcon as Lightbulb } from "phosphor-react-native/src/icons/Lightbulb";
 import { ListChecksIcon as ListChecks } from "phosphor-react-native/src/icons/ListChecks";
 import { MagnifyingGlassIcon as MagnifyingGlass } from "phosphor-react-native/src/icons/MagnifyingGlass";
@@ -86,6 +87,7 @@ const ICONES = {
   sparkle: Sparkle,
   verified: SealCheck,
   image: Image,
+  info: Info,
   close: X,
   "circle-empty": Circle,
   audio: SpeakerHigh,

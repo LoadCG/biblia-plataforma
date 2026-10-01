@@ -1,9 +1,18 @@
 import { useEffect, useRef, useState } from "react";
 import { Animated, Pressable, Text, View } from "react-native";
-import { ouvirToast, type PayloadToast } from "../core/util/toast";
+import { IconeUI } from "./icone/IconeUI";
+import { ouvirToast, type PayloadToast, type SeveridadeToast } from "../core/util/toast";
 
 const DURACAO_PADRAO_MS = 2000;
 const DURACAO_COM_ACAO_MS = 4000;
+
+const ESTILOS_SEVERIDADE: Record<SeveridadeToast, { container: string; texto: string; acao: string; icone?: "complete" | "warning" | "info" }> = {
+  neutra: { container: "bg-cor-texto dark:bg-cor-texto-dark", texto: "text-cor-fundo dark:text-cor-fundo-dark", acao: "bg-cor-fundo/15 dark:bg-cor-fundo-dark/15" },
+  sucesso: { container: "bg-feedback-sucesso-fundo dark:bg-feedback-sucesso-fundo-dark", texto: "text-feedback-sucesso-texto dark:text-feedback-sucesso-texto-dark", acao: "bg-feedback-sucesso-texto/10 dark:bg-feedback-sucesso-texto-dark/10", icone: "complete" },
+  aviso: { container: "bg-feedback-aviso-fundo dark:bg-feedback-aviso-fundo-dark", texto: "text-feedback-aviso-texto dark:text-feedback-aviso-texto-dark", acao: "bg-feedback-aviso-texto/10 dark:bg-feedback-aviso-texto-dark/10", icone: "warning" },
+  erro: { container: "bg-feedback-erro-fundo dark:bg-feedback-erro-fundo-dark", texto: "text-feedback-erro-texto dark:text-feedback-erro-texto-dark", acao: "bg-feedback-erro-texto/10 dark:bg-feedback-erro-texto-dark/10", icone: "warning" },
+  informacao: { container: "bg-feedback-info-fundo dark:bg-feedback-info-fundo-dark", texto: "text-feedback-info-texto dark:text-feedback-info-texto-dark", acao: "bg-feedback-info-texto/10 dark:bg-feedback-info-texto-dark/10", icone: "info" },
+};
 
 // Montado uma vez em app/_layout.tsx — qualquer lugar do app dispara
 // um toast chamando `mostrarToast(mensagem)`, sem precisar de Context.
@@ -30,6 +39,7 @@ export function Toast() {
   }, [opacidade]);
 
   if (!payload) return null;
+  const estilo = ESTILOS_SEVERIDADE[payload.severidade ?? "neutra"];
 
   return (
     <Animated.View
@@ -49,11 +59,12 @@ export function Toast() {
         accessibilityRole="alert"
         accessibilityLiveRegion="polite"
         accessibilityLabel={payload.acaoLabel ? `${payload.mensagem}. Ação disponível: ${payload.acaoLabel}` : payload.mensagem}
-        className={`flex-row items-center gap-3 bg-cor-texto dark:bg-cor-texto-dark py-2 rounded-full shadow-md max-w-[90%] ${
+        className={`flex-row items-center gap-2.5 ${estilo.container} py-2 rounded-full shadow-md max-w-[90%] ${
           payload.acaoLabel ? "pl-4 pr-2" : "px-4"
         }`}
       >
-        <Text className="text-cor-fundo dark:text-cor-fundo-dark text-sm font-semibold shrink">{payload.mensagem}</Text>
+        {estilo.icone ? <IconeUI name={estilo.icone} size={18} weight="bold" className={estilo.texto} /> : null}
+        <Text className={`${estilo.texto} text-sm font-semibold shrink`}>{payload.mensagem}</Text>
         {payload.acaoLabel ? (
           <Pressable
             onPress={() => {
@@ -64,9 +75,9 @@ export function Toast() {
             accessibilityRole="button"
             accessibilityLabel={payload.acaoLabel}
             accessibilityHint="Ativa a ação antes que o aviso desapareça"
-            className="px-3 py-1.5 rounded-full bg-cor-fundo/15 dark:bg-cor-fundo-dark/15 active:opacity-70"
+            className={`px-3 py-1.5 rounded-full ${estilo.acao} active:opacity-70`}
           >
-            <Text className="text-cor-fundo dark:text-cor-fundo-dark text-sm font-bold">{payload.acaoLabel}</Text>
+            <Text className={`${estilo.texto} text-sm font-bold`}>{payload.acaoLabel}</Text>
           </Pressable>
         ) : null}
       </Animated.View>

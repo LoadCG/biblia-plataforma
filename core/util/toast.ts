@@ -2,10 +2,14 @@
 // da árvore de componentes, ex. `core/estatisticas/compartilhador.ts`)
 // sem precisar de um Context Provider — só o componente montado uma
 // vez em `app/_layout.tsx` (`components/Toast.tsx`) escuta e renderiza.
+export type SeveridadeToast = "neutra" | "sucesso" | "aviso" | "erro" | "informacao";
+
 export type OpcoesToast = {
   /** Rótulo de um botão de ação opcional (ex. "Desfazer"). */
   acaoLabel?: string;
   onAcao?: () => void;
+  /** Aparência semântica opcional; neutra preserva os consumidores atuais. */
+  severidade?: SeveridadeToast;
   /** Duração em ms antes de sumir sozinho. Default: 2000ms sem ação, 4000ms com ação (mais tempo pra decidir). */
   duracaoMs?: number;
 };

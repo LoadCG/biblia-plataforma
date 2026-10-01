@@ -26,7 +26,7 @@ validação em tela real.
 | Seletor de livros | catálogo local | não aplicável | `EstadoVazio` | limpar busca quando há termo | A tela preserva o estado original sem ação quando o catálogo estiver vazio sem filtro. |
 | Cards de versículo / popover | `EstadoCarregando` | `EstadoErro` com retry | não aplicável | ações específicas | O card do dia mantém painel próprio de erro em gradiente. |
 | Detalhe de plano | `EstadoCarregando` | `EstadoErro` com retry | estado concluído quando todos os dias finalizam | Toast nas ações | Falhas de progresso não aparecem como conclusão ou progresso zero. |
-| Toast global | — | — | — | alerta polido e ação opcional | Componente compartilhado existente. |
+| Toast global | — | — | — | alerta com ação opcional e severidade semântica | `neutra` continua padrão; estilos/tokens de sucesso, aviso, erro e informação estão disponíveis. Migração de chamadas antigas e inspeção visual ainda pendentes. |
 
 O detalhe de Plano agora diferencia carga do progresso, erro com retry e dados;
 falhas ao iniciar uma sessão ou alterar conclusão dão feedback via Toast. O

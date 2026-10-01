@@ -505,6 +505,12 @@ Home, Descubra, Planos, Salvos, Resumos, Perfil, conteúdo, identidade global, n
 - A ação usa botão semântico, alvo de pelo menos 44 px e tokens da paleta clara/escura. O foco responsivo continua na web desktop; a responsividade compartilhada é preservada. A aparência real em navegador/tema escuro ainda precisa de inspeção visual.
 - Próximo passo: completar os tokens compartilhados de feedback e revisar estados vazios restantes na migração, depois retomar a maior diferença visual desktop em relação à referência. Não iniciar refinamento nativo mobile.
 
+### Continuação — severidade visual de Toast — 2026-10-01
+
+- O Toast aceita severidade neutra, sucesso, aviso, erro ou informação. A API antiga continua neutra; mensagens recebem símbolos Phosphor e tokens semânticos claros/escuros apenas quando a severidade for indicada.
+- Os tokens foram definidos com pares de superfície/texto por severidade, e a ação herda a combinação correspondente. `npm run typecheck` passou; inspeção visual de contraste permanece pendente e nenhuma suíte de testes foi executada.
+- Próxima etapa: migrar chamadas de feedback por grupo para declarar severidade correta, começando por ações de escrita e carregamento; conferir cada tema em navegador quando a inspeção visual estiver disponível.
+
 - Roadmap atual: `PLANO-MESTRE-UX-ETAPAS-19-A-23.md`.
 - Matriz de inspeção: `docs/matriz-auditoria-responsiva.md`.
 - Inventário de estados: `docs/inventario-estados-ui.md`.

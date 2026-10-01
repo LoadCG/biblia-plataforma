@@ -250,18 +250,24 @@ visual continua pendente. TypeScript, contratos de acessibilidade/UI, cobertura
 editorial e `git diff --check` passaram; a suíte de testes não foi executada
 neste recorte.
 
-### 21.2 API visual compartilhada `⬜`
+### 21.2 API visual compartilhada `🔶`
 
 - [x] Criar `EstadoCarregando` com label e variante visual.
 - [x] Criar `EstadoErro` com mensagem amigável e retry opcional.
 - [x] Evoluir `EstadoVazio` com ação opcional sem quebrar consumidores atuais.
-- [ ] Definir tokens de severidade, espaçamento, borda e contraste.
+- [x] Definir tokens de severidade, espaçamento, borda e contraste.
 
 **Incremento:** a ação é contextual e opcional; busca sem resultados pode ser
 limpa e a busca em Resumos pode trocar para a Bíblia. Estados de Salvo/Perfil
 continuam sem botão quando não há uma recuperação imediata apropriada. O botão
 tem papel acessível e altura mínima de 44 px. Validar aparência em navegador e
 tema escuro segue pendente.
+
+**Incremento de feedback:** Toast ganhou severidade opcional (`neutra`, `sucesso`,
+`aviso`, `erro`, `informacao`), tokens claros/escuros e símbolos Phosphor
+semânticos. Chamadas antigas continuam neutras; migrá-las por grupo é parte da
+etapa 21.3. O TypeScript passou; inspeção de contraste e composição no navegador
+permanece pendente.
 
 ### 21.3 Migração incremental `⬜`
 

@@ -269,6 +269,11 @@ semânticos. Chamadas antigas continuam neutras; migrá-las por grupo é parte d
 etapa 21.3. O TypeScript passou; inspeção de contraste e composição no navegador
 permanece pendente.
 
+**Migração 21.3 — primeiro grupo:** Salvo, coleções e `CardAtividade` agora
+classificam sucesso, erro e exclusão parcialmente interrompida. A ação de undo
+preserva seu comportamento e anuncia também o resultado da tentativa. O restante
+das superfícies segue em migração por grupo.
+
 ### 21.3 Migração incremental `⬜`
 
 - [ ] Migrar Busca e Resumos.

@@ -509,7 +509,8 @@ Home, Descubra, Planos, Salvos, Resumos, Perfil, conteúdo, identidade global, n
 
 - O Toast aceita severidade neutra, sucesso, aviso, erro ou informação. A API antiga continua neutra; mensagens recebem símbolos Phosphor e tokens semânticos claros/escuros apenas quando a severidade for indicada.
 - Os tokens foram definidos com pares de superfície/texto por severidade, e a ação herda a combinação correspondente. `npm run typecheck` passou; inspeção visual de contraste permanece pendente e nenhuma suíte de testes foi executada.
-- Próxima etapa: migrar chamadas de feedback por grupo para declarar severidade correta, começando por ações de escrita e carregamento; conferir cada tema em navegador quando a inspeção visual estiver disponível.
+- Salvos, coleções e `CardAtividade` passaram a declarar sucesso, erro e aviso de falha parcial. O desfazer mantém o resultado visível sem perder a ação.
+- Próxima etapa: migrar as chamadas restantes por grupo, começando pelas operações de escrita do Leitor e das configurações; conferir cada tema em navegador quando a inspeção visual estiver disponível.
 
 - Roadmap atual: `PLANO-MESTRE-UX-ETAPAS-19-A-23.md`.
 - Matriz de inspeção: `docs/matriz-auditoria-responsiva.md`.

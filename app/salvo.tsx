@@ -94,9 +94,9 @@ export default function Salvo() {
       await colecoesRepository.criar(ownerId, novaColecao);
       setNovaColecao("");
       await carregar();
-      mostrarToast("Coleção criada");
+      mostrarToast("Coleção criada", { severidade: "sucesso" });
     } catch {
-      mostrarToast("Não foi possível criar a coleção. Tente novamente.");
+      mostrarToast("Não foi possível criar a coleção. Tente novamente.", { severidade: "erro" });
     }
   }
 
@@ -106,9 +106,9 @@ export default function Salvo() {
       await colecoesRepository.renomear(ownerId, editandoColecao.id, nomeColecao);
       setEditandoColecao(null); setNomeColecao("");
       await carregar();
-      mostrarToast("Coleção atualizada");
+      mostrarToast("Coleção atualizada", { severidade: "sucesso" });
     } catch {
-      mostrarToast("Não foi possível salvar o nome. Ele continua no campo para você tentar novamente.");
+      mostrarToast("Não foi possível salvar o nome. Ele continua no campo para você tentar novamente.", { severidade: "erro" });
     }
   }
 
@@ -120,9 +120,9 @@ export default function Salvo() {
         if (colecaoFiltro === colecao.id) setColecaoFiltro(null);
         setEditandoColecao(null);
         await carregar();
-        mostrarToast("Coleção excluída; seus itens foram preservados");
+        mostrarToast("Coleção excluída; seus itens foram preservados", { severidade: "sucesso" });
       } catch {
-        mostrarToast("Não foi possível excluir a coleção. Tente novamente.");
+        mostrarToast("Não foi possível excluir a coleção. Tente novamente.", { severidade: "erro" });
       }
     };
     if (Platform.OS === "web") { if (window.confirm(`Excluir a coleção "${colecao.nome}"? Os itens salvos serão preservados.`)) remover(); return; }
@@ -135,9 +135,9 @@ export default function Salvo() {
       await colecoesRepository.associar(ownerId, colecaoId, [...selecionados]);
       setSelecionados(new Set());
       await carregar();
-      mostrarToast("Itens adicionados à coleção");
+      mostrarToast("Itens adicionados à coleção", { severidade: "sucesso" });
     } catch {
-      mostrarToast("Não foi possível adicionar os itens. A seleção continua ativa para tentar novamente.");
+      mostrarToast("Não foi possível adicionar os itens. A seleção continua ativa para tentar novamente.", { severidade: "erro" });
     }
   }
 
@@ -169,6 +169,7 @@ export default function Salvo() {
       setSelecionados(new Set());
       await carregar();
       mostrarToast(`${removidos.length} itens excluídos`, {
+        severidade: "sucesso",
         acaoLabel: "Desfazer",
         onAcao: async () => {
           try {
@@ -178,17 +179,17 @@ export default function Salvo() {
               if (chaves.length) await colecoesRepository.associar(ownerId, colecao.id, chaves);
             }
             await carregar();
-            mostrarToast("Exclusão desfeita");
+            mostrarToast("Exclusão desfeita", { severidade: "sucesso" });
           } catch {
             await carregar();
-            mostrarToast("Não foi possível desfazer tudo. Confira a lista atualizada.");
+            mostrarToast("Não foi possível desfazer tudo. Confira a lista atualizada.", { severidade: "erro" });
           }
         },
       });
     } catch {
       setSelecionados(new Set());
       await carregar();
-      mostrarToast("A exclusão foi interrompida. Atualizei a lista; confira os itens antes de tentar novamente.");
+      mostrarToast("A exclusão foi interrompida. Atualizei a lista; confira os itens antes de tentar novamente.", { severidade: "aviso" });
     }
   }
 

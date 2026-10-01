@@ -49,7 +49,7 @@ export function CardAtividade({ item, onMudou, selecionado, onSelecionar }: Prop
       onMudou();
       return true;
     } catch {
-      mostrarToast("Não foi possível excluir este item. Tente novamente.");
+      mostrarToast("Não foi possível excluir este item. Tente novamente.", { severidade: "erro" });
       return false;
     }
   }
@@ -137,7 +137,7 @@ export function CardAtividade({ item, onMudou, selecionado, onSelecionar }: Prop
               setEditando(false);
               onMudou();
             } catch {
-              mostrarToast("Não foi possível salvar a nota. Ela continua aberta para você tentar novamente.");
+              mostrarToast("Não foi possível salvar a nota. Ela continua aberta para você tentar novamente.", { severidade: "erro" });
             }
           }}
           onRemover={async () => {

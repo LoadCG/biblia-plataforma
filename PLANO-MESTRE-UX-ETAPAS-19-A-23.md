@@ -96,13 +96,20 @@ alcançáveis por toque/teclado.
 
 ### 19.3 Descubra e Busca `⬜`
 
-- [ ] Testar digitação, debounce, loading, erro e estado vazio.
-- [ ] Verificar botão de limpar sem cobrir o texto do campo.
-- [ ] Verificar tabs Bíblia/Resumos em 320 px.
-- [ ] Testar filtros de testamento e livro com rolagem horizontal.
-- [ ] Confirmar leitura dos resultados por leitor de tela.
+- [ ] **Entrada e intenção:** distinguir exploração guiada por tema da busca textual, mantendo claro o que cada interação vai mostrar.
+- [ ] **Escolha de tema:** preservar título, descrição e ilustração como conteúdo complementar; tornar a área acionável inteira, com hover/foco/seleção perceptíveis e sem depender apenas da cor.
+- [ ] **Detalhe do tema:** apresentar título e contexto antes das referências; permitir voltar à grade preservando posição de rolagem e filtros.
+- [ ] **Continuidade de navegação:** alinhar seleção por card, recomendações da Home e links diretos; definir como query string e botão voltar do navegador refletem o tema aberto.
+- [ ] **Passagens:** deixar explícito que cada item abre uma referência bíblica; fornecer loading, erro com retry e comportamento coerente se uma referência curada não estiver disponível.
+- [ ] **Busca:** conferir digitação/debounce, limpeza sem cobrir o texto, abas Bíblia/Resumos, resultados, vazio e erro; trocar de tema para busca não pode deixar filtros antigos confusos.
+- [ ] **Filtros de resultados:** validar filtros de testamento e livro, estado selecionado, combinação, limpeza e acessibilidade por teclado/leitor de tela.
+- [ ] **Estados e tema:** revisar claro/escuro, foco, hover, loading, erro, vazio e tema inválido via URL em web desktop.
+- [ ] **Responsividade preservada:** evitar regressão estrutural em larguras menores sem puxar o refinamento visual mobile para esta etapa.
 
-**Aceite:** nenhum controle fica inacessível, truncado ou sem feedback.
+**Aceite:** a pessoa entende onde está, o que cada tema oferece e como chegar à
+passagem; consegue voltar sem perder contexto; nenhum estado depende apenas de
+cor, fica sem feedback, ou apresenta overflow/controle inacessível. Confirmar em
+claro/escuro, navegação por teclado e jornada completa no navegador.
 
 ### 19.4 Salvo e coleções `⬜`
 

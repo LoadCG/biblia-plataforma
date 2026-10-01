@@ -512,6 +512,69 @@ Home, Descubra, Planos, Salvos, Resumos, Perfil, conteúdo, identidade global, n
 - Salvos, coleções e `CardAtividade` passaram a declarar sucesso, erro e aviso de falha parcial. O desfazer mantém o resultado visível sem perder a ação.
 - Próxima etapa: migrar as chamadas restantes por grupo, começando pelas operações de escrita do Leitor e das configurações; conferir cada tema em navegador quando a inspeção visual estiver disponível.
 
+## Plano UX — Descubra / Explore por tema
+
+**Objetivo:** ajudar a pessoa que chega com uma necessidade (“quero encontrar
+consolo”, “quero entender esperança”) a escolher um assunto, compreender o que
+vai encontrar e abrir uma passagem sem perder o caminho de volta. A prioridade é
+clareza e continuidade; a ilustração apoia o reconhecimento, mas não substitui o
+nome, a descrição ou a ação.
+
+### Jornada principal
+
+1. **Chegar e se orientar:** manter “Descubra” como área que reúne busca e
+   descoberta guiada. Explicar a diferença: busca procura palavras na Bíblia e
+   nos resumos; “Explore por tema” leva a uma seleção curada de passagens.
+2. **Escolher:** cada card mostra nome do tema, descrição curta e cena própria.
+   O card inteiro responde a clique/teclado, apresenta foco visível e anuncia
+   um único nome acessível; a arte decorativa não duplica a leitura do rótulo.
+3. **Entender o destino:** ao abrir um tema, mostrar título e uma frase que
+   conecte o tema à seleção curada antes da lista. Indicar com clareza que cada
+   referência abre a leitura bíblica. Não inventar conteúdo nem prometer
+   aconselhamento; preservar a curadoria editorial existente.
+4. **Ler e voltar:** a pessoa pode abrir uma passagem, voltar ao tema e depois
+   à grade sem perder a posição de exploração. Card da Home e link direto devem
+   chegar ao mesmo estado de tema. O botão voltar do navegador e a URL precisam
+   concordar com a seleção aberta, incluindo tema inválido ou removido.
+5. **Recuperar-se:** erro de referência oferece retry; busca sem resultado dá
+   caminho para limpar ou mudar de fonte; falha de rede não deve parecer tema
+   vazio. Limpar busca remove filtros relacionados apenas quando isso for
+   explícito e reversível.
+
+### Etapas e prioridades
+
+| Ordem | Trabalho | Prioridade | Aceite |
+|---|---|---|---|
+| 1 | Auditar estados atuais de Descubra, cards, referências curadas, URL e volta | P0 | Fluxos de grade, detalhe, Home, link direto e retorno descritos sem lacunas |
+| 2 | Corrigir modelo de navegação do tema para URL/histórico e retorno à grade | P0 | Compartilhar/atualizar a URL preserva tema; voltar restaura contexto e rolagem |
+| 3 | Refinar hierarquia e interação dos cards desktop | P1 | Área acionável e foco evidentes; título/descrição legíveis em claro e escuro |
+| 4 | Melhorar cabeçalho do tema e orientação da lista de passagens | P1 | Tema e propósito ficam claros antes dos cards; referência abre a passagem correta |
+| 5 | Fechar os estados da busca e de referências | P1 | Loading, erro/retry, vazio e resultados são distintos e oferecem saída coerente |
+| 6 | QA da jornada web desktop | P0 | Teclado, leitor de tela estrutural, tema claro/escuro e fluxo ponta a ponta aprovados |
+
+### Regras de escopo e revisão
+
+- Priorizar web desktop, sem redesenhar agora o produto mobile nativo. Preservar
+  a responsividade existente e conferir que as mudanças não a quebram.
+- Reutilizar as oito ilustrações vetoriais e as referências curadas atuais;
+  alterar arte/conteúdo só se a auditoria apontar problema concreto.
+- Não adicionar métricas, conteúdo bíblico, filtros ou categorias sem evidência
+  de necessidade. Reduzir ambiguidade antes de adicionar controles.
+- Manter movimento curto e opcional; respeitar `prefers-reduced-motion`.
+- Registrar screenshots e resultados por rota/estado/tema quando a inspeção
+  visual estiver disponível. Até lá, o aceite visual permanece aberto.
+
+### Riscos a verificar antes de codificar
+
+- Tema escolhido em estado React local pode divergir da query string usada pelas
+  recomendações da Home e não representar o histórico do navegador.
+- “Buscar na Bíblia e nos resumos” pode ser confundido com explorar um tema;
+  os rótulos e transições devem tornar a diferença explícita sem duplicar busca.
+- Card com ilustração decorativa pode parecer não acionável; foco, hover e
+  affordance precisam comunicar interação sem ruído visual.
+- Lista curada com uma referência indisponível precisa manter o restante útil e
+  dar retry local, sem apagar seleção nem transformar o estado em vazio global.
+
 - Roadmap atual: `PLANO-MESTRE-UX-ETAPAS-19-A-23.md`.
 - Matriz de inspeção: `docs/matriz-auditoria-responsiva.md`.
 - Inventário de estados: `docs/inventario-estados-ui.md`.

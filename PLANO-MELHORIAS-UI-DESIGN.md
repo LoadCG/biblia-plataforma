@@ -230,18 +230,147 @@ A rodada atual concentra as melhorias na experiência web em largura ampla (mín
 - Não adicionar dependência, família de ícones, fonte tipográfica ou imagens remotas como pressuposto.
 - O usuário aprovou a execução visual; continuar em mudanças pequenas, anotar a evidência e não tratar a inspeção parcial como aceite final.
 
-## Status de execução e fila revisada — 2026-09-28
+## Foco único da próxima rodada — Leitor bíblico desktop (2026-10-01)
+
+**Decisão de escopo:** concentrar a próxima rodada somente no Leitor bíblico web em viewport desktop (largura a partir de 1024 px), aproximando cabeçalho, texto e ações da tela 03 da referência aprovada. Não iniciar trabalho nas outras superfícies durante esta rodada. A experiência mobile/nativa permanece adiada por decisão do usuário.
+
+### Resultado pretendido
+
+Uma página de leitura editorial, confortável e texto-primeiro: capítulo fácil de identificar e trocar; coluna de leitura estável; versículos, números e estados com hierarquia clara; controles discretos e acessíveis; progresso e seleção sem encobrir o texto. O tema claro deve acompanhar a paleta creme/terrosa da referência, e o tema escuro deve conservar os tokens existentes com contraste legível.
+
+### Plano em etapas
+
+#### Etapa 1 — Baseline e inventário da rota
+
+1.1 **Conferir o checkout:** anotar `git status` e diff dos três alvos permitidos para esta rodada (rota do Leitor e documentos); preservar alterações preexistentes fora deles e não reformatar arquivos sem relação com o foco.
+
+1.2 **Mapear a implementação existente:** localizar estrutura do cabeçalho, altura/rolagem animada, renderização de capítulo e versículos, estado de preferência tipográfica, progresso, barra fixa inferior, toolbar de seleção e funções de persistência. Registrar dependências entre componentes sem propor refatoração ampla.
+
+1.3 **Fixar amostra de conteúdo:** usar Gênesis 1 como leitura representativa e Salmos 119 como capítulo longo; escolher no acervo real o livro de nome visualmente mais extenso para checar o cabeçalho. Não introduzir título, subtítulo ou texto bíblico novo.
+
+1.4 **Capturar baseline de layout:** registrar 1280×900 e 1440×900, nos temas claro e escuro, para as duas rotas principais. Conferir 1024×900 como limite de largura em pelo menos um estado de leitura e um estado selecionado. Guardar para cada evidência: URL, dimensão, tema, tamanho/família de fonte e estado da interface.
+
+1.5 **Capturar baseline de estados:** observar sem seleção; seleção simples; seleção múltipla; preferências serifada/sem serifa; fonte menor/maior; rolagem suficiente para recolher o cabeçalho; final do capítulo; início e fim de livro. Estados repetidos podem ser agrupados em capturas se a evidência continuar legível.
+
+1.6 **Medir e classificar:** verificar dimensões do documento/coluna, rolagem horizontal, colisão entre cabeçalho e versículos, oclusão pela navegação/toolbar, contraste, foco e nomes acessíveis. Registrar cada problema com rota, estado, viewport, reprodução, gravidade, evidência e condição de aceite.
+
+1.7 **Proteger dados persistidos:** não alterar preferências reais, notas, progresso, grifos ou salvos. Preferir perfil/contexto local isolado; se for inevitável alternar tema ou fonte no contexto atual, anotar o valor inicial e restaurá-lo ao final, verificando a restauração. Ações que persistem só serão exercitadas se houver contexto local descartável e limpeza comprovável; caso contrário, registrar a limitação e validar a ligação pelo código/estado visual sem simular sucesso persistente.
+
+**Saída/gate:** matriz de baseline reproduzível, mapa curto dos componentes e lista priorizada de achados. Não iniciar ajuste cosmético antes de classificar os desvios observados.
+
+#### Etapa 2 — Cabeçalho e navegação do capítulo
+
+2.1 **Definir hierarquia:** comparar o título do livro/capítulo e o conjunto de controles com a referência; decidir posição, alinhamento, escala, espaçamento e tratamento do título. Não se comprometer com um dropdown novo antes de confirmar que a navegação existente suporta essa interação.
+
+2.2 **Inventariar controles:** revisar voltar, ver resumo, áudio, tema e ajustes. Para cada controle, registrar função, prioridade, rótulo acessível, ícone, estado normal/desabilitado/ativo e alvo; identificar duplicação ou competição visual.
+
+2.3 **Ajustar composição:** corrigir apenas desvios observados de alinhamento, respiro, superfície, borda e tipografia. Manter as ações atuais e tokens claro/escuro; não misturar cor codificada direta se houver token semântico adequado.
+
+2.4 **Revisar comportamento fixo:** conferir o cabeçalho no topo, após rolar, ao voltar ao topo e durante troca de capítulo. Confirmar fundo opaco, separador, altura medida, animação existente sem saltos e âncora do conteúdo abaixo do cabeçalho.
+
+2.5 **Revisar teclado:** percorrer controles em ordem de tabulação; confirmar foco visível, ativação por teclado e que a rolagem/recolhimento do cabeçalho não rouba foco nem esconde o controle focado.
+
+2.6 **Exercitar limites de conteúdo:** título de livro mais longo; capítulo 1; último capítulo de um livro; capítulo curto; passagem de anterior/próximo. Confirmar nomes legíveis e destinos corretos, sem overflow.
+
+**Saída/gate:** cabeçalho aprovado nos dois temas e nas larguras de aceite; navegação continua funcional; nenhum foco/controlador fica oculto. Se a captura não demonstrar benefício visual, não acrescentar decoração.
+
+#### Etapa 3 — Área editorial do texto
+
+3.1 **Conferir largura e medida:** medir largura do texto em 1024, 1280 e 1440 px; manter uma linha confortável e coluna centrada. Ajustar `max-width`/margens só com evidência de linhas excessivamente longas ou coluna estreita.
+
+3.2 **Conferir escala tipográfica:** comparar tamanho selecionado, família serifada e sem serifa, peso, entrelinha e escala dos números de versículo. A escolha salva e os controles A-/A+ prevalecem; a referência visual não autoriza trocar a preferência da pessoa.
+
+3.3 **Conferir ritmo editorial:** revisar o intervalo vertical e horizontal entre versículos, recuo dos números, quebra de linhas, relação título/corpo e respiro do início/fim do capítulo. Evitar transformar cada versículo em card ou ornamento.
+
+3.4 **Confirmar destaque dos estados:** inspecionar grifo, versículo alvo por URL, versículo selecionado, versículo falado e nota/salvo existentes. Cor não pode ser o único sinal; a cópia do texto e o número continuam discerníveis.
+
+3.5 **Avaliar subtítulo com fonte de verdade:** verificar se os dados do produto contêm subtítulo de capítulo com procedência adequada. Só usar se existir e se for contextualmente correto; se não existir, manter sem subtítulo em vez de inferir o texto do mockup.
+
+3.6 **Revalidar contraste:** comparar texto principal, número, controles inline e destaques nos fundos claro/escuro; medir combinações que mudarem. Preservar leitura em tema escuro sem sombra de texto como substituta de contraste suficiente.
+
+**Saída/gate:** corpo confortável nos tamanhos/famílias suportados, conteúdo correto e todos os estados visuais legíveis; preferência persiste sem ser regravada pela inspeção.
+
+#### Etapa 4 — Progresso, seleção e ações
+
+4.1 **Progresso de leitura:** percorrer início, meio e final do capítulo; conferir que a barra acompanha a posição real, não salta ao recolher o cabeçalho e não transmite conclusão falsa. Avaliar rótulo/value acessível e cor em ambos os temas.
+
+4.2 **Navegação fixa inferior:** verificar posição, área de clique, contraste e relação com o fim do texto e com a barra de seleção. As setas e seletor de capítulo devem continuar acessíveis sem cobrir a leitura ou outro controle.
+
+4.3 **Painel de seleção simples:** conferir título/referência selecionada, botão fechar, grifos recentes, salvar, nota, cópia, compartilhar e imagem. Medir largura/altura e confirmar que o painel permanece próximo ao centro, não ultrapassa a viewport e não tapa controles essenciais.
+
+4.4 **Painel de seleção múltipla:** verificar intervalo de versículos, ação cancelar, cores e ações em largura curta de desktop; conferir rolagem horizontal por mouse/trackpad e teclado, indicador de que há mais ações e retorno do foco após fechar.
+
+4.5 **Ícones e acessibilidade:** para cada ação icon-only, conferir `accessibilityLabel`, papel, estado checked/disabled e foco visível. Alvos permanecem confortáveis; rótulos acessíveis não dependem do texto visual omitido no desktop.
+
+4.6 **Ações com persistência:** somente em contexto descartável, testar salvar/desfazer, anotação/cancelar, grifo/remover e criação de imagem; restaurar o estado inicial e comprovar que a conta real não foi afetada. Compartilhamento pode ser validado até a abertura da folha de compartilhamento, sem escolher destino nem enviar. Sem ambiente descartável, marcar a integração mutável como não verificada e não clicar em produção/perfil real.
+
+4.7 **Sem movimento / movimento reduzido:** respeitar o comportamento de movimento já existente. Não acrescentar animações nesta rodada; verificar que foco, seleção e confirmação não dependem de animação.
+
+**Saída/gate:** ações simples e múltiplas claras, utilizáveis por mouse e teclado; nenhuma ação some ou se torna inacessível por compactação; estado de leitura e persistência não se corrompem.
+
+#### Etapa 5 — Consolidação e aceite
+
+5.1 **Implementar por achado:** corrigir primeiro P0/P1 e depois os ajustes P2 que comprovadamente aproximam a hierarquia da referência. Um grupo de mudanças por vez, diff pequeno, sem limpar alterações existentes de outros escopos.
+
+5.2 **Repetir baseline pareado:** repetir rotas, 1024/1280/1440, temas, família/tamanho tipográfico e estados relevantes com dados equivalentes; alinhar antes/depois para detectar regressão em vez de confiar em memória visual.
+
+5.3 **Revisar acessibilidade e layout:** repetir navegação por teclado, nomes/estados no accessibility tree, contraste dos elementos alterados, zoom/texto ampliado disponível no web e verificação de overflow/oclusão.
+
+5.4 **Executar verificações do projeto:** typecheck, contratos de acessibilidade/UI e diff check existentes. Não adicionar dependência, suíte ou animação só para cumprir o plano; qualquer ambiente externo indisponível deve ficar registrado como limitação.
+
+5.5 **Fazer revisão de código:** verificar hooks/estado, dependências de efeito, valores inline vs tokens, breakpoint desktop, semântica de botões, segurança de parâmetros, uso de armazenamento, mensagens de erro e impacto em Android/iOS causado por JSX compartilhado.
+
+5.6 **Fechar evidências e backlog:** registrar na matriz cada achado corrigido, validado ou bloqueado; listar telas/plataformas não cobertas; atualizar status de execução; deixar o navegador em estado neutro, sem seleção ou preferência temporária alterada.
+
+**Saída/gate:** critérios de conclusão abaixo atendidos para o Leitor web desktop. O plano geral de UI continua parcialmente aberto; concluir esta rodada não aprova mobile, nativo, leitor de tela ou outras superfícies.
+
+### Critérios de conclusão
+
+- Cabeçalho, título e coluna de texto têm hierarquia editorial consistente com a referência sem remover funções ou alterar conteúdo.
+- Sem rolagem horizontal nem controles sobrepostos em 1024, 1280 e 1440 px, em claro e escuro.
+- O texto segue sendo o foco dominante; tamanho e família tipográfica salvos continuam valendo.
+- Barra de progresso, navegação de capítulo e painel de seleção permanecem utilizáveis em seus estados relevantes; ações por ícone têm nomes acessíveis e foco perceptível.
+- Evidência visual pareada e verificações de código registradas; lacunas nativas, de leitor de tela e de mobile permanecem explicitamente fora do aceite desta rodada.
+
+### Fora do escopo nesta rodada
+
+Home, Descubra, Planos, Salvos, Resumos, Perfil, conteúdo, identidade global, novas imagens/ilustrações e implementação mobile/nativa. Não alterar a preferência de fonte, dados de leitura ou estado salvo do usuário para produzir capturas. Sem nova dependência e sem motion decorativo.
+
+### Riscos e respostas
+
+- **A referência mostra um leitor mobile:** adaptar apenas hierarquia e linguagem visual ao desktop; não copiar dimensões nem inferir que mobile está aprovado.
+- **A toolbar compacta usa ícones:** manter alvos confortáveis, nomes acessíveis e rótulos textuais acessíveis; não reduzir affordance só para caber na composição.
+- **A fonte serifada pode ser preferência pessoal:** preservar configuração salva e conferir ambas as opções.
+- **O estado persistido pode contaminar capturas:** registrar estado inicial e não salvar alterações durante a inspeção.
+- **O checkout contém mudanças anteriores:** limitar o diff desta rodada ao Leitor e documentos diretamente relacionados; preservar o restante.
+
+## Status de execução e fila revisada — 2026-10-01
 
 | Etapa | Estado | Evidência / restante |
 |---|---|---|
-| A — Auditoria visual | Parcial | Home, Descubra, Leitor e Planos inspecionados em web desktop a 1280×900 nos temas claro e escuro; não houve overflow horizontal. Mobile adiado pelo usuário; seguem pendentes foco/teclado e fluxos específicos fora das telas prioritárias. |
-| B — Ícones e símbolos | Parcial | MaterialIcons continuam como padrão de ações; recomendações e temas mantêm descrições textuais. Falta auditoria completa de foco/teclado, alvos e contraste. |
-| C — Ilustrações | Parcial | SVG panorâmico do versículo por período e desenho original de livros/ramo em Planos; categorias seguem com line art, menos detalhado que a referência. Falta melhorar algumas cenas e validar amanhecer/tarde em capturas controladas. |
-| D — Cartões e imagens | Parcial | Home com composição ampla e recomendações temáticas; Planos com destaque editorial e grid. Sem fotos remotas; SVG local controla licença e offline. Ainda há distância para as ilustrações mais ricas da referência. |
-| E — Movimento | Em andamento | O fogo da sequência respeita movimento reduzido; o ícone de salvar do versículo do dia recebeu pulso curto de escala, também desativado quando a preferência está ativa. Inspeção web confirmou alternância de salvo, sem persistir o estado temporário. Falta piloto de progresso e validação nativa da preferência. |
-| F — Qualidade | Parcial | Typecheck, 34 contratos de acessibilidade, 7 superfícies estruturais de UI, diff check e inspeções web foram executados. Sem validação em aparelho/leitor de tela e sem suítes de teste neste recorte. Avisos existentes de estilos de sombra RN Web e notificações web seguem para avaliação futura. |
+| A — Auditoria visual | Parcial | Home, Descubra, Leitor e Planos têm inspeção web desktop em claro/escuro; paisagem e recomendações ganharam conferências recentes. A rodada focal do Leitor precisa repetir baseline em 1280/1440 e cobrir estados de foco/seleção. Mobile/nativo segue adiado. |
+| B — Ícones e símbolos | Parcial | MaterialIcons seguem como padrão. O painel de seleção desktop tem rótulos acessíveis nas ações principais; falta varrer foco, alvos, contraste e affordance do Leitor em todos os estados. |
+| C — Ilustrações | Parcial | Temas de Descubra, planos e paisagem do dia têm vetores locais; manhã/tarde/noite são controláveis no Expo Web de desenvolvimento. Permanecem oportunidades em estados vazios e ficha documental de cada ativo. |
+| D — Cartões e imagens | Parcial | Home e Planos usam cenas SVG locais; sem fotografia ou fonte externa não curada. Não é foco da próxima rodada. |
+| E — Movimento | Parcial | Fogo de sequência e feedback curto de salvar respeitam movimento reduzido no fluxo implementado. Falta piloto de progresso e validação da preferência em plataforma nativa; não é foco desta rodada do Leitor. |
+| F — Qualidade | Parcial | Typecheck, 34 contratos de acessibilidade, 8 superfícies estruturais de UI, diff check e inspeções web passaram nos recortes realizados. Validação nativa/leitores de tela permanece pendente. |
 
-**Próxima execução:** seguir a prioridade desktop-first acima e atualizar a matriz para separar claramente o que esta rodada cobre do mobile adiado. Revisão nativa e de tecnologias assistivas continua fora do aceite web.
+**Foco da rodada concluída:** etapas 1–5 do foco único acima para o Leitor web desktop, com cobertura de navegador e QA estático registradas no incremento a seguir. As demais superfícies ficam fora desta rodada; mobile, nativo e tecnologias assistivas sem ambiente apropriado permanecem pendentes e não bloqueiam o aceite desktop.
+
+### Incremento — hierarquia editorial do Leitor desktop (2026-10-01)
+
+- Conferida a rota `/biblia/01-genesis/1` no Expo Web: conteúdo completo de Gênesis 1, controles de voltar/resumo/áudio/tema/ajustes e navegação anterior/próximo aparecem na árvore acessível.
+- A inspeção visual encontrou oportunidade para aproximar a referência: o capítulo estava centralizado como título utilitário, sem alinhamento explícito com a coluna; o corpo permanecia em sans conforme a preferência salva e os números tinham contraste/hierarquia fracos.
+- Ajustado apenas o Leitor: faixa superior limitada e centrada sobre a área de conteúdo; seletor central de livro/capítulo leva à tela existente de capítulos; resumo virou ação icon-only nomeada na área de controles; título serifado editorial maior e alinhado à mesma coluna do texto, sem mudança no fluxo mobile. O corpo mantém a largura máxima anterior, ganha entrelinha ligeiramente maior no desktop e os números usam tamanho/acento terroso mais legível. A fonte do corpo continua respeitando a preferência persistida.
+- Corrigido um problema observado no painel de seleção desktop: antes ele encobria versículos e a navegação fixa em 1024 px. Quando a seleção abre, a área rolável agora reserva a altura medida do painel e o painel flutua acima da navegação. Em 1024 px, a região de leitura termina em y=672, o painel começa em y=673 e a navegação fica abaixo, sem interseção ou overflow horizontal.
+- O teste de teclado/rolagem identificou que o cabeçalho podia se recolher enquanto um controle nele mantinha foco. O Leitor web agora o mantém visível enquanto o foco ativo está dentro do cabeçalho; ao mover o foco para o texto, o recolhimento por rolagem volta ao comportamento esperado.
+- Não foi adicionado subtítulo ao capítulo: o acervo consultado não oferece fonte de verdade explícita para esse campo. Nenhuma decoração ou conteúdo bíblico foi inferido da referência.
+- QA visual isolado: Gênesis 1 em claro a 1024/1280/1440 px; Gênesis 1 em escuro a 1280/1440; Salmos 119 (176 versículos) em claro e escuro a 1024/1280/1440. Em todas as larguras medidas, a largura documental igualou a viewport e os controles/título permaneceram dentro da tela. As capturas pareadas foram feitas em contexto de navegador descartável.
+- Estados exercitados: seleção simples e múltipla sem gravar ações de salvar/grifar; nomes acessíveis do painel; alternância Resumo/Texto; abertura do seletor de capítulos; troca para Provérbios 1 ao avançar de Salmos 150; livro mais longo, 2 Tessalonicenses 3; rolagem de Salmos 119 até o fim (progresso 100%) e retorno, com cabeçalho revelado nas bordas; foco no seletor durante rolagem (cabeçalho permanece visível) e foco transferido ao versículo (cabeçalho pode recolher); A+/A− e fonte serifada testadas e restauradas no perfil descartável. O switch de tema também foi restaurado ao claro nesse perfil.
+- Verificações: `npm run typecheck` aprovado; `npm run check:a11y` aprovou 34 contratos; `npm run check:ui` aprovou 8 superfícies; `git diff --check` limpo. A captura visual não registrou erros do app. Jest não foi executado.
+- Revisão de código: nenhum pacote ou conteúdo novo; escopo de código limitado à rota do Leitor; preferências do usuário mantidas; dimensões da reserva do painel derivam de constante nomeada junto à área já reservada da navegação. Revisar depois em aparelho/nativo, leitores de tela reais, tema claro/escuro em todas as demais dimensões/estados, seleção persistente real e ajuste de fonte em perfil real; mobile continua adiado.
+- Limite atual: o navegador web desktop e os checks estáticos cobrem o que pode ser confirmado neste checkout. Validação em iOS/Android, leitores de tela, dados persistentes de usuário e breakpoints mobile exigem ambiente/escopo posterior.
+- Continuação desta revisão: leitura estática confirmou que Gênesis 1 não tem capítulo anterior e Apocalipse 22 não tem próximo; a lógica usa os limites do catálogo e atravessa livros adjacentes. Os repositórios de grifos, notas, salvos e progresso só persistem após ação explícita e apresentam feedback de falha; nenhuma ação persistente foi simulada nesta revisão. A aba Codex disponível mostrava “Não foi possível acessar o site” em `localhost:8081`, e a política de navegação bloqueou sua leitura; por isso, não se declara nova inspeção visual de Apocalipse 22 nem se tentou contornar o bloqueio. Sem defeito funcional reproduzido, não houve nova alteração de código nesta continuação.
 
 ## Registro do primeiro incremento — 2026-09-28
 

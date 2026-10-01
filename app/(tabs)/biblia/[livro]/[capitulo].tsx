@@ -44,6 +44,7 @@ import { useArrastarParaRolar } from "../../../../core/util/useArrastarParaRolar
 import { useOwnerId } from "../../../../core/useOwnerId";
 
 const ALTURA_AREA_NAVEGACAO_CAPITULO = 80;
+const ALTURA_RESERVA_SELECAO_DESKTOP = 148;
 
 export default function Leitura() {
   const desktop = useWindowDimensions().width >= 1024;
@@ -311,6 +312,19 @@ export default function Leitura() {
     const diferenca = y - ultimoY.current;
     ultimoY.current = y;
     setProgresso(alturaRolavel > 0 ? y / alturaRolavel : 0);
+
+    // Não recolha o cabeçalho enquanto um de seus controles mantém foco
+    // de teclado: o elemento ativo precisa continuar visível para que a
+    // próxima tecla não opere sobre um controle oculto.
+    if (
+      Platform.OS === "web" &&
+      typeof document !== "undefined" &&
+      document.getElementById("leitor-cabecalho")?.contains(document.activeElement)
+    ) {
+      acumulado.current = 0;
+      setFocoAtivo(false);
+      return;
+    }
 
     if (y <= MARGEM_BORDA || (alturaRolavel > 0 && y >= alturaRolavel - MARGEM_BORDA)) {
       acumulado.current = 0;
@@ -643,6 +657,7 @@ export default function Leitura() {
           (`translateY` animado) que não move nem redimensiona nada
           embaixo. */}
       <Animated.View
+        nativeID="leitor-cabecalho"
         onLayout={(e) => {
           // Guarda contra loop de remontagem infinito (bug real achado
           // ao testar, 2026-08-20): sem o limiar, jitter de subpixel na
@@ -673,31 +688,52 @@ export default function Leitura() {
         }}
         className="bg-cor-fundo dark:bg-cor-fundo-dark border-b border-cor-borda dark:border-cor-borda-dark"
       >
-        <View className="px-3 py-2 flex-row items-center justify-between">
+        <View className={`${desktop ? "max-w-[760px] w-full mx-auto px-8 py-2 relative" : "px-3 py-2"} flex-row items-center justify-between`}>
           <Pressable onPress={() => router.back()} accessibilityRole="button" accessibilityLabel="Voltar" className="w-10 h-10 items-center justify-center active:opacity-60">
             <MaterialIcons name="arrow-back" size={24} className="text-cor-texto dark:text-cor-texto-dark" />
           </Pressable>
 
-          {/* Antes era um switch de 2 pílulas ("Texto Bíblico"/"Resumo")
-              sempre visíveis, mais os ícones de áudio/tema/ajustes ao
-              lado — no mobile isso tudo junto não cabia na largura da
-              tela e criava overflow horizontal (achado real,
-              2026-08-20). Virou um botão só, mostrando o nome do modo
-              PRA ONDE ele leva (não o modo atual) — mesmo padrão de
-              toggle usado no resto do app (ex. Aa/tema). */}
-          <Pressable
-            onPress={() => setAbaAtual((atual) => (atual === "texto" ? "resumo" : "texto"))}
-            accessibilityRole="button"
-            accessibilityLabel={abaAtual === "texto" ? "Ver resumo do livro" : "Ver texto bíblico"}
-            className="flex-row items-center gap-1 px-3 py-1.5 rounded-full bg-cor-borda dark:bg-cor-borda-dark active:opacity-60"
-          >
-            <MaterialIcons name={abaAtual === "texto" ? "menu-book" : "auto-stories"} size={14} className="text-cor-texto dark:text-cor-texto-dark" />
-            <Text className="text-xs font-bold text-cor-texto dark:text-cor-texto-dark">
-              {abaAtual === "texto" ? "Ver resumo" : "Ver Bíblia"}
-            </Text>
-          </Pressable>
+          {/* No desktop, o centro abre a escolha de capítulo; na variante
+              estreita, mantemos o botão de alternância para o resumo, que
+              evita disputar espaço com os controles de leitura. */}
+          {desktop ? (
+            <Link href={{ pathname: "/biblia/escolher", params: { livro: livro.slug } }} asChild>
+              <Pressable
+                accessibilityRole="link"
+                accessibilityLabel={`Escolher capítulo de ${livro.nome}`}
+                className="absolute left-1/2 -translate-x-1/2 h-10 flex-row items-center gap-1 px-3 rounded-full active:opacity-60"
+              >
+                <Text className="text-sm font-semibold text-cor-texto dark:text-cor-texto-dark" numberOfLines={1}>
+                  {livro.nome} {capitulo}
+                </Text>
+                <MaterialIcons name="expand-more" size={18} className="text-cor-texto-suave dark:text-cor-texto-suave-dark" />
+              </Pressable>
+            </Link>
+          ) : (
+            <Pressable
+              onPress={() => setAbaAtual((atual) => (atual === "texto" ? "resumo" : "texto"))}
+              accessibilityRole="button"
+              accessibilityLabel={abaAtual === "texto" ? "Ver resumo do livro" : "Ver texto bíblico"}
+              className="flex-row items-center gap-1 px-3 py-1.5 rounded-full bg-cor-borda dark:bg-cor-borda-dark active:opacity-60"
+            >
+              <MaterialIcons name={abaAtual === "texto" ? "menu-book" : "auto-stories"} size={14} className="text-cor-texto dark:text-cor-texto-dark" />
+              <Text className="text-xs font-bold text-cor-texto dark:text-cor-texto-dark">
+                {abaAtual === "texto" ? "Ver resumo" : "Ver Bíblia"}
+              </Text>
+            </Pressable>
+          )}
 
           <View className="flex-row items-center gap-1">
+            {desktop ? (
+              <Pressable
+                onPress={() => setAbaAtual((atual) => (atual === "texto" ? "resumo" : "texto"))}
+                accessibilityRole="button"
+                accessibilityLabel={abaAtual === "texto" ? "Ver resumo do livro" : "Ver texto bíblico"}
+                className="w-10 h-10 items-center justify-center active:opacity-60"
+              >
+                <MaterialIcons name={abaAtual === "texto" ? "menu-book" : "auto-stories"} size={21} className="text-cor-texto dark:text-cor-texto-dark" />
+              </Pressable>
+            ) : null}
             {suportaAudio() && abaAtual === "texto" ? (
               <Pressable
                 onPress={alternarAudio}
@@ -720,9 +756,11 @@ export default function Leitura() {
         </View>
 
         {abaAtual === "texto" ? (
-          <Text className="text-2xl lg:text-3xl font-bold text-cor-texto dark:text-cor-texto-dark text-center pt-1 pb-3" style={desktop ? { fontFamily: FAMILIA_SERIFADA } : undefined}>
-            {livro?.nome} {capitulo}
-          </Text>
+          <View className={`${desktop ? "max-w-2xl w-full mx-auto px-8 pt-2 pb-5" : "pt-1 pb-3"}`}>
+            <Text accessibilityRole="header" className={`${desktop ? "text-4xl" : "text-2xl lg:text-3xl text-center"} font-bold text-cor-texto dark:text-cor-texto-dark`} style={desktop ? { fontFamily: FAMILIA_SERIFADA } : undefined}>
+              {livro?.nome} {capitulo}
+            </Text>
+          </View>
         ) : null}
       </Animated.View>
       <ScrollView
@@ -730,10 +768,13 @@ export default function Leitura() {
         onScroll={aoRolar}
         scrollEventThrottle={16}
         className="flex-1"
-        style={{ display: abaAtual === "texto" ? "flex" : "none", marginBottom: ALTURA_AREA_NAVEGACAO_CAPITULO }}
+        style={{
+          display: abaAtual === "texto" ? "flex" : "none",
+          marginBottom: ALTURA_AREA_NAVEGACAO_CAPITULO + (desktop && versiculosSelecionados.size > 0 ? ALTURA_RESERVA_SELECAO_DESKTOP : 0),
+        }}
         contentContainerStyle={{ paddingTop: alturaHeader + 8 }}
       >
-        <View className="px-5 pb-32 max-w-2xl w-full mx-auto">
+        <View className={`${desktop ? "px-8" : "px-5"} pb-32 max-w-2xl w-full mx-auto`}>
           {!desktop ? <DicaContextual id="leitor" titulo="Faça destaques enquanto lê" descricao="Toque em um versículo para selecionar. Depois você pode grifar, salvar, anotar, copiar ou compartilhar." /> : null}
           {erro ? (
             <View className="items-start gap-3">
@@ -785,11 +826,11 @@ export default function Leitura() {
                   >
                     <Text
                       className="text-cor-texto dark:text-[#EAEAEA]"
-                      style={{ fontSize: tamanhoFonte, lineHeight: tamanhoFonte * 1.65, fontFamily: fonteSerifada ? FAMILIA_SERIFADA : undefined }}
+                      style={{ fontSize: tamanhoFonte, lineHeight: tamanhoFonte * (desktop ? 1.72 : 1.65), fontFamily: fonteSerifada ? FAMILIA_SERIFADA : undefined }}
                     >
                       <Text
-                        className="text-cor-texto-suave dark:text-cor-texto-suave-dark font-bold opacity-50"
-                        style={{ fontSize: tamanhoFonte * 0.60, verticalAlign: "top", color: desktop ? (escuro ? "#e0a75e" : "#8a5a2b") : undefined }}
+                        className="text-cor-texto-suave dark:text-cor-texto-suave-dark font-bold"
+                        style={{ fontSize: tamanhoFonte * 0.72, verticalAlign: "top", color: desktop ? (escuro ? "#e0a75e" : "#8a5a2b") : undefined, opacity: desktop ? 0.9 : 0.5 }}
                       >
                         {"  "}
                         {v.numero}{" "}
@@ -817,7 +858,7 @@ export default function Leitura() {
           ) : (
             <Text
               className="text-cor-texto dark:text-cor-texto-dark"
-              style={{ fontSize: tamanhoFonte, lineHeight: tamanhoFonte * 1.65, fontFamily: fonteSerifada ? FAMILIA_SERIFADA : undefined }}
+              style={{ fontSize: tamanhoFonte, lineHeight: tamanhoFonte * (desktop ? 1.72 : 1.65), fontFamily: fonteSerifada ? FAMILIA_SERIFADA : undefined }}
             >
               {dados.texto}
             </Text>
@@ -906,7 +947,7 @@ export default function Leitura() {
 
       {/* Barra de Seleção Múltipla */}
       {versiculosSelecionados.size > 0 && (
-        <View className={`absolute bottom-0 left-0 right-0 items-center z-50 ${desktop ? "px-5 pb-5" : "bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark border-t border-cor-borda dark:border-cor-borda-dark pb-4"}`}>
+        <View className={`absolute ${desktop ? "bottom-24" : "bottom-0"} left-0 right-0 items-center z-50 ${desktop ? "px-5 pb-5" : "bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark border-t border-cor-borda dark:border-cor-borda-dark pb-4"}`}>
           <View className={`${desktop ? "w-full max-w-[560px] rounded-3xl border border-cor-borda dark:border-cor-borda-dark bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark shadow-xl" : "w-full"}`}>
           <View className="px-5 py-3 border-b border-cor-borda dark:border-cor-borda-dark flex-row justify-between items-center">
             <Text className="text-cor-texto dark:text-cor-texto-dark font-bold">

@@ -1,11 +1,11 @@
 import { Modal, Pressable, Text, View } from "react-native";
-import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { IconeUI, type IconeUINome } from "./icone/IconeUI";
 
 export type AcaoMenu = {
   label: string;
   onPress: () => void;
   destrutiva?: boolean;
-  icone?: keyof typeof MaterialIcons.glyphMap;
+  icone?: IconeUINome;
 };
 
 type Props = {
@@ -42,7 +42,7 @@ export function MenuAcoes({ acoes, aberto, onFechar }: Props) {
               className="flex-row items-center gap-3 px-5 py-3.5 active:bg-cor-borda dark:active:bg-cor-borda-dark"
             >
               {acao.icone ? (
-                <MaterialIcons
+                <IconeUI
                   name={acao.icone}
                   size={20}
                   color={acao.destrutiva ? "#dc2626" : undefined}

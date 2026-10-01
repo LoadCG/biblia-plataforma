@@ -32,13 +32,17 @@ O produto em foco é a aplicação web, e ela deve funcionar bem em larguras est
 
 ### Ícones e símbolos
 
-1. Manter MaterialIcons como família padrão de interface. Não misturar famílias de ícones sem uma lacuna concreta e revisão de consistência.
-2. Criar uma pequena camada compartilhada para tamanhos, cores semânticas e apresentação de ícones, sem encapsular cada ocorrência mecanicamente.
+1. Usar Phosphor como família padrão da interface, com ícones vetoriais em uma linguagem editorial mais expressiva e pesos coerentes entre estados. O piloto técnico confirmou compatibilidade com a stack atual via `react-native-svg`.
+2. Centralizar o mapeamento em `components/icone/IconeUI.tsx`, importar cada desenho pelo subcaminho específico e expor nomes/tipos de produto para que telas não dependam da biblioteca diretamente.
 3. Usar escala inicial de 16 px para apoio inline, 20 px para controles compactos e 24 px para ações primárias/navegação. Ajustar com base nas capturas reais.
 4. Preservar rótulo textual em ações importantes. Ícone isolado só quando for convencional, tiver nome acessível claro e alvo de toque confortável (mínimo recomendado de 44×44 dp).
 5. Símbolos de gênero ou tema devem complementar texto/rótulo. Cor nunca deve ser a única forma de indicar categoria, estado, seleção ou progresso.
 6. Estender a linguagem SVG linear existente apenas para um conjunto coeso de temas, gêneros e estados vazios. Manter traço, cantos, proporções e paleta compatíveis com o design atual.
 7. Evitar emojis como substitutos de ícones de produto e evitar decoração dentro dos parágrafos bíblicos.
+
+8. Usar peso regular como base; aplicar preenchimento apenas a estados selecionados/ativos e ícones cuja semântica pede ênfase. Manter os ícones decorativos fora da árvore acessível; botões e controles devem continuar fornecendo seus próprios nomes acessíveis.
+
+9. `phosphor-react-native` é uma adaptação comunitária do Phosphor. A dependência é aceita nesta rodada após confirmação de suporte a React 19, React Native 0.86 e `react-native-svg` já presente; manter imports diretos e revalidar build/export sempre que o pacote ou o Metro mudar.
 
 ### Imagens e ilustrações
 
@@ -396,6 +400,17 @@ Home, Descubra, Planos, Salvos, Resumos, Perfil, conteúdo, identidade global, n
 - Revisão de código: nenhum pacote ou conteúdo novo; escopo de código limitado à rota do Leitor; preferências do usuário mantidas; dimensões da reserva do painel derivam de constante nomeada junto à área já reservada da navegação. Revisar depois em aparelho/nativo, leitores de tela reais, tema claro/escuro em todas as demais dimensões/estados, seleção persistente real e ajuste de fonte em perfil real; mobile continua adiado.
 - Limite atual: o navegador web desktop e os checks estáticos cobrem o que pode ser confirmado neste checkout. Validação em iOS/Android, leitores de tela, dados persistentes de usuário e breakpoints mobile exigem ambiente/escopo posterior.
 - Continuação desta revisão: leitura estática confirmou que Gênesis 1 não tem capítulo anterior e Apocalipse 22 não tem próximo; a lógica usa os limites do catálogo e atravessa livros adjacentes. Os repositórios de grifos, notas, salvos e progresso só persistem após ação explícita e apresentam feedback de falha; nenhuma ação persistente foi simulada nesta revisão. A aba Codex disponível mostrava “Não foi possível acessar o site” em `localhost:8081`, e a política de navegação bloqueou sua leitura; por isso, não se declara nova inspeção visual de Apocalipse 22 nem se tentou contornar o bloqueio. Sem defeito funcional reproduzido, não houve nova alteração de código nesta continuação.
+
+### Incremento — sistema de ícones Phosphor (2026-10-01)
+
+- A família MaterialIcons foi substituída pelo Phosphor no app compartilhado: navegação, leitura, Descubra, Início, Perfil, Planos, Salvos, resumos, onboarding, conquistas e menus de ação.
+- Criado um adaptador único com imports por ícone, tipo semântico, suporte às classes NativeWind e pesos regular/preenchido. Estados ativos da navegação usam preenchimento; favoritos, notas, marcadores e concluído usam preenchimento nos estados ativos.
+- Ícones continuam complementares aos rótulos; a camada os marca como decorativos. Nomes acessíveis continuam nos controles interativos que os contêm.
+- Removido `@expo/vector-icons`; instalada a adaptação comunitária `phosphor-react-native` sobre `react-native-svg` já presente. O pacote não é a implementação oficial do projeto Phosphor e segue registrado como risco de manutenção.
+- O desenvolvimento foi feito sobre Expo SDK 57 / React Native 0.86. A documentação versionada SDK 57 foi consultada antes da alteração. A documentação não cataloga essa dependência de terceiros como API Expo.
+- Verificações: `npm run typecheck`, `npm run export:web` (94 rotas), `npm run check:a11y` (34 contratos), `npm run check:ui` (8 superfícies), `npm run check:e2e` (4 contratos de jornada) e Expo Doctor (21/21) passaram. A exportação mostrou apenas os avisos já conhecidos do suporte de notificações web e do ambiente Node `localStorage`.
+- Revisão React/TypeScript: adaptador sem estado/hooks próprios, tipos explícitos para nomes/props, imports de ícone individuais e cores explícitas resolvidas das classes NativeWind antes de renderizar os caminhos SVG.
+- O diff confirma substituição completa de `@expo/vector-icons` nos componentes executáveis. A inspeção visual desktop e nativa não será declarada sem executar no navegador/aparelho; o refinamento deliberado do aplicativo móvel nativo continua adiado.
 
 ## Registro do primeiro incremento — 2026-09-28
 

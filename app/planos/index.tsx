@@ -1,7 +1,7 @@
 import { Link, router } from "expo-router";
 import { useEffect, useState } from "react";
 import { Pressable, ScrollView, Text, useWindowDimensions, View } from "react-native";
-import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { IconeUI } from "../../components/icone/IconeUI";
 import { BotaoTema } from "../../components/BotaoTema";
 import { IlustracaoPlano } from "../../components/IlustracaoPlano";
 import { EstadoCarregando } from "../../components/EstadoCarregando";
@@ -16,19 +16,19 @@ const SOMBRA = { shadowColor: "#000", shadowOpacity: 0.06, shadowRadius: 4, shad
 function CardPlano({ plano, diasConcluidos, desktop }: { plano: PlanoLeitura; diasConcluidos: number; desktop: boolean }) {
   const progresso = plano.duracaoDias > 0 ? Math.min(1, diasConcluidos / plano.duracaoDias) : 0;
   const concluido = diasConcluidos >= plano.duracaoDias;
-  const icone = plano.id === "sabedoria-7" ? "lightbulb-outline" : "auto-stories";
+  const icone = plano.id === "sabedoria-7" ? "wisdom" : "book-collection";
 
   return (
     <Link href={`/planos/${plano.id}`} asChild>
       <Pressable accessibilityRole="link" accessibilityLabel={`${plano.titulo}. ${concluido ? "Plano concluído" : "Continuar plano"}`} accessibilityHint="Abre o plano de leitura guiado" className={`rounded-2xl bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark px-4 py-4 mb-3 shadow-sm active:opacity-80 ${desktop ? "w-[48.5%]" : ""}`} style={SOMBRA}>
         <View className="flex-row items-center gap-3 mb-3">
           <View aria-hidden={true} className="w-11 h-11 rounded-2xl bg-cor-destaque-fundo dark:bg-cor-destaque-fundo-dark items-center justify-center">
-            <MaterialIcons name={icone} size={22} className="text-cor-destaque dark:text-cor-destaque-dark" />
+            <IconeUI name={icone} size={22} className="text-cor-destaque dark:text-cor-destaque-dark" />
           </View>
           <View className="flex-1">
             <View className="flex-row items-start justify-between gap-2">
               <Text className="text-base font-bold text-cor-texto dark:text-cor-texto-dark flex-1">{plano.titulo}</Text>
-              {concluido ? <MaterialIcons name="check-circle" size={20} color="#287a45" /> : null}
+              {concluido ? <IconeUI name="complete" size={20} color="#287a45" /> : null}
             </View>
             <Text className="text-xs text-cor-texto-suave dark:text-cor-texto-suave-dark mt-0.5" numberOfLines={3}>
               {plano.descricao}
@@ -99,7 +99,7 @@ export default function Planos() {
             accessibilityLabel="Voltar"
             className="min-h-11 flex-row items-center gap-1 pr-3 active:opacity-70"
           >
-            <MaterialIcons name="arrow-back" size={18} className="text-cor-destaque dark:text-cor-destaque-dark" />
+            <IconeUI name="back" size={18} className="text-cor-destaque dark:text-cor-destaque-dark" />
             <Text className="text-cor-destaque dark:text-cor-destaque-dark text-sm">Voltar</Text>
           </Pressable>
           <BotaoTema />
@@ -122,7 +122,7 @@ export default function Planos() {
               <Text className="text-base text-cor-texto-suave dark:text-cor-texto-suave-dark leading-6 mb-5">Conheça a Semana da Sabedoria: sete dias pelos livros poéticos e sapienciais para fortalecer a mente e o espírito.</Text>
               <View className="self-start flex-row items-center gap-2 rounded-full bg-cor-destaque dark:bg-cor-destaque-dark px-5 py-3">
                 <Text className="text-sm font-bold text-white dark:text-cor-texto">Conhecer o plano</Text>
-                <MaterialIcons name="arrow-forward" size={18} className="text-white dark:text-cor-texto" />
+                <IconeUI name="next" size={18} className="text-white dark:text-cor-texto" />
               </View>
             </View>
             <View aria-hidden={true} className="w-[270px] h-[170px] mr-5">

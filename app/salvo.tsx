@@ -12,7 +12,7 @@ import { obterLivro } from "../core/content/livros";
 import { colecoesRepository, grifosRepository, notasRepository, pesquisasFavoritasRepository, versiculosSalvosRepository } from "../core/repositories";
 import type { AssociacaoColecao, Colecao } from "../core/repositories/ColecoesRepository";
 import { mostrarToast } from "../core/util/toast";
-import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { IconeUI } from "../components/icone/IconeUI";
 
 type Filtro = "todos" | "grifo" | "nota" | "pesquisa" | "salvo";
 
@@ -219,7 +219,7 @@ export default function Salvo() {
           <TextInput testID="busca-salvo" accessibilityLabel="Buscar nos itens salvos" value={termo} onChangeText={setTermo} placeholder="Buscar em notas, livros e pesquisas..." placeholderTextColor="#9ca3af" className="px-4 pr-12 py-3 rounded-full border border-cor-borda dark:border-cor-borda-dark bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark text-cor-texto dark:text-cor-texto-dark" />
           {termo ? (
             <Pressable testID="limpar-busca-salvo" onPress={() => setTermo("")} accessibilityRole="button" accessibilityLabel="Limpar busca dos itens salvos" hitSlop={10} className="absolute right-3 top-2 h-9 w-9 items-center justify-center rounded-full active:opacity-60">
-              <MaterialIcons name="close" size={20} color="#6b6257" />
+              <IconeUI name="close" size={20} color="#6b6257" />
             </Pressable>
           ) : null}
         </View>
@@ -269,7 +269,7 @@ export default function Salvo() {
 
         {possuiFiltrosAtivos ? (
           <Pressable testID="limpar-filtros-salvo" onPress={limparFiltros} accessibilityRole="button" accessibilityLabel="Limpar filtros e seleção" className="self-start flex-row items-center gap-1.5 mb-4 rounded-full border border-cor-borda dark:border-cor-borda-dark px-3 py-1.5 active:opacity-70">
-            <MaterialIcons name="filter-alt-off" size={15} color="#8a5a2b" />
+            <IconeUI name="clear-filter" size={15} color="#8a5a2b" />
             <Text className="text-xs font-semibold text-cor-destaque dark:text-cor-destaque-dark">Limpar filtros</Text>
           </Pressable>
         ) : null}

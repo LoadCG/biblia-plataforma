@@ -1,7 +1,7 @@
 import { Link, router, useLocalSearchParams } from "expo-router";
 import { useEffect, useMemo, useState } from "react";
 import { Platform, Pressable, ScrollView, Text, useWindowDimensions, View } from "react-native";
-import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { IconeUI } from "../../components/icone/IconeUI";
 import { CardConquistas } from "../../components/CardConquistas";
 import { CardStreak } from "../../components/CardStreak";
 import { CardVersiculoDia } from "../../components/CardVersiculoDia";
@@ -58,7 +58,7 @@ function CardContinueLendo({ item, escuro }: { item: CapituloLido; escuro: boole
       style={{ shadowColor: "#000", shadowOpacity: 0.06, shadowRadius: 4, shadowOffset: { width: 0, height: 1 } }}
     >
       <View className="w-9 h-9 rounded-full bg-cor-destaque-fundo dark:bg-cor-destaque-fundo-dark items-center justify-center mb-2.5">
-        <MaterialIcons name="auto-stories" size={18} color={escuro ? "#e0a75e" : "#8a5a2b"} />
+        <IconeUI name="book-collection" size={18} color={escuro ? "#e0a75e" : "#8a5a2b"} />
       </View>
       <Text numberOfLines={1} className="text-sm font-bold text-cor-texto dark:text-cor-texto-dark">
         {livro.nome}
@@ -148,7 +148,7 @@ export default function Inicio() {
                 accessibilityLabel="Lembrete diário de leitura"
                 className="w-8 h-8 items-center justify-center active:opacity-60"
               >
-                <MaterialIcons name="notifications-none" size={24} className="text-cor-texto dark:text-cor-texto-dark" />
+                <IconeUI name="notification" size={24} className="text-cor-texto dark:text-cor-texto-dark" />
               </Pressable>
             ) : null}
           </View>
@@ -167,7 +167,7 @@ export default function Inicio() {
                   </View>
                   <Pressable onPress={() => router.push("/pesquisa")} accessibilityRole="link" className="flex-row items-center gap-1 py-2 active:opacity-70">
                     <Text className="text-sm font-semibold text-cor-destaque dark:text-cor-destaque-dark">Ver todos</Text>
-                    <MaterialIcons name="chevron-right" size={18} color={escuro ? "#e0a75e" : "#8a5a2b"} />
+                    <IconeUI name="next-chevron" size={18} color={escuro ? "#e0a75e" : "#8a5a2b"} />
                   </Pressable>
                 </View>
                 <View className="flex-row gap-3">
@@ -217,7 +217,7 @@ export default function Inicio() {
                   {lembretePlano.diasConcluidos} de {lembretePlano.plano.duracaoDias} dias — sem pressa, retome quando quiser.
                 </Text>
               </View>
-              <MaterialIcons name="chevron-right" size={20} color={escuro ? "#c9bfa8" : "#6b6153"} />
+              <IconeUI name="next-chevron" size={20} color={escuro ? "#c9bfa8" : "#6b6153"} />
             </Pressable>
           </Link>
         ) : null}
@@ -252,7 +252,7 @@ export default function Inicio() {
               </View>
             </View>
             <View className="w-14 h-14 rounded-full bg-white/60 dark:bg-cor-texto/10 items-center justify-center border border-cor-borda dark:border-cor-texto/10">
-              <MaterialIcons name="auto-stories" size={25} color={escuro ? "#2a241c" : "#8a5a2b"} />
+              <IconeUI name="book-collection" size={25} color={escuro ? "#2a241c" : "#8a5a2b"} />
             </View>
           </Pressable>
         </Link>

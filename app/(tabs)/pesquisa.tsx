@@ -1,7 +1,7 @@
 import { Link, router, useLocalSearchParams } from "expo-router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Pressable, ScrollView, Text, TextInput, useWindowDimensions, View } from "react-native";
-import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { IconeUI, type IconeUINome } from "../../components/icone/IconeUI";
 import { BotaoTema } from "../../components/BotaoTema";
 import { CardVersiculoTema } from "../../components/CardVersiculoTema";
 import { EstadoVazio } from "../../components/EstadoVazio";
@@ -39,9 +39,9 @@ function TextoDestacado({ texto, termo }: { texto: string; termo: string }) {
 // Início e do "Enviar diariamente" do Versículo do Dia), não fingem
 // ser clicáveis com um alerta falso. Quando existirem, troque `disabled`
 // por navegação de verdade.
-const ATALHOS_EM_BREVE: { id: string; rotulo: string; icone: keyof typeof MaterialIcons.glyphMap }[] = [
-  { id: "favoritos", rotulo: "Favoritos", icone: "star-border" },
-  { id: "apoie", rotulo: "Apoie", icone: "favorite-border" },
+const ATALHOS_EM_BREVE: { id: string; rotulo: string; icone: IconeUINome }[] = [
+  { id: "favoritos", rotulo: "Favoritos", icone: "featured" },
+  { id: "apoie", rotulo: "Apoie", icone: "favorite-outline" },
 ];
 
 export default function Pesquisa() {
@@ -139,7 +139,7 @@ export default function Pesquisa() {
           <View className="flex-row items-center gap-3">
             {desktop ? (
               <Pressable onPress={() => router.push("/planos")} accessibilityRole="link" className="flex-row items-center gap-2 rounded-full border border-cor-borda dark:border-cor-borda-dark bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark px-4 py-2.5 active:opacity-70">
-                <MaterialIcons name="event-note" size={18} color={escuro ? "#e0a75e" : "#8a5a2b"} />
+                <IconeUI name="reading-plan" size={18} color={escuro ? "#e0a75e" : "#8a5a2b"} />
                 <Text className="text-sm font-semibold text-cor-texto dark:text-cor-texto-dark">Planos de leitura</Text>
               </Pressable>
             ) : null}
@@ -154,7 +154,7 @@ export default function Pesquisa() {
               accessibilityRole="link"
               className="flex-1 items-center gap-1.5 mx-1 rounded-2xl bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark py-3.5 active:opacity-70"
             >
-              <MaterialIcons name="event-note" size={20} color={escuro ? "#e0a75e" : "#8a5a2b"} />
+              <IconeUI name="reading-plan" size={20} color={escuro ? "#e0a75e" : "#8a5a2b"} />
               <Text className="text-xs font-semibold text-cor-texto dark:text-cor-texto-dark">Planos</Text>
             </Pressable>
             {ATALHOS_EM_BREVE.map((atalho) => (
@@ -166,7 +166,7 @@ export default function Pesquisa() {
                 accessibilityState={{ disabled: true }}
                 className="flex-1 items-center gap-1.5 mx-1 rounded-2xl bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark py-3.5 opacity-40"
               >
-                <MaterialIcons name={atalho.icone} size={20} color={escuro ? "#e0a75e" : "#8a5a2b"} />
+                <IconeUI name={atalho.icone} size={20} color={escuro ? "#e0a75e" : "#8a5a2b"} />
                 <Text className="text-xs font-semibold text-cor-texto dark:text-cor-texto-dark">{atalho.rotulo}</Text>
               </Pressable>
             ))}
@@ -174,7 +174,7 @@ export default function Pesquisa() {
         ) : null}
 
         <View className="relative">
-          {desktop ? <MaterialIcons name="search" size={21} color={escuro ? "#b3a894" : "#6b6153"} className="absolute left-4 top-3.5 z-10" /> : null}
+          {desktop ? <IconeUI name="search" size={21} color={escuro ? "#b3a894" : "#6b6153"} className="absolute left-4 top-3.5 z-10" /> : null}
           <TextInput
             testID="busca-descubra"
             accessibilityLabel="Buscar na Bíblia e nos resumos"
@@ -197,7 +197,7 @@ export default function Pesquisa() {
               hitSlop={10}
               className="absolute right-3 top-2.5 h-9 w-9 items-center justify-center rounded-full active:opacity-60"
             >
-              <MaterialIcons name="close" size={20} color={escuro ? "#b3a894" : "#6b6257"} />
+              <IconeUI name="close" size={20} color={escuro ? "#b3a894" : "#6b6257"} />
             </Pressable>
           ) : null}
         </View>

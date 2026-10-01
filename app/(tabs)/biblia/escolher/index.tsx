@@ -1,7 +1,7 @@
 import { Link, router, useLocalSearchParams } from "expo-router";
 import { useEffect, useMemo, useState } from "react";
 import { FlatList, Platform, Pressable, Text, TextInput, View } from "react-native";
-import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { IconeUI } from "../../../../components/icone/IconeUI";
 import { BotaoTema } from "../../../../components/BotaoTema";
 import { EstadoVazio } from "../../../../components/EstadoVazio";
 import { GradeCapitulos } from "../../../../components/GradeCapitulos";
@@ -172,8 +172,8 @@ export default function EscolherLivro() {
                 accessibilityLabel={emSelecao ? "Cancelar seleção" : "Marcar vários capítulos como lidos"}
                 className="flex-row items-center gap-1.5 px-3 py-1.5 rounded-full bg-cor-borda dark:bg-cor-borda-dark active:opacity-70"
               >
-                <MaterialIcons
-                  name={emSelecao ? "close" : "playlist-add-check"}
+                <IconeUI
+                  name={emSelecao ? "close" : "select-many"}
                   size={15}
                   className="text-cor-texto dark:text-cor-texto-dark"
                 />
@@ -254,7 +254,7 @@ export default function EscolherLivro() {
               accessibilityLabel="Limpar busca"
               className="absolute right-2 w-7 h-7 items-center justify-center rounded-full active:opacity-60"
             >
-              <MaterialIcons name="close" size={16} className="text-cor-texto-suave dark:text-cor-texto-suave-dark" />
+              <IconeUI name="close" size={16} className="text-cor-texto-suave dark:text-cor-texto-suave-dark" />
             </Pressable>
           ) : null}
         </View>

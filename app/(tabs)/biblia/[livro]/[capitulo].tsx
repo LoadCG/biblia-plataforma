@@ -8,7 +8,7 @@ import { captureRef } from "react-native-view-shot";
 if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
   UIManager.setLayoutAnimationEnabledExperimental(true);
 }
-import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { IconeUI } from "../../../../components/icone/IconeUI";
 import { BotaoTema } from "../../../../components/BotaoTema";
 import { ModalNota } from "../../../../components/ModalNota";
 import { Tooltip } from "../../../../components/Tooltip";
@@ -349,7 +349,7 @@ export default function Leitura() {
   if (!livro || !valido) {
     return (
       <View className="flex-1 items-center justify-center bg-cor-fundo dark:bg-cor-fundo-dark px-6">
-        <MaterialIcons name="error-outline" size={48} className="text-cor-texto-suave dark:text-cor-texto-suave-dark mb-4" />
+        <IconeUI name="warning" size={48} className="text-cor-texto-suave dark:text-cor-texto-suave-dark mb-4" />
         <Text className="text-xl font-bold text-cor-texto dark:text-cor-texto-dark mb-2 text-center">Capítulo não encontrado</Text>
         <Text className="text-cor-texto-suave dark:text-cor-texto-suave-dark mb-6 text-center">Parece que você tentou acessar um capítulo que não existe neste livro.</Text>
         <Link href={livro ? { pathname: "/biblia/escolher", params: { livro: livro.slug } } : "/"} asChild>
@@ -719,7 +719,7 @@ export default function Leitura() {
               : "Volta à tela anterior ou abre a escolha de capítulos se esta leitura foi aberta diretamente."}
             className="w-10 h-10 items-center justify-center active:opacity-60"
           >
-            <MaterialIcons name={versiculosSelecionados.size > 0 ? "close" : "arrow-back"} size={24} className="text-cor-texto dark:text-cor-texto-dark" />
+            <IconeUI name={versiculosSelecionados.size > 0 ? "close" : "back"} size={24} className="text-cor-texto dark:text-cor-texto-dark" />
           </Pressable>
 
           {/* No desktop, o centro abre a escolha de capítulo; na variante
@@ -735,7 +735,7 @@ export default function Leitura() {
                 <Text className="text-sm font-semibold text-cor-texto dark:text-cor-texto-dark" numberOfLines={1}>
                   {livro.nome} {capitulo}
                 </Text>
-                <MaterialIcons name="expand-more" size={18} className="text-cor-texto-suave dark:text-cor-texto-suave-dark" />
+                <IconeUI name="chevron-down" size={18} className="text-cor-texto-suave dark:text-cor-texto-suave-dark" />
               </Pressable>
             </Link>
           ) : (
@@ -745,7 +745,7 @@ export default function Leitura() {
               accessibilityLabel={abaAtual === "texto" ? "Ver resumo do livro" : "Ver texto bíblico"}
               className="flex-row items-center gap-1 px-3 py-1.5 rounded-full bg-cor-borda dark:bg-cor-borda-dark active:opacity-60"
             >
-              <MaterialIcons name={abaAtual === "texto" ? "menu-book" : "auto-stories"} size={14} className="text-cor-texto dark:text-cor-texto-dark" />
+              <IconeUI name={abaAtual === "texto" ? "open-book" : "book-collection"} size={14} className="text-cor-texto dark:text-cor-texto-dark" />
               <Text className="text-xs font-bold text-cor-texto dark:text-cor-texto-dark">
                 {abaAtual === "texto" ? "Ver resumo" : "Ver Bíblia"}
               </Text>
@@ -760,7 +760,7 @@ export default function Leitura() {
                 accessibilityLabel={abaAtual === "texto" ? "Ver resumo do livro" : "Ver texto bíblico"}
                 className="w-10 h-10 items-center justify-center active:opacity-60"
               >
-                <MaterialIcons name={abaAtual === "texto" ? "menu-book" : "auto-stories"} size={21} className="text-cor-texto dark:text-cor-texto-dark" />
+                <IconeUI name={abaAtual === "texto" ? "open-book" : "book-collection"} size={21} className="text-cor-texto dark:text-cor-texto-dark" />
               </Pressable>
             ) : null}
             {suportaAudio() && abaAtual === "texto" ? (
@@ -770,8 +770,8 @@ export default function Leitura() {
                 accessibilityLabel={audioTocando ? "Pausar leitura em voz alta" : "Ouvir capítulo em voz alta"}
                 className="w-10 h-10 items-center justify-center active:opacity-60"
               >
-                <MaterialIcons
-                  name={audioTocando ? "pause-circle-outline" : "volume-up"}
+                <IconeUI
+                  name={audioTocando ? "pause" : "audio"}
                   size={22}
                   className="text-cor-texto dark:text-cor-texto-dark"
                 />
@@ -990,7 +990,7 @@ export default function Leitura() {
               hitSlop={10}
               className="p-2 -m-2 active:opacity-60"
             >
-              <MaterialIcons name="close" size={24} className="text-cor-texto-suave dark:text-cor-texto-suave-dark" />
+              <IconeUI name="close" size={24} className="text-cor-texto-suave dark:text-cor-texto-suave-dark" />
             </Pressable>
           </View>
           <ScrollView ref={refBarraSelecao} horizontal showsHorizontalScrollIndicator={false} className={desktop ? "px-3 py-2" : "px-5 py-3"}>
@@ -1023,7 +1023,7 @@ export default function Leitura() {
                         className="w-11 h-11 items-center justify-center active:opacity-70"
                       >
                         <View className={`w-8 h-8 rounded-full ${corBolinha} shadow-sm items-center justify-center`}>
-                          {isDesfazer && <MaterialIcons name="close" size={18} color="rgba(0,0,0,0.5)" />}
+                          {isDesfazer && <IconeUI name="close" size={18} color="rgba(0,0,0,0.5)" />}
                         </View>
                       </Pressable>
                     );
@@ -1037,7 +1037,7 @@ export default function Leitura() {
                     className="w-11 h-11 items-center justify-center active:opacity-70"
                   >
                     <View className="w-8 h-8 rounded-full bg-cor-borda dark:bg-cor-borda-dark items-center justify-center">
-                      <MaterialIcons name="more-horiz" size={20} className="text-cor-texto dark:text-cor-texto-dark" />
+                      <IconeUI name="more" size={20} className="text-cor-texto dark:text-cor-texto-dark" />
                     </View>
                   </Pressable>
                 )}
@@ -1056,7 +1056,7 @@ export default function Leitura() {
                     accessibilityChecked={todosSalvos}
                     className={`items-center justify-center active:opacity-70 ${desktop ? "w-11 h-11 rounded-full bg-cor-destaque-fundo dark:bg-cor-destaque-fundo-dark" : "flex-row gap-1 bg-cor-borda dark:bg-cor-borda-dark px-4 py-2 rounded-lg"}`}
                   >
-                    <MaterialIcons name={todosSalvos ? "bookmark" : "bookmark-border"} size={18} className="text-cor-texto dark:text-cor-texto-dark" />
+                    <IconeUI name={todosSalvos ? "bookmark" : "bookmark-outline"} size={18} className="text-cor-texto dark:text-cor-texto-dark" />
                     {!desktop ? <Text className="text-cor-texto dark:text-cor-texto-dark font-semibold text-sm">{todosSalvos ? "Salvo" : "Salvar"}</Text> : null}
                   </Pressable>
                 );
@@ -1071,23 +1071,23 @@ export default function Leitura() {
                 accessibilityLabel="Adicionar anotação aos versículos selecionados"
                 className={`items-center justify-center active:opacity-70 ${desktop ? "w-11 h-11 rounded-full bg-cor-borda dark:bg-cor-borda-dark" : "flex-row gap-1 bg-cor-borda dark:bg-cor-borda-dark px-4 py-2 rounded-lg"}`}
               >
-                <MaterialIcons name="edit" size={18} className="text-cor-texto dark:text-cor-texto-dark" />
+                <IconeUI name="edit" size={18} className="text-cor-texto dark:text-cor-texto-dark" />
                 {!desktop ? <Text className="text-cor-texto dark:text-cor-texto-dark font-semibold text-sm">Anotação</Text> : null}
               </Pressable>
 
               <Pressable onPress={copiarVersiculos} accessibilityRole="button" accessibilityLabel="Copiar versículos selecionados" className={`items-center justify-center active:opacity-70 ${desktop ? "w-11 h-11 rounded-full bg-cor-borda dark:bg-cor-borda-dark" : "flex-row gap-1 bg-cor-borda dark:bg-cor-borda-dark px-4 py-2 rounded-lg"}`}>
-                <MaterialIcons name="content-copy" size={18} className="text-cor-texto dark:text-cor-texto-dark" />
+                <IconeUI name="copy" size={18} className="text-cor-texto dark:text-cor-texto-dark" />
                 {!desktop ? <Text className="text-cor-texto dark:text-cor-texto-dark font-semibold text-sm">Copiar</Text> : null}
               </Pressable>
 
               <Pressable onPress={compartilharVersiculos} accessibilityRole="button" accessibilityLabel="Compartilhar versículos selecionados" className={`items-center justify-center active:opacity-70 ${desktop ? "w-11 h-11 rounded-full bg-cor-borda dark:bg-cor-borda-dark" : `flex-row gap-1 bg-cor-borda dark:bg-cor-borda-dark px-4 py-2 rounded-lg ${versiculosSelecionados.size === 1 ? "" : "mr-6"}`}`}>
-                <MaterialIcons name="share" size={18} className="text-cor-texto dark:text-cor-texto-dark" />
+                <IconeUI name="share" size={18} className="text-cor-texto dark:text-cor-texto-dark" />
                 {!desktop ? <Text className="text-cor-texto dark:text-cor-texto-dark font-semibold text-sm">Compartilhar</Text> : null}
               </Pressable>
 
               {versiculosSelecionados.size === 1 ? (
                 <Pressable onPress={gerarImagemDoVersiculoSelecionado} accessibilityRole="button" accessibilityLabel="Criar imagem deste versículo" className={`items-center justify-center active:opacity-70 ${desktop ? "w-11 h-11 rounded-full bg-cor-borda dark:bg-cor-borda-dark" : "flex-row gap-1 bg-cor-borda dark:bg-cor-borda-dark px-4 py-2 rounded-lg mr-6"}`}>
-                  <MaterialIcons name="image" size={18} className="text-cor-texto dark:text-cor-texto-dark" />
+                  <IconeUI name="image" size={18} className="text-cor-texto dark:text-cor-texto-dark" />
                   {!desktop ? <Text className="text-cor-texto dark:text-cor-texto-dark font-semibold text-sm">Imagem</Text> : null}
                 </Pressable>
               ) : null}
@@ -1118,7 +1118,7 @@ export default function Leitura() {
               accessibilityLabel="Capítulo anterior"
               className={`w-11 h-11 items-center justify-center rounded-full ${anterior ? "active:opacity-60" : "opacity-30"}`}
             >
-              <MaterialIcons name="chevron-left" size={24} className="text-cor-texto dark:text-cor-texto-dark" />
+              <IconeUI name="previous" size={24} className="text-cor-texto dark:text-cor-texto-dark" />
             </Pressable>
 
           <Link href={{ pathname: "/biblia/escolher", params: { livro: livro.slug } }} asChild>
@@ -1136,7 +1136,7 @@ export default function Leitura() {
             accessibilityLabel="Próximo capítulo"
             className={`w-11 h-11 items-center justify-center rounded-full ${proximo ? "active:opacity-60" : "opacity-30"}`}
           >
-            <MaterialIcons name="chevron-right" size={24} className="text-cor-texto dark:text-cor-texto-dark" />
+            <IconeUI name="next-chevron" size={24} className="text-cor-texto dark:text-cor-texto-dark" />
           </Pressable>
         </View>
       </View>
@@ -1207,7 +1207,7 @@ export default function Leitura() {
                     texto/ícone em cima, não pra fundo com branco — branco
                     aqui dava só ~2.1:1 de contraste (mesmo problema já
                     corrigido no card "Estudo por Resumos" do Início) */}
-                <MaterialIcons name={Platform.OS === "web" ? "download" : "share"} size={18} color={escuro ? "#2a241c" : "white"} />
+                <IconeUI name={Platform.OS === "web" ? "download" : "share"} size={18} color={escuro ? "#2a241c" : "white"} />
                 <Text className="text-white dark:text-cor-texto font-semibold text-sm">{Platform.OS === "web" ? "Baixar" : "Compartilhar"}</Text>
               </Pressable>
               <Pressable onPress={() => setImagemVersiculo(null)} accessibilityRole="button" accessibilityLabel="Fechar" className="px-5 py-2.5 rounded-full border border-white/30 active:opacity-70">

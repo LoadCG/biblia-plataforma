@@ -9,7 +9,7 @@ import { livros } from "../../core/content/livros";
 import type { Livro } from "../../core/content/tipos";
 import { livrosLidosRepository } from "../../core/repositories";
 import { useOwnerId } from "../../core/useOwnerId";
-import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { IconeUI } from "../../components/icone/IconeUI";
 import { mostrarToast } from "../../core/util/toast";
 
 function CardLivro({ livro, lido, trecho }: { livro: Livro; lido: boolean; trecho: string | null }) {
@@ -94,7 +94,7 @@ export default function ListaResumos() {
               />
               {termo ? (
                 <Pressable testID="limpar-busca-resumos" onPress={() => setTermo("")} accessibilityRole="button" accessibilityLabel="Limpar busca dos resumos" hitSlop={10} className="absolute right-3 top-1.5 h-9 w-9 items-center justify-center rounded-full active:opacity-60">
-                  <MaterialIcons name="close" size={20} color="#6b6257" />
+                  <IconeUI name="close" size={20} color="#6b6257" />
                 </Pressable>
               ) : null}
             </View>

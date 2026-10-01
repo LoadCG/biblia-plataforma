@@ -57,20 +57,20 @@ export function CardAtividade({ item, onMudou, selecionado, onSelecionar }: Prop
   const acoes: AcaoMenu[] =
     item.tipo === "pesquisa"
       ? [
-          { label: "Copiar termo", icone: "content-copy", onPress: () => compartilhar(item.termo) },
-          { label: "Excluir", icone: "delete-outline", onPress: excluir, destrutiva: true },
+          { label: "Copiar termo", icone: "copy", onPress: () => compartilhar(item.termo) },
+          { label: "Excluir", icone: "delete", onPress: excluir, destrutiva: true },
         ]
       : [
           {
             label: "Ler",
-            icone: "menu-book",
+            icone: "open-book",
             onPress: () => router.push(`/biblia/${item.livroSlug}/${item.capitulo}?versiculo=${item.versiculo}`),
           },
           { label: "Compartilhar", icone: "share", onPress: () => compartilhar(referenciaComLink ?? "") },
-          { label: "Resumo do livro", icone: "auto-stories", onPress: () => router.push(`/resumos/${item.livroSlug}`) },
-          { label: "Copiar", icone: "content-copy", onPress: () => compartilhar(item.tipo === "nota" ? item.texto : (referencia ?? "")) },
+          { label: "Resumo do livro", icone: "book-collection", onPress: () => router.push(`/resumos/${item.livroSlug}`) },
+          { label: "Copiar", icone: "copy", onPress: () => compartilhar(item.tipo === "nota" ? item.texto : (referencia ?? "")) },
           ...(item.tipo === "nota" ? [{ label: "Editar", icone: "edit" as const, onPress: () => setEditando(true) }] : []),
-          { label: "Excluir", icone: "delete-outline", onPress: excluir, destrutiva: true },
+          { label: "Excluir", icone: "delete", onPress: excluir, destrutiva: true },
         ];
 
   return (

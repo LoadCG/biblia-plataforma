@@ -1,7 +1,7 @@
 import { Link, router } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
 import { Image, Pressable, ScrollView, Text, View } from "react-native";
-import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { IconeUI } from "../../components/icone/IconeUI";
 import { BotaoTema } from "../../components/BotaoTema";
 import { CardAtividade } from "../../components/CardAtividade";
 import { EstadoVazio } from "../../components/EstadoVazio";
@@ -126,7 +126,7 @@ export default function Voce() {
               accessibilityLabel="Configurações"
               className="w-11 h-11 rounded-full bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark items-center justify-center active:opacity-70"
             >
-              <MaterialIcons name="settings" size={18} className="text-cor-texto dark:text-cor-texto-dark" />
+              <IconeUI name="settings" size={18} className="text-cor-texto dark:text-cor-texto-dark" />
             </Pressable>
           </Link>
           </View>
@@ -139,7 +139,7 @@ export default function Voce() {
             </Text>
             <Text className="text-xs text-cor-destaque dark:text-cor-destaque-dark font-semibold mt-0.5">Editar perfil ✎</Text>
             <View className="flex-row items-center gap-1 mt-1">
-              <MaterialIcons name="place" size={13} color={cores.textoSuave} />
+              <IconeUI name="location" size={13} color={cores.textoSuave} />
               <Text className="text-xs text-cor-texto-suave dark:text-cor-texto-suave-dark">Sem conta ainda</Text>
             </View>
           </View>
@@ -175,7 +175,7 @@ export default function Voce() {
             className="flex-1 items-center gap-1.5 rounded-2xl py-4 shadow-sm active:opacity-70 bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark"
             style={SOMBRA}
           >
-            <MaterialIcons name="bookmark-border" size={20} color={cores.destaque} />
+            <IconeUI name="bookmark-outline" size={20} color={cores.destaque} />
             <Text className="text-xs font-bold text-cor-texto dark:text-cor-texto-dark">Salvos</Text>
           </Pressable>
           <Pressable
@@ -184,7 +184,7 @@ export default function Voce() {
             className="flex-1 items-center gap-1.5 rounded-2xl py-4 shadow-sm active:opacity-70 bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark"
             style={SOMBRA}
           >
-            <MaterialIcons name="edit-note" size={20} color={cores.destaque} />
+            <IconeUI name="edit-note" size={20} color={cores.destaque} />
             <Text className="text-xs font-bold text-cor-texto dark:text-cor-texto-dark">Notas</Text>
           </Pressable>
         </View>

@@ -1,14 +1,14 @@
 import { router } from "expo-router";
 import { useState } from "react";
 import { Pressable, Text, View } from "react-native";
-import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { IconeUI } from "../components/icone/IconeUI";
 import { concluirOnboarding } from "../core/leitura/onboarding";
 import { mostrarToast } from "../core/util/toast";
 
 const PASSOS = [
-  { icone: "auto-stories" as const, titulo: "Sua Bíblia, sempre disponível", texto: "Leia e pesquise toda a Bíblia mesmo sem conexão. Ajuste fonte e tema para o seu ritmo." },
+  { icone: "book-collection" as const, titulo: "Sua Bíblia, sempre disponível", texto: "Leia e pesquise toda a Bíblia mesmo sem conexão. Ajuste fonte e tema para o seu ritmo." },
   { icone: "edit-note" as const, titulo: "Guarde o que importa", texto: "Grife em cores, salve versículos e escreva notas privadas, armazenadas somente neste dispositivo." },
-  { icone: "event-note" as const, titulo: "Caminhe um dia de cada vez", texto: "Use planos guiados, acompanhe sua constância e celebre marcos sem competição." },
+  { icone: "reading-plan" as const, titulo: "Caminhe um dia de cada vez", texto: "Use planos guiados, acompanhe sua constância e celebre marcos sem competição." },
 ];
 
 export default function Onboarding() {
@@ -26,7 +26,7 @@ export default function Onboarding() {
     <View className="flex-1 bg-cor-fundo dark:bg-cor-fundo-dark px-6 py-10 items-center justify-center">
       <View className="w-full max-w-md">
         <View className="w-16 h-16 rounded-3xl bg-cor-destaque-fundo dark:bg-cor-destaque-fundo-dark items-center justify-center mb-6">
-          <MaterialIcons name={atual.icone} size={32} className="text-cor-destaque dark:text-cor-destaque-dark" />
+          <IconeUI name={atual.icone} size={32} className="text-cor-destaque dark:text-cor-destaque-dark" />
         </View>
         <Text accessibilityRole="header" className="text-3xl font-extrabold text-cor-texto dark:text-cor-texto-dark mb-3">{atual.titulo}</Text>
         <Text className="text-base leading-7 text-cor-texto-suave dark:text-cor-texto-suave-dark mb-8">{atual.texto}</Text>

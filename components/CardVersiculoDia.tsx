@@ -2,7 +2,7 @@ import { router } from "expo-router";
 import { useEffect, useRef, useState } from "react";
 import { Animated, Easing, Platform, Pressable, Text, useWindowDimensions, View } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { IconeUI } from "./icone/IconeUI";
 import { buscarReferencia } from "../core/biblia/BibliaAPI";
 import { parseReferenciaVersiculo } from "../core/biblia/parseReferencia";
 import { referenciaDoDia } from "../core/biblia/versiculoDoDia";
@@ -24,7 +24,7 @@ import { FAMILIA_SERIFADA } from "../core/leitura/preferenciaFonte";
 
 // Cores dos tokens de tema (tailwind.config.js) — precisam ser valores
 // reais aqui (não className) porque `LinearGradient` e o `color` do
-// MaterialIcons não aceitam classes Tailwind/dark: então este card,
+// IconeUI não aceitam classes Tailwind/dark: então este card,
 // diferente do resto do app, não muda de tema sozinho só com CSS.
 const GRADIENTE = {
   claro: ["#f3e6d3", "#fdf9f2", "#faf8f4"] as const,
@@ -109,9 +109,9 @@ export function CardVersiculoDia({ periodoDoDia }: Props) {
   }
 
   const acoesMais: AcaoMenu[] = [
-    { label: "Copiar", icone: "content-copy", onPress: () => compartilhar(textoParaCompartilhar()) },
-    ...(ref ? [{ label: "Ver capítulo inteiro", icone: "menu-book" as const, onPress: () => router.push(`/biblia/${ref.livroSlug}/${ref.capitulo}?versiculo=${ref.versiculo}`) }] : []),
-    ...(ref ? [{ label: "Resumo do livro", icone: "auto-stories" as const, onPress: () => router.push(`/resumos/${ref.livroSlug}`) }] : []),
+    { label: "Copiar", icone: "copy", onPress: () => compartilhar(textoParaCompartilhar()) },
+    ...(ref ? [{ label: "Ver capítulo inteiro", icone: "open-book" as const, onPress: () => router.push(`/biblia/${ref.livroSlug}/${ref.capitulo}?versiculo=${ref.versiculo}`) }] : []),
+    ...(ref ? [{ label: "Resumo do livro", icone: "book-collection" as const, onPress: () => router.push(`/resumos/${ref.livroSlug}`) }] : []),
   ];
 
   if (erro) {
@@ -213,7 +213,7 @@ export function CardVersiculoDia({ periodoDoDia }: Props) {
                 className="flex-1 items-center py-1 active:opacity-60"
               >
                 <Animated.View style={{ transform: [{ scale: escalaAmem }] }}>
-                  <MaterialIcons name={salvo ? "favorite" : "favorite-border"} size={24} color={salvo ? corDestaque : corIconePadrao} />
+                  <IconeUI name={salvo ? "favorite" : "favorite-outline"} size={24} color={salvo ? corDestaque : corIconePadrao} />
                 </Animated.View>
                 <Text className="text-cor-texto-suave dark:text-white/80 text-xs mt-1">Amém</Text>
               </Pressable>
@@ -224,7 +224,7 @@ export function CardVersiculoDia({ periodoDoDia }: Props) {
                 accessibilityLabel="Anotar sobre este versículo"
                 className="flex-1 items-center py-1 active:opacity-60"
               >
-                <MaterialIcons name={notaTexto ? "chat-bubble" : "chat-bubble-outline"} size={24} color={notaTexto ? corDestaque : corIconePadrao} />
+                <IconeUI name={notaTexto ? "note" : "note-outline"} size={24} color={notaTexto ? corDestaque : corIconePadrao} />
                 <Text className="text-cor-texto-suave dark:text-white/80 text-xs mt-1">Anotar</Text>
               </Pressable>
               <Pressable
@@ -233,11 +233,11 @@ export function CardVersiculoDia({ periodoDoDia }: Props) {
                 accessibilityLabel="Enviar este versículo"
                 className="flex-1 items-center py-1 active:opacity-60"
               >
-                <MaterialIcons name="share" size={24} color={corIconePadrao} />
+                <IconeUI name="share" size={24} color={corIconePadrao} />
                 <Text className="text-cor-texto-suave dark:text-white/80 text-xs mt-1">Enviar</Text>
               </Pressable>
               <Pressable onPress={() => setMenuAberto(true)} accessibilityRole="button" accessibilityLabel="Mais opções" className="flex-1 items-center py-1 active:opacity-60">
-                <MaterialIcons name="more-horiz" size={24} color={corIconePadrao} />
+                <IconeUI name="more" size={24} color={corIconePadrao} />
                 <Text className="text-cor-texto-suave dark:text-white/80 text-xs mt-1">Mais</Text>
               </Pressable>
             </View>
@@ -255,7 +255,7 @@ export function CardVersiculoDia({ periodoDoDia }: Props) {
                 accessibilityLabel="Ativar lembrete diário de leitura"
                 className="self-end bg-black/5 dark:bg-white/10 rounded-full px-3.5 py-1.5 items-center justify-center flex-row gap-1.5 active:opacity-70"
               >
-                <MaterialIcons name="notifications-none" size={14} color={corIconePadrao} />
+                <IconeUI name="notification" size={14} color={corIconePadrao} />
                 <Text className="text-cor-texto dark:text-white text-xs font-semibold">Lembrete diário</Text>
               </Pressable>
             ) : null}

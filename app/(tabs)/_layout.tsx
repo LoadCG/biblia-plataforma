@@ -1,8 +1,4 @@
-// Import direto do subcaminho, não do pacote inteiro — importar de
-// "@expo/vector-icons" (o barrel) faz o Metro empacotar as fontes de
-// TODAS as famílias de ícone (Zocial, SimpleLineIcons etc.), inflando o
-// bundle por ~500KB à toa quando só MaterialIcons é usado.
-import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { IconeUI, type IconeUINome } from "../../components/icone/IconeUI";
 import { Tabs, TabList, TabSlot, TabTrigger, type TabTriggerSlotProps } from "expo-router/ui";
 import { forwardRef, startTransition, useEffect } from "react";
 import { Platform, Pressable, Text, useWindowDimensions, View } from "react-native";
@@ -35,14 +31,14 @@ const CORES = {
 
 const ABAS = [
   { nome: "index", href: "/" as const, rotulo: "Início", icone: "home" as const },
-  { nome: "biblia", href: "/biblia" as const, rotulo: "Bíblia", icone: "menu-book" as const },
+  { nome: "biblia", href: "/biblia" as const, rotulo: "Bíblia", icone: "open-book" as const },
   { nome: "pesquisa", href: "/pesquisa" as const, rotulo: "Descubra", icone: "search" as const },
-  { nome: "voce", href: "/voce" as const, rotulo: "Você", icone: "person" as const },
+  { nome: "voce", href: "/voce" as const, rotulo: "Você", icone: "profile" as const },
 ];
 
 type BotaoAbaProps = TabTriggerSlotProps & {
   rotulo: string;
-  icone: keyof typeof MaterialIcons.glyphMap;
+  icone: IconeUINome;
   sidebar: boolean;
 };
 
@@ -71,7 +67,7 @@ const BotaoAba = forwardRef<View, BotaoAbaProps>(({ rotulo, icone, sidebar, isFo
           : "min-h-[44px] flex-1 flex-col items-center justify-center py-2 active:opacity-60"
       }
     >
-      <MaterialIcons name={icone} size={sidebar ? 22 : 26} color={isFocused ? cores.ativo : cores.inativo} />
+      <IconeUI name={icone} size={sidebar ? 22 : 26} weight={isFocused ? "fill" : "regular"} color={isFocused ? cores.ativo : cores.inativo} />
       <Text
         className={`${sidebar ? "text-sm" : "text-[10px] mt-1 tracking-wide"} font-semibold ${
           isFocused ? "text-cor-destaque dark:text-cor-destaque-dark" : "text-cor-texto-suave dark:text-cor-texto-suave-dark"

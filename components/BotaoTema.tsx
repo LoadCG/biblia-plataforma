@@ -1,5 +1,5 @@
 import { Pressable, Text } from "react-native";
-import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { IconeUI } from "./icone/IconeUI";
 import { alternarTema, useColorScheme } from "../core/theme";
 
 type Props = {
@@ -28,7 +28,7 @@ export function BotaoTema({ compacto = false }: Props) {
         accessibilityChecked={escuro}
         className="w-10 h-10 items-center justify-center active:opacity-60"
       >
-        <MaterialIcons name={escuro ? "light-mode" : "dark-mode"} size={22} className="text-cor-texto dark:text-cor-texto-dark" />
+        <IconeUI name={escuro ? "sun" : "moon-stars"} size={22} className="text-cor-texto dark:text-cor-texto-dark" />
       </Pressable>
     );
   }

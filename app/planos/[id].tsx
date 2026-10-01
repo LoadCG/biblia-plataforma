@@ -2,7 +2,7 @@ import { Link, router, useLocalSearchParams } from "expo-router";
 import Head from "expo-router/head";
 import { useEffect, useState } from "react";
 import { Pressable, ScrollView, Text, useWindowDimensions, View } from "react-native";
-import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { IconeUI } from "../../components/icone/IconeUI";
 import { BotaoTema } from "../../components/BotaoTema";
 import { IlustracaoPlano } from "../../components/IlustracaoPlano";
 import { EstadoCarregando } from "../../components/EstadoCarregando";
@@ -189,7 +189,7 @@ export default function DetalhePlano() {
                     concluido ? "bg-green-600" : "border border-cor-borda dark:border-cor-borda-dark"
                   }`}
                 >
-                  <MaterialIcons name={concluido ? "check-circle" : "radio-button-unchecked"} size={16} color={concluido ? "white" : escuro ? "#b3a894" : "#6b6153"} />
+                  <IconeUI name={concluido ? "complete" : "circle-empty"} size={16} color={concluido ? "white" : escuro ? "#b3a894" : "#6b6153"} />
                   <Text className={`text-xs font-semibold ${concluido ? "text-white" : "text-cor-texto dark:text-cor-texto-dark"}`}>
                     {concluido ? "Concluído" : "Marcar"}
                   </Text>

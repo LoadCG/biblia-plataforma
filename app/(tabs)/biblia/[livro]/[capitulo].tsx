@@ -466,6 +466,27 @@ export default function Leitura() {
     });
   }
 
+  function voltarDoLeitor() {
+    if (versiculosSelecionados.size > 0) {
+      setVersiculosSelecionados(new Set());
+      setMostrarTodasCores(false);
+      return;
+    }
+
+    if (router.canGoBack()) {
+      router.back();
+      return;
+    }
+
+    // Links diretos e cold starts não têm histórico para voltar. Mantém a
+    // pessoa na área da Bíblia e preserva o livro que estava lendo.
+    if (!livro) {
+      router.replace("/biblia/escolher");
+      return;
+    }
+    router.replace({ pathname: "/biblia/escolher", params: { livro: livro.slug } });
+  }
+
   function aplicarCorGrifo(cor: string) {
     // Atualiza a lista de recentes
     setCoresRecentes((atual) => {
@@ -689,8 +710,16 @@ export default function Leitura() {
         className="bg-cor-fundo dark:bg-cor-fundo-dark border-b border-cor-borda dark:border-cor-borda-dark"
       >
         <View className={`${desktop ? "max-w-[760px] w-full mx-auto px-8 py-2 relative" : "px-3 py-2"} flex-row items-center justify-between`}>
-          <Pressable onPress={() => router.back()} accessibilityRole="button" accessibilityLabel="Voltar" className="w-10 h-10 items-center justify-center active:opacity-60">
-            <MaterialIcons name="arrow-back" size={24} className="text-cor-texto dark:text-cor-texto-dark" />
+          <Pressable
+            onPress={voltarDoLeitor}
+            accessibilityRole="button"
+            accessibilityLabel={versiculosSelecionados.size > 0 ? "Cancelar seleção de versículos" : "Voltar"}
+            accessibilityHint={versiculosSelecionados.size > 0
+              ? "Cancela a seleção atual sem sair do capítulo."
+              : "Volta à tela anterior ou abre a escolha de capítulos se esta leitura foi aberta diretamente."}
+            className="w-10 h-10 items-center justify-center active:opacity-60"
+          >
+            <MaterialIcons name={versiculosSelecionados.size > 0 ? "close" : "arrow-back"} size={24} className="text-cor-texto dark:text-cor-texto-dark" />
           </Pressable>
 
           {/* No desktop, o centro abre a escolha de capítulo; na variante

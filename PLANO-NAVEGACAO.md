@@ -672,6 +672,12 @@ para uso por mim ou por qualquer outro agente que continue o trabalho.
       depois disso cai direto em Gênesis 6 (persistência confirmada);
       zero erros de console em todo o fluxo. Marcar 9.3 como `✅` no
       FUNCIONALIDADES.md.
+- [x] 3.7 Quando a aba Bíblia abre o último capítulo lido, registra a
+      origem `aba-biblia`. O botão de voltar do leitor leva à escolha de
+      livros (em vez de voltar à aba Início); ao trocar capítulos por
+      setas/teclado, preserva essa origem. Leituras abertas por outro
+      fluxo continuam retornando à tela de origem; se houver seleção de
+      versículos, o primeiro toque no voltar apenas cancela a seleção.
 
 ### Fase 4 — Pesquisa (parte 3b: temas)
 

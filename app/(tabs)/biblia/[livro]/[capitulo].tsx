@@ -45,10 +45,18 @@ import { useOwnerId } from "../../../../core/useOwnerId";
 
 const ALTURA_AREA_NAVEGACAO_CAPITULO = 80;
 const ALTURA_RESERVA_SELECAO_DESKTOP = 148;
+const ORIGEM_ABA_BIBLIA = "aba-biblia";
+
+function hrefCapitulo(livroSlug: string | undefined, numero: number, origem?: string) {
+  if (!livroSlug) return "/biblia/escolher";
+  const href = `/biblia/${livroSlug}/${numero}`;
+  return origem === ORIGEM_ABA_BIBLIA ? `${href}?origem=${ORIGEM_ABA_BIBLIA}` : href;
+}
 
 export default function Leitura() {
   const desktop = useWindowDimensions().width >= 1024;
-  const params = useLocalSearchParams<{ livro: string; capitulo: string; versiculo?: string; planoId?: string; diaPlano?: string; indicePlano?: string }>();
+  const params = useLocalSearchParams<{ livro: string; capitulo: string; versiculo?: string; planoId?: string; diaPlano?: string; indicePlano?: string; origem?: string }>();
+  const abertaPelaAbaBiblia = params.origem === ORIGEM_ABA_BIBLIA;
   const livro = obterLivro(params.livro ?? "");
   const capitulo = parseInt(params.capitulo ?? "", 10);
   const versiculoAlvo = params.versiculo ? parseInt(params.versiculo, 10) : null;
@@ -148,16 +156,16 @@ export default function Leitura() {
       const alvo = e.target as HTMLElement | null;
       if (alvo && ["INPUT", "TEXTAREA"].includes(alvo.tagName)) return;
       if (e.key === "ArrowLeft" && anterior) {
-        router.replace(`/biblia/${anterior.slug}/${anterior.capitulo}`);
+        router.replace(hrefCapitulo(anterior.slug, anterior.capitulo, params.origem));
       } else if (e.key === "ArrowRight" && proximo) {
-        router.replace(`/biblia/${proximo.slug}/${proximo.capitulo}`);
+        router.replace(hrefCapitulo(proximo.slug, proximo.capitulo, params.origem));
       } else if (e.key === "t" || e.key === "T") {
         alternarTema();
       }
     }
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [anterior, proximo]);
+  }, [anterior, proximo, params.origem]);
 
   useEffect(() => {
     let ativo = true;
@@ -473,6 +481,15 @@ export default function Leitura() {
       return;
     }
 
+    if (abertaPelaAbaBiblia) {
+      if (livro) {
+        router.replace({ pathname: "/biblia/escolher", params: { livro: livro.slug } });
+      } else {
+        router.replace("/biblia/escolher");
+      }
+      return;
+    }
+
     if (router.canGoBack()) {
       router.back();
       return;
@@ -716,7 +733,9 @@ export default function Leitura() {
             accessibilityLabel={versiculosSelecionados.size > 0 ? "Cancelar seleção de versículos" : "Voltar"}
             accessibilityHint={versiculosSelecionados.size > 0
               ? "Cancela a seleção atual sem sair do capítulo."
-              : "Volta à tela anterior ou abre a escolha de capítulos se esta leitura foi aberta diretamente."}
+              : abertaPelaAbaBiblia
+                ? "Volta à escolha de livros da Bíblia."
+                : "Volta à tela de onde você abriu esta leitura."}
             className="w-10 h-10 items-center justify-center active:opacity-60"
           >
             <IconeUI name={versiculosSelecionados.size > 0 ? "close" : "back"} size={24} className="text-cor-texto dark:text-cor-texto-dark" />
@@ -1112,7 +1131,7 @@ export default function Leitura() {
         >
 
           <Pressable
-              onPress={() => anterior && router.replace(`/biblia/${anterior.slug}/${anterior.capitulo}`)}
+              onPress={() => anterior && router.replace(hrefCapitulo(anterior.slug, anterior.capitulo, params.origem))}
               disabled={!anterior}
               accessibilityRole="button"
               accessibilityLabel="Capítulo anterior"
@@ -1130,7 +1149,7 @@ export default function Leitura() {
           </Link>
 
           <Pressable
-            onPress={() => proximo && router.replace(`/biblia/${proximo.slug}/${proximo.capitulo}`)}
+            onPress={() => proximo && router.replace(hrefCapitulo(proximo.slug, proximo.capitulo, params.origem))}
             disabled={!proximo}
             accessibilityRole="button"
             accessibilityLabel="Próximo capítulo"

@@ -11,7 +11,7 @@ export default function BibliaTab() {
   useEffect(() => {
     carregarUltimaLeitura().then((ultima) => {
       if (ultima) {
-        router.replace(`/biblia/${ultima.livroSlug}/${ultima.capitulo}`);
+        router.replace(`/biblia/${ultima.livroSlug}/${ultima.capitulo}?origem=aba-biblia`);
       } else {
         router.replace("/biblia/escolher");
       }

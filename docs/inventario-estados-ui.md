@@ -16,13 +16,14 @@ validação em tela real.
 
 | Superfície | Carregando | Erro | Vazio | Ação/feedback | Observação |
 |---|---|---|---|---|---|
-| Descubra / Busca | `EstadoCarregando` | `EstadoErro` com retry | `EstadoVazio` | Toast para ações | Erro e vazio são distintos; retry repete a mesma consulta. |
+| Descubra / Busca | `EstadoCarregando` | `EstadoErro` com retry | `EstadoVazio` | Limpar busca ou trocar para Bíblia; Toast para ações | Erro e vazio são distintos; retry repete a mesma consulta. |
 | Leitor bíblico | skeleton `progressbar` | painel com retry | parcial conforme conteúdo | Toast | Dados pessoais são carregados em conjunto por capítulo; respostas antigas são descartadas. |
 | Seletor de versículos | `EstadoCarregando` | `EstadoErro` com retry | não aplicável | — | Respostas após desmontagem ou troca de referência são ignoradas. |
 | Estatísticas | `EstadoCarregando` | `EstadoErro` com retry | não aplicável com cálculo zerado | — | Falhas não deixam spinner indefinido. |
 | Planos (lista) | `EstadoCarregando` | `EstadoErro` com retry | não aplicável (catálogo estático) | progresso | Não apresenta progresso zero antes de carregar. |
 | Salvo | `EstadoCarregando` | `EstadoErro` com retry | `EstadoVazio` | Toast com undo em lote | Loading, erro e vazio distinguíveis. |
-| Resumos | filtro síncrono | não aplicável na listagem | `EstadoVazio` | limpar busca | Estado vazio acessível e orientativo. |
+| Resumos | filtro síncrono | não aplicável na listagem | `EstadoVazio` | limpar busca quando há termo | Estado vazio acessível e orientativo; ação opcional no componente compartilhado. |
+| Seletor de livros | catálogo local | não aplicável | `EstadoVazio` | limpar busca quando há termo | A tela preserva o estado original sem ação quando o catálogo estiver vazio sem filtro. |
 | Cards de versículo / popover | `EstadoCarregando` | `EstadoErro` com retry | não aplicável | ações específicas | O card do dia mantém painel próprio de erro em gradiente. |
 | Detalhe de plano | `EstadoCarregando` | `EstadoErro` com retry | estado concluído quando todos os dias finalizam | Toast nas ações | Falhas de progresso não aparecem como conclusão ou progresso zero. |
 | Toast global | — | — | — | alerta polido e ação opcional | Componente compartilhado existente. |

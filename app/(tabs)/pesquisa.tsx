@@ -283,7 +283,11 @@ export default function Pesquisa() {
               
               {abaExibicao === 'resumos' ? (
                 resultadosResumo.length === 0 ? (
-                  <EstadoVazio titulo="Nenhum resultado nos resumos" descricao="Tente pesquisar na aba da Bíblia." />
+                  <EstadoVazio
+                    titulo="Nenhum resultado nos resumos"
+                    descricao="Tente pesquisar na aba da Bíblia."
+                    acao={{ rotulo: "Buscar na Bíblia", aoPressionar: () => setAbaExibicao("biblia") }}
+                  />
                 ) : (
                   resultadosResumo.map(({ livro, trecho }) => (
                     <Link key={livro.slug} href={`/resumos/${livro.slug}`} asChild>
@@ -308,7 +312,11 @@ export default function Pesquisa() {
                 ) : buscando ? (
                   <EstadoCarregando rotulo="Buscando resultados" className="mt-8" />
                 ) : resultadosBiblia.length === 0 ? (
-                  <EstadoVazio titulo="Nenhum versículo encontrado" descricao="Tente outra palavra." />
+                  <EstadoVazio
+                    titulo="Nenhum versículo encontrado"
+                    descricao="Tente outra palavra."
+                    acao={{ rotulo: "Limpar busca", aoPressionar: () => setTermo("") }}
+                  />
                 ) : (
                   <>
                   {resultadosBiblia.map((resultado, i) => {

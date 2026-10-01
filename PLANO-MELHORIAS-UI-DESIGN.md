@@ -499,6 +499,12 @@ Home, Descubra, Planos, Salvos, Resumos, Perfil, conteúdo, identidade global, n
 - A origem é preservada ao navegar capítulos com setas e teclado, para que o retorno continue previsível depois da leitura contínua. Outras entradas mantêm o comportamento de retornar à tela que iniciou a leitura; cancelar seleção de versículos segue sendo a primeira ação do botão.
 - Verificações: typecheck, 34 contratos de acessibilidade, 8 superfícies UI, 4 contratos de jornada, export web com 94 rotas e diff check passaram. A inspeção interativa do navegador não foi feita nesta rodada.
 
+### Continuação — ações em estados vazios — 2026-10-01
+
+- `EstadoVazio` aceita uma ação opcional, mantendo os usos existentes sem alteração. Busca em Resumos e seletor bíblico podem limpar uma consulta sem resultados; Descubra pode trocar para a Bíblia ou limpar a busca conforme o contexto.
+- A ação usa botão semântico, alvo de pelo menos 44 px e tokens da paleta clara/escura. O foco responsivo continua na web desktop; a responsividade compartilhada é preservada. A aparência real em navegador/tema escuro ainda precisa de inspeção visual.
+- Próximo passo: completar os tokens compartilhados de feedback e revisar estados vazios restantes na migração, depois retomar a maior diferença visual desktop em relação à referência. Não iniciar refinamento nativo mobile.
+
 - Roadmap atual: `PLANO-MESTRE-UX-ETAPAS-19-A-23.md`.
 - Matriz de inspeção: `docs/matriz-auditoria-responsiva.md`.
 - Inventário de estados: `docs/inventario-estados-ui.md`.

@@ -254,8 +254,14 @@ neste recorte.
 
 - [x] Criar `EstadoCarregando` com label e variante visual.
 - [x] Criar `EstadoErro` com mensagem amigável e retry opcional.
-- [ ] Evoluir `EstadoVazio` com ação opcional sem quebrar consumidores atuais.
+- [x] Evoluir `EstadoVazio` com ação opcional sem quebrar consumidores atuais.
 - [ ] Definir tokens de severidade, espaçamento, borda e contraste.
+
+**Incremento:** a ação é contextual e opcional; busca sem resultados pode ser
+limpa e a busca em Resumos pode trocar para a Bíblia. Estados de Salvo/Perfil
+continuam sem botão quando não há uma recuperação imediata apropriada. O botão
+tem papel acessível e altura mínima de 44 px. Validar aparência em navegador e
+tema escuro segue pendente.
 
 ### 21.3 Migração incremental `⬜`
 

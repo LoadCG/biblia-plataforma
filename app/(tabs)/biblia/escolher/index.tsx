@@ -267,7 +267,11 @@ export default function EscolherLivro() {
         contentContainerClassName="px-4 pt-4 pb-32 max-w-2xl w-full mx-auto"
         keyboardShouldPersistTaps="handled"
         ListEmptyComponent={
-          <EstadoVazio titulo="Nenhum livro encontrado" descricao="Tente buscar por outro nome." />
+          <EstadoVazio
+            titulo="Nenhum livro encontrado"
+            descricao="Tente buscar por outro nome."
+            acao={termo ? { rotulo: "Limpar busca", aoPressionar: () => setTermo("") } : undefined}
+          />
         }
       />
     </View>

@@ -103,7 +103,13 @@ export default function ListaResumos() {
             </View>
           </View>
         }
-        ListEmptyComponent={<EstadoVazio titulo="Nenhum livro encontrado" descricao="Tente buscar por outro nome ou palavra." />}
+        ListEmptyComponent={
+          <EstadoVazio
+            titulo="Nenhum livro encontrado"
+            descricao="Tente buscar por outro nome ou palavra."
+            acao={termo ? { rotulo: "Limpar busca", aoPressionar: () => setTermo("") } : undefined}
+          />
+        }
       />
     </View>
   );

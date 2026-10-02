@@ -100,3 +100,17 @@ como aprovado, defeito reproduzível ou bloqueado.
   inspecionadas aqui outras larguras, fluxos de erro ou leitores de tela.
 - Resultado: nenhum defeito visual reproduzível neste recorte. A matriz global
   permanece parcial; não marcar etapa 19 ou 21.4 como concluída.
+
+## Inspeção da paisagem do Versículo do Dia — 2026-10-01
+
+- Ambiente: Codex In-app Browser, `localhost:8081`, viewport 1280×900; Home
+  web desktop. A largura declarada pelo documento foi 1280 px.
+- Variações conferidas: manhã em claro e escuro; tarde em escuro; noite em
+  claro. A saudação e o astro corresponderam ao período selecionado; a arte
+  permaneceu legível nos quatro pares inspecionados.
+- O primeiro ajuste adicionou picos triangulares desalinhados com a referência;
+  eles foram removidos durante a revisão. A cena final usa colinas curvas em
+  camadas e ciprestes unidos, sem corte ou overflow aparente no cartão.
+- A preferência de tema foi restaurada para claro; não foram alterados dados de
+  progresso, salvos, notas ou planos. Refinamento mobile dedicado continua
+  adiado; esta captura não é aceite dos breakpoints estreitos.

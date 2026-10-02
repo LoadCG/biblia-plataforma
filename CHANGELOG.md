@@ -6,6 +6,9 @@ O formato é baseado no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.
 ## [Unreleased] - 2026-10-01
 
 ### Interface e qualidade
+- A paisagem do Versículo do Dia ganhou camadas de colinas, ciprestes,
+  vegetação e detalhes de luz; o mesmo SVG local mantém variações de manhã,
+  tarde e noite e paletas próprias para os temas claro e escuro.
 - Severidades de Toast foram aplicadas às chamadas remanescentes em Home,
   Busca, Resumos, Planos, navegação bíblica, seleção de livros/capítulos, Perfil,
   Medalhas, Onboarding, tema e dicas contextuais; copiar informa sucesso e
@@ -22,6 +25,9 @@ O formato é baseado no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.
 - Inspeção visual parcial: Home e Descubra claros; Planos claro/escuro a
   1280×900. O Toast por severidade, demais estados, breakpoints e leitores de
   tela continuam pendentes; evidência em `docs/matriz-auditoria-responsiva.md`.
+- Nova inspeção: paisagem do Versículo do Dia em 1280×900 — manhã claro/escuro,
+  tarde escuro e noite claro; DOM e largura do documento conferidos. Sem
+  alterações de progresso ou conteúdo pessoal. A matriz geral segue parcial.
 
 ## [Unreleased] - 2026-09-10
 

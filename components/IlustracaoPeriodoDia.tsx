@@ -40,15 +40,15 @@ export function IlustracaoPeriodoDia({ periodoDoDia, escuro, panoramica = false 
         {periodoDoDia === "manha" ? (
           <>
             <Circle cx={326} cy={48} r={27} fill={paleta.astro} fillOpacity={0.78} />
-            <Path d="M326 0v10m0 76v10M276 48h10m80 0h10M290 12l7 7m58 58 7 7m0-72-7 7m-58 58-7 7" stroke={paleta.astro} strokeOpacity={0.7} strokeWidth={2} strokeLinecap="round" />
-            <Path d="M73 40c10-9 20-9 30 0m17 12c7-7 14-7 21 0" stroke={paleta.detalhe} strokeWidth={2} strokeLinecap="round" />
+            <Path d="M326 2v11m0 69v11M278 48h11m74 0h11M292 14l8 8m52 52 8 8m0-68-8 8m-52 52-8 8" stroke={paleta.astro} strokeOpacity={0.7} strokeWidth={2} strokeLinecap="round" />
+            <Path d="M61 48c12-11 24-11 36 0m17 9c9-8 18-8 27 0m174-27c8-7 16-7 24 0" stroke={paleta.detalhe} strokeWidth={2} strokeLinecap="round" />
           </>
         ) : null}
         {periodoDoDia === "tarde" ? (
           <>
             <Circle cx={104} cy={49} r={26} fill={paleta.astro} fillOpacity={0.84} />
-            <Path d="M104 8v10m0 62v10M48 49h12m88 0h12M65 10l9 9m56 56 9 9m0-74-9 9m-56 56-9 9" stroke={paleta.astro} strokeOpacity={0.72} strokeWidth={2} strokeLinecap="round" />
-            <Path d="M307 36c8-8 16-8 24 0m13 13c7-7 14-7 21 0" stroke={paleta.detalhe} strokeWidth={2} strokeLinecap="round" />
+            <Path d="M104 7v11m0 62v11M48 49h12m88 0h12M65 10l9 9m56 56 9 9m0-74-9 9m-56 56-9 9" stroke={paleta.astro} strokeOpacity={0.72} strokeWidth={2} strokeLinecap="round" />
+            <Path d="M307 36c8-8 16-8 24 0m13 13c7-7 14-7 21 0M203 31c7-6 14-6 21 0" stroke={paleta.detalhe} strokeWidth={2} strokeLinecap="round" />
           </>
         ) : null}
         {periodoDoDia === "noite" ? (
@@ -60,11 +60,16 @@ export function IlustracaoPeriodoDia({ periodoDoDia, escuro, panoramica = false 
             <Path d="M277 13v7m-3.5-3.5h7" stroke={paleta.detalhe} strokeWidth={1.5} strokeLinecap="round" />
           </>
         ) : null}
-        <Path d="M0 103c42-31 77-39 112-29 31 9 50 30 81 29 40-1 61-39 109-43 56-5 94 20 158 53v37H0v-47Z" fill={paleta.colinaDistante} fillOpacity={0.72} />
-        <Path d="M0 120c48-21 83-28 124-20 37 7 65 27 106 26 44-1 77-27 117-34 40-7 74 2 113 20v38H0v-30Z" fill={paleta.colinaProxima} fillOpacity={0.84} />
-        <Path d="M0 132c47-14 79-13 117-3m90 4c50 2 78-20 118-26 48-7 82 1 135 19" stroke={paleta.traco} strokeOpacity={0.82} strokeWidth={2} strokeLinecap="round" />
-        <Path d="M35 66 20 94h9l-14 15h12l-17 14h50l-17-14h12L41 94h9L35 66Zm-3 57h6v13h-6Zm383-50-13 24h8l-13 15h10l-15 13h46l-15-13h10l-13-15h8l-13-24Zm-3 52h6v11h-6Z" fill={paleta.traco} fillOpacity={escuro ? 0.45 : 0.8} />
-        <Path d="M74 145c2-7 4-10 8-14m-3 16c2-5 5-8 10-10m278 9c3-6 6-9 11-12m-5 14c3-5 6-7 11-8" stroke={paleta.detalhe} strokeOpacity={0.72} strokeWidth={1.5} strokeLinecap="round" />
+        {/* Colinas em camadas, com curvas amplas como uma paisagem ao longe. */}
+        <Path d="M0 101c48-32 83-39 123-28 34 9 52 31 86 31 45 0 73-36 119-43 44-7 86 10 132 38v51H0v-49Z" fill={paleta.colinaDistante} fillOpacity={0.46} />
+        <Path d="M0 107c41-27 77-34 111-24 30 8 50 29 82 29 39 0 63-35 109-40 57-6 94 18 158 47v41H0v-53Z" fill={paleta.colinaDistante} fillOpacity={0.78} />
+        <Path d="M0 124c43-19 80-25 120-18 40 7 66 26 108 25 46-1 77-25 118-32 41-7 75 2 114 18v38H0v-31Z" fill={paleta.colinaProxima} fillOpacity={0.88} />
+        <Path d="M0 133c39-11 74-14 108-6m17 4c27 4 48 10 75 6m25 0c46 0 79-20 118-26 48-7 82 0 117 14" stroke={paleta.traco} strokeOpacity={0.76} strokeWidth={2} strokeLinecap="round" />
+
+        {/* Ciprestes em silhueta: a escala da cena remete à paisagem da referência. */}
+        <Path d="M40 29c-4 18-7 31-13 42-3 7-7 13-12 18h14l-15 15h14l-16 15h56l-16-15h14L51 89h14c-5-7-10-14-13-21-6-11-9-24-12-39Zm-4 90h8v14h-8Zm385-41c-3 13-5 21-10 29-2 4-5 8-8 11h10l-11 11h10l-12 12h40l-12-12h10l-11-11h10c-4-6-7-10-9-15-4-7-6-15-8-25h-9Zm-2 63h7v10h-7Z" fill={paleta.traco} fillOpacity={escuro ? 0.5 : 0.78} />
+        <Path d="M35 64c2 14 7 27 14 39m370-18c2 10 6 18 11 27" stroke={paleta.detalhe} strokeOpacity={0.28} strokeWidth={1.5} strokeLinecap="round" />
+        <Path d="M75 145c2-7 5-11 9-15m-2 16c2-5 5-8 10-11m-40 7c1-4 3-7 6-10m262 12c3-6 6-9 11-12m-5 14c3-5 6-7 11-9m38 7c2-4 4-7 8-9" stroke={paleta.detalhe} strokeOpacity={0.72} strokeWidth={1.5} strokeLinecap="round" />
       </Svg>
     );
   }

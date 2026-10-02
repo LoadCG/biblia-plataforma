@@ -628,6 +628,24 @@ nome, a descrição ou a ação.
   a composição mobile precisa ser revisada no navegador para garantir que as
   cenas não concorram com os títulos.
 
+### Execução — paisagem do Versículo do Dia — 2026-10-01
+
+- A composição panorâmica da Home foi refinada com colinas em camadas,
+  ciprestes, vegetação e raios solares. A arte continua vetorial, local e
+  compartilhada entre as variações de manhã, tarde e noite; as paletas mudam
+  com o período e o tema.
+- Revisão visual em viewport desktop 1280×900: manhã em claro/escuro, tarde em
+  escuro e noite em claro. A primeira silhueta de montanhas pontiagudas se
+  afastava da referência e foi substituída por curvas baixas; também corrigi a
+  silhueta dos ciprestes após a inspeção. A largura do documento permaneceu
+  1280 px.
+- Escopo desta rodada: Home web desktop. Não representa redesenho/aceite mobile,
+  auditoria de todos os breakpoints ou inspeção dos demais estados e telas.
+- Próxima prioridade visual: continuar ajustando a composição desktop de Home
+  frente à referência (hierarquia e cartões de jornada/conquistas); em seguida
+  registrar QA equivalente para Descubra e Planos. A validação transversal de
+  Toast ainda permanece aberta no inventário de estados.
+
 - Roadmap atual: `PLANO-MESTRE-UX-ETAPAS-19-A-23.md`.
 - Matriz de inspeção: `docs/matriz-auditoria-responsiva.md`.
 - Inventário de estados: `docs/inventario-estados-ui.md`.

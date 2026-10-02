@@ -19,6 +19,8 @@ O formato é baseado no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.
   visual/assistiva do componente e dos consumidores segue pendente.
 - Contrato de `mostrarToast` agora exige severidade em TypeScript, evitando que
   novos avisos caiam silenciosamente no estilo neutro.
+- A ação de retry do estado de erro compartilhado agora tem alvo mínimo de 44 px,
+  alinhado ao estado vazio e mais confortável para toque.
 
 ### Documentação e qualidade
 - Documentos foram reclassificados em fontes atuais, planos operacionais e
@@ -31,6 +33,9 @@ O formato é baseado no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.
 - Verificados nesta revisão: `check:copy-ui` (114 fontes, nenhum padrão),
   `typecheck`, `check:ui` (8 superfícies) e `git diff --check`; suítes de testes
   não executadas.
+- Após o ajuste de `EstadoErro`: `typecheck`, `check:ui` (8 superfícies),
+  `check:a11y` (34 contratos), `check:copy-ui` (114 fontes) e `git diff --check`
+  passaram; suítes de testes não foram executadas.
 - CI remoto `37033595191` passou em 1m36s para o commit `7716388`, incluindo
   testes, Expo Doctor, export e metadados; registrou avisos não bloqueantes de
   runtime do GitHub Actions para análise futura.

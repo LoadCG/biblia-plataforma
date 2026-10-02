@@ -20,7 +20,7 @@ export function EstadoErro({ titulo, descricao, aoTentarNovamente, rotuloAcao = 
         <Pressable
           onPress={aoTentarNovamente}
           accessibilityRole="button"
-          className="mt-4 rounded-full bg-cor-destaque dark:bg-cor-destaque-dark px-4 py-2.5 active:opacity-70"
+          className="mt-4 min-h-11 justify-center rounded-full bg-cor-destaque dark:bg-cor-destaque-dark px-4 py-2.5 active:opacity-70"
         >
           <Text className="text-white dark:text-cor-texto font-semibold">{rotuloAcao}</Text>
         </Pressable>

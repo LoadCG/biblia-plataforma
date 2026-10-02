@@ -5,6 +5,11 @@ Escopo inicial: superfícies com operações assíncronas e componentes comparti
 
 Este inventário veio da leitura estática do código. Não representa inspeção visual nem teste em leitor de tela.
 
+Em 2026-10-02, o retry compartilhado de `EstadoErro` recebeu altura mínima de
+44 px (`min-h-11`) e alinhamento vertical centralizado, igualando o alvo de
+toque ao padrão já usado por `EstadoVazio`. Mudança estrutural; ainda requer
+inspeção visual em browser e dispositivo para aceite completo.
+
 ## Implementação iniciada
 
 Os estados compartilhados foram adicionados em `components/EstadoCarregando.tsx`

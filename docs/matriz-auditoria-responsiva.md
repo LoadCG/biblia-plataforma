@@ -126,3 +126,15 @@ como aprovado, defeito reproduzível ou bloqueado.
   não aparece e o feedback de erro existente continua responsável pelo estado.
 - Tema claro e escuro conferidos na Home. Este acréscimo é exclusivo do desktop;
   o layout mobile não foi redesenhado nesta rodada e segue adiado.
+
+## Organização da Home desktop — 2026-10-01
+
+- Viewport 1280×900, rota `/`: a sequência acessível da coluna principal é
+  Versículo do Dia, “Continue lendo” ou início da leitura, e “Temas para o seu
+  dia”; progresso por resumos, lembrete de plano, sequência, conquistas e
+  estatísticas ficam agrupados na coluna lateral.
+- A composição foi conferida em claro e escuro. A largura do documento manteve
+  1280 px, sem overflow horizontal; a árvore acessível confirma títulos e links
+  da jornada.
+- A auditoria mobile dedicada permanece adiada; esta rodada documenta apenas a
+  composição desktop.

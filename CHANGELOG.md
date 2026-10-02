@@ -6,6 +6,9 @@ O formato é baseado no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.
 ## [Unreleased] - 2026-10-01
 
 ### Interface e qualidade
+- A Home desktop agora organiza a jornada principal em sequência — versículo,
+  retomada/início da leitura e temas do dia — e agrupa progresso, sequência e
+  conquistas na coluna de apoio. O layout mobile não foi redesenhado.
 - Na Home desktop, o espaço de “Continue lendo” agora oferece uma entrada
   honesta para quem ainda não tem histórico: “Escolha um livro para começar”,
   exibida só após a carga bem-sucedida e ligada ao seletor bíblico. A composição

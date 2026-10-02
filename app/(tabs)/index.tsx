@@ -187,14 +187,26 @@ export default function Inicio() {
         </View>
 
         <View className="xl:flex-row xl:items-start xl:gap-6">
+          {/* Leitura: versículo, retomada e descoberta seguem a ordem da jornada. */}
           <View className="xl:flex-[1.2] xl:min-w-0">
             <CardVersiculoDia periodoDoDia={periodoDoDia} />
+
+            {recentes.length > 0 ? (
+              <View className="mb-4 -mx-4 px-4">
+                <Text className="text-sm font-bold text-cor-texto dark:text-cor-texto-dark mb-2.5">Continue lendo</Text>
+                <ScrollView ref={refContinueLendo} horizontal showsHorizontalScrollIndicator={false}>
+                  {recentes.map((item) => (
+                    <CardContinueLendo key={`${item.livroSlug}-${item.capitulo}`} item={item} escuro={escuro} />
+                  ))}
+                </ScrollView>
+              </View>
+            ) : desktop && progressoCarregado ? <CardComecarLeitura escuro={escuro} /> : null}
 
             {desktop ? (
               <View className="mt-7">
                 <View className="flex-row items-end justify-between mb-3">
                   <View>
-                    <Text className="text-2xl font-bold text-cor-texto dark:text-cor-texto-dark" style={{ fontFamily: FAMILIA_SERIFADA }}>Para o seu dia</Text>
+                    <Text className="text-2xl font-bold text-cor-texto dark:text-cor-texto-dark" style={{ fontFamily: FAMILIA_SERIFADA }}>Temas para o seu dia</Text>
                     <Text className="text-sm text-cor-texto-suave dark:text-cor-texto-suave-dark mt-1">Uma pausa breve, guiada por um tema.</Text>
                   </View>
                   <Pressable onPress={() => router.push("/pesquisa")} accessibilityRole="link" className="flex-row items-center gap-1 py-2 active:opacity-70">
@@ -225,19 +237,8 @@ export default function Inicio() {
             ) : null}
           </View>
 
+          {/* Progresso pessoal e conquistas ficam agrupados na coluna de apoio. */}
           <View className="xl:flex-[0.85] xl:min-w-0 xl:pt-1">
-
-        {recentes.length > 0 ? (
-          <View className="mb-4 -mx-4 px-4">
-            <Text className="text-sm font-bold text-cor-texto dark:text-cor-texto-dark mb-2.5">Continue lendo</Text>
-            <ScrollView ref={refContinueLendo} horizontal showsHorizontalScrollIndicator={false}>
-              {recentes.map((item) => (
-                <CardContinueLendo key={`${item.livroSlug}-${item.capitulo}`} item={item} escuro={escuro} />
-              ))}
-            </ScrollView>
-          </View>
-        ) : desktop && progressoCarregado ? <CardComecarLeitura escuro={escuro} /> : null}
-
         {lembretePlano ? (
           <Link href={`/planos/${lembretePlano.plano.id}`} asChild>
             <Pressable accessibilityRole="link" className="flex-row items-center justify-between rounded-2xl bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark border border-cor-borda dark:border-cor-borda-dark px-4 py-3.5 mb-4 active:opacity-80">

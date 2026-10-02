@@ -659,6 +659,20 @@ nome, a descrição ou a ação.
   claro e escuro. O plano continua: refinar a hierarquia desktop da Home e então
   fazer auditoria visual semelhante em Descubra e Planos.
 
+### Execução — organização da Home desktop — 2026-10-01
+
+- A coluna principal segue a jornada de leitura: Versículo do Dia, retomada ou
+  início da leitura e temas para o dia. O título dos temas deixa explícito o
+  papel de descoberta editorial.
+- Progresso por resumos, lembrete de plano, sequência, conquistas e estatísticas
+  ficam agrupados na coluna de apoio, aproximando hierarquia e densidade da
+  referência sem alterar funcionalidades ou dados pessoais.
+- Árvore acessível e temas claro/escuro conferidos em 1280×900; largura do
+  documento em 1280 px, sem overflow horizontal. A auditoria mobile dedicada
+  permanece adiada.
+- Próxima prioridade: refinar cartões e hierarquia da coluna de apoio, depois
+  inspecionar estados e larguras desktop restantes.
+
 - Roadmap atual: `PLANO-MESTRE-UX-ETAPAS-19-A-23.md`.
 - Matriz de inspeção: `docs/matriz-auditoria-responsiva.md`.
 - Inventário de estados: `docs/inventario-estados-ui.md`.

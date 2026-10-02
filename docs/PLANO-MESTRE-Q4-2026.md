@@ -21,7 +21,7 @@ aceite visual, assistivo, nativo ou de publicação.
 | Frente | Estado | Evidência / lacuna |
 |---|---|---|
 | Home desktop | Parcialmente refinada | Jornada reorganizada; paisagem horária e ilustração da jornada implementadas. Nova inspeção no viewport desktop disponível, claro/escuro e perfil local sem histórico; composição e lateral legíveis. A captura em 1280×900 e 1440×900 continua pendente: a API do navegador não expõe dimensão CSS nem permite fixar o viewport nesta sessão. |
-| Descubra | Parcialmente implementada | No viewport desktop disponível, grade de oito temas, detalhe “Esperança”, links, entrada direta, recarga e busca (50 resultados/estado vazio) foram conferidos. Retorno que selecionava Início foi corrigido; tema inválido agora normaliza para `/pesquisa`. Foco/teclado e viewports planejados seguem pendentes. |
+| Descubra | Parcialmente implementada | No viewport desktop disponível, grade de oito temas, detalhe “Esperança”, links, entrada direta, recarga e busca (50 resultados/estado vazio) foram conferidos. Retorno que selecionava Início foi corrigido; tema inválido agora normaliza para `/pesquisa`. Ordem inicial de foco, indicador visível e abrir/voltar tema com Enter foram verificados; auditoria completa e viewports planejados seguem pendentes. |
 | Planos | Implementado com QA parcial | Lista e detalhe em claro/escuro; estado 0/7, sete sessões e ações acessíveis conferidos sem alterar progresso. Erro, conclusão, sessão retomada e viewports planejados permanecem incompletos. |
 | Sistema de estados | Migração principal feita | Inventário/API/migrações e severidades existem; inspeção visual/assistiva de cada estado, duplicações e alguns contratos continuam pendentes. |
 | Copy da interface | Gate estático passou | 114 fontes de app/componentes/conteúdo verificadas localmente e no CI, sem padrões sinalizados; a heurística não substitui revisão semântica. |
@@ -85,11 +85,13 @@ exclusivamente de cor.
 “Esperança” preservou a aba Descubra e carregou quatro referências acessíveis.
 “Voltar aos temas” retorna à grade; entrada direta e recarga preservam o detalhe;
 busca com 50 resultados, estado sem resultados e normalização de tema inválido
-foram conferidos. O estado sem resultados oferece nova consulta e limpeza. Busca
-com resultados resumidos, teclado e inspeção em 1280×900/1440×900 ainda não foram
-cobertos. Em Planos, listas e detalhe zero foram vistos em ambos os temas; nenhum
-progresso pessoal foi alterado. Estados intermediário, concluído e erro seguem
-pendentes. A API do navegador não expõe dimensão CSS nem oferece override.
+foram conferidos. O estado sem resultados oferece nova consulta e limpeza. O
+foco percorre a navegação e controles iniciais, fica visível e abre/retorna de
+um tema por Enter; os demais caminhos de teclado e estados de erro seguem sem
+revisão. Busca com resultados resumidos e inspeção em 1280×900/1440×900 ainda
+não foram cobertos. Em Planos, a lista e o detalhe em 0/7 foram vistos nos dois
+temas, sem alterar progresso pessoal. Os estados intermediário, concluído e erro
+seguem pendentes. A API do navegador não expõe dimensão CSS nem oferece override.
 
 ### Ciclo 3 — fechar sistema de estados web (P1)
 

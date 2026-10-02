@@ -13,6 +13,8 @@ O formato é baseado no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.
 - Verificadas no navegador a seleção de Esperança, as quatro passagens acessíveis
   e a volta à grade; a auditoria desktop mais ampla permanece parcial por limite
   de viewport da sessão.
+- Foco visível e abertura/retorno de tema por teclado conferidos no fluxo inicial
+  de Descubra; a auditoria dos demais controles permanece pendente.
 
 ### Documentação e qualidade
 - Documentos foram reclassificados em fontes atuais, planos operacionais e

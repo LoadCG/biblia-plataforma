@@ -28,6 +28,8 @@ O formato é baseado no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.
   de iniciar/revisar agora garantem alvo mínimo de 44 px sem mudar a composição.
 - O indicador de progresso no detalhe do plano agora expõe papel, rótulo e valor
   acessíveis, com o valor atual limitado à duração definida.
+- “Voltar aos temas” em Descubra agora oferece área mínima de 44 px, facilitando
+  o retorno à grade sem alterar a posição ou a hierarquia do controle.
 
 ### Documentação e qualidade
 - Documentos foram reclassificados em fontes atuais, planos operacionais e
@@ -53,6 +55,9 @@ O formato é baseado no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.
   `git diff --check` passaram; suítes de testes não foram executadas.
 - Após a semântica do progresso no detalhe de Plano: `typecheck`, `check:ui` (8
   superfícies), `check:a11y` (44 contratos), `check:copy-ui` (114 fontes) e
+  `git diff --check` passaram; suítes de testes não foram executadas.
+- Após o alvo de retorno em Descubra: `typecheck`, `check:ui` (8 superfícies),
+  `check:a11y` (45 contratos), `check:copy-ui` (114 fontes) e
   `git diff --check` passaram; suítes de testes não foram executadas.
 - CI remoto `37033595191` passou em 1m36s para o commit `7716388`, incluindo
   testes, Expo Doctor, export e metadados; registrou avisos não bloqueantes de

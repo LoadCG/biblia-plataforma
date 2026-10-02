@@ -355,7 +355,7 @@ export default function Pesquisa() {
             </>
           ) : temaSelecionado ? (
             <>
-              <Pressable onPress={voltarAosTemas} accessibilityRole="button" className="self-start mb-3 active:opacity-60">
+              <Pressable onPress={voltarAosTemas} accessibilityRole="button" className="self-start min-h-11 justify-center mb-3 pr-3 active:opacity-60">
                 <Text className="text-sm text-cor-destaque dark:text-cor-destaque-dark font-semibold">← Voltar aos temas</Text>
               </Pressable>
               <Text accessibilityRole="header" className="text-xl font-bold text-cor-texto dark:text-cor-texto-dark">{temaSelecionado.titulo}</Text>

@@ -38,6 +38,7 @@ const contratos = [
   ["app/planos/[id].tsx", 'accessibilityRole="progressbar"'],
   ["app/planos/[id].tsx", 'accessibilityLabel={`Progresso de ${plano.titulo}`}'],
   ["app/planos/[id].tsx", "now: Math.min(diasConcluidos.size, plano.duracaoDias)"],
+  ["app/(tabs)/pesquisa.tsx", 'className="self-start min-h-11 justify-center mb-3 pr-3 active:opacity-60"'],
   ["app/resumos/index.tsx", 'accessibilityLabel="Buscar nos resumos"'],
   ["app/resumos/index.tsx", 'accessibilityLabel="Limpar busca dos resumos"'],
   ["app/configuracoes.tsx", 'accessibilityRole="header"'],

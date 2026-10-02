@@ -151,7 +151,12 @@ export default function DetalhePlano() {
         ) : <>
         <View className={desktop ? "w-full max-w-4xl self-center" : "w-full"}>
         <View className="flex-row items-center gap-2 mb-6">
-          <View className="flex-1 h-2 rounded-full bg-cor-borda dark:bg-cor-borda-dark">
+          <View
+            accessibilityRole="progressbar"
+            accessibilityLabel={`Progresso de ${plano.titulo}`}
+            accessibilityValue={{ min: 0, max: plano.duracaoDias, now: Math.min(diasConcluidos.size, plano.duracaoDias), text: `${diasConcluidos.size} de ${plano.duracaoDias} dias` }}
+            className="flex-1 h-2 rounded-full bg-cor-borda dark:bg-cor-borda-dark"
+          >
             <View className="h-2 rounded-full bg-cor-destaque dark:bg-cor-destaque-dark" style={{ width: `${progresso * 100}%` }} />
           </View>
           <Text className="text-xs font-semibold text-cor-texto-suave dark:text-cor-texto-suave-dark">

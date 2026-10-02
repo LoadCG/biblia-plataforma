@@ -26,6 +26,8 @@ O formato é baseado no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.
   zero fictício, e o retry continua acessível.
 - No detalhe de Plano, retorno, alternância de conclusão, referências e ações
   de iniciar/revisar agora garantem alvo mínimo de 44 px sem mudar a composição.
+- O indicador de progresso no detalhe do plano agora expõe papel, rótulo e valor
+  acessíveis, com o valor atual limitado à duração definida.
 
 ### Documentação e qualidade
 - Documentos foram reclassificados em fontes atuais, planos operacionais e
@@ -48,6 +50,9 @@ O formato é baseado no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.
   `git diff --check` passaram; suítes de testes não foram executadas.
 - Após os alvos de toque no detalhe de Plano: `typecheck`, `check:ui` (8
   superfícies), `check:a11y` (41 contratos), `check:copy-ui` (114 fontes) e
+  `git diff --check` passaram; suítes de testes não foram executadas.
+- Após a semântica do progresso no detalhe de Plano: `typecheck`, `check:ui` (8
+  superfícies), `check:a11y` (44 contratos), `check:copy-ui` (114 fontes) e
   `git diff --check` passaram; suítes de testes não foram executadas.
 - CI remoto `37033595191` passou em 1m36s para o commit `7716388`, incluindo
   testes, Expo Doctor, export e metadados; registrou avisos não bloqueantes de

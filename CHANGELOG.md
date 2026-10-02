@@ -16,6 +16,9 @@ O formato é baseado no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.
 - Verificados nesta revisão: `check:copy-ui` (114 fontes, nenhum padrão),
   `typecheck`, `check:ui` (8 superfícies) e `git diff --check`; suítes de testes
   não executadas.
+- CI remoto `37033595191` passou em 1m36s para o commit `7716388`, incluindo
+  testes, Expo Doctor, export e metadados; registrou avisos não bloqueantes de
+  runtime do GitHub Actions para análise futura.
 
 ## [Unreleased] - 2026-10-01
 

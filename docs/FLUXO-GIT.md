@@ -8,8 +8,14 @@
 - Não há proteção de branch ou política de pull request comprovada por este
   checkout; não assumir que esteja habilitada.
 - O workflow de CI executa em `push` para `main` e `master`, além de pull request
-  e execução manual. A primeira execução verde em GitHub ainda precisa ser
-  observada; configuração versionada não prova execução remota.
+  e execução manual. Run `37033595191`, commit `77163887d9fc9744c45e27ffaa2ce379a195b914`,
+  passou em 1m36s em 2026-10-02; copy, validação, export e metadados passaram.
+- O run anotou que `actions/checkout@v4` e `actions/setup-node@v4` ainda declaram
+  Node 20; esse runtime foi removido dos runners GitHub-hosted em 2026-09-23 e o
+  job foi forçado a Node 24. Atualizar para versões compatíveis após conferir
+  [orientação oficial](https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/).
+- `ubuntu-latest` começa a migrar para Ubuntu 26 em 2026-10-19, com conclusão
+  planejada em 2026-11-19 ([anúncio do runner](https://github.com/actions/runner-images/issues/14748)); conferir execução nessa transição.
 - A configuração do projeto indica deploy Vercel ligado a `master`; validar
   preview/produção separadamente do resultado do CI.
 

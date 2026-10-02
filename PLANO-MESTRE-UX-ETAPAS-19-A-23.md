@@ -11,8 +11,10 @@ caixa por inferência: a conclusão exige a evidência indicada.
 - Home desktop recebeu sequência de leitura reorganizada e ilustração no card de
   jornada. Evidências por rota/tema constam em `docs/matriz-auditoria-responsiva.md`;
   a lateral ainda precisa de captura integral em viewport amplo.
-- O workflow de CI agora inclui `master`; nenhuma execução remota foi retornada
-  pela consulta feita em 2026-10-02. O gate remoto segue aberto até um run verde.
+- O workflow de CI agora inclui `master`; run `37033595191` passou para o
+  commit `77163887d9fc9744c45e27ffaa2ce379a195b914` em 2026-10-02. A configuração
+  do novo gatilho e copy gate foram exercitados; preview, artefato de falha e
+  proteção de branch permanecem abertos.
 - `npm run check:copy-ui` foi adicionado à configuração do CI e passou localmente:
   114 fontes verificadas, nenhum padrão interno sinalizado. A busca estática não
   substitui revisão semântica humana nem avalia conteúdo remoto.
@@ -408,12 +410,22 @@ acionou Toast por severidade nem fecha o aceite visual/assistivo da etapa 21.
 - [ ] Conferir clean URLs, fallback e console sem erros.
 - [ ] Guardar URL, commit e resultado como evidência.
 
-### 23.2 GitHub Actions `⬜`
+### 23.2 GitHub Actions `🔶`
 
-- [ ] Confirmar primeiro workflow remoto verde.
+- [x] Confirmar primeiro workflow remoto verde (run `37033595191`, commit
+  `77163887d9fc9744c45e27ffaa2ce379a195b914`, 2026-10-02).
 - [ ] Verificar artefato de diagnóstico em uma execução controlada.
-- [ ] Confirmar que `check:content`, `check:ui` e export estático rodam no CI.
+- [x] Confirmar que `check:content`, `check:ui` e export estático rodam no CI.
 - [ ] Configurar proteção de branch somente após uma rodada estável.
+
+**Observação do primeiro run:** todos os passos passaram em 1m36s, incluindo
+`check:copy-ui`, `npm run validate`, export web e metadados estáticos. O GitHub
+anotou que `actions/checkout@v4` e `actions/setup-node@v4` ainda declaram Node 20;
+o runtime Node 20 foi removido dos runners GitHub-hosted em 2026-09-23, e o run
+foi forçado a Node 24. Avaliar versões atuais compatíveis antes de atualizá-las
+([aviso oficial de runtime](https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/)).
+O `ubuntu-latest` começará a migrar para Ubuntu 26 em 2026-10-19, com conclusão
+planejada até 2026-11-19 ([anúncio de runner](https://github.com/actions/runner-images/issues/14748)).
 
 ### 23.3 EAS e distribuição `⬜`
 

@@ -154,8 +154,9 @@ revisão humana, execução remota e distribuição.
 3. **Estados web:** conferir inventário, duplicações de Toast, retry e estados
    destrutivos por superfície, sem generalizar aceites parciais.
 4. **CI e SEO:** após o workflow atualizado, confirmar execução verde em GitHub;
-   validar preview Vercel quando disponível. Nesta revisão não havia execuções
-   remotas retornadas pelo GitHub Actions.
+   run `37033595191` passou em 2026-10-02; validar preview Vercel quando
+   disponível e revisar compatibilidade das actions e do runner Ubuntu 26 na
+   janela de migração anunciada pelo GitHub.
 5. **Conteúdo:** evoluir contrato/taxonomia e selecionar um pequeno lote apenas
    quando houver responsáveis por revisão humana independente.
 6. **Mobile dedicado, validação nativa e lojas:** permanecem deferidos; não são

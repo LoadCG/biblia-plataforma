@@ -24,8 +24,8 @@ aceite visual, assistivo, nativo ou de publicação.
 | Descubra | Parcialmente implementada | Navegação por tema sincronizada com URL/histórico e cenas vetoriais compartilhadas; auditoria completa de foco, filtros, erros e breakpoints segue pendente. |
 | Planos | Implementado com QA parcial | Arte e sessões existem; inspeção visual registrada em desktop claro/escuro. Fluxos de erro, conclusão e evidência integral de viewport permanecem incompletos. |
 | Sistema de estados | Migração principal feita | Inventário/API/migrações e severidades existem; inspeção visual/assistiva de cada estado, duplicações e alguns contratos continuam pendentes. |
-| Copy da interface | Sem vazamento identificado na busca atual | Varredura literal de app, componentes e fontes editoriais não encontrou padrões de pensamento interno ou autoidentificação. Novo gate automatizado limita regressões futuras. |
-| CI remoto | Não comprovado | Não há execuções retornadas pelo GitHub Actions nesta revisão. Workflow passa a observar `master` e `main`; confirmar run remoto após push. |
+| Copy da interface | Gate estático passou | 114 fontes de app/componentes/conteúdo verificadas localmente e no CI, sem padrões sinalizados; a heurística não substitui revisão semântica. |
+| CI remoto | Primeiro run passou | `37033595191` para o commit `7716388`; gates de conteúdo, copy, validação, export e metadados passaram. Revisar avisos de runtime do Actions/runner; preview não foi comprovado. |
 | Conteúdo editorial | Catálogo funcional; expansão não aprovada | Há 66 resumos e 2 planos. Schema editorial completo, segunda revisão humana e publicação dos novos rascunhos são gates separados. |
 | Mobile/nativo | Deferido | Não fazer redesenho nem declarar aceite sem retomada explícita; validar regressões responsivas web em componentes compartilhados. |
 
@@ -133,15 +133,28 @@ verdes, rotas/busca/offline revisadas e nenhum conteúdo pendente exposto.
 
 1. Após o workflow atualizado chegar ao GitHub, confirmar um run verde em
    `master`; registrar run ID, commit e eventuais falhas reais.
-2. Corrigir falhas do CI sem reduzir cobertura nem elevar tolerâncias para
-   mascarar defeito.
-3. Quando quota de preview estiver disponível, validar Home, resumo, plano e
+2. Revisar avisos de runtime do GitHub Actions: o primeiro run foi aprovado,
+   mas anotou que `actions/checkout@v4` e `actions/setup-node@v4` ainda declaram
+   Node 20; esse runtime foi removido dos runners GitHub-hosted em 2026-09-23 e
+   o job foi forçado a Node 24. Identificar versões atuais compatíveis e
+   atualizar com base no [aviso oficial](https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/).
+   O runner `ubuntu-latest` inicia migração para Ubuntu 26 em 2026-10-19, com
+   término planejado para 2026-11-19 ([anúncio](https://github.com/actions/runner-images/issues/14748)); confirmar o workflow após a mudança.
+3. Corrigir falhas futuras do CI sem reduzir cobertura nem elevar tolerâncias
+   para mascarar defeito.
+4. Quando quota de preview estiver disponível, validar Home, resumo, plano e
    leitor em preview; conferir clean URLs, console e metadados.
-4. Só promover após validação explícita de preview e instrução de rollback.
-5. Não iniciar build assinado sem conta/credenciais e retomada do escopo nativo.
+5. Só promover após validação explícita de preview e instrução de rollback.
+6. Não iniciar build assinado sem conta/credenciais e retomada do escopo nativo.
 
 **Aceite:** evidência do workflow e preview vinculada ao commit, smoke test e
 rollback conhecidos. Sem esses sinais, registrar como bloqueio externo.
+
+**Execução CI em 2026-10-02:** run
+[`37033595191`](https://github.com/LoadCG/biblia-plataforma/actions/runs/37033595191)
+aprovado em 1m36s para `77163887d9fc9744c45e27ffaa2ce379a195b914`; os gates de
+conteúdo, copy, validação, export e metadados passaram. O preview Vercel continua
+sem evidência nesta rodada.
 
 ### Ciclo 7 — retomada mobile/nativa (deferido, fora da fila atual)
 

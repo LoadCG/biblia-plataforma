@@ -45,7 +45,7 @@ const ATALHOS_EM_BREVE: { id: string; rotulo: string; icone: IconeUINome }[] = [
 ];
 
 export default function Pesquisa() {
-  const parametros = useLocalSearchParams<{ tema?: string; origem?: string }>();
+  const parametros = useLocalSearchParams<{ tema?: string }>();
   const [termo, setTermo] = useState("");
   const [favoritada, setFavoritada] = useState(false);
   const [resultadosBiblia, setResultadosBiblia] = useState<ResultadoBuscaGlobal[]>([]);
@@ -64,26 +64,21 @@ export default function Pesquisa() {
   const ownerId = useOwnerId();
   const buscaAtiva = useRef(0);
   const idTemaParametro = Array.isArray(parametros.tema) ? parametros.tema[0] : parametros.tema;
-  const origemTema = Array.isArray(parametros.origem) ? parametros.origem[0] : parametros.origem;
   const temaSelecionado = idTemaParametro ? TEMAS_BUSCA.find((tema) => tema.id === idTemaParametro) ?? null : null;
 
   useEffect(() => {
     if (idTemaParametro && !temaSelecionado) {
-      router.setParams({ tema: undefined, origem: undefined });
+      router.setParams({ tema: undefined });
       return;
     }
     if (temaSelecionado && termo) setTermo("");
   }, [idTemaParametro, temaSelecionado, termo]);
 
   function abrirTema(tema: Tema) {
-    router.push({ pathname: "/pesquisa", params: { tema: tema.id, origem: "temas" } });
+    router.push({ pathname: "/pesquisa", params: { tema: tema.id } });
   }
 
   function voltarAosTemas() {
-    if (origemTema === "temas" && router.canGoBack()) {
-      router.back();
-      return;
-    }
     router.replace("/pesquisa");
   }
 

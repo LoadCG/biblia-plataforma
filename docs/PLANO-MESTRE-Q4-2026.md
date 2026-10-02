@@ -20,8 +20,8 @@ aceite visual, assistivo, nativo ou de publicação.
 
 | Frente | Estado | Evidência / lacuna |
 |---|---|---|
-| Home desktop | Parcialmente refinada | Jornada reorganizada; paisagem horária e ilustração da jornada implementadas. Inspeções registradas em 1280×900; lateral ainda precisa de captura integral em janela ampla e comparação de hierarquia/ritmo. |
-| Descubra | Parcialmente implementada | Navegação por tema sincronizada com URL/histórico e cenas vetoriais compartilhadas; auditoria completa de foco, filtros, erros e breakpoints segue pendente. |
+| Home desktop | Parcialmente refinada | Jornada reorganizada; paisagem horária e ilustração da jornada implementadas. Nova inspeção no viewport desktop disponível, claro/escuro e perfil local sem histórico; composição e lateral legíveis. A captura em 1280×900 e 1440×900 continua pendente: a API do navegador não expõe dimensão CSS nem permite fixar o viewport nesta sessão. |
+| Descubra | Parcialmente implementada | No viewport desktop disponível, grade de oito temas, detalhe “Esperança” e quatro links de passagem foram conferidos; retorno que selecionava Início foi corrigido para `/pesquisa`. Reload, link direto, busca/erros, foco/teclado e viewports planejados seguem pendentes. |
 | Planos | Implementado com QA parcial | Arte e sessões existem; inspeção visual registrada em desktop claro/escuro. Fluxos de erro, conclusão e evidência integral de viewport permanecem incompletos. |
 | Sistema de estados | Migração principal feita | Inventário/API/migrações e severidades existem; inspeção visual/assistiva de cada estado, duplicações e alguns contratos continuam pendentes. |
 | Copy da interface | Gate estático passou | 114 fontes de app/componentes/conteúdo verificadas localmente e no CI, sem padrões sinalizados; a heurística não substitui revisão semântica. |
@@ -80,6 +80,13 @@ contraste e foco visíveis; largura sem overflow; evidências e limites anotados
 **Aceite:** journeys desktop reproduzíveis, contexto e ações compreensíveis,
 sem clipping/overflow; erros recuperáveis oferecem saída; estados não dependem
 exclusivamente de cor.
+
+**Progresso parcial em 2026-10-02:** no viewport desktop disponível, a seleção de “Esperança”
+preservou a aba Descubra e carregou quatro referências acessíveis. Foi corrigido
+e revalidado que “Voltar aos temas” retorne à grade `/pesquisa`, sem depender do
+histórico. Busca vazia/resultado/erro, entrada direta, reload, teclado e a
+inspeção em 1280×900/1440×900 ainda não foram cobertos; o navegador desta sessão
+não expõe a dimensão CSS nem oferece override de viewport.
 
 ### Ciclo 3 — fechar sistema de estados web (P1)
 

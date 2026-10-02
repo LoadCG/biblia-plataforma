@@ -2,6 +2,40 @@
 
 ## Execução
 
+### Continuação da Home desktop — 2026-10-02
+
+- Ambiente: Codex In-app Browser, Expo Web local, rota `/`, captura no viewport
+  desktop disponível. A API não expõe a dimensão CSS; a capacidade de override
+  não foi disponibilizada. Portanto 1280×900 e 1440×900 não foram simulados nem
+  declarados como inspecionados.
+- Estado: perfil local recém-carregado, sem histórico de leitura, sequência ou
+  medalhas; não havia lembrete de plano ativo. O link de início da leitura foi
+  exibido. Conteúdo carregou após o estado inicial de carregamento.
+- Claro/escuro: tema claro restaurado ao final. A composição mostrou a coluna
+  principal (Versículo do Dia e início de leitura) junto à coluna de apoio
+  (jornada, sequência e medalhas); hierarquia, textos e ações estavam visíveis
+  nos dois temas. Sem clipping horizontal perceptível na largura disponível.
+- O viewport tinha rolagem vertical; a captura disponível não permite validar a
+  composição integral de 900 px nem o alinhamento abaixo da dobra. Estados com
+  histórico, lembrete de plano, erro e falha de carregamento não foram
+  fabricados no perfil local. Nenhuma alteração visual foi justificada por um
+  defeito reproduzível neste recorte.
+
+### Descubra: retorno da seleção de tema — 2026-10-02
+
+- No viewport desktop disponível, claro e escuro, a grade de oito temas e suas ilustrações estavam
+  visíveis sem clipping aparente. O detalhe de “Esperança” carregou quatro
+  passagens com links acessíveis para capítulo e versículo.
+- Achado `VIS-UI-16` (P1): “Voltar aos temas” usava `router.back()`. Ao entrar em
+  `/pesquisa?tema=esperanca` e pressionar o controle, o Expo Router voltava para
+  `/` e selecionava Início, em vez da grade.
+- Correção: o controle agora substitui o detalhe por `/pesquisa`, e o parâmetro
+  de origem que só sustentava esse fallback foi removido. Após abrir Esperança,
+  a navegação retornou a `/pesquisa`, com Descubra selecionado e a grade de oito
+  temas presente. Busca, tema inválido, reload e link direto continuam pendentes.
+- O navegador desta sessão não expõe dimensão CSS nem override de viewport. Este recorte não
+  substitui as inspeções planejadas em 1280×900 e 1440×900.
+
 - Data: 2026-09-28
 - Branch/commit: `codex/ui-usabilidade-16-18` / `113a6b6`
 - Ambiente: Codex In-app Browser, Expo Web em `http://localhost:8081`; observados 1280×900 nesta rodada, além dos viewports históricos 1280×720, 375×812 e 320×800.
@@ -58,6 +92,7 @@
 | VIS-UI-13 | A paisagem do Versículo do Dia tinha colinas abstratas, sem os raios e silhuetas presentes na linguagem da referência. | P2 | Acrescentar raios solares e árvores vetoriais locais sem cobrir o conteúdo nem substituir a cena por ícone. | Corrigido; manhã conferida visualmente em tema claro. A prévia de horário controlada permite repetir a conferência das três variantes. |
 | VIS-UI-14 | A barra de ações após selecionar versículos ocupava toda a largura do painel desktop e os rótulos repetidos pesavam visualmente. | P2 | Usar painel flutuante centralizado com ações em ícones nomeados e manter todas as opções atuais; deixar o breakpoint mobile inalterado. | Corrigido e conferido no estado de versículo selecionado em tema escuro; árvore acessível anuncia salvar, anotação, cópia, compartilhamento e criação de imagem. |
 | VIS-UI-15 | A dica de primeira leitura ocupava uma faixa alta antes do texto bíblico no desktop, distanciando o capítulo da hierarquia sem distração da referência. | P2 | Manter a dica no fluxo estreito e omiti-la apenas no breakpoint desktop. | Corrigido; captura desktop mostra o texto logo após o cabeçalho. O estado estreito continua usando `DicaContextual`. |
+| VIS-UI-16 | O botão “Voltar aos temas” podia sair de Descubra e selecionar Início quando o histórico do Expo Router incluía a aba anterior. | P1 | Sempre remover o tema selecionado com navegação determinística para `/pesquisa`; remover o parâmetro de origem que só sustentava o fallback pelo histórico. | Corrigido e confirmado no navegador em `/pesquisa`; quatro links de passagem e retorno à grade conferidos. Outros caminhos de entrada e reload pendentes. |
 
 ## Fechamento do incremento de microfeedback
 

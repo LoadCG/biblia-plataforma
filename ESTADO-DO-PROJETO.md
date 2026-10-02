@@ -147,8 +147,12 @@ revisão humana, execução remota e distribuição.
 
 ### Próxima ordem de execução
 
-1. **Home desktop:** capturar viewport integral amplo e revisar a lateral,
-   proporção de colunas, ritmo vertical e estados com dados reproduzíveis.
+1. **Home desktop:** a revisão no viewport desktop disponível, em claro/escuro
+   e perfil sem histórico, confirmou a hierarquia e não mostrou clipping
+   horizontal perceptível. A API do navegador não expõe a dimensão CSS nem
+   oferece override; faltam capturas integrais em 1280×900 e 1440×900 e estados
+   com histórico/plano. Não marcar o Ciclo 1 como concluído até obter esses
+   sinais ou revisar explicitamente o critério de viewport.
 2. **Descubra e Planos:** completar auditoria desktop de journeys, estados,
    foco, tema e regressões responsivas nos breakpoints afetados.
 3. **Estados web:** conferir inventário, duplicações de Toast, retry e estados

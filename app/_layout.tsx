@@ -22,7 +22,7 @@ export default function RootLayout() {
   const segments = useSegments();
   const rotaEstrutural = segments.join("/");
   useEffect(() => {
-    restaurarTema().catch(() => mostrarToast("Não foi possível restaurar o tema salvo"));
+    restaurarTema().catch(() => mostrarToast("Não foi possível restaurar o tema salvo", { severidade: "erro" }));
     registrarServiceWorker();
     corrigirAlturaViewportMobile();
   }, []);
@@ -34,7 +34,7 @@ export default function RootLayout() {
     if (!estaNaRaiz) return;
     onboardingConcluido()
       .then((concluido) => { if (!concluido) router.replace("/onboarding"); })
-      .catch(() => mostrarToast("Não foi possível verificar a apresentação inicial"));
+      .catch(() => mostrarToast("Não foi possível verificar a apresentação inicial", { severidade: "erro" }));
   }, [rotaEstrutural]);
 
   return (

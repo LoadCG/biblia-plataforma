@@ -18,7 +18,7 @@ export function alternarTema(): void {
   const proximo = atual === "dark" ? "light" : "dark";
   colorScheme.set(proximo);
   AsyncStorage.setItem(CHAVE_TEMA, proximo).catch(() => {
-    mostrarToast("O tema mudou, mas não foi possível salvá-lo para a próxima abertura");
+    mostrarToast("O tema mudou, mas não foi possível salvá-lo para a próxima abertura", { severidade: "erro" });
   });
 }
 

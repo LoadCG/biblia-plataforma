@@ -48,7 +48,7 @@ export default function EscolherVersiculo() {
     let ativo = true;
     grifosRepository.listarPorCapitulo(ownerId, livro.slug, capitulo)
       .then((itens) => { if (ativo) setGrifados(new Set(itens.map((g) => g.versiculo))); })
-      .catch(() => { if (ativo) mostrarToast("Não foi possível carregar os grifos deste capítulo"); });
+      .catch(() => { if (ativo) mostrarToast("Não foi possível carregar os grifos deste capítulo", { severidade: "erro" }); });
     return () => { ativo = false; };
   }, [ownerId, livro?.slug, capitulo]);
 

@@ -62,7 +62,7 @@ export default function Medalhas() {
     let ativo = true;
     livrosLidosRepository.listar(ownerId)
       .then((itens) => { if (ativo) setLidos(itens); })
-      .catch(() => { if (ativo) mostrarToast("Não foi possível carregar seu progresso para as medalhas"); });
+      .catch(() => { if (ativo) mostrarToast("Não foi possível carregar seu progresso para as medalhas", { severidade: "erro" }); });
     return () => { ativo = false; };
   }, [ownerId]);
 

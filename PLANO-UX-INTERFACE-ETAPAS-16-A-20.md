@@ -3,6 +3,11 @@
 Atualizado em 2026-09-10. Este ciclo consolida padrões transversais de
 feedback, navegação e responsividade antes de novas features de produto.
 
+Escopo vigente revisado em 2026-10-01: priorizar web desktop e preservar a
+responsividade nos breakpoints tocados. A auditoria mobile dedicada e o produto
+nativo ficam deferidos; itens abaixo continuam pendentes, não implicitamente
+aprovados.
+
 ## Etapa 16 — Estados vazios orientativos `✅`
 
 - [x] Tornar o container do estado vazio identificável como resumo.

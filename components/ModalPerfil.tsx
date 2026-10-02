@@ -37,7 +37,7 @@ export function ModalPerfil({ visivel, perfilAtual, onFechar, onSalvar }: Props)
       const asset = resultado.assets[0];
       setAvatarUri(asset.base64 ? `data:image/jpeg;base64,${asset.base64}` : asset.uri);
     } catch {
-      mostrarToast("Não foi possível escolher uma foto");
+      mostrarToast("Não foi possível escolher uma foto", { severidade: "erro" });
     }
   }
 
@@ -48,7 +48,7 @@ export function ModalPerfil({ visivel, perfilAtual, onFechar, onSalvar }: Props)
     try {
       await onSalvar({ nome: nomeFinal, avatarUri });
     } catch {
-      mostrarToast("Não foi possível salvar seu perfil");
+      mostrarToast("Não foi possível salvar seu perfil", { severidade: "erro" });
     } finally {
       setSalvando(false);
     }

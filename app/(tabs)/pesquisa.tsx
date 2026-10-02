@@ -92,7 +92,7 @@ export default function Pesquisa() {
     let ativo = true;
     pesquisasFavoritasRepository.listarTodas(ownerId)
       .then((itens) => { if (ativo) setFavoritas(itens); })
-      .catch(() => { if (ativo) mostrarToast("Não foi possível carregar suas buscas favoritas"); });
+      .catch(() => { if (ativo) mostrarToast("Não foi possível carregar suas buscas favoritas", { severidade: "erro" }); });
     return () => { ativo = false; };
   }, [ownerId, favoritada]);
   useEffect(() => setLimite(50), [termo, testamento, livroFiltro]);
@@ -110,7 +110,7 @@ export default function Pesquisa() {
     pesquisasFavoritasRepository.estaFavoritada(ownerId, termo).then((valor) => {
       if (buscaAtiva.current === idBusca) setFavoritada(valor);
     }).catch(() => {
-      if (buscaAtiva.current === idBusca) mostrarToast("Não foi possível verificar se a busca está salva");
+      if (buscaAtiva.current === idBusca) mostrarToast("Não foi possível verificar se a busca está salva", { severidade: "erro" });
     });
     
     // Busca assíncrona na Bíblia
@@ -137,7 +137,7 @@ export default function Pesquisa() {
     try {
       setFavoritada(await pesquisasFavoritasRepository.alternar(ownerId, termo));
     } catch {
-      mostrarToast("Não foi possível atualizar a busca favorita");
+      mostrarToast("Não foi possível atualizar a busca favorita", { severidade: "erro" });
     }
   }
 

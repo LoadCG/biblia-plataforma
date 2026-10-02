@@ -19,7 +19,7 @@ export default function Onboarding() {
       await concluirOnboarding();
       router.replace(destino);
     } catch {
-      mostrarToast("Não foi possível salvar a conclusão da apresentação");
+      mostrarToast("Não foi possível salvar a conclusão da apresentação", { severidade: "erro" });
     }
   }
   return (

@@ -72,7 +72,7 @@
 - Capturas de Home, Descubra, Planos e Leitor foram revisadas em 1280×900 em claro e escuro. O DOM confirmou largura de documento de 1280 px nas capturas de plano e leitor, sem rolagem horizontal. A Home também foi revisada em 1024×900 no tema claro, com documento de 1024 px.
 - Home adicionou três cards (“Ansiedade”, “Esperança”, “Sabedoria”) vinculados a `pesquisa?tema=...`; o tema de Esperança abriu as passagens bíblicas curadas. A paisagem panorâmica mantém as três paletas horárias no SVG e foi conferida no período noturno disponível durante esta sessão.
 - Planos (lista e detalhe) usa cartão ilustrado local de livros/ramo; a sequência detalhada permanece em coluna única e largura máxima de 896 px para preservar leitura em desktop.
-- Na continuação, Descubra teve a grade desktop ampliada, oito cenas vetoriais conferidas em claro/escuro e contraste do rótulo de Sabedoria corrigido. A lista de Planos recebeu arte mais detalhada de livros empilhados e ramo; arte conferida nos dois temas. Home usa cenas maiores nas recomendações desktop; a captura noturna estava coerente com “Boa noite”. O pictograma de tema original continua no layout estreito enquanto mobile segue adiado.
+- Na continuação, Descubra teve a grade desktop ampliada, oito cenas vetoriais conferidas em claro/escuro e contraste do rótulo de Sabedoria corrigido. A lista de Planos recebeu arte mais detalhada de livros empilhados e ramo; arte conferida nos dois temas. Home usa cenas maiores nas recomendações desktop; a captura noturna estava coerente com “Boa noite”. A divergência antiga de arte entre larguras foi corrigida em 2026-10-01: os mesmos SVGs editoriais agora aparecem em toda largura, com escala responsiva; veja o registro “consistência das ilustrações de tema”.
 - A paisagem de Home passou a aceitar `?previewPeriodo=manha|tarde|noite` apenas em Expo Web de desenvolvimento. Capturas controladas anteriores confirmaram as três saudações e posições de astro; após incluir raios/árvores, a manhã foi conferida em tema claro. O cartão de jornada foi alinhado às superfícies creme da referência; a captura clara confirma o resultado.
 - A barra de seleção do Leitor foi compactada em painel flutuante apenas no breakpoint desktop. Com um versículo selecionado, os ícones preservam `accessibilityLabel`; todas as opções continuam na árvore acessível. O layout estreito mantém as classes e rótulos anteriores.
 - A dica contextual inicial deixou de aparecer no Leitor desktop para aproximar a página do padrão “texto primeiro”; permanece no fluxo estreito e não altera o armazenamento de dicas.
@@ -83,3 +83,20 @@ As capturas e a árvore acessível comprovam somente o viewport/superfícies ano
 Os contratos estruturais não substituem interação real em viewports mobile nem
 tecnologias assistivas. Continuar a matriz gradualmente e registrar cada caso
 como aprovado, defeito reproduzível ou bloqueado.
+
+## Inspeção desktop do incremento de estados — 2026-10-01
+
+- Ambiente: Codex In-app Browser, Expo Web em `http://localhost:8081`, viewport
+  1280×900, branch `master`; leitura da interface real e árvore acessível.
+- Home `/`: tema claro, conteúdo do dia, jornada, sequência e medalhas visíveis;
+  checkbox de “Amém” foi alternado em armazenamento isolado de `localhost` e
+  restaurado. Nenhum dado da origem publicada ou perfil real foi alterado.
+- Descubra `/pesquisa`: tema claro; busca, oito cards ilustrados e nomes/descrições
+  acessíveis presentes, sem clipping observado no viewport.
+- Planos `/planos`: tema claro e escuro; banner, livros ilustrados, dois cards e
+  progresso legíveis; os símbolos permaneceram visíveis em ambos os temas.
+- Limite: não houve acionamento de Toast por severidade nesta inspeção; as novas
+  cores semânticas ainda precisam de captura em claro/escuro. Também não foram
+  inspecionadas aqui outras larguras, fluxos de erro ou leitores de tela.
+- Resultado: nenhum defeito visual reproduzível neste recorte. A matriz global
+  permanece parcial; não marcar etapa 19 ou 21.4 como concluída.

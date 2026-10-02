@@ -73,14 +73,14 @@ export default function DetalhePlano() {
       const indice = Math.min(sessao?.indiceAtual ?? 0, conteudo.referencias.length - 1);
       const href = hrefReferenciaBiblica(conteudo.referencias[indice]);
       if (!href) {
-        mostrarToast("Não foi possível abrir a referência deste dia.");
+        mostrarToast("Não foi possível abrir a referência deste dia.", { severidade: "aviso" });
         return;
       }
       await planosRepository.salvarSessao(ownerId, plano.id, dia, indice, sessao?.referenciasConcluidas ?? []);
       const separador = href.includes("?") ? "&" : "?";
       router.push(`${href}${separador}planoId=${encodeURIComponent(plano.id)}&diaPlano=${dia}&indicePlano=${indice}`);
     } catch {
-      mostrarToast("Não foi possível iniciar esta sessão. Tente novamente.");
+      mostrarToast("Não foi possível iniciar esta sessão. Tente novamente.", { severidade: "erro" });
     } finally {
       setAcaoEmAndamento(null);
     }
@@ -98,7 +98,7 @@ export default function DetalhePlano() {
         return novo;
       });
     } catch {
-      mostrarToast("Não foi possível atualizar o progresso. Tente novamente.");
+      mostrarToast("Não foi possível atualizar o progresso. Tente novamente.", { severidade: "erro" });
     } finally {
       setAcaoEmAndamento(null);
     }

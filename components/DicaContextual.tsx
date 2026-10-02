@@ -9,7 +9,7 @@ export function DicaContextual({ id, titulo, descricao }: { id: string; titulo: 
     let ativo = true;
     dicaJaVista(id)
       .then((vista) => { if (ativo) setVisivel(!vista); })
-      .catch(() => { if (ativo) mostrarToast("Não foi possível carregar esta dica"); });
+      .catch(() => { if (ativo) mostrarToast("Não foi possível carregar esta dica", { severidade: "erro" }); });
     return () => { ativo = false; };
   }, [id]);
   async function fecharDica() {
@@ -17,7 +17,7 @@ export function DicaContextual({ id, titulo, descricao }: { id: string; titulo: 
       await marcarDicaVista(id);
       setVisivel(false);
     } catch {
-      mostrarToast("Não foi possível salvar que você viu esta dica");
+      mostrarToast("Não foi possível salvar que você viu esta dica", { severidade: "erro" });
     }
   }
   if (!visivel) return null;

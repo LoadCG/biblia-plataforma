@@ -55,7 +55,7 @@ export default function ListaResumos() {
     let ativo = true;
     livrosLidosRepository.listar(ownerId)
       .then((itens) => { if (ativo) setLidos(itens); })
-      .catch(() => { if (ativo) mostrarToast("Não foi possível carregar seu progresso de leitura"); });
+      .catch(() => { if (ativo) mostrarToast("Não foi possível carregar seu progresso de leitura", { severidade: "erro" }); });
     return () => { ativo = false; };
   }, [ownerId]);
 

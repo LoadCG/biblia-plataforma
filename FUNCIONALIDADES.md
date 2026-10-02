@@ -2085,6 +2085,17 @@ em telas estreitas, e a lista de Resumos ganhou limpeza rápida e rotulagem
 acessível no campo de busca. A confirmação visual em múltiplas larguras ainda
 depende da matriz manual.
 
+### 13.6 Feedback semântico transversal `🔶`
+
+As chamadas de Toast em Busca, Resumos, Planos, Leitor, Início, Bíblia,
+Configurações, Perfil, Onboarding e demais ações registradas classificam
+sucesso, aviso ou erro; o padrão neutro permanece disponível por compatibilidade.
+Carregamentos e erros recuperáveis usam estados compartilhados nas superfícies
+principais. A migração de código está feita em grupos, mas a revisão exaustiva de
+duplicações, composição visual em claro/escuro e aceitação assistiva ainda está
+pendente. Ver `PLANO-MESTRE-UX-ETAPAS-19-A-23.md` e
+`docs/inventario-estados-ui.md`.
+
 ## Como usar este documento
 
 Ao começar qualquer item: mover de `⬜` para `🔶` (em andamento). Ao

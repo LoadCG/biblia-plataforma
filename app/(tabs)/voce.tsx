@@ -103,7 +103,7 @@ export default function Voce() {
       setCompartilhamentos(compart);
       setPerfil(perfilCarregado);
     } catch {
-      mostrarToast("Não foi possível carregar alguns dados do seu perfil");
+      mostrarToast("Não foi possível carregar alguns dados do seu perfil", { severidade: "erro" });
     }
   }, [ownerId]);
 

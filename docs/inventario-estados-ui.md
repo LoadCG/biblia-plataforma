@@ -1,6 +1,6 @@
 # Inventário de estados de interface
 
-Data: 2026-09-28  
+Data: 2026-10-01
 Escopo inicial: superfícies com operações assíncronas e componentes compartilhados.
 
 Este inventário veio da leitura estática do código. Não representa inspeção visual nem teste em leitor de tela.
@@ -17,8 +17,11 @@ validação em tela real.
 O rótulo de `EstadoCarregando` também é exibido junto ao spinner, mantendo o
 nome no anúncio do progressbar e ocultando o texto repetido da árvore acessível.
 Tokens de severidade foram aplicados às ações de escrita de Salvo, Leitor,
-Configurações, `CardAtividade` e Versículo do Dia; o restante das chamadas Toast
-continua em migração gradual.
+Configurações, `CardAtividade` e Versículo do Dia. Em 2026-10-01 as chamadas
+restantes em Home, Busca, Resumos, Planos, seleção bíblica, perfil, medalhas,
+onboarding, tema e dicas contextuais também passaram a declarar severidade.
+Verificar futuramente as chamadas novas antes de considerar este inventário
+exaustivo; revisão visual e assistiva ainda está pendente.
 
 | Superfície | Carregando | Erro | Vazio | Ação/feedback | Observação |
 |---|---|---|---|---|---|
@@ -32,7 +35,7 @@ continua em migração gradual.
 | Seletor de livros | catálogo local | não aplicável | `EstadoVazio` | limpar busca quando há termo | A tela preserva o estado original sem ação quando o catálogo estiver vazio sem filtro. |
 | Cards de versículo / popover | `EstadoCarregando` | `EstadoErro` com retry | não aplicável | ações específicas | O card do dia mantém painel próprio de erro em gradiente. |
 | Detalhe de plano | `EstadoCarregando` | `EstadoErro` com retry | estado concluído quando todos os dias finalizam | Toast nas ações | Falhas de progresso não aparecem como conclusão ou progresso zero. |
-| Toast global | — | — | — | alerta com ação opcional e severidade semântica | `neutra` continua padrão; Salvo, Leitor, Configurações, `CardAtividade` e Versículo do Dia declaram severidade. Demais chamadas e inspeção visual ainda pendentes. |
+| Toast global | — | — | — | alerta com ação opcional e severidade semântica | Chamadas de resultado já declaram severidade; o padrão `neutra` permanece por compatibilidade. Inventário estático ainda deve ser conferido contra novas chamadas e a composição/contraste precisa de inspeção visual. |
 
 O detalhe de Plano agora diferencia carga do progresso, erro com retry e dados;
 falhas ao iniciar uma sessão ou alterar conclusão dão feedback via Toast. O
@@ -53,7 +56,10 @@ Preferências de fonte e estado do lembrete retornam o
 resultado real da persistência; o lembrete só aparece ativo depois que a permissão,
 o agendamento e a gravação forem concluídos. Exportação, exclusão de dados, foto,
 nota e edição do perfil exibem falha e preservam o diálogo quando possível.
-Inspeção visual no navegador/dispositivo segue pendente.
+Inspeção web parcial em 2026-10-01 está registrada em
+`docs/matriz-auditoria-responsiva.md` (Início, Descubra e Planos a 1280×900;
+Planos também em tema escuro). O feedback Toast por severidade, demais estados,
+breakpoints estreitos e leitores de tela ainda precisam de revisão própria.
 
 ## Prioridade sugerida
 

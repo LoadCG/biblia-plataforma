@@ -3,6 +3,26 @@
 Todas as mudanças notáveis feitas no projeto serão documentadas neste arquivo.
 O formato é baseado no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/).
 
+## [Unreleased] - 2026-10-01
+
+### Interface e qualidade
+- Severidades de Toast foram aplicadas às chamadas remanescentes em Home,
+  Busca, Resumos, Planos, navegação bíblica, seleção de livros/capítulos, Perfil,
+  Medalhas, Onboarding, tema e dicas contextuais; copiar informa sucesso e
+  referência indisponível informa aviso.
+- Roadmaps reconciliados: `PLANO-MESTRE-UX-ETAPAS-19-A-23.md` agora registra os
+  grupos migrados e gates ainda pendentes; os demais documentos distinguem
+  responsividade web de refinamento mobile/nativo deferido.
+- Expo SDK 57 versionado consultado antes das alterações, conforme `AGENTS.md`.
+
+### Verificado
+- `npm run typecheck` passou.
+- `git diff --check` passou após remover whitespace final no inventário.
+- Suítes de testes não foram executadas nesta rodada.
+- Inspeção visual parcial: Home e Descubra claros; Planos claro/escuro a
+  1280×900. O Toast por severidade, demais estados, breakpoints e leitores de
+  tela continuam pendentes; evidência em `docs/matriz-auditoria-responsiva.md`.
+
 ## [Unreleased] - 2026-09-10
 
 ### Adicionado

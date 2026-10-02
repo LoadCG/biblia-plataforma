@@ -42,7 +42,7 @@ export default function ResumoLivro() {
   function ajustarFonte(delta: number) {
     setIndiceFonte((atual) => {
       const novo = Math.min(TAMANHOS_FONTE.length - 1, Math.max(0, atual + delta));
-      salvarIndiceFonte(novo).catch(() => mostrarToast("Não foi possível salvar o tamanho da fonte"));
+      salvarIndiceFonte(novo).catch(() => mostrarToast("Não foi possível salvar o tamanho da fonte", { severidade: "erro" }));
       return novo;
     });
   }
@@ -51,7 +51,7 @@ export default function ResumoLivro() {
     if (!ownerId || !slug) return;
     livrosLidosRepository.estaLido(ownerId, slug)
       .then(setLido)
-      .catch(() => mostrarToast("Não foi possível carregar o progresso deste livro"));
+      .catch(() => mostrarToast("Não foi possível carregar o progresso deste livro", { severidade: "erro" }));
   }, [ownerId, slug]);
 
   useEffect(() => {
@@ -63,7 +63,7 @@ export default function ResumoLivro() {
         setFonteSerifada(serifada);
       })
       .catch(() => {
-        if (ativo) mostrarToast("Não foi possível carregar as preferências de leitura");
+        if (ativo) mostrarToast("Não foi possível carregar as preferências de leitura", { severidade: "erro" });
       });
     return () => { ativo = false; };
   }, []);
@@ -71,7 +71,7 @@ export default function ResumoLivro() {
   function alternarFonteSerifada() {
     setFonteSerifada((atual) => {
       const novo = !atual;
-      salvarFonteSerifada(novo).catch(() => mostrarToast("Não foi possível salvar a preferência de fonte"));
+      salvarFonteSerifada(novo).catch(() => mostrarToast("Não foi possível salvar a preferência de fonte", { severidade: "erro" }));
       return novo;
     });
   }

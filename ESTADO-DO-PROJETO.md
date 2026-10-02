@@ -1,4 +1,4 @@
-# Estado do projeto e próximos passos (2026-09-10)
+# Estado do projeto e próximos passos (revisado em 2026-10-01)
 
 Este é o documento de referência pra responder duas perguntas: **em
 que etapa estamos de verdade** (sem otimismo nem pessimismo) e **o que
@@ -131,46 +131,46 @@ traduções licenciadas, notificações push), a distância é grande e
 > `PLANO-EXECUCAO-ETAPAS-6-A-10.md`, `PLANO-UX-INTERFACE-ETAPAS-11-A-15.md` e
 > `PLANO-UX-INTERFACE-ETAPAS-16-A-20.md`.
 
-Ordenados por impacto real vs. esforço, respeitando as decisões já
-fechadas (sem conta, sem notificação real no web, sem trocar
-tradução) e a intenção declarada de publicar o app nativo algum dia
-(ver acima). Nenhum item aqui reabre as decisões fechadas.
+Ordenados por impacto e pela instrução vigente: aproximar a aplicação web da
+referência, preservando os breakpoints tocados; refinamento mobile dedicado e
+produto nativo ficam para depois. Esta prioridade não reabre decisões de conta,
+tradução ou backend.
 
-1. **Executar acessibilidade física** — validar foco, ordem de leitura e
-   anúncios com NVDA, VoiceOver e TalkBack, registrando plataforma/versão.
-2. **Rodar Maestro contra binários nativos** — executar as quatro jornadas em
-   Android e, quando houver host compatível, iOS; corrigir flakiness observada.
-3. **Validar CI e SEO remotamente** — confirmar o primeiro workflow verde e
-   testar clean URLs/deep links em um Preview Deployment do Vercel.
-4. **Gerar builds EAS assinados de preview** — somente quando conta e
-   credenciais forem disponibilizadas e a retomada da publicação for autorizada.
-5. **Revisar editorialmente os 21 devocionais** — validação humana de conteúdo,
-   tom e coerência teológica antes de tratar o material como definitivo.
-6. **Tratar vulnerabilidades de dependências sem upgrade forçado** — avaliar os
-   avisos do `npm audit` por explorabilidade real e compatibilidade com Expo 57.
-7. **Executar a matriz visual de usabilidade** — testar as larguras e temas
-   definidos nas etapas 14–15 do plano de UX, com evidência em dispositivos.
-8. **Adicionar regressão visual automatizada** — selecionar ferramenta,
-   baselines e tolerância depois da matriz visual manual.
+1. **Concluir o sistema de estados web** — fechar severidades, registrar
+   contratos pendentes e revisar loading/erro/feedback em desktop e nos
+   breakpoints afetados. Estado: migração principal implementada; QA visual e
+   algumas checagens de aceite continuam pendentes.
+2. **Continuar a aproximação da referência** — após os estados, percorrer
+   Descubra, Planos e Início com evidência visual desktop e regressão responsiva
+   dirigida. O Leitor desktop já tem uma rodada registrada; isso não aprova as
+   demais superfícies.
+3. **Confirmar CI remoto e SEO** — observar workflow verde e validar rotas
+   estáticas em preview quando a quota da Vercel permitir.
+4. **Avançar o piloto editorial** — concluir schema mínimo e revisão humana
+   independente dos próximos conteúdos antes de ampliar o catálogo.
+5. **Retomar QA mobile/nativo e acessibilidade física** — Maestro, NVDA,
+   VoiceOver e TalkBack dependem da decisão de retomar essa frente e de um
+   navegador/aparelho/binário apropriado.
+6. **Gerar builds EAS assinados** — somente quando conta e credenciais estiverem
+   disponíveis e o desenvolvimento nativo for retomado.
+7. **Avaliar vulnerabilidades de dependências** sem upgrade forçado, conforme
+   explorabilidade e compatibilidade com Expo 57.
 
 ### Execução revisada por marcos
 
 Para evitar manter duas listas concorrentes, a execução detalhada fica nos
 roadmaps operacionais. A ordem recomendada é:
 
-1. **Marco atual — fundação editorial mensurável:** inventário reproduzível
-   dos 66 resumos e 2 planos; o gerador/checagem inicial está em
-   `scripts/relatorio-cobertura-editorial.js`. A validação atual é estrutural,
-   não editorial e não valida os limites das referências bíblicas.
-2. **Marco web — qualidade que não depende de credenciais:** executar a matriz
-   responsiva manual, corrigir P0/P1 e confirmar um CI remoto verde. O Preview
-   Vercel é tentado quando a quota estiver disponível.
+1. **Marco web ativo:** terminar sistema de estados e avançar a comparação
+   desktop com a referência; manter registro de responsividade nos breakpoints
+   tocados e explicitar cobertura não feita.
+2. **Marco web de qualidade:** confirmar CI remoto e validar SEO em preview
+   quando a quota estiver disponível; iniciar snapshots visuais após a auditoria
+   desktop e correção dos defeitos prioritários.
 3. **Marco editorial piloto — em paralelo:** fechar schema/taxonomia mínimos e
    produzir apenas um lote curto com revisão independente; QA estrutural e
    revisão humana são gates daquele lote, não uma etapa tardia após expansão.
-4. **Marco transversal:** inventariar estados e migrar feedback de forma
-   incremental; criar snapshots após a auditoria visual manual.
-5. **Marco nativo — condicionado a ambiente:** gerar build instalável e então
+4. **Marco nativo — deferido até retomada:** gerar build instalável e então
    executar Maestro, leitores de tela, performance e smoke test. Credenciais e
    publicação em loja continuam dependências futuras, não bloqueiam o web.
 

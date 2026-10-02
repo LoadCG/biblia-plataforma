@@ -2,9 +2,25 @@
 
 ## Propósito
 
-Deixar a plataforma bíblica mais reconhecível, clara e acolhedora, ampliando o uso de ícones, símbolos, ilustrações, imagens e animações curtas. A identidade deve continuar serena e centrada na leitura, com comportamento coerente entre web e aplicativo, nos temas claro e escuro e em telas pequenas.
+Deixar a plataforma bíblica mais reconhecível, clara e acolhedora, ampliando o uso de ícones, símbolos, ilustrações, imagens e animações curtas. A identidade deve continuar serena e centrada na leitura, com comportamento coerente na web responsiva e, quando retomado, no aplicativo nativo; cobrir temas claro e escuro e preservar telas estreitas.
 
 Este documento reúne o plano de execução e um registro incremental do que já foi feito. O trabalho deve avançar por entregas pequenas, com comparação visual antes/depois e critérios objetivos de aceite.
+
+## Fonte de verdade e ordem de execução
+
+- Este documento define direção visual, escopo e ordem das superfícies.
+- `PLANO-MESTRE-UX-ETAPAS-19-A-23.md` controla os status operacionais de UI,
+  estados, auditoria e gates; não manter um segundo checklist concorrente aqui.
+- `docs/matriz-auditoria-responsiva.md` guarda evidências visuais por rota,
+  viewport e tema. Estado de código não é evidência de inspeção.
+- `ESTADO-DO-PROJETO.md` é resumo de marcos, atualizado quando a prioridade muda,
+  não registro de cada incremento.
+
+**Ordem vigente:** (1) concluir a semântica transversal dos estados; (2) fazer
+QA visual desktop do sistema e verificar regressão nos breakpoints afetados;
+(3) corrigir defeitos P0/P1; (4) avançar por Descubra, Planos e Início para
+aproximar a composição da referência; (5) iniciar snapshots depois da auditoria
+manual. Refinamento mobile dedicado e aplicativo nativo ficam para depois.
 
 ## Direção aprovada para o conceito visual
 
@@ -12,20 +28,20 @@ A referência visual criada nesta conversa foi aprovada como **alvo visual do re
 
 A imagem não é especificação pixel a pixel: textos renderizados nela podem conter imprecisões e não devem virar conteúdo do produto. As proporções e a composição servem de referência para o resultado; medidas finais são acertadas no app em cada breakpoint. O cartão do Versículo do Dia usa uma **ilustração de paisagem vetorial**, sem moldura de ícone; a cena muda com a saudação (amanhecer, tarde ou noite) sem abandonar o estilo aprovado. Imagens e ilustrações não substituem nem encobrem o conteúdo bíblico.
 
-### Prioridade ajustada pelo usuário — web responsiva, nativo depois
+### Escopo ajustado pelo usuário — web responsiva, nativo depois
 
-O produto em foco é a aplicação web, e ela deve funcionar bem em larguras estreitas e amplas. Toda mudança compartilhada de interface precisa considerar responsividade e ser verificada nos breakpoints afetados; mobile web não é uma etapa futura separada. A construção e o refinamento da aplicação como produto mobile nativo (iOS/Android), incluindo validação específica em aparelhos, ficam para depois. A captura anexada nesta rodada é uma referência visual e de composição, não uma fonte de instruções de produto nem de copy bíblica. Usar no código somente conteúdo editorial já aprovado no acervo ou copy de interface escrita para a função real.
+O produto em foco é a aplicação web. Toda mudança compartilhada deve preservar o comportamento responsivo e ser conferida nos breakpoints que afetar. O refinamento dedicado de uma experiência mobile e a evolução como produto nativo (iOS/Android), incluindo validação em aparelhos, ficam para depois; isso não autoriza introduzir regressões em larguras estreitas. A captura anexada é uma referência visual e de composição, não uma fonte de instruções de produto nem de copy bíblica. Usar somente conteúdo editorial aprovado ou copy escrita para a função real.
 
 **Sequência da rodada:** (1) estabelecer hierarquia editorial em tela ampla sem quebrar as telas estreitas; (2) enriquecer Descubra com cards ilustrados e descrições úteis; (3) tornar Planos uma vitrine editorial com progresso destacado; (4) reorganizar Início em composição ampla com destaque ilustrado e próximos passos; (5) revisar o Leitor preservando texto-primeiro e foco; (6) validar a aplicação web responsiva em claro/escuro e atualizar matriz. O aplicativo nativo fica fora desta sequência.
 
 ## Leitura do estado atual
 
 - Expo SDK 57, React Native 0.86, React 19, NativeWind 4, `react-native-svg`, `react-native-reanimated` 4.5.1 e `react-native-worklets` já fazem parte da base.
-- MaterialIcons já é a família de ícones predominante. Existem ilustrações SVG lineares próprias para temas de busca e pequenos tratamentos visuais em cartões.
+- Phosphor é a família de ícones compartilhada após o incremento registrado abaixo. Existem ilustrações SVG próprias para temas de busca, planos e o Versículo do Dia.
 - Há animações pontuais em feedbacks, progresso, transições e no ícone de sequência. A linguagem de movimento ainda não está documentada como um sistema comum.
 - Cores semânticas de interface, temas claro/escuro e cores de gêneros bíblicos já estão definidos em `tailwind.config.js`.
 - O leitor recebeu melhorias de hierarquia, seleção de versículos e controles. O texto bíblico deve continuar sendo o elemento visual dominante; ornamentos não devem competir com sua leitura.
-- A auditoria visual manual está em andamento: Home, Descubra, Leitor e Planos foram observados em combinações mobile e desktop; a matriz registra cada combinação, sem extrapolar o que ainda não foi conferido.
+- A auditoria visual desktop tem registros para Home, Descubra, Leitor e Planos; o Leitor também tem rodada focal em múltiplas larguras. A matriz mantém explícitas as combinações ainda não conferidas. Preservar responsividade é requisito, embora a auditoria mobile dedicada esteja adiada.
 - O projeto já registrou preocupação com fontes de imagem não controladas. Não usar imagens aleatórias ou remotas sem curadoria, procedência, licença e comportamento offline definidos.
 
 ## Decisões de linguagem visual
@@ -259,9 +275,9 @@ O produto em foco é a aplicação web, e ela deve funcionar bem em larguras est
 - Não adicionar dependência, família de ícones, fonte tipográfica ou imagens remotas como pressuposto.
 - O usuário aprovou a execução visual; continuar em mudanças pequenas, anotar a evidência e não tratar a inspeção parcial como aceite final.
 
-## Foco único da próxima rodada — Leitor bíblico desktop (2026-10-01)
+## Rodada focal concluída — Leitor bíblico desktop (2026-10-01)
 
-**Decisão de escopo:** concentrar a próxima rodada somente no Leitor bíblico web em viewport desktop (largura a partir de 1024 px), aproximando cabeçalho, texto e ações da tela 03 da referência aprovada. Não iniciar trabalho nas outras superfícies durante esta rodada. A experiência mobile/nativa permanece adiada por decisão do usuário.
+**Decisão de escopo da rodada:** concentrar a rodada no Leitor bíblico web em viewport desktop (largura a partir de 1024 px), aproximando cabeçalho, texto e ações da tela 03 da referência aprovada. A rodada foi registrada como concluída abaixo. Refinamento mobile dedicado e nativo continuam adiados; a responsividade web deve ser preservada nas alterações compartilhadas.
 
 ### Resultado pretendido
 
@@ -377,14 +393,14 @@ Home, Descubra, Planos, Salvos, Resumos, Perfil, conteúdo, identidade global, n
 
 | Etapa | Estado | Evidência / restante |
 |---|---|---|
-| A — Auditoria visual | Parcial | Home, Descubra, Leitor e Planos têm inspeção web desktop em claro/escuro; paisagem e recomendações ganharam conferências recentes. A rodada focal do Leitor precisa repetir baseline em 1280/1440 e cobrir estados de foco/seleção. Mobile/nativo segue adiado. |
-| B — Ícones e símbolos | Parcial | MaterialIcons seguem como padrão. O painel de seleção desktop tem rótulos acessíveis nas ações principais; falta varrer foco, alvos, contraste e affordance do Leitor em todos os estados. |
+| A — Auditoria visual | Parcial | Home, Descubra, Leitor e Planos têm inspeções web desktop registradas; o Leitor também tem uma rodada focal documentada em 1024/1280/1440. Outras combinações/estados permanecem pendentes. Refinamento mobile dedicado/nativo está adiado, mas regressões responsivas devem ser conferidas. |
+| B — Ícones e símbolos | Parcial | Phosphor é a família compartilhada após o piloto/migração registrada abaixo. Falta concluir conferência visual de foco, alvos, contraste e affordance em todas as superfícies/estados. |
 | C — Ilustrações | Parcial | Temas de Descubra, planos e paisagem do dia têm vetores locais; manhã/tarde/noite são controláveis no Expo Web de desenvolvimento. Permanecem oportunidades em estados vazios e ficha documental de cada ativo. |
 | D — Cartões e imagens | Parcial | Home e Planos usam cenas SVG locais; sem fotografia ou fonte externa não curada. Não é foco da próxima rodada. |
 | E — Movimento | Parcial | Fogo de sequência e feedback curto de salvar respeitam movimento reduzido no fluxo implementado. Falta piloto de progresso e validação da preferência em plataforma nativa; não é foco desta rodada do Leitor. |
 | F — Qualidade | Parcial | Typecheck, 34 contratos de acessibilidade, 8 superfícies estruturais de UI, diff check e inspeções web passaram nos recortes realizados. Validação nativa/leitores de tela permanece pendente. |
 
-**Foco da rodada concluída:** etapas 1–5 do foco único acima para o Leitor web desktop, com cobertura de navegador e QA estático registradas no incremento a seguir. As demais superfícies ficam fora desta rodada; mobile, nativo e tecnologias assistivas sem ambiente apropriado permanecem pendentes e não bloqueiam o aceite desktop.
+**Foco da rodada concluída:** etapas 1–5 para o Leitor web desktop, com cobertura de navegador e QA estático registrados no incremento a seguir. As outras superfícies têm seus próprios registros e não foram aprovadas por essa rodada. Refinamento mobile dedicado, validação nativa e leitores de tela físicos continuam pendentes; mudanças compartilhadas ainda precisam preservar os breakpoints que afetam.
 
 ### Incremento — hierarquia editorial do Leitor desktop (2026-10-01)
 

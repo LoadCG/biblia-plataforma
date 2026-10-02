@@ -106,7 +106,7 @@ export default function Inicio() {
       } else falhou = true;
       if (resultadoLembrete.status === "fulfilled") setLembretePlano(resultadoLembrete.value);
       else falhou = true;
-      if (falhou) mostrarToast("Não foi possível carregar alguns dados da página inicial");
+      if (falhou) mostrarToast("Não foi possível carregar alguns dados da página inicial", { severidade: "erro" });
     });
     return () => { ativo = false; };
   }, [ownerId]);

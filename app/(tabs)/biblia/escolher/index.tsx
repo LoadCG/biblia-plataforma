@@ -31,7 +31,7 @@ export default function EscolherLivro() {
     let ativo = true;
     carregarUltimaLeitura()
       .then((ultima) => { if (ativo && ultima) setLivroExpandido(ultima.livroSlug); })
-      .catch(() => { if (ativo) mostrarToast("Não foi possível recuperar sua última leitura"); });
+      .catch(() => { if (ativo) mostrarToast("Não foi possível recuperar sua última leitura", { severidade: "erro" }); });
     return () => { ativo = false; };
   }, [livroParaAbrir]);
 
@@ -48,7 +48,7 @@ export default function EscolherLivro() {
         }
         setLidosPorLivro(porLivro);
       })
-      .catch(() => { if (ativo) mostrarToast("Não foi possível carregar o progresso dos livros"); });
+      .catch(() => { if (ativo) mostrarToast("Não foi possível carregar o progresso dos livros", { severidade: "erro" }); });
     return () => { ativo = false; };
   }, [ownerId]);
 
@@ -109,6 +109,7 @@ export default function EscolherLivro() {
         ? `${refs.length} ${refs.length === 1 ? "capítulo marcado" : "capítulos marcados"} como lido${refs.length === 1 ? "" : "s"}`
         : `${refs.length} ${refs.length === 1 ? "capítulo desmarcado" : "capítulos desmarcados"}`,
       {
+        severidade: "sucesso",
         acaoLabel: "Desfazer",
         onAcao: async () => {
           const paraLido = capitulos.filter((c) => estadoAnterior.get(c));

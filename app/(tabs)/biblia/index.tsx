@@ -16,7 +16,7 @@ export default function BibliaTab() {
         router.replace("/biblia/escolher");
       }
     }).catch(() => {
-      mostrarToast("Não foi possível recuperar sua última leitura");
+      mostrarToast("Não foi possível recuperar sua última leitura", { severidade: "erro" });
       router.replace("/biblia/escolher");
     });
   }, []);

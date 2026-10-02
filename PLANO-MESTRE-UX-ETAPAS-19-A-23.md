@@ -4,20 +4,24 @@ Documento operacional para execução posterior. Cada tarefa possui um ID único
 pré-requisitos, procedimento, evidência e critério de aceite. Não marcar uma
 caixa por inferência: a conclusão exige a evidência indicada.
 
-## Estado de partida
+## Estado atual — 2026-10-01
 
-- Branch de trabalho: `codex/ui-usabilidade-16-18`.
-- Quality gates locais: TypeScript, Jest, acessibilidade, Maestro estrutural,
-  `check:ui` e Expo Doctor aprovados.
-- Export web estático: 94 rotas verificadas.
-- Gate externo conhecido: quota da Vercel temporariamente indisponível.
-- Gates físicos ainda não executados: dispositivo/emulador e leitores de tela.
+- Branch: `master`; base de trabalho desta revisão: `ad63545`.
+- Último recorte de estados: TypeScript e `git diff --check` aprovados; os testes
+  automatizados não foram executados nesse recorte.
+- A auditoria desktop do Leitor tem evidência própria em
+  `PLANO-MELHORIAS-UI-DESIGN.md`; não extrapolar seus resultados para outras
+  superfícies ou para mobile.
+- Responsividade web continua sendo requisito para toda mudança compartilhada.
+  O refinamento específico da experiência mobile/nativa está adiado.
+- Gates de preview, aparelho/emulador e leitores de tela dependem de ambiente
+  externo e permanecem separados da implementação local.
 
 ## Matriz de prioridade
 
 | ID | Entrega | Prioridade | Dependência | Tipo |
 |---|---|---:|---|---|
-| 19.x | Auditoria responsiva manual | P0 | navegador/dispositivo | validação |
+| 19.x | Auditoria visual web desktop + regressão responsiva dirigida | P0 | navegador | validação |
 | 20.x | Regressão visual automatizada | P1 | 19 concluída | infraestrutura de QA |
 | 21.x | Sistema unificado de estados | P1 | inventário 21.1 | implementação |
 | 22.x | Validação nativa e assistiva | P0 | build instalável | validação |
@@ -29,16 +33,18 @@ As etapas são trilhas paralelas com gates explícitos. O trabalho web local pod
 começar sem EAS ou quota Vercel; validação em binário só começa quando houver
 build instalável; publicação não é pré-requisito para corrigir UX.
 
-1. **19 — validação web manual**: preparar dados/matriz, percorrer superfícies,
-   registrar defeitos e corrigir bloqueadores.
-2. **23.2 — CI remoto**: confirmar um workflow verde e registrar execução/commit.
+1. **21 — sistema de estados web**: concluir a migração semântica; revisar
+   feedback, acessibilidade estrutural e aparência nos breakpoints afetados.
+2. **19 — validação visual desktop**: comparar as superfícies com a referência,
+   corrigir P0/P1 e verificar responsividade nos componentes compartilhados.
+   A auditoria mobile dedicada fica deferida, sem marcar seus itens como feitos.
+3. **23.2 — CI remoto**: confirmar um workflow verde e registrar execução/commit.
    Isso pode avançar em paralelo à etapa 19; gerar um run deliberadamente falho
    não é necessário para provar o artefato diagnóstico.
-3. **21 — sistema de estados**: inventariar primeiro, definir API mínima e
-   migrar telas por grupos, com validação a cada grupo.
-4. **20 — snapshots web**: iniciar após a auditoria manual e correção P0/P1,
+4. **20 — snapshots web**: iniciar após a auditoria desktop e correção P0/P1,
    usando as telas/estados que já têm dados reproduzíveis.
-5. **22 — nativo e assistivo**: obter build instalável; executar Maestro,
+5. **22 — nativo e assistivo**: retomar após reabrir o refinamento mobile/nativo;
+   obter build instalável e executar Maestro,
    VoiceOver/TalkBack e performance por plataforma, reportando separadamente
    qualquer plataforma sem ambiente disponível.
 6. **23.1/23.3 — preview e distribuição**: validar preview quando a quota
@@ -48,9 +54,11 @@ build instalável; publicação não é pré-requisito para corrigir UX.
 
 ### Definição de pronto por etapa
 
-- **19:** todas as superfícies prioritárias percorridas nas larguras/temas
-  planejados; defeitos reproduzíveis com rota, viewport, passos e severidade;
-  P0/P1 corrigidos e revalidados.
+- **19:** superfícies desktop prioritárias percorridas nos viewports/temas do
+  escopo vigente; defeitos reproduzíveis com rota, viewport, passos e severidade;
+  P0/P1 corrigidos e revalidados. Breakpoints estreitos afetados por componentes
+  compartilhados recebem regressão dirigida; a auditoria mobile dedicada segue
+  deferida e não pode ser marcada como concluída por inferência.
 - **20:** snapshots estáveis em CI Linux, dados/locale/tamanho de tela fixos,
   política de atualização aprovada e falha de comparação legível.
 - **21:** cada estado crítico tem feedback acessível; erro recuperável oferece
@@ -62,7 +70,12 @@ build instalável; publicação não é pré-requisito para corrigir UX.
 
 ---
 
-## Etapa 19 — Auditoria visual responsiva
+## Etapa 19 — Auditoria visual web e regressão responsiva
+
+**Escopo vigente:** priorizar a comparação visual web desktop com a referência.
+Em cada mudança compartilhada, conferir regressão nos breakpoints que ela afeta.
+A auditoria mobile dedicada e a validação nativa ficam deferidas; viewport móvel
+com status antigo não deve ser tratado como aceite da rodada atual.
 
 ### 19.1 Preparar matriz de execução `⬜`
 
@@ -209,17 +222,19 @@ estáticas e interativas críticas; adicionar nativo somente após 22.x.
 
 ## Etapa 21 — Sistema unificado de estados
 
-### 21.1 Inventário técnico `⬜`
+### 21.1 Inventário técnico `🔶`
 
-- [ ] Catalogar cada `ActivityIndicator`, skeleton, `EstadoVazio`, Toast e Alert.
-- [ ] Mapear ações assíncronas sem feedback ou com feedback inconsistente.
-- [ ] Registrar copy atual, severidade, duração e ação de recuperação.
-- [ ] Identificar duplicação antes de criar novos componentes.
+- [x] Criar inventário estático das principais superfícies assíncronas em
+  `docs/inventario-estados-ui.md`.
+- [x] Mapear feedbacks de erro/recuperação nas ações assíncronas inventariadas.
+- [ ] Conferir exaustivamente Alertas, durações, severidades e duplicações em
+  todas as chamadas, incluindo estados condicionais e ações destrutivas.
 
-**Inventário inicial:** `docs/inventario-estados-ui.md` (leitura estática,
-2026-09-28). Descobertas: Estatísticas e Salvo não expõem falha de carga;
-Planos pode exibir temporariamente progresso zero; Busca trata erro como estado
-vazio e ainda não oferece retry explícito.
+**Achados de partida (histórico, não status atual):** a leitura estática de
+`docs/inventario-estados-ui.md` em 2026-09-28 detectou falta de erro explícito em
+Estatísticas/Salvo, progresso zero transitório em Planos e confusão entre erro e
+vazio na Busca. Os recortes seguintes adicionaram erro/retry e separação desses
+estados; conferir os arquivos atuais antes de reabrir esses achados.
 
 **Primeiro recorte implementado:** componentes compartilhados de carregamento
 e erro aplicados a Busca, Salvo, Planos e Estatísticas; revisão visual desses
@@ -294,13 +309,26 @@ O componente de carregamento compartilhado passou a exibir seu rótulo junto ao
 spinner e a usar acento coerente com o tema. Leitor, notificações e outras telas
 ainda precisam de inspeção visual e assistiva.
 
-### 21.3 Migração incremental `⬜`
+### 21.3 Migração incremental `🔶`
 
-- [ ] Migrar Busca e Resumos.
-- [ ] Migrar Salvo, Coleções e Planos.
-- [ ] Migrar Leitor, Popover e seleção de versículo.
-- [ ] Migrar Configurações e Estatísticas.
+- [x] Migrar Busca e Resumos: erro de consulta recuperável, favoritos e
+  preferências declaram feedback semântico.
+- [x] Migrar Salvo, Coleções e Planos: ações de escrita distinguem sucesso,
+  falha e indisponibilidade de referência.
+- [x] Migrar Leitor, Popover e seleção de versículo: ações persistentes e
+  resultados informam sucesso/erro/aviso; undo mantém sua ação acessível.
+- [x] Migrar Configurações e Estatísticas: persistência, notificações e dados
+  carregados classificam o resultado.
 - [ ] Remover duplicações somente após todos os consumidores passarem.
+
+**Incremento 2026-10-01:** severidades explícitas foram aplicadas às chamadas
+restantes de Home, navegação bíblica, seleção de livro/capítulo, resumos, perfil,
+medalhas, onboarding, tema e dica contextual. Copiar classifica como sucesso;
+referência indisponível como aviso. A busca mantém feedback neutro somente onde
+ele ainda é deliberadamente informativo sem sucesso/erro. TypeScript passou;
+revisão visual/assistiva deste conjunto permanece incompleta. Uma inspeção
+limitada de Home, Descubra e Planos em 1280×900 está na matriz responsiva; não
+acionou Toast por severidade nem fecha o aceite visual/assistivo da etapa 21.
 
 ### 21.4 Aceite e regressão `⬜`
 
@@ -309,10 +337,11 @@ ainda precisam de inspeção visual e assistiva.
 - [ ] Cada ação destrutiva deve ter confirmação e resultado observável.
 - [ ] Adicionar contratos e cenários Maestro para os estados críticos.
 
-### 21.5 Plano de migração/compatibilidade `⬜`
+### 21.5 Plano de migração/compatibilidade `🔶`
 
-- [ ] Definir API comum sem acoplar a plataforma a um componente nativo/web.
-- [ ] Migrar um grupo de telas por vez e observar as mensagens atuais.
+- [x] Definir API comum (`EstadoCarregando`, `EstadoErro`, `EstadoVazio` e Toast)
+  sem amarrar os consumidores a uma tela específica.
+- [x] Migrar grupos de telas incrementalmente e preservar as mensagens atuais.
 - [ ] Conferir acessibilidade, dark mode e layout estreito por estado.
 - [ ] Remover padrões duplicados apenas quando não houver consumidor restante.
 

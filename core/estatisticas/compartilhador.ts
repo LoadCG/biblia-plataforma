@@ -12,7 +12,7 @@ export async function compartilhar(texto: string): Promise<void> {
   if (Platform.OS === "web") {
     try {
       await navigator.clipboard.writeText(texto);
-      mostrarToast("Copiado!");
+      mostrarToast("Copiado!", { severidade: "sucesso" });
     } catch {
       // Permissão de clipboard pode falhar (ex. contexto não seguro) —
       // não é crítico o suficiente pra travar a ação com um alerta.

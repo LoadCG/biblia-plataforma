@@ -512,6 +512,17 @@ Home, Descubra, Planos, Salvos, Resumos, Perfil, conteúdo, identidade global, n
 - Salvos, coleções e `CardAtividade` passaram a declarar sucesso, erro e aviso de falha parcial. O desfazer mantém o resultado visível sem perder a ação.
 - Próxima etapa: migrar as chamadas restantes por grupo, começando pelas operações de escrita do Leitor e das configurações; conferir cada tema em navegador quando a inspeção visual estiver disponível.
 
+### Continuação — feedback transversal da interface — 2026-10-01
+
+- Leitor, Configurações e Versículo do Dia passaram a indicar severidade correta
+  nos Toasts de sucesso, falha, aviso e informação; as opções continuam
+  retrocompatíveis e as chamadas não migradas seguem neutras.
+- `EstadoCarregando` agora mostra o rótulo ao lado do indicador, dá ao spinner
+  acento compatível com o tema e evita anunciar o rótulo duas vezes.
+- `npm run typecheck` e `git diff --check` passaram. A inspeção visual segue
+  necessária para confirmar densidade e contraste do carregamento em cards,
+  lista e áreas de conteúdo.
+
 ## Plano UX — Descubra / Explore por tema
 
 **Objetivo:** ajudar a pessoa que chega com uma necessidade (“quero encontrar

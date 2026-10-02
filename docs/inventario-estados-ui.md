@@ -14,6 +14,12 @@ parâmetros e leituras de referência descartam respostas depois da desmontagem
 ou troca de referência. Esta migração ainda precisa de inspeção visual e
 validação em tela real.
 
+O rótulo de `EstadoCarregando` também é exibido junto ao spinner, mantendo o
+nome no anúncio do progressbar e ocultando o texto repetido da árvore acessível.
+Tokens de severidade foram aplicados às ações de escrita de Salvo, Leitor,
+Configurações, `CardAtividade` e Versículo do Dia; o restante das chamadas Toast
+continua em migração gradual.
+
 | Superfície | Carregando | Erro | Vazio | Ação/feedback | Observação |
 |---|---|---|---|---|---|
 | Descubra / Busca | `EstadoCarregando` | `EstadoErro` com retry | `EstadoVazio` | Limpar busca ou trocar para Bíblia; Toast para ações | Erro e vazio são distintos; retry repete a mesma consulta. |
@@ -26,7 +32,7 @@ validação em tela real.
 | Seletor de livros | catálogo local | não aplicável | `EstadoVazio` | limpar busca quando há termo | A tela preserva o estado original sem ação quando o catálogo estiver vazio sem filtro. |
 | Cards de versículo / popover | `EstadoCarregando` | `EstadoErro` com retry | não aplicável | ações específicas | O card do dia mantém painel próprio de erro em gradiente. |
 | Detalhe de plano | `EstadoCarregando` | `EstadoErro` com retry | estado concluído quando todos os dias finalizam | Toast nas ações | Falhas de progresso não aparecem como conclusão ou progresso zero. |
-| Toast global | — | — | — | alerta com ação opcional e severidade semântica | `neutra` continua padrão; Salvo, coleções e `CardAtividade` já declaram severidade. Demais chamadas e inspeção visual ainda pendentes. |
+| Toast global | — | — | — | alerta com ação opcional e severidade semântica | `neutra` continua padrão; Salvo, Leitor, Configurações, `CardAtividade` e Versículo do Dia declaram severidade. Demais chamadas e inspeção visual ainda pendentes. |
 
 O detalhe de Plano agora diferencia carga do progresso, erro com retry e dados;
 falhas ao iniciar uma sessão ou alterar conclusão dão feedback via Toast. O

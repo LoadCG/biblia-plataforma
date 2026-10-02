@@ -287,6 +287,13 @@ classificam sucesso, erro e exclusão parcialmente interrompida. A ação de und
 preserva seu comportamento e anuncia também o resultado da tentativa. O restante
 das superfícies segue em migração por grupo.
 
+**Migração 21.3 — Leitor e Configurações:** ações de persistência agora
+classificam sucesso/erro e mensagens de suporte do sistema classificam aviso ou
+informação. O card do Versículo do Dia também distingue falhas ao carregar/salvar.
+O componente de carregamento compartilhado passou a exibir seu rótulo junto ao
+spinner e a usar acento coerente com o tema. Leitor, notificações e outras telas
+ainda precisam de inspeção visual e assistiva.
+
 ### 21.3 Migração incremental `⬜`
 
 - [ ] Migrar Busca e Resumos.

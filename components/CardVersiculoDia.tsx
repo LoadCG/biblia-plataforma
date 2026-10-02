@@ -81,7 +81,7 @@ export function CardVersiculoDia({ periodoDoDia }: Props) {
         setNotaTexto(nota?.texto ?? "");
       })
       .catch(() => {
-        if (ativo) mostrarToast("Não foi possível carregar suas ações neste versículo");
+        if (ativo) mostrarToast("Não foi possível carregar suas ações neste versículo", { severidade: "erro" });
       });
     return () => { ativo = false; };
   }, [ownerId, ref?.livroSlug, ref?.capitulo, ref?.versiculo]);
@@ -99,7 +99,7 @@ export function CardVersiculoDia({ periodoDoDia }: Props) {
         Animated.timing(escalaAmem, { toValue: 1, duration: 130, easing: Easing.out(Easing.quad), useNativeDriver }),
       ]).start();
     } catch {
-      mostrarToast("Não foi possível salvar este versículo");
+      mostrarToast("Não foi possível salvar este versículo", { severidade: "erro" });
     }
   }
 
@@ -283,7 +283,7 @@ export function CardVersiculoDia({ periodoDoDia }: Props) {
               }
               setNotaAberta(false);
             } catch {
-              mostrarToast("Não foi possível salvar a nota. Ela continua aberta para você tentar novamente.");
+              mostrarToast("Não foi possível salvar a nota. Ela continua aberta para você tentar novamente.", { severidade: "erro" });
             }
           }}
           onRemover={async () => {
@@ -293,7 +293,7 @@ export function CardVersiculoDia({ periodoDoDia }: Props) {
               setNotaTexto("");
               setNotaAberta(false);
             } catch {
-              mostrarToast("Não foi possível remover a nota. Tente novamente.");
+              mostrarToast("Não foi possível remover a nota. Tente novamente.", { severidade: "erro" });
             }
           }}
         />

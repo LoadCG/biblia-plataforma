@@ -65,7 +65,7 @@ export default function Configuracoes() {
         setLembreteAtivo(lembrete);
       })
       .catch(() => {
-        if (ativo) mostrarToast("Não foi possível carregar todas as configurações");
+        if (ativo) mostrarToast("Não foi possível carregar todas as configurações", { severidade: "erro" });
       });
     return () => { ativo = false; };
   }, []);
@@ -73,7 +73,7 @@ export default function Configuracoes() {
   async function alternarLembreteDiario() {
     if (alterandoLembrete) return;
     if (Platform.OS === "web") {
-      mostrarToast("Notificações diárias funcionam no app instalado (Android/iOS)");
+      mostrarToast("Notificações diárias funcionam no app instalado (Android/iOS)", { severidade: "informacao" });
       return;
     }
     const novo = !lembreteAtivo;
@@ -87,7 +87,7 @@ export default function Configuracoes() {
           "Sua leitura de hoje já está esperando por você."
         );
         if (!agendado) {
-          mostrarToast("Permita notificações nas configurações do dispositivo para ativar o lembrete");
+      mostrarToast("Permita notificações nas configurações do dispositivo para ativar o lembrete", { severidade: "aviso" });
           return;
         }
       } else {
@@ -96,7 +96,7 @@ export default function Configuracoes() {
       await salvarLembreteDiarioAtivo(novo);
       setLembreteAtivo(novo);
     } catch {
-      mostrarToast("Não foi possível atualizar o lembrete diário");
+      mostrarToast("Não foi possível atualizar o lembrete diário", { severidade: "erro" });
     } finally {
       setAlterandoLembrete(false);
     }
@@ -111,7 +111,7 @@ export default function Configuracoes() {
       await salvarIndiceFonte(novo);
       setIndiceFonte(novo);
     } catch {
-      mostrarToast("Não foi possível salvar o tamanho da fonte");
+      mostrarToast("Não foi possível salvar o tamanho da fonte", { severidade: "erro" });
     } finally {
       setSalvandoPreferencias(false);
     }
@@ -125,7 +125,7 @@ export default function Configuracoes() {
       await salvarFonteSerifada(novo);
       setFonteSerifada(novo);
     } catch {
-      mostrarToast("Não foi possível salvar a preferência de fonte");
+      mostrarToast("Não foi possível salvar a preferência de fonte", { severidade: "erro" });
     } finally {
       setSalvandoPreferencias(false);
     }
@@ -145,12 +145,12 @@ export default function Configuracoes() {
         link.download = `meus-dados-${new Date().toISOString().slice(0, 10)}.json`;
         link.click();
         URL.revokeObjectURL(url);
-        mostrarToast("Dados exportados!");
+        mostrarToast("Dados exportados!", { severidade: "sucesso" });
       } else {
         await Share.share({ message: json });
       }
     } catch {
-      mostrarToast("Não foi possível exportar seus dados");
+      mostrarToast("Não foi possível exportar seus dados", { severidade: "erro" });
     } finally {
       setExportando(false);
     }
@@ -164,9 +164,9 @@ export default function Configuracoes() {
       const dados = await coletarDadosPessoais(ownerId);
       await apagarDadosPessoais(ownerId, dados);
       apagado = true;
-      mostrarToast("Todos os seus dados foram apagados");
+      mostrarToast("Todos os seus dados foram apagados", { severidade: "sucesso" });
     } catch {
-      mostrarToast("Não foi possível apagar todos os dados. Tente novamente.");
+      mostrarToast("Não foi possível apagar todos os dados. Tente novamente.", { severidade: "erro" });
     } finally {
       setApagando(false);
       if (apagado) setConfirmarApagar(false);
@@ -348,7 +348,7 @@ export default function Configuracoes() {
                 await reiniciarOnboarding();
                 router.push("/onboarding");
               } catch {
-                mostrarToast("Não foi possível reiniciar a apresentação");
+                mostrarToast("Não foi possível reiniciar a apresentação", { severidade: "erro" });
               }
             }} accessibilityRole="button" className="flex-row items-center justify-between active:opacity-70">
               <View><Text className="text-cor-texto dark:text-cor-texto-dark font-semibold">Rever apresentação</Text><Text className="text-xs text-cor-texto-suave dark:text-cor-texto-suave-dark mt-0.5">Veja novamente os recursos principais</Text></View>

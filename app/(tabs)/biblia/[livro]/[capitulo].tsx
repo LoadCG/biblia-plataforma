@@ -176,7 +176,7 @@ export default function Leitura() {
         setFonteSerifada(serifada);
       })
       .catch(() => {
-        if (ativo) mostrarToast("Não foi possível carregar as preferências de leitura");
+        if (ativo) mostrarToast("Não foi possível carregar as preferências de leitura", { severidade: "erro" });
       });
     return () => { ativo = false; };
   }, []);
@@ -184,7 +184,7 @@ export default function Leitura() {
   function ajustarFonte(delta: number) {
     setIndiceFonte((atual) => {
       const novo = Math.min(TAMANHOS_FONTE.length - 1, Math.max(0, atual + delta));
-      salvarIndiceFonte(novo).catch(() => mostrarToast("Não foi possível salvar o tamanho da fonte"));
+      salvarIndiceFonte(novo).catch(() => mostrarToast("Não foi possível salvar o tamanho da fonte", { severidade: "erro" }));
       return novo;
     });
   }
@@ -192,7 +192,7 @@ export default function Leitura() {
   function alternarFonteSerifada() {
     setFonteSerifada((atual) => {
       const novo = !atual;
-      salvarFonteSerifada(novo).catch(() => mostrarToast("Não foi possível salvar a preferência de fonte"));
+      salvarFonteSerifada(novo).catch(() => mostrarToast("Não foi possível salvar a preferência de fonte", { severidade: "erro" }));
       return novo;
     });
   }
@@ -232,7 +232,7 @@ export default function Leitura() {
       setNotas(new Map(notasCarregadas.map((n) => [n.versiculo, n.texto])));
       setSalvos(new Set(salvosCarregados.map((s) => s.versiculo)));
     }).catch(() => {
-      if (ativo) mostrarToast("Não foi possível carregar seus grifos, notas e salvos deste capítulo.");
+      if (ativo) mostrarToast("Não foi possível carregar seus grifos, notas e salvos deste capítulo.", { severidade: "erro" });
     });
     return () => { ativo = false; };
   }, [ownerId, livro, capitulo]);
@@ -380,7 +380,7 @@ export default function Leitura() {
         return novo;
       });
     } catch {
-      mostrarToast("Não foi possível salvar o grifo. Tente novamente.");
+      mostrarToast("Não foi possível salvar o grifo. Tente novamente.", { severidade: "erro" });
     }
   }
 
@@ -390,7 +390,7 @@ export default function Leitura() {
       const ativo = await progressoRepository.alternar(ownerId, { livroSlug: livro.slug, capitulo });
       setCapituloLido(ativo);
     } catch {
-      mostrarToast("Não foi possível atualizar o progresso deste capítulo. Tente novamente.");
+      mostrarToast("Não foi possível atualizar o progresso deste capítulo. Tente novamente.", { severidade: "erro" });
     }
   }
 
@@ -408,7 +408,7 @@ export default function Leitura() {
       if (proximoIndice >= diaEmAndamento.referencias.length) {
         await planosRepository.definirDiaConcluido(ownerId, planoEmAndamento.id, numeroDiaPlano, true);
         await planosRepository.removerSessao(ownerId, planoEmAndamento.id, numeroDiaPlano);
-        mostrarToast(`Dia ${numeroDiaPlano} concluído`);
+        mostrarToast(`Dia ${numeroDiaPlano} concluído`, { severidade: "sucesso" });
         router.replace(`/planos/${planoEmAndamento.id}`);
         return;
       }
@@ -416,13 +416,13 @@ export default function Leitura() {
       await planosRepository.salvarSessao(ownerId, planoEmAndamento.id, numeroDiaPlano, proximoIndice, concluidas);
       const href = hrefReferenciaBiblica(diaEmAndamento.referencias[proximoIndice]);
       if (!href) {
-        mostrarToast("A próxima referência deste plano não está disponível.");
+        mostrarToast("A próxima referência deste plano não está disponível.", { severidade: "aviso" });
         return;
       }
       const separador = href.includes("?") ? "&" : "?";
       router.replace(`${href}${separador}planoId=${encodeURIComponent(planoEmAndamento.id)}&diaPlano=${numeroDiaPlano}&indicePlano=${proximoIndice}`);
     } catch {
-      mostrarToast("Não foi possível atualizar sua sessão. Tente novamente.");
+      mostrarToast("Não foi possível atualizar sua sessão. Tente novamente.", { severidade: "erro" });
     }
   }
 
@@ -443,7 +443,7 @@ export default function Leitura() {
       }
       setVersiculoEditandoNota(null);
     } catch {
-      mostrarToast("Não foi possível salvar a nota. Ela continua aberta para você tentar novamente.");
+      mostrarToast("Não foi possível salvar a nota. Ela continua aberta para você tentar novamente.", { severidade: "erro" });
     }
   }
 
@@ -458,7 +458,7 @@ export default function Leitura() {
       });
       setVersiculoEditandoNota(null);
     } catch {
-      mostrarToast("Não foi possível remover a nota. Tente novamente.");
+      mostrarToast("Não foi possível remover a nota. Tente novamente.", { severidade: "erro" });
     }
   }
 
@@ -597,7 +597,7 @@ export default function Leitura() {
         const uri = await captureRef(refCartaoNativo, { format: "png", quality: 1 });
         if (!cancelado) setImagemVersiculo(uri);
       } catch {
-        if (!cancelado) mostrarToast("Não foi possível gerar a imagem.");
+        if (!cancelado) mostrarToast("Não foi possível gerar a imagem.", { severidade: "erro" });
       } finally {
         if (!cancelado) setCartaoNativoParaCapturar(null);
       }
@@ -614,12 +614,12 @@ export default function Leitura() {
       link.href = imagemVersiculo;
       link.download = `${livro?.slug ?? "versiculo"}-${capitulo}.png`;
       link.click();
-      mostrarToast("Imagem baixada!");
+      mostrarToast("Imagem baixada!", { severidade: "sucesso" });
       return;
     }
     const disponivel = await Sharing.isAvailableAsync();
     if (!disponivel) {
-      mostrarToast("Compartilhamento não disponível neste dispositivo.");
+      mostrarToast("Compartilhamento não disponível neste dispositivo.", { severidade: "informacao" });
       return;
     }
     await Sharing.shareAsync(imagemVersiculo, { mimeType: "image/png", dialogTitle: "Compartilhar versículo" });
@@ -629,7 +629,7 @@ export default function Leitura() {
     const texto = textoDosVersiculosSelecionados();
     if (!texto) return;
     await Clipboard.setStringAsync(texto);
-    mostrarToast("Copiado!");
+    mostrarToast("Copiado!", { severidade: "sucesso" });
     setVersiculosSelecionados(new Set());
   }
 
@@ -652,7 +652,7 @@ export default function Leitura() {
       // `TypeError` no web, caía no catch e o toast nunca aparecia.
       const resultado = await Share.share({ message: texto });
       if (resultado?.action !== Share.dismissedAction) {
-        mostrarToast("Compartilhado!");
+        mostrarToast("Compartilhado!", { severidade: "sucesso" });
       }
     } catch {
       // usuário cancelou ou o navegador bloqueou o compartilhamento —

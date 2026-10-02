@@ -575,6 +575,20 @@ nome, a descrição ou a ação.
 - Lista curada com uma referência indisponível precisa manter o restante útil e
   dar retry local, sem apagar seleção nem transformar o estado em vazio global.
 
+### Execução — navegação de Explore por tema — 2026-10-01
+
+- A grade agora abre o detalhe usando `tema` na query string e uma origem de
+  navegação explícita; recomendações da Home também identificam sua origem.
+- O detalhe deriva o tema da URL, então links diretos e recarga abrem o mesmo
+  conteúdo. Tema inexistente limpa os parâmetros inválidos. “Voltar aos temas”
+  retorna ao histórico da grade quando veio dela e apresenta a grade quando foi
+  aberto pela Home ou por link direto.
+- O detalhe passou a exibir a descrição curada e a explicar que os itens levam
+  às passagens bíblicas. Cards anunciam a ação em nome acessível e dica.
+- `npm run typecheck` e `git diff --check` passaram. QA de navegador, back/forward
+  real, restauração da rolagem, claro/escuro e teclado segue aberto; não foi
+  declarado como conferido nesta execução.
+
 - Roadmap atual: `PLANO-MESTRE-UX-ETAPAS-19-A-23.md`.
 - Matriz de inspeção: `docs/matriz-auditoria-responsiva.md`.
 - Inventário de estados: `docs/inventario-estados-ui.md`.

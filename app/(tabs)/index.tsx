@@ -174,7 +174,7 @@ export default function Inicio() {
                   {TEMAS_BUSCA.filter((tema) => ["ansiedade", "esperanca", "sabedoria"].includes(tema.id)).map((tema) => (
                     <Pressable
                       key={tema.id}
-                      onPress={() => router.push(`/pesquisa?tema=${tema.id}`)}
+                      onPress={() => router.push({ pathname: "/pesquisa", params: { tema: tema.id, origem: "inicio" } })}
                       accessibilityRole="link"
                       accessibilityLabel={`${tema.titulo}. ${tema.descricao}`}
                       className="flex-1 min-h-44 rounded-2xl border border-cor-borda dark:border-cor-borda-dark bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark p-4 justify-between active:opacity-80"

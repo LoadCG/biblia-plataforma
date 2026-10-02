@@ -45,9 +45,8 @@ const ATALHOS_EM_BREVE: { id: string; rotulo: string; icone: IconeUINome }[] = [
 ];
 
 export default function Pesquisa() {
-  const parametros = useLocalSearchParams<{ tema?: string }>();
+  const parametros = useLocalSearchParams<{ tema?: string; origem?: string }>();
   const [termo, setTermo] = useState("");
-  const [temaSelecionado, setTemaSelecionado] = useState<Tema | null>(null);
   const [favoritada, setFavoritada] = useState(false);
   const [resultadosBiblia, setResultadosBiblia] = useState<ResultadoBuscaGlobal[]>([]);
   const [buscando, setBuscando] = useState(false);
@@ -64,15 +63,29 @@ export default function Pesquisa() {
   const desktop = useWindowDimensions().width >= 1024;
   const ownerId = useOwnerId();
   const buscaAtiva = useRef(0);
+  const idTemaParametro = Array.isArray(parametros.tema) ? parametros.tema[0] : parametros.tema;
+  const origemTema = Array.isArray(parametros.origem) ? parametros.origem[0] : parametros.origem;
+  const temaSelecionado = idTemaParametro ? TEMAS_BUSCA.find((tema) => tema.id === idTemaParametro) ?? null : null;
 
   useEffect(() => {
-    const idTema = Array.isArray(parametros.tema) ? parametros.tema[0] : parametros.tema;
-    if (!idTema) return;
-    const tema = TEMAS_BUSCA.find((item) => item.id === idTema);
-    if (!tema) return;
-    setTermo("");
-    setTemaSelecionado(tema);
-  }, [parametros.tema]);
+    if (idTemaParametro && !temaSelecionado) {
+      router.setParams({ tema: undefined, origem: undefined });
+      return;
+    }
+    if (temaSelecionado && termo) setTermo("");
+  }, [idTemaParametro, temaSelecionado, termo]);
+
+  function abrirTema(tema: Tema) {
+    router.push({ pathname: "/pesquisa", params: { tema: tema.id, origem: "temas" } });
+  }
+
+  function voltarAosTemas() {
+    if (origemTema === "temas" && router.canGoBack()) {
+      router.back();
+      return;
+    }
+    router.replace("/pesquisa");
+  }
 
   useEffect(() => {
     if (!ownerId) return;
@@ -182,7 +195,7 @@ export default function Pesquisa() {
             value={termo}
             onChangeText={(t) => {
               setTermo(t);
-              if (t.trim()) setTemaSelecionado(null);
+              if (t.trim() && idTemaParametro) router.setParams({ tema: undefined, origem: undefined });
             }}
             placeholder="Buscar na Bíblia e nos resumos"
             placeholderTextColor="#9ca3af"
@@ -347,10 +360,11 @@ export default function Pesquisa() {
             </>
           ) : temaSelecionado ? (
             <>
-              <Pressable onPress={() => setTemaSelecionado(null)} accessibilityRole="button" className="self-start mb-3 active:opacity-60">
+              <Pressable onPress={voltarAosTemas} accessibilityRole="button" className="self-start mb-3 active:opacity-60">
                 <Text className="text-sm text-cor-destaque dark:text-cor-destaque-dark font-semibold">← Voltar aos temas</Text>
               </Pressable>
-              <Text className="text-lg font-bold text-cor-texto dark:text-cor-texto-dark mb-3">{temaSelecionado.titulo}</Text>
+              <Text accessibilityRole="header" className="text-xl font-bold text-cor-texto dark:text-cor-texto-dark">{temaSelecionado.titulo}</Text>
+              <Text className="text-sm text-cor-texto-suave dark:text-cor-texto-suave-dark mt-1 mb-4">{temaSelecionado.descricao} Passagens selecionadas para você ler na Bíblia.</Text>
               {temaSelecionado.referencias.map((ref) => (
                 <CardVersiculoTema key={ref} referencia={ref} />
               ))}
@@ -376,9 +390,10 @@ export default function Pesquisa() {
                 {TEMAS_BUSCA.map((tema) => (
                   <Pressable
                     key={tema.id}
-                    onPress={() => setTemaSelecionado(tema)}
+                    onPress={() => abrirTema(tema)}
                     accessibilityRole="button"
                     accessibilityLabel={`${tema.titulo}. ${tema.descricao}`}
+                    accessibilityHint={`Abre passagens bíblicas sobre ${tema.titulo}`}
                     style={{
                       backgroundColor: desktop ? (escuro ? "#262019" : "#fffdf9") : (escuro ? tema.corBgDark : tema.corBg),
                       borderColor: desktop ? (escuro ? "#3a3226" : "#e6ded0") : "transparent",

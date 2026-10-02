@@ -111,6 +111,12 @@ passagem; consegue voltar sem perder contexto; nenhum estado depende apenas de
 cor, fica sem feedback, ou apresenta overflow/controle inacessível. Confirmar em
 claro/escuro, navegação por teclado e jornada completa no navegador.
 
+**Implementação inicial:** seleção de tema da grade e recomendações da Home
+agora usam query params; tema inválido é normalizado e o botão interno retorna à
+grade quando o tema veio dela. Descrição e destino das referências foram
+explicitados. TypeScript passou. Navegação real do navegador, restauração de
+rolagem, teclado, temas e estados visuais permanecem pendentes.
+
 ### 19.4 Salvo e coleções `⬜`
 
 - [ ] Testar combinação de busca, filtro, ordenação e coleção.

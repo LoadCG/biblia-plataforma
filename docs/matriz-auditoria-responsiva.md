@@ -114,3 +114,15 @@ como aprovado, defeito reproduzível ou bloqueado.
 - A preferência de tema foi restaurada para claro; não foram alterados dados de
   progresso, salvos, notas ou planos. Refinamento mobile dedicado continua
   adiado; esta captura não é aceite dos breakpoints estreitos.
+
+## Entrada inicial para leitura na Home — 2026-10-01
+
+- Home web desktop em `localhost`: sem histórico, após o progresso carregar, a
+  árvore acessível apresenta “Começar a leitura bíblica escolhendo um livro”
+  como link para `/biblia/escolher`. A rota abriu corretamente; não foi
+  selecionado capítulo nem alterado progresso.
+- Com progresso de leitura existente, o caminho original “Continue lendo” é
+  preservado. Enquanto carrega ou se a leitura do progresso falha, o convite
+  não aparece e o feedback de erro existente continua responsável pelo estado.
+- Tema claro e escuro conferidos na Home. Este acréscimo é exclusivo do desktop;
+  o layout mobile não foi redesenhado nesta rodada e segue adiado.

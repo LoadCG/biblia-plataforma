@@ -25,6 +25,7 @@ exaustivo; revisão visual e assistiva ainda está pendente.
 
 | Superfície | Carregando | Erro | Vazio | Ação/feedback | Observação |
 |---|---|---|---|---|---|
+| Início (desktop) | progresso ainda pendente; não antecipa vazio | Toast se o progresso falhar | CTA “Escolha um livro para começar” quando não há histórico | abre `/biblia/escolher` | O CTA substitui o espaço de “Continue lendo” apenas sem histórico; mobile preserva a composição atual. |
 | Descubra / Busca | `EstadoCarregando` | `EstadoErro` com retry | `EstadoVazio` | Limpar busca ou trocar para Bíblia; Toast para ações | Erro e vazio são distintos; retry repete a mesma consulta. |
 | Leitor bíblico | skeleton `progressbar` | painel com retry | parcial conforme conteúdo | Toast | Dados pessoais são carregados em conjunto por capítulo; respostas antigas são descartadas. |
 | Seletor de versículos | `EstadoCarregando` | `EstadoErro` com retry | não aplicável | — | Respostas após desmontagem ou troca de referência são ignoradas. |

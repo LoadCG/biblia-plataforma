@@ -6,6 +6,10 @@ O formato é baseado no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.
 ## [Unreleased] - 2026-10-01
 
 ### Interface e qualidade
+- Na Home desktop, o espaço de “Continue lendo” agora oferece uma entrada
+  honesta para quem ainda não tem histórico: “Escolha um livro para começar”,
+  exibida só após a carga bem-sucedida e ligada ao seletor bíblico. A composição
+  mobile permanece como estava.
 - A paisagem do Versículo do Dia ganhou camadas de colinas, ciprestes,
   vegetação e detalhes de luz; o mesmo SVG local mantém variações de manhã,
   tarde e noite e paletas próprias para os temas claro e escuro.
@@ -28,6 +32,9 @@ O formato é baseado no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.
 - Nova inspeção: paisagem do Versículo do Dia em 1280×900 — manhã claro/escuro,
   tarde escuro e noite claro; DOM e largura do documento conferidos. Sem
   alterações de progresso ou conteúdo pessoal. A matriz geral segue parcial.
+- Entrada de leitura da Home: árvore acessível confirma o link para
+  `/biblia/escolher`; rota abriu corretamente em `localhost`, sem alterar o
+  progresso. Tema claro/escuro verificado; QA mobile dedicado segue adiado.
 
 ## [Unreleased] - 2026-09-10
 

@@ -646,6 +646,19 @@ nome, a descrição ou a ação.
   registrar QA equivalente para Descubra e Planos. A validação transversal de
   Toast ainda permanece aberta no inventário de estados.
 
+### Execução — primeiro acesso à leitura pela Home — 2026-10-01
+
+- Quem não tem capítulos no histórico não recebe mais um espaço vazio no lugar
+  de “Continue lendo”: após a carga bem-sucedida, o desktop apresenta o convite
+  “Escolha um livro para começar” e abre o seletor `/biblia/escolher`.
+- A tela não presume Gênesis nem registra progresso. Durante a carga ou quando
+  a consulta falha, o CTA não é mostrado. Usuários com histórico continuam vendo
+  os cards de retomada; o layout mobile não recebeu o novo card.
+- No navegador local, a árvore acessível confirmou o rótulo e o destino; a rota
+  abriu e retornamos à Home sem selecionar capítulo. O tema foi verificado em
+  claro e escuro. O plano continua: refinar a hierarquia desktop da Home e então
+  fazer auditoria visual semelhante em Descubra e Planos.
+
 - Roadmap atual: `PLANO-MESTRE-UX-ETAPAS-19-A-23.md`.
 - Matriz de inspeção: `docs/matriz-auditoria-responsiva.md`.
 - Inventário de estados: `docs/inventario-estados-ui.md`.

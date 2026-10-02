@@ -70,12 +70,41 @@ function CardContinueLendo({ item, escuro }: { item: CapituloLido; escuro: boole
   );
 }
 
+function CardComecarLeitura({ escuro }: { escuro: boolean }) {
+  return (
+    <Link href="/biblia/escolher" asChild>
+      <Pressable
+        accessibilityRole="link"
+        accessibilityLabel="Começar a leitura bíblica escolhendo um livro"
+        className="flex-row items-center rounded-2xl border border-cor-borda dark:border-cor-borda-dark bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark p-4 mb-4 active:opacity-80"
+      >
+        <View className="w-11 h-11 rounded-full bg-cor-destaque-fundo dark:bg-cor-destaque-fundo-dark items-center justify-center mr-3.5">
+          <IconeUI name="open-book" size={22} color={escuro ? "#e0a75e" : "#8a5a2b"} />
+        </View>
+        <View className="flex-1 pr-3">
+          <Text className="text-[10px] font-semibold uppercase tracking-[1.2px] text-cor-texto-suave dark:text-cor-texto-suave-dark mb-1">
+            Sua próxima leitura
+          </Text>
+          <Text className="text-base font-bold text-cor-texto dark:text-cor-texto-dark">
+            Escolha um livro para começar
+          </Text>
+          <Text className="text-xs leading-4 text-cor-texto-suave dark:text-cor-texto-suave-dark mt-1">
+            Encontre uma passagem para o seu momento.
+          </Text>
+        </View>
+        <IconeUI name="next-chevron" size={20} color={escuro ? "#c9bfa8" : "#6b6153"} />
+      </Pressable>
+    </Link>
+  );
+}
+
 export default function Inicio() {
   const parametros = useLocalSearchParams<{ previewPeriodo?: string | string[] }>();
   const ownerId = useOwnerId();
   const [lidos, setLidos] = useState<string[]>([]);
   const [sequencia, setSequencia] = useState(0);
   const [recentes, setRecentes] = useState<CapituloLido[]>([]);
+  const [progressoCarregado, setProgressoCarregado] = useState(false);
   const [lembretePlano, setLembretePlano] = useState<LembretePlano | null>(null);
   const { colorScheme } = useColorScheme();
   const escuro = colorScheme === "dark";
@@ -90,6 +119,8 @@ export default function Inicio() {
   useEffect(() => {
     if (!ownerId) return;
     let ativo = true;
+    setProgressoCarregado(false);
+    setRecentes([]);
     Promise.allSettled([
       livrosLidosRepository.listar(ownerId),
       progressoRepository.listarTodos(ownerId),
@@ -103,6 +134,7 @@ export default function Inicio() {
         const itens = resultadoProgresso.value;
         setSequencia(calcularSequenciaAtual(itens.map((i) => i.lidoEm)));
         setRecentes(capitulosRecentes(itens, 10));
+        setProgressoCarregado(true);
       } else falhou = true;
       if (resultadoLembrete.status === "fulfilled") setLembretePlano(resultadoLembrete.value);
       else falhou = true;
@@ -204,7 +236,7 @@ export default function Inicio() {
               ))}
             </ScrollView>
           </View>
-        ) : null}
+        ) : desktop && progressoCarregado ? <CardComecarLeitura escuro={escuro} /> : null}
 
         {lembretePlano ? (
           <Link href={`/planos/${lembretePlano.plano.id}`} asChild>

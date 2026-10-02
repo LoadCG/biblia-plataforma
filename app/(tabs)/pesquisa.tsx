@@ -408,7 +408,7 @@ export default function Pesquisa() {
                         ? { alignSelf: "flex-end", opacity: 0.86, transform: [{ rotate: "-8deg" }] }
                         : { position: "absolute", top: -10, right: -10, opacity: 0.5, transform: [{ rotate: "-12deg" }] }}
                     >
-                      <IlustracaoTema tema={tema.id} cor={escuro ? tema.corTextoDark : tema.corTexto} tamanho={desktop ? 108 : 72} modoCena={desktop} />
+                      <IlustracaoTema tema={tema.id} cor={escuro ? tema.corTextoDark : tema.corTexto} tamanho={desktop ? 108 : 72} />
                     </View>
                     <View>
                       <Text style={{ color: escuro ? tema.corTextoDark : tema.corTexto }} className={desktop ? "text-lg font-bold" : "text-lg font-extrabold px-4 pb-4"}>

@@ -589,6 +589,18 @@ nome, a descrição ou a ação.
   real, restauração da rolagem, claro/escuro e teclado segue aberto; não foi
   declarado como conferido nesta execução.
 
+### Execução — consistência das ilustrações de tema — 2026-10-01
+
+- A grade de Descubra usava cenas editoriais no desktop e pictogramas diferentes
+  no breakpoint estreito. Removi essa bifurcação: todas as larguras agora usam
+  a mesma cena vetorial, reduzida em telas estreitas e ampliada no desktop.
+- A remoção do modo alternativo elimina caminhos visuais duplicados no
+  componente. A estrutura e os breakpoints dos cards não foram redesenhados;
+  esta correção responsiva não equivale à rodada posterior de refinamento mobile.
+- `npm run typecheck` passou. Inspeção visual desktop/mobile permanece pendente;
+  a composição mobile precisa ser revisada no navegador para garantir que as
+  cenas não concorram com os títulos.
+
 - Roadmap atual: `PLANO-MESTRE-UX-ETAPAS-19-A-23.md`.
 - Matriz de inspeção: `docs/matriz-auditoria-responsiva.md`.
 - Inventário de estados: `docs/inventario-estados-ui.md`.

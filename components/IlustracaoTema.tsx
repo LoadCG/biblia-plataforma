@@ -7,14 +7,9 @@ type Props = {
   tema: IdTema;
   cor: string;
   tamanho?: number;
-  modoCena?: boolean;
 };
 
-const TRACO = 1.6;
-
-export function IlustracaoTema({ tema, cor, tamanho = 64, modoCena = true }: Props) {
-  if (!modoCena) return <IlustracaoTemaIcone tema={tema} cor={cor} tamanho={tamanho} />;
-
+export function IlustracaoTema({ tema, cor, tamanho = 64 }: Props) {
   const comuns = { width: tamanho, height: tamanho * 0.8, viewBox: "0 0 120 96", fill: "none" as const };
   const tinta = cor;
   const folha = tema === "cura" || tema === "perdao" ? "#89936b" : "#a28a62";
@@ -101,101 +96,6 @@ export function IlustracaoTema({ tema, cor, tamanho = 64, modoCena = true }: Pro
           <Path d="M65 54v22m-36-16c9-3 17-3 27 1m19-1c9-4 18-4 27-1" stroke={tinta} strokeWidth="1.4" strokeLinecap="round" opacity="0.65" />
           <Path d="M17 78c31-8 64-8 104 0v6c-40-7-73-7-104 0v-6Z" fill="#c89c64" fillOpacity="0.78" />
           <Path d="M89 48c5-11 10-18 18-25m-17 17c-8-1-13-5-16-12 9 0 15 4 16 12Zm10-13c0-9 4-15 12-19 1 8-3 15-12 19Z" stroke={folha} strokeWidth="1.8" strokeLinejoin="round" />
-        </Svg>
-      );
-    default:
-      return null;
-  }
-}
-
-/** Mantém a arte compacta anterior nos cards mobile enquanto essa etapa aguarda revisão. */
-function IlustracaoTemaIcone({ tema, cor, tamanho }: Props) {
-  const comuns = { width: tamanho, height: tamanho, viewBox: "0 0 24 24", fill: "none" as const };
-
-  switch (tema) {
-    case "amor":
-      return (
-        <Svg {...comuns}>
-          <Path
-            d="M12 20.5c-4.8-3-8.5-6.4-8.5-10.3A4.7 4.7 0 0 1 12 7a4.7 4.7 0 0 1 8.5 3.2c0 3.9-3.7 7.3-8.5 10.3Z"
-            stroke={cor}
-            strokeWidth={TRACO}
-            strokeLinejoin="round"
-          />
-        </Svg>
-      );
-    case "cura":
-      return (
-        <Svg {...comuns}>
-          <Path d="M12 21V9" stroke={cor} strokeWidth={TRACO} strokeLinecap="round" />
-          <Path d="M12 13c0-4.5 3-7.5 7.5-8-.5 4.5-3 7.5-7.5 8Z" stroke={cor} strokeWidth={TRACO} strokeLinejoin="round" />
-          <Path d="M12 16c0-3.8-2.5-6.3-6-6.7.4 3.8 2.5 6.3 6 6.7Z" stroke={cor} strokeWidth={TRACO} strokeLinejoin="round" />
-        </Svg>
-      );
-    case "ansiedade":
-      return (
-        <Svg {...comuns}>
-          <Path
-            d="M4 9c1.6-3 4-4.5 8-4.5S18.4 6 20 9c-1 .8-2 1.2-3 1.2-1.8 0-2.6-1-5-1s-3.2 1-5 1c-1 0-2-.4-3-1.2Z"
-            stroke={cor}
-            strokeWidth={TRACO}
-            strokeLinejoin="round"
-          />
-          <Path d="M6 14c4 1.6 8 1.6 12 0" stroke={cor} strokeWidth={TRACO} strokeLinecap="round" />
-          <Path d="M7 18c3.4 1.2 6.6 1.2 10 0" stroke={cor} strokeWidth={TRACO} strokeLinecap="round" />
-        </Svg>
-      );
-    case "raiva":
-      return (
-        <Svg {...comuns}>
-          <Path
-            d="M12 21c3.6 0 6-2.3 6-5.6 0-3-1.8-5-3-8-.4 2-1.4 3-2.4 3.6.4-2.4-.4-4.6-2.6-6.4C10.4 7.2 9 9.5 9 12c-1-.4-1.6-1.4-1.8-2.6C6 11 6 13 6 15.4 6 18.7 8.4 21 12 21Z"
-            stroke={cor}
-            strokeWidth={TRACO}
-            strokeLinejoin="round"
-          />
-        </Svg>
-      );
-    case "alegria":
-      return (
-        <Svg {...comuns}>
-          <Circle cx={12} cy={12} r={4.5} stroke={cor} strokeWidth={TRACO} />
-          <Line x1={12} y1={2.5} x2={12} y2={5} stroke={cor} strokeWidth={TRACO} strokeLinecap="round" />
-          <Line x1={12} y1={19} x2={12} y2={21.5} stroke={cor} strokeWidth={TRACO} strokeLinecap="round" />
-          <Line x1={2.5} y1={12} x2={5} y2={12} stroke={cor} strokeWidth={TRACO} strokeLinecap="round" />
-          <Line x1={19} y1={12} x2={21.5} y2={12} stroke={cor} strokeWidth={TRACO} strokeLinecap="round" />
-          <Line x1={5.3} y1={5.3} x2={7} y2={7} stroke={cor} strokeWidth={TRACO} strokeLinecap="round" />
-          <Line x1={17} y1={17} x2={18.7} y2={18.7} stroke={cor} strokeWidth={TRACO} strokeLinecap="round" />
-          <Line x1={18.7} y1={5.3} x2={17} y2={7} stroke={cor} strokeWidth={TRACO} strokeLinecap="round" />
-          <Line x1={7} y1={17} x2={5.3} y2={18.7} stroke={cor} strokeWidth={TRACO} strokeLinecap="round" />
-        </Svg>
-      );
-    case "perdao":
-      return (
-        <Svg {...comuns}>
-          <Path d="M3 12h4l2.5-4L13 15l2-3h6" stroke={cor} strokeWidth={TRACO} strokeLinecap="round" strokeLinejoin="round" />
-        </Svg>
-      );
-    case "esperanca":
-      return (
-        <Svg {...comuns}>
-          <Path d="M3 16a9 9 0 0 1 18 0" stroke={cor} strokeWidth={TRACO} strokeLinecap="round" />
-          <Line x1={3} y1={20} x2={21} y2={20} stroke={cor} strokeWidth={TRACO} strokeLinecap="round" />
-          <Line x1={12} y1={4} x2={12} y2={7} stroke={cor} strokeWidth={TRACO} strokeLinecap="round" />
-          <Line x1={5} y1={9} x2={7} y2={10.5} stroke={cor} strokeWidth={TRACO} strokeLinecap="round" />
-          <Line x1={19} y1={9} x2={17} y2={10.5} stroke={cor} strokeWidth={TRACO} strokeLinecap="round" />
-        </Svg>
-      );
-    case "sabedoria":
-      return (
-        <Svg {...comuns}>
-          <Path
-            d="M12 6.5c-1.6-1.3-3.6-2-6.5-2v12.5c2.9 0 4.9.7 6.5 2 1.6-1.3 3.6-2 6.5-2V4.5c-2.9 0-4.9.7-6.5 2Z"
-            stroke={cor}
-            strokeWidth={TRACO}
-            strokeLinejoin="round"
-          />
-          <Line x1={12} y1={6.5} x2={12} y2={19} stroke={cor} strokeWidth={TRACO} strokeLinecap="round" />
         </Svg>
       );
     default:

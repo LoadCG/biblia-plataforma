@@ -34,8 +34,10 @@ O formato é baseado no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.
   `typecheck`, `check:ui` (8 superfícies) e `git diff --check`; suítes de testes
   não executadas.
 - Após o ajuste de `EstadoErro`: `typecheck`, `check:ui` (8 superfícies),
-  `check:a11y` (34 contratos), `check:copy-ui` (114 fontes) e `git diff --check`
+  `check:a11y` (35 contratos), `check:copy-ui` (114 fontes) e `git diff --check`
   passaram; suítes de testes não foram executadas.
+- O gate estrutural de acessibilidade agora também protege o alvo de 44 px do
+  retry de `EstadoErro` (35 contratos após a ampliação).
 - CI remoto `37033595191` passou em 1m36s para o commit `7716388`, incluindo
   testes, Expo Doctor, export e metadados; registrou avisos não bloqueantes de
   runtime do GitHub Actions para análise futura.

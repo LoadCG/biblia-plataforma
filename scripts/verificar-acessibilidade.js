@@ -29,6 +29,8 @@ const contratos = [
   ["components/CardVersiculoDia.tsx", 'rotulo="Carregando versículo do dia"'],
   ["components/EstadoErro.tsx", 'accessibilityRole="alert"'],
   ["components/EstadoErro.tsx", "min-h-11 justify-center rounded-full"],
+  ["app/planos/index.tsx", "Progresso indisponível"],
+  ["app/planos/index.tsx", "progresso !== null && diasConcluidos !== null"],
   ["app/resumos/index.tsx", 'accessibilityLabel="Buscar nos resumos"'],
   ["app/resumos/index.tsx", 'accessibilityLabel="Limpar busca dos resumos"'],
   ["app/configuracoes.tsx", 'accessibilityRole="header"'],

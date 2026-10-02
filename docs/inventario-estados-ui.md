@@ -35,7 +35,7 @@ exaustivo; revisão visual e assistiva ainda está pendente.
 | Leitor bíblico | skeleton `progressbar` | painel com retry | parcial conforme conteúdo | Toast | Dados pessoais são carregados em conjunto por capítulo; respostas antigas são descartadas. |
 | Seletor de versículos | `EstadoCarregando` | `EstadoErro` com retry | não aplicável | — | Respostas após desmontagem ou troca de referência são ignoradas. |
 | Estatísticas | `EstadoCarregando` | `EstadoErro` com retry | não aplicável com cálculo zerado | — | Falhas não deixam spinner indefinido. |
-| Planos (lista) | `EstadoCarregando` | `EstadoErro` com retry | não aplicável (catálogo estático) | progresso | Não apresenta progresso zero antes de carregar. |
+| Planos (lista) | `EstadoCarregando` | `EstadoErro` com retry sem ocultar o catálogo | catálogo estático continua disponível | progresso conhecido por plano; falha parcial indica “Progresso indisponível” sem barra enganosa | Cada plano agora carrega progresso isoladamente; falha não bloqueia a navegação para o catálogo nem é apresentada como 0%. |
 | Salvo | `EstadoCarregando` | `EstadoErro` com retry | `EstadoVazio` | Toast com undo em lote | Loading, erro e vazio distinguíveis. |
 | Resumos | filtro síncrono | não aplicável na listagem | `EstadoVazio` | limpar busca quando há termo | Estado vazio acessível e orientativo; ação opcional no componente compartilhado. |
 | Seletor de livros | catálogo local | não aplicável | `EstadoVazio` | limpar busca quando há termo | A tela preserva o estado original sem ação quando o catálogo estiver vazio sem filtro. |

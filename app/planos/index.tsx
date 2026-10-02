@@ -14,16 +14,18 @@ import { useColorScheme } from "../../core/theme";
 
 const SOMBRA = { shadowColor: "#000", shadowOpacity: 0.06, shadowRadius: 4, shadowOffset: { width: 0, height: 1 } };
 
-function CardPlano({ plano, diasConcluidos, desktop }: { plano: PlanoLeitura; diasConcluidos: number; desktop: boolean }) {
+function CardPlano({ plano, diasConcluidos, desktop }: { plano: PlanoLeitura; diasConcluidos: number | null; desktop: boolean }) {
   const { colorScheme } = useColorScheme();
   const escuro = colorScheme === "dark";
-  const progresso = plano.duracaoDias > 0 ? Math.min(1, diasConcluidos / plano.duracaoDias) : 0;
-  const concluido = diasConcluidos >= plano.duracaoDias;
+  const progresso = diasConcluidos !== null && plano.duracaoDias > 0
+    ? Math.min(1, diasConcluidos / plano.duracaoDias)
+    : null;
+  const concluido = diasConcluidos !== null && diasConcluidos >= plano.duracaoDias;
   const icone = plano.id === "sabedoria-7" ? "wisdom" : "book-collection";
 
   return (
     <Link href={`/planos/${plano.id}`} asChild>
-      <Pressable accessibilityRole="link" accessibilityLabel={`${plano.titulo}. ${concluido ? "Plano concluído" : "Continuar plano"}`} accessibilityHint="Abre o plano de leitura guiado" className={`rounded-2xl bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark px-4 py-4 mb-3 shadow-sm active:opacity-80 ${desktop ? "w-[48.5%]" : ""}`} style={SOMBRA}>
+      <Pressable accessibilityRole="link" accessibilityLabel={`${plano.titulo}. ${concluido ? "Plano concluído" : diasConcluidos === null ? "Progresso indisponível" : "Continuar plano"}`} accessibilityHint="Abre o plano de leitura guiado" className={`rounded-2xl bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark px-4 py-4 mb-3 shadow-sm active:opacity-80 ${desktop ? "w-[48.5%]" : ""}`} style={SOMBRA}>
         <View className="flex-row items-center gap-3 mb-3">
           <View aria-hidden={true} className="w-11 h-11 rounded-2xl bg-cor-destaque-fundo dark:bg-cor-destaque-fundo-dark items-center justify-center">
             <IconeUI name={icone} size={22} className="text-cor-destaque dark:text-cor-destaque-dark" />
@@ -43,14 +45,20 @@ function CardPlano({ plano, diasConcluidos, desktop }: { plano: PlanoLeitura; di
             </View>
           </View>
         </View>
-        <View className="flex-row items-center gap-2">
-          <View accessibilityRole="progressbar" accessibilityLabel={`Progresso de ${plano.titulo}`} accessibilityValue={{ min: 0, max: plano.duracaoDias, now: diasConcluidos, text: `${diasConcluidos} de ${plano.duracaoDias} dias` }} className="flex-1 h-1.5 rounded-full bg-cor-borda dark:bg-cor-borda-dark">
-            <View className="h-1.5 rounded-full bg-cor-destaque dark:bg-cor-destaque-dark" style={{ width: `${progresso * 100}%` }} />
+        {progresso !== null && diasConcluidos !== null ? (
+          <View className="flex-row items-center gap-2">
+            <View accessibilityRole="progressbar" accessibilityLabel={`Progresso de ${plano.titulo}`} accessibilityValue={{ min: 0, max: plano.duracaoDias, now: diasConcluidos, text: `${diasConcluidos} de ${plano.duracaoDias} dias` }} className="flex-1 h-1.5 rounded-full bg-cor-borda dark:bg-cor-borda-dark">
+              <View className="h-1.5 rounded-full bg-cor-destaque dark:bg-cor-destaque-dark" style={{ width: `${progresso * 100}%` }} />
+            </View>
+            <Text className="text-[11px] font-semibold text-cor-texto-suave dark:text-cor-texto-suave-dark">
+              {diasConcluidos}/{plano.duracaoDias} dias
+            </Text>
           </View>
-          <Text className="text-[11px] font-semibold text-cor-texto-suave dark:text-cor-texto-suave-dark">
-            {diasConcluidos}/{plano.duracaoDias} dias
+        ) : (
+          <Text accessibilityRole="text" className="text-xs text-cor-texto-suave dark:text-cor-texto-suave-dark">
+            Progresso indisponível
           </Text>
-        </View>
+        )}
       </Pressable>
     </Link>
   );
@@ -59,7 +67,7 @@ function CardPlano({ plano, diasConcluidos, desktop }: { plano: PlanoLeitura; di
 export default function Planos() {
   const desktop = useWindowDimensions().width >= 1024;
   const ownerId = useOwnerId();
-  const [progressoPorPlano, setProgressoPorPlano] = useState<Record<string, number>>({});
+  const [progressoPorPlano, setProgressoPorPlano] = useState<Record<string, number | null>>({});
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState(false);
   const [tentativa, setTentativa] = useState(0);
@@ -72,14 +80,17 @@ export default function Planos() {
     let ativo = true;
     setCarregando(true);
     setErro(false);
-    Promise.all(
-      planosLeitura.map((plano) =>
-        planosRepository.listarDiasConcluidos(ownerId, plano.id).then((dias) => [plano.id, dias.length] as const)
-      )
-    ).then((pares) => {
-      if (ativo) setProgressoPorPlano(Object.fromEntries(pares));
-    }).catch(() => {
-      if (ativo) setErro(true);
+    Promise.all(planosLeitura.map(async (plano) => {
+      try {
+        const dias = await planosRepository.listarDiasConcluidos(ownerId, plano.id);
+        return [plano.id, dias.length] as const;
+      } catch {
+        return [plano.id, null] as const;
+      }
+    })).then((pares) => {
+      if (!ativo) return;
+      setProgressoPorPlano(Object.fromEntries(pares));
+      setErro(pares.some(([, progresso]) => progresso === null));
     }).finally(() => {
       if (ativo) setCarregando(false);
     });
@@ -134,14 +145,15 @@ export default function Planos() {
           </Pressable>
         ) : null}
 
-        {erro ? (
-          <EstadoErro titulo="Não foi possível carregar o progresso" descricao="Tente novamente. Os planos seguem disponíveis, mas o progresso precisa ser carregado para mostrar seu avanço." aoTentarNovamente={() => setTentativa((valor) => valor + 1)} />
-        ) : carregando ? (
+        {erro && !carregando ? (
+          <EstadoErro titulo="Não foi possível carregar todo o progresso" descricao="Os planos continuam disponíveis. Tente novamente para atualizar seu avanço." aoTentarNovamente={() => setTentativa((valor) => valor + 1)} />
+        ) : null}
+        {carregando ? (
           <EstadoCarregando rotulo="Carregando progresso dos planos" />
         ) : (
           <View className={desktop ? "flex-row flex-wrap justify-between" : undefined}>
             {planosLeitura.map((plano) => (
-              <CardPlano key={plano.id} plano={plano} diasConcluidos={progressoPorPlano[plano.id] ?? 0} desktop={desktop} />
+              <CardPlano key={plano.id} plano={plano} diasConcluidos={progressoPorPlano[plano.id] ?? null} desktop={desktop} />
             ))}
           </View>
         )}

@@ -32,9 +32,24 @@
 - Correção: o controle agora substitui o detalhe por `/pesquisa`, e o parâmetro
   de origem que só sustentava esse fallback foi removido. Após abrir Esperança,
   a navegação retornou a `/pesquisa`, com Descubra selecionado e a grade de oito
-  temas presente. Busca, tema inválido, reload e link direto continuam pendentes.
+  temas presente. Link direto e recarga mantiveram o detalhe e quatro passagens.
+- Busca por “esperança” exibiu 50 resultados bíblicos (limite inicial) e 31
+  resumos; `xyzqwerty` mostrou a orientação “Tente outra palavra” e ação
+  “Limpar busca”, que restaurou a grade. Tema inválido foi normalizado para
+  `/pesquisa` após a correção documentada como `VIS-UI-17`.
 - O navegador desta sessão não expõe dimensão CSS nem override de viewport. Este recorte não
   substitui as inspeções planejadas em 1280×900 e 1440×900.
+
+### Planos: listagem e estado inicial do detalhe — 2026-10-02
+
+- A lista mostrou o destaque da Semana da Sabedoria e os dois planos disponíveis.
+  O detalhe abriu com 0/7 dias, próxima ação “Começar leitura de hoje” e sete
+  sessões com leituras, reflexão e ações acessíveis.
+- Ilustração vetorial, progresso e superfícies foram observados em claro e escuro;
+  textos e controles permaneceram legíveis. Nenhum dia foi iniciado/marcado e
+  nenhum progresso do perfil foi alterado.
+- Só o estado inicial 0/7 foi inspecionado nesta sessão; estados intermediário,
+  concluído, falha/retry e layouts nos viewports planejados permanecem pendentes.
 
 - Data: 2026-09-28
 - Branch/commit: `codex/ui-usabilidade-16-18` / `113a6b6`
@@ -92,7 +107,8 @@
 | VIS-UI-13 | A paisagem do Versículo do Dia tinha colinas abstratas, sem os raios e silhuetas presentes na linguagem da referência. | P2 | Acrescentar raios solares e árvores vetoriais locais sem cobrir o conteúdo nem substituir a cena por ícone. | Corrigido; manhã conferida visualmente em tema claro. A prévia de horário controlada permite repetir a conferência das três variantes. |
 | VIS-UI-14 | A barra de ações após selecionar versículos ocupava toda a largura do painel desktop e os rótulos repetidos pesavam visualmente. | P2 | Usar painel flutuante centralizado com ações em ícones nomeados e manter todas as opções atuais; deixar o breakpoint mobile inalterado. | Corrigido e conferido no estado de versículo selecionado em tema escuro; árvore acessível anuncia salvar, anotação, cópia, compartilhamento e criação de imagem. |
 | VIS-UI-15 | A dica de primeira leitura ocupava uma faixa alta antes do texto bíblico no desktop, distanciando o capítulo da hierarquia sem distração da referência. | P2 | Manter a dica no fluxo estreito e omiti-la apenas no breakpoint desktop. | Corrigido; captura desktop mostra o texto logo após o cabeçalho. O estado estreito continua usando `DicaContextual`. |
-| VIS-UI-16 | O botão “Voltar aos temas” podia sair de Descubra e selecionar Início quando o histórico do Expo Router incluía a aba anterior. | P1 | Sempre remover o tema selecionado com navegação determinística para `/pesquisa`; remover o parâmetro de origem que só sustentava o fallback pelo histórico. | Corrigido e confirmado no navegador em `/pesquisa`; quatro links de passagem e retorno à grade conferidos. Outros caminhos de entrada e reload pendentes. |
+| VIS-UI-16 | O botão “Voltar aos temas” podia sair de Descubra e selecionar Início quando o histórico do Expo Router incluía a aba anterior. | P1 | Sempre remover o tema selecionado com navegação determinística para `/pesquisa`; remover o parâmetro de origem que só sustentava o fallback pelo histórico. | Corrigido e confirmado no navegador em `/pesquisa`; grade, entrada direta, recarga e quatro links de passagem conferidos. Foco/teclado pendentes. |
+| VIS-UI-17 | Um parâmetro `tema` desconhecido mostrava a grade de Descubra, mas continuava na URL, criando diferença entre endereço e estado visível. | P2 | Substituir a rota por `/pesquisa` quando o identificador temático não existir no catálogo. | Corrigido e conferido com entrada direta: a URL termina em `/pesquisa` e a grade de oito temas fica selecionada. |
 
 ## Fechamento do incremento de microfeedback
 

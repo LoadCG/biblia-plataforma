@@ -68,7 +68,7 @@ export default function Pesquisa() {
 
   useEffect(() => {
     if (idTemaParametro && !temaSelecionado) {
-      router.setParams({ tema: undefined });
+      router.replace("/pesquisa");
       return;
     }
     if (temaSelecionado && termo) setTermo("");

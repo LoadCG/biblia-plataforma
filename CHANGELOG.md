@@ -8,6 +8,8 @@ O formato é baseado no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.
 ### Interface
 - Corrigido “Voltar aos temas” em Descubra: o detalhe de tema agora retorna à
   grade `/pesquisa` em vez de depender do histórico, que podia selecionar Início.
+- Tema inválido em Descubra agora normaliza o endereço para `/pesquisa`, mantendo
+  URL e conteúdo visível sincronizados.
 - Verificadas no navegador a seleção de Esperança, as quatro passagens acessíveis
   e a volta à grade; a auditoria desktop mais ampla permanece parcial por limite
   de viewport da sessão.

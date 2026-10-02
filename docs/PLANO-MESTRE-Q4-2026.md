@@ -21,8 +21,8 @@ aceite visual, assistivo, nativo ou de publicação.
 | Frente | Estado | Evidência / lacuna |
 |---|---|---|
 | Home desktop | Parcialmente refinada | Jornada reorganizada; paisagem horária e ilustração da jornada implementadas. Nova inspeção no viewport desktop disponível, claro/escuro e perfil local sem histórico; composição e lateral legíveis. A captura em 1280×900 e 1440×900 continua pendente: a API do navegador não expõe dimensão CSS nem permite fixar o viewport nesta sessão. |
-| Descubra | Parcialmente implementada | No viewport desktop disponível, grade de oito temas, detalhe “Esperança” e quatro links de passagem foram conferidos; retorno que selecionava Início foi corrigido para `/pesquisa`. Reload, link direto, busca/erros, foco/teclado e viewports planejados seguem pendentes. |
-| Planos | Implementado com QA parcial | Arte e sessões existem; inspeção visual registrada em desktop claro/escuro. Fluxos de erro, conclusão e evidência integral de viewport permanecem incompletos. |
+| Descubra | Parcialmente implementada | No viewport desktop disponível, grade de oito temas, detalhe “Esperança”, links, entrada direta, recarga e busca (50 resultados/estado vazio) foram conferidos. Retorno que selecionava Início foi corrigido; tema inválido agora normaliza para `/pesquisa`. Foco/teclado e viewports planejados seguem pendentes. |
+| Planos | Implementado com QA parcial | Lista e detalhe em claro/escuro; estado 0/7, sete sessões e ações acessíveis conferidos sem alterar progresso. Erro, conclusão, sessão retomada e viewports planejados permanecem incompletos. |
 | Sistema de estados | Migração principal feita | Inventário/API/migrações e severidades existem; inspeção visual/assistiva de cada estado, duplicações e alguns contratos continuam pendentes. |
 | Copy da interface | Gate estático passou | 114 fontes de app/componentes/conteúdo verificadas localmente e no CI, sem padrões sinalizados; a heurística não substitui revisão semântica. |
 | CI remoto | Primeiro run passou | `37033595191` para o commit `7716388`; gates de conteúdo, copy, validação, export e metadados passaram. Revisar avisos de runtime do Actions/runner; preview não foi comprovado. |
@@ -81,12 +81,15 @@ contraste e foco visíveis; largura sem overflow; evidências e limites anotados
 sem clipping/overflow; erros recuperáveis oferecem saída; estados não dependem
 exclusivamente de cor.
 
-**Progresso parcial em 2026-10-02:** no viewport desktop disponível, a seleção de “Esperança”
-preservou a aba Descubra e carregou quatro referências acessíveis. Foi corrigido
-e revalidado que “Voltar aos temas” retorne à grade `/pesquisa`, sem depender do
-histórico. Busca vazia/resultado/erro, entrada direta, reload, teclado e a
-inspeção em 1280×900/1440×900 ainda não foram cobertos; o navegador desta sessão
-não expõe a dimensão CSS nem oferece override de viewport.
+**Progresso parcial em 2026-10-02:** no viewport desktop disponível, a seleção de
+“Esperança” preservou a aba Descubra e carregou quatro referências acessíveis.
+“Voltar aos temas” retorna à grade; entrada direta e recarga preservam o detalhe;
+busca com 50 resultados, estado sem resultados e normalização de tema inválido
+foram conferidos. O estado sem resultados oferece nova consulta e limpeza. Busca
+com resultados resumidos, teclado e inspeção em 1280×900/1440×900 ainda não foram
+cobertos. Em Planos, listas e detalhe zero foram vistos em ambos os temas; nenhum
+progresso pessoal foi alterado. Estados intermediário, concluído e erro seguem
+pendentes. A API do navegador não expõe dimensão CSS nem oferece override.
 
 ### Ciclo 3 — fechar sistema de estados web (P1)
 

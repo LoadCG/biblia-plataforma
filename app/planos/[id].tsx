@@ -126,8 +126,10 @@ export default function DetalhePlano() {
       </Head>
       <View className="px-5 pt-6 lg:pt-10 pb-10 max-w-2xl lg:max-w-6xl w-full mx-auto">
         <View className="flex-row items-center justify-between mb-2">
-          <Link href="/planos" className="text-cor-destaque dark:text-cor-destaque-dark text-sm">
-            ← Planos
+          <Link href="/planos" asChild>
+            <Pressable accessibilityRole="link" className="min-h-11 justify-center pr-3 active:opacity-70">
+              <Text className="text-cor-destaque dark:text-cor-destaque-dark text-sm">← Planos</Text>
+            </Pressable>
           </Link>
           <BotaoTema />
         </View>
@@ -185,7 +187,7 @@ export default function DetalhePlano() {
                   accessibilityState={{ checked: concluido }}
                   // @ts-expect-error accessibilityChecked é uma extensão do react-native-web, não existe nos tipos do React Native
                   accessibilityChecked={concluido}
-                  className={`flex-row items-center gap-1.5 px-3 py-1.5 rounded-full active:opacity-70 ${
+                  className={`min-h-11 flex-row items-center justify-center gap-1.5 px-3 py-1.5 rounded-full active:opacity-70 ${
                     concluido ? "bg-green-600" : "border border-cor-borda dark:border-cor-borda-dark"
                   }`}
                 >
@@ -213,7 +215,7 @@ export default function DetalhePlano() {
                   );
                   return href ? (
                     <Link key={ref} href={href} asChild>
-                      <Pressable accessibilityRole="link" className="active:opacity-70">{conteudo}</Pressable>
+                      <Pressable accessibilityRole="link" className="min-h-11 justify-center active:opacity-70">{conteudo}</Pressable>
                     </Link>
                   ) : (
                     <View key={ref}>{conteudo}</View>
@@ -224,7 +226,7 @@ export default function DetalhePlano() {
                 onPress={() => iniciarDia(diaPlano.dia, concluido)}
                 disabled={acaoEmAndamento !== null}
                 accessibilityRole="button"
-                className="mt-3 rounded-full bg-cor-destaque dark:bg-cor-destaque-dark px-4 py-2.5 items-center active:opacity-80"
+                className="mt-3 min-h-11 justify-center rounded-full bg-cor-destaque dark:bg-cor-destaque-dark px-4 py-2.5 items-center active:opacity-80"
               >
                 <Text className="text-white dark:text-cor-texto font-bold text-sm">
                   {concluido ? "Revisar leituras" : sessoes[diaPlano.dia] ? "Continuar sessão" : "Começar este dia"}

@@ -24,6 +24,8 @@ O formato é baseado no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.
 - A lista de Planos agora mantém o catálogo navegável quando a leitura de
   progresso falha; cada card sinaliza progresso indisponível em vez de exibir
   zero fictício, e o retry continua acessível.
+- No detalhe de Plano, retorno, alternância de conclusão, referências e ações
+  de iniciar/revisar agora garantem alvo mínimo de 44 px sem mudar a composição.
 
 ### Documentação e qualidade
 - Documentos foram reclassificados em fontes atuais, planos operacionais e
@@ -43,6 +45,9 @@ O formato é baseado no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.
   retry de `EstadoErro` (35 contratos após a ampliação).
 - Após a degradação segura da lista de Planos: `typecheck`, `check:ui` (8
   superfícies), `check:a11y` (37 contratos), `check:copy-ui` (114 fontes) e
+  `git diff --check` passaram; suítes de testes não foram executadas.
+- Após os alvos de toque no detalhe de Plano: `typecheck`, `check:ui` (8
+  superfícies), `check:a11y` (41 contratos), `check:copy-ui` (114 fontes) e
   `git diff --check` passaram; suítes de testes não foram executadas.
 - CI remoto `37033595191` passou em 1m36s para o commit `7716388`, incluindo
   testes, Expo Doctor, export e metadados; registrou avisos não bloqueantes de

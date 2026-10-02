@@ -138,3 +138,13 @@ como aprovado, defeito reproduzível ou bloqueado.
   da jornada.
 - A auditoria mobile dedicada permanece adiada; esta rodada documenta apenas a
   composição desktop.
+
+## Ilustração do card de jornada — 2026-10-01
+
+- Em Home desktop, 1280×900, o card “Estudo por Resumos” mostra a ilustração
+  vetorial de livros e ramo nos temas claro e escuro. O SVG está presente na
+  árvore DOM, dentro do link `/resumos`; seu enquadramento foi conferido por
+  geometria DOM e árvore acessível.
+- O documento permaneceu com 1280 px de largura. A captura visual disponível
+  recorta a borda direita do viewport, então não se registra inspeção visual
+  integral da lateral nesta rodada.

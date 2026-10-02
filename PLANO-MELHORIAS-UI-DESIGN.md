@@ -673,6 +673,19 @@ nome, a descrição ou a ação.
 - Próxima prioridade: refinar cartões e hierarquia da coluna de apoio, depois
   inspecionar estados e larguras desktop restantes.
 
+### Execução — ilustração do card de jornada na Home — 2026-10-01
+
+- O símbolo isolado do card “Estudo por Resumos” foi substituído pela
+  ilustração SVG local de livros e ramo já utilizada em Planos. A variante
+  respeita as paletas claro/escuro e não cria dependências nem altera dados.
+- Capturas em 1280×900 e inspeção da árvore/DOM confirmaram SVG presente em
+  ambos os temas, card na coluna lateral e largura de documento de 1280 px.
+  A captura exibida pelo navegador corta a extremidade direita da janela; por
+  isso, a avaliação da lateral usou também geometria do DOM e árvore acessível.
+- Typecheck, contratos estruturais de UI (8 superfícies) e `git diff --check`
+  passaram. Próxima prioridade: avaliar composição e ritmo vertical da coluna
+  lateral com viewport amplo e ampliar estados desktop da Home.
+
 - Roadmap atual: `PLANO-MESTRE-UX-ETAPAS-19-A-23.md`.
 - Matriz de inspeção: `docs/matriz-auditoria-responsiva.md`.
 - Inventário de estados: `docs/inventario-estados-ui.md`.

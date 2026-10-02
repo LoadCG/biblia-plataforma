@@ -6,6 +6,9 @@ O formato é baseado no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.
 ## [Unreleased] - 2026-10-01
 
 ### Interface e qualidade
+- O card “Estudo por Resumos” da Home passou a usar a ilustração vetorial local
+  de livros e ramo, com paleta adaptada ao tema claro/escuro, substituindo o
+  símbolo isolado e reforçando a linguagem editorial da referência.
 - A Home desktop agora organiza a jornada principal em sequência — versículo,
   retomada/início da leitura e temas do dia — e agrupa progresso, sequência e
   conquistas na coluna de apoio. O layout mobile não foi redesenhado.

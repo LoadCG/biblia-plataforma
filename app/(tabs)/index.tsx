@@ -20,6 +20,7 @@ import { obterSaudacao, type PeriodoDoDia } from "../../core/util/periodoDoDia";
 import { usePeriodoDoDia } from "../../core/util/usePeriodoDoDia";
 import { TEMAS_BUSCA } from "../../core/biblia/temasBusca";
 import { IlustracaoTema } from "../../components/IlustracaoTema";
+import { IlustracaoPlano } from "../../components/IlustracaoPlano";
 import { FAMILIA_SERIFADA } from "../../core/leitura/preferenciaFonte";
 import type { CapituloLido } from "../../core/types/leitura";
 
@@ -284,8 +285,8 @@ export default function Inicio() {
                 />
               </View>
             </View>
-            <View className="w-14 h-14 rounded-full bg-white/60 dark:bg-cor-texto/10 items-center justify-center border border-cor-borda dark:border-cor-texto/10">
-              <IconeUI name="book-collection" size={25} color={escuro ? "#e0a75e" : "#8a5a2b"} />
+            <View aria-hidden={true} className="w-28 h-20 ml-2 overflow-hidden">
+              <IlustracaoPlano escuro={escuro} />
             </View>
           </Pressable>
         </Link>

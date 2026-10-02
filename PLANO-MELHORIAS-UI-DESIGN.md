@@ -686,7 +686,19 @@ nome, a descrição ou a ação.
   passaram. Próxima prioridade: avaliar composição e ritmo vertical da coluna
   lateral com viewport amplo e ampliar estados desktop da Home.
 
-- Roadmap atual: `PLANO-MESTRE-UX-ETAPAS-19-A-23.md`.
+### Replanejamento do ciclo — 2026-10-02
+
+- A fila deste histórico passa a seguir o plano canônico
+  [`docs/PLANO-MESTRE-Q4-2026.md`](./docs/PLANO-MESTRE-Q4-2026.md), que começa
+  pela captura integral e revisão da coluna lateral da Home desktop.
+- Não considerar a proximidade visual global da referência concluída: Home,
+  Descubra e Planos ainda precisam das inspeções e estados listados naquele
+  plano.
+- O detalhamento por superfície aqui continua como registro/evidência dos
+  incrementos anteriores; não manter uma fila de prioridades concorrente.
+
+- Ordem atual: `docs/PLANO-MESTRE-Q4-2026.md`; gates técnicos de UX/estados:
+  `PLANO-MESTRE-UX-ETAPAS-19-A-23.md`.
 - Matriz de inspeção: `docs/matriz-auditoria-responsiva.md`.
 - Inventário de estados: `docs/inventario-estados-ui.md`.
 - Tokens: `tailwind.config.js`.

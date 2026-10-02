@@ -3,6 +3,12 @@
 Atualizado em 2026-09-10. Este plano continua o ciclo funcional anterior com
 ênfase em redução de fricção, feedback de estado e coerência semântica.
 
+**Status em 2026-10-02: registro histórico.** Itens de implementação estão
+marcados individualmente; auditoria de dispositivo e aceite de estados que
+continuaram parciais foram levados aos ciclos 1–3 de
+[`docs/PLANO-MESTRE-Q4-2026.md`](./docs/PLANO-MESTRE-Q4-2026.md). Não usar a
+antiga fila abaixo como plano paralelo.
+
 ## Etapa 11 — Busca com controle de limpeza `✅`
 
 - [x] Adicionar ação explícita para limpar o termo na tela Descubra.

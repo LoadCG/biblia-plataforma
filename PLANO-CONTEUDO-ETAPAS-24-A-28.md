@@ -4,6 +4,12 @@ Roadmap posterior ao ciclo de UX/UI. O objetivo é aumentar profundidade,
 variedade e utilidade editorial sem sacrificar consistência teológica,
 licenciamento, performance offline ou qualidade dos dados derivados.
 
+**Status em 2026-10-02: ativo, ainda não aprovado para expansão.** O catálogo
+atual contém 66 resumos e 2 planos; inventário e validações estruturais existem,
+mas schema editorial completo, taxonomia e revisões humanas independentes dos
+rascunhos continuam abertos. A fila de execução do trimestre está consolidada
+no ciclo 5 de [`docs/PLANO-MESTRE-Q4-2026.md`](./docs/PLANO-MESTRE-Q4-2026.md).
+
 ## Princípios editoriais
 
 - Preservar Almeida ACF como texto bíblico principal e domínio público.

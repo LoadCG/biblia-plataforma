@@ -4,28 +4,24 @@ Uma plataforma bíblica completa, rápida e imersiva (Web + App), construída co
 
 **🔗 Demo ao vivo:** [biblia-plataforma.vercel.app](https://biblia-plataforma.vercel.app)
 
-<!--
-  Screenshot/GIF do app aqui — ex.:
-  ![Tela inicial do app](./docs/screenshot-inicio.png)
-  Tire uma captura da tela inicial (ou grave um GIF curto navegando
-  entre Início → Bíblia → leitura de capítulo), salve em ./docs/ e
-  troque este comentário pela linha de imagem acima. Não foi possível
-  gerar isso automaticamente neste ambiente (a ferramenta de screenshot
-  do navegador não funciona nas sessões de IA usadas neste projeto).
--->
 
 Este projeto unifica a experiência de leitura bíblica, resumos teológicos, acompanhamento de progresso diário e medalhas num único código-fonte escalável, substituindo projetos fragmentados anteriores. O plano arquitetural original que guiou essa unificação está em [`PLANO-PLATAFORMA.md`](./PLANO-PLATAFORMA.md).
 
-Toda a documentação está organizada no [`DOCUMENTACAO.md`](./DOCUMENTACAO.md). Para saber em que etapa o projeto está de verdade e o que vem a seguir — comparado com o que apps do mesmo nicho já entregam — consulte o [`ESTADO-DO-PROJETO.md`](./ESTADO-DO-PROJETO.md). O checklist item a item fica em [`FUNCIONALIDADES.md`](./FUNCIONALIDADES.md), o histórico cronológico completo em [`CHANGELOG.md`](./CHANGELOG.md), e as decisões fechadas em [`TODO.md`](./TODO.md).
+Toda a documentação tem um índice em [`DOCUMENTACAO.md`](./DOCUMENTACAO.md). O estado atual e as prioridades estão em [`ESTADO-DO-PROJETO.md`](./ESTADO-DO-PROJETO.md); o plano executável está em [`docs/PLANO-MESTRE-Q4-2026.md`](./docs/PLANO-MESTRE-Q4-2026.md). O checklist funcional fica em [`FUNCIONALIDADES.md`](./FUNCIONALIDADES.md), as decisões fechadas em [`TODO.md`](./TODO.md), o histórico em [`CHANGELOG.md`](./CHANGELOG.md), e o fluxo Git/CI em [`docs/FLUXO-GIT.md`](./docs/FLUXO-GIT.md).
 
 ## Tecnologias
 
-- **[Expo Router](https://docs.expo.dev/router/introduction/)** — React Native + Web num único código-fonte, roteamento por arquivo.
+- **[Expo SDK 57 + Expo Router](https://docs.expo.dev/versions/v57.0.0/sdk/router/)** — React Native + Web num único código-fonte, roteamento por arquivo.
 - **[NativeWind v4](https://www.nativewind.dev/)** (Tailwind CSS v3) — estilização utilitária cross-platform.
 - **TypeScript** em todo o projeto.
-- **[expo-sqlite](https://docs.expo.dev/versions/latest/sdk/sqlite/)** (nativo) / **AsyncStorage** (web) — persistência local, mesma interface de repositório nos dois.
+- **React Native 0.86 / React 19** — base multiplataforma do SDK atual.
+- **Phosphor React Native + React Native SVG** — ícones e ilustrações vetoriais locais.
+- **[expo-sqlite](https://docs.expo.dev/versions/v57.0.0/sdk/sqlite/)** (nativo) / **AsyncStorage** (web) — persistência local, mesma interface de repositório nos dois.
 - **Jest** + **@testing-library/react-native** — testes unitários das regras de negócio.
 - Hospedagem: **[Vercel](https://vercel.com)** (deploy automático a partir de `master`).
+
+O pipeline está configurado em `.github/workflows/ci.yml`. Confira a execução
+remota antes de considerar uma mudança validada pelo CI.
 
 ## Licença
 
@@ -49,6 +45,7 @@ npm run ios      # Roda no simulador iOS (exclusivo para macOS)
 ```bash
 npx tsc --noEmit   # Checagem de tipos
 npx jest           # Testes unitários (core/biblia, core/util)
+npm run check:copy-ui # Verifica padrões de texto interno na interface
 ```
 
 ## Estrutura de Diretórios Atual

@@ -3,6 +3,12 @@
 Atualizado em 2026-09-10. Este ciclo consolida padrões transversais de
 feedback, navegação e responsividade antes de novas features de produto.
 
+**Status em 2026-10-02: ciclo histórico, implementação parcialmente concluída.**
+Etapas 16–18 estão marcadas como concluídas; 19 e 20 permanecem parciais ou
+abertas por falta de auditoria completa e baselines visuais. A execução vigente
+está em [`PLANO-MESTRE-UX-ETAPAS-19-A-23.md`](./PLANO-MESTRE-UX-ETAPAS-19-A-23.md)
+e [`docs/PLANO-MESTRE-Q4-2026.md`](./docs/PLANO-MESTRE-Q4-2026.md).
+
 Escopo vigente revisado em 2026-10-01: priorizar web desktop e preservar a
 responsividade nos breakpoints tocados. A auditoria mobile dedicada e o produto
 nativo ficam deferidos; itens abaixo continuam pendentes, não implicitamente
@@ -52,7 +58,7 @@ aprovados.
 
 ## Próximos gates
 
-1. Executar a matriz visual em navegador/dispositivo real.
-2. Escolher e configurar a ferramenta de snapshots após o gate visual manual.
-3. Não ampliar a superfície de componentes compartilhados sem atualizar os
-   contratos de acessibilidade e os baselines.
+1. Seguir ciclos 1–4 do plano mestre atual; manter a inspeção mobile dedicada
+   deferida e verificar regressões responsivas nos breakpoints tocados.
+2. Não declarar regressão visual automatizada concluída até ferramenta,
+   baselines, política de atualização e execução estável no CI existirem.

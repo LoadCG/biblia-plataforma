@@ -4,11 +4,18 @@ Documento operacional para execução posterior. Cada tarefa possui um ID único
 pré-requisitos, procedimento, evidência e critério de aceite. Não marcar uma
 caixa por inferência: a conclusão exige a evidência indicada.
 
-## Estado atual — 2026-10-01
+## Estado atual — 2026-10-02
 
-- Branch: `master`; base de trabalho desta revisão: `ad63545`.
-- Último recorte de estados: TypeScript e `git diff --check` aprovados; os testes
-  automatizados não foram executados nesse recorte.
+- Branch: `master`; base desta revisão documental: `25ce9d0`.
+- Plano de ordem superior: [`docs/PLANO-MESTRE-Q4-2026.md`](./docs/PLANO-MESTRE-Q4-2026.md).
+- Home desktop recebeu sequência de leitura reorganizada e ilustração no card de
+  jornada. Evidências por rota/tema constam em `docs/matriz-auditoria-responsiva.md`;
+  a lateral ainda precisa de captura integral em viewport amplo.
+- O workflow de CI agora inclui `master`; nenhuma execução remota foi retornada
+  pela consulta feita em 2026-10-02. O gate remoto segue aberto até um run verde.
+- `npm run check:copy-ui` foi adicionado à configuração do CI e passou localmente:
+  114 fontes verificadas, nenhum padrão interno sinalizado. A busca estática não
+  substitui revisão semântica humana nem avalia conteúdo remoto.
 - A auditoria desktop do Leitor tem evidência própria em
   `PLANO-MELHORIAS-UI-DESIGN.md`; não extrapolar seus resultados para outras
   superfícies ou para mobile.
@@ -33,12 +40,14 @@ As etapas são trilhas paralelas com gates explícitos. O trabalho web local pod
 começar sem EAS ou quota Vercel; validação em binário só começa quando houver
 build instalável; publicação não é pré-requisito para corrigir UX.
 
-1. **21 — sistema de estados web**: concluir a migração semântica; revisar
-   feedback, acessibilidade estrutural e aparência nos breakpoints afetados.
-2. **19 — validação visual desktop**: comparar as superfícies com a referência,
+1. **19 — validação visual desktop**: comparar Home, Descubra, Planos e Leitor
+   com a referência,
    corrigir P0/P1 e verificar responsividade nos componentes compartilhados.
    A auditoria mobile dedicada fica deferida, sem marcar seus itens como feitos.
-3. **23.2 — CI remoto**: confirmar um workflow verde e registrar execução/commit.
+2. **21 — sistema de estados web**: fechar migração semântica e revisar
+   feedback, acessibilidade estrutural e aparência nos breakpoints afetados.
+3. **23.2 — CI remoto**: confirmar um workflow verde após incluir `master` e
+   registrar execução/commit.
    Isso pode avançar em paralelo à etapa 19; gerar um run deliberadamente falho
    não é necessário para provar o artefato diagnóstico.
 4. **20 — snapshots web**: iniciar após a auditoria desktop e correção P0/P1,

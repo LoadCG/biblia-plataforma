@@ -1,86 +1,92 @@
 # Índice da documentação
 
-Este é o ponto de entrada da documentação do repositório. Os arquivos permanecem
-na raiz para preservar links históricos, mas estão classificados por finalidade.
+Use esta página para localizar a fonte de verdade de cada assunto. O plano
+trimestral consolida a ordem; documentos específicos detalham a execução sem
+substituir os estados e critérios mais atuais.
 
-## Comece aqui
+## Fontes de verdade
 
-| Documento | Uso | Status |
+| Necessidade | Documento | Regra |
 |---|---|---|
-| [`README.md`](./README.md) | Visão geral, execução local e arquitetura resumida | atual |
-| [`ESTADO-DO-PROJETO.md`](./ESTADO-DO-PROJETO.md) | Situação real, benchmark e prioridades | fonte viva |
-| [`TODO.md`](./TODO.md) | Decisões fechadas e ponte para o roadmap | fonte viva enxuta |
-| [`CHANGELOG.md`](./CHANGELOG.md) | Histórico cronológico de mudanças | histórico |
-| [`FUNCIONALIDADES.md`](./FUNCIONALIDADES.md) | Checklist funcional e UX/UI detalhado | checklist |
+| Entender produto, stack e execução local | [`README.md`](./README.md) | Visão introdutória; conferir `package.json` para versões exatas. |
+| Saber o que está concluído e o que vem primeiro | [`ESTADO-DO-PROJETO.md`](./ESTADO-DO-PROJETO.md) | Atualizar quando um marco ou prioridade mudar; nunca inferir aceite. |
+| Executar o plano do trimestre | [`docs/PLANO-MESTRE-Q4-2026.md`](./docs/PLANO-MESTRE-Q4-2026.md) | Ordem canônica das próximas frentes e critérios de saída. |
+| Seguir branch, commit, CI e recuperação | [`docs/FLUXO-GIT.md`](./docs/FLUXO-GIT.md) | Descreve apenas políticas observadas/autorizadas e evidências reais. |
+| Conferir implementação funcional | [`FUNCIONALIDADES.md`](./FUNCIONALIDADES.md) | Checklist legado amplo; confirmar código/evidência antes de marcar item. |
+| Consultar decisões fechadas | [`TODO.md`](./TODO.md) | Não reabrir decisões do usuário sem pedido. |
+| Consultar histórico | [`CHANGELOG.md`](./CHANGELOG.md) | Registro cronológico; não é roadmap. |
 
-## Roadmaps ativos
+## Planos operacionais vigentes
 
-| Documento | Escopo | Status |
+| Documento | Escopo | Relação com o plano mestre |
 |---|---|---|
-| [`PLANO-MESTRE-UX-ETAPAS-19-A-23.md`](./PLANO-MESTRE-UX-ETAPAS-19-A-23.md) | Auditoria visual, estados, validação nativa e release | próximo ciclo |
-| [`PLANO-CONTEUDO-ETAPAS-24-A-28.md`](./PLANO-CONTEUDO-ETAPAS-24-A-28.md) | Planos de leitura, resumos, curadoria e qualidade editorial | próximo ciclo de conteúdo |
-| [`PLANO-PROXIMOS-PASSOS-CONTEUDO-UX.md`](./PLANO-PROXIMOS-PASSOS-CONTEUDO-UX.md) | Execução por ondas, aprovação editorial e publicação | plano ativo |
-| [`PLANO-EXECUCAO-COMPLETO-CONTEUDO-UX-RELEASE.md`](./PLANO-EXECUCAO-COMPLETO-CONTEUDO-UX-RELEASE.md) | Detalhamento operacional de conteúdo, UX, SEO, preview e release | plano detalhado |
-| [`PLANO-TECNICO-BUSCA.md`](./PLANO-TECNICO-BUSCA.md) | Arquitetura, ranking, índice, acessibilidade e benchmark da busca | plano técnico |
-| [`PLANO-UX-INTERFACE-ETAPAS-16-A-20.md`](./PLANO-UX-INTERFACE-ETAPAS-16-A-20.md) | Alvos de toque, Toast, responsividade e gate estrutural | ciclo anterior |
-| [`PLANO-UX-INTERFACE-ETAPAS-11-A-15.md`](./PLANO-UX-INTERFACE-ETAPAS-11-A-15.md) | Busca, Salvo, Planos e estados transitórios iniciais | histórico recente |
-| [`PLANO-EXECUCAO-ETAPAS-6-A-10.md`](./PLANO-EXECUCAO-ETAPAS-6-A-10.md) | CI, SEO, Maestro, acessibilidade e EAS | histórico recente |
-| [`PLANO-EXECUCAO-5-ETAPAS.md`](./PLANO-EXECUCAO-5-ETAPAS.md) | Primeiro ciclo funcional de evolução | histórico |
+| [`PLANO-MESTRE-UX-ETAPAS-19-A-23.md`](./PLANO-MESTRE-UX-ETAPAS-19-A-23.md) | Auditoria web, estados, QA visual, nativo e release | Detalha ciclos 1–4 e 6; suas caixas só fecham com evidência correspondente. |
+| [`PLANO-MELHORIAS-UI-DESIGN.md`](./PLANO-MELHORIAS-UI-DESIGN.md) | Direção visual, componentes e histórico das inspeções | Referência visual/casos já trabalhados; não mantém uma fila independente do plano mestre. |
+| [`PLANO-CONTEUDO-ETAPAS-24-A-28.md`](./PLANO-CONTEUDO-ETAPAS-24-A-28.md) | Contrato, planos, resumos, curadoria e QA editorial | Detalha o ciclo 5; revisão humana é obrigatória antes de publicar. |
+| [`PLANO-TECNICO-BUSCA.md`](./PLANO-TECNICO-BUSCA.md) | Arquitetura e evolução técnica da busca | Backlog especializado; iniciar somente se priorizado no plano mestre. |
 
-## Arquitetura e produto
+## Estado, qualidade e conteúdo
 
-| Documento | Escopo | Status |
-|---|---|---|
-| [`PLANO-PLATAFORMA.md`](./PLANO-PLATAFORMA.md) | Decisões arquiteturais e evolução web/mobile | referência arquitetural |
-| [`PLANO-NAVEGACAO.md`](./PLANO-NAVEGACAO.md) | Raciocínio histórico da navegação e UI | histórico |
-| [`PLANO-UI-COMPONENTES.md`](./PLANO-UI-COMPONENTES.md) | Auditoria inicial componente a componente | histórico |
-| [`ESTUDO-UX-LEITURA.md`](./ESTUDO-UX-LEITURA.md) | Racional de UX para leitura bíblica e resumos | referência de design |
+- [`docs/matriz-auditoria-responsiva.md`](./docs/matriz-auditoria-responsiva.md):
+  evidência visual por rota, viewport, tema e limite da inspeção.
+- [`docs/inventario-estados-ui.md`](./docs/inventario-estados-ui.md):
+  loading, erro, vazio, feedback e recuperação por superfície.
+- [`docs/contrato-editorial.md`](./docs/contrato-editorial.md),
+  [`docs/criterios-editoriais.md`](./docs/criterios-editoriais.md) e
+  [`docs/cobertura-editorial.md`](./docs/cobertura-editorial.md): modelo,
+  critérios e cobertura automatizada; nenhum deles aprova revisão humana.
+- [`docs/revisao-editorial/INDICE.md`](./docs/revisao-editorial/INDICE.md):
+  propostas e fila de conteúdo ainda não aprovado.
+- `.github/workflows/ci.yml`: configuração do CI. A configuração não comprova
+  que o GitHub executou ou aprovou um workflow.
 
-## Logs históricos
+## Histórico e referências
 
-| Documento | Escopo |
+Os documentos abaixo preservam o contexto de ciclos anteriores. Não devem ser
+lidos como planos ativos nem usados para reabrir uma prioridade sem reconciliá-la
+com o plano mestre atual:
+
+| Documento | Conteúdo preservado |
 |---|---|
-| [`frontend-log.md`](./frontend-log.md) | Handoffs e sessões de front-end |
-| [`backend-log.md`](./backend-log.md) | Integração inicial de persistência e banco |
+| [`PLANO-EXECUCAO-5-ETAPAS.md`](./PLANO-EXECUCAO-5-ETAPAS.md) | Primeiro ciclo funcional. |
+| [`PLANO-EXECUCAO-ETAPAS-6-A-10.md`](./PLANO-EXECUCAO-ETAPAS-6-A-10.md) | CI, SEO, Maestro, acessibilidade e builds; gates externos ainda podem estar abertos. |
+| [`PLANO-UX-INTERFACE-ETAPAS-11-A-15.md`](./PLANO-UX-INTERFACE-ETAPAS-11-A-15.md) | Ciclo de busca, Salvo, Planos e feedback. |
+| [`PLANO-UX-INTERFACE-ETAPAS-16-A-20.md`](./PLANO-UX-INTERFACE-ETAPAS-16-A-20.md) | Estados vazios, navegação e gates de responsividade/snapshots. |
+| [`PLANO-EXECUCAO-COMPLETO-CONTEUDO-UX-RELEASE.md`](./PLANO-EXECUCAO-COMPLETO-CONTEUDO-UX-RELEASE.md) | Especificação anterior de conteúdo e release, substituída pelo plano mestre atual e plano 24–28. |
+| [`PLANO-PROXIMOS-PASSOS-CONTEUDO-UX.md`](./PLANO-PROXIMOS-PASSOS-CONTEUDO-UX.md) | Ondas anteriores de conteúdo, absorvidas pelo plano mestre e plano 24–28. |
+| [`PLANO-PLATAFORMA.md`](./PLANO-PLATAFORMA.md) | Decisões de arquitetura e produto. |
+| [`PLANO-NAVEGACAO.md`](./PLANO-NAVEGACAO.md), [`PLANO-UI-COMPONENTES.md`](./PLANO-UI-COMPONENTES.md) | Rascunhos de navegação e auditoria inicial de componentes. |
+| [`ESTUDO-UX-LEITURA.md`](./ESTUDO-UX-LEITURA.md) | Fundamentos da experiência de leitura. |
+| [`frontend-log.md`](./frontend-log.md), [`backend-log.md`](./backend-log.md) | Relatos históricos de implementação; não substituem código nem CI. |
 
-## Conteúdo editorial
+## Diretório `docs/`
 
-- [`resumos-biblicos/`](./resumos-biblicos/) contém as fontes Markdown dos 66
-  resumos.
-- `core/content/dados/livros.json` é derivado por `npm run gerar-conteudo` e não
-  deve ser editado manualmente.
-- [`docs/cobertura-editorial.md`](./docs/cobertura-editorial.md) registra o
-  inventário estrutural gerado por `npm run relatorio:editorial`.
-- [`docs/revisao-editorial/INDICE.md`](./docs/revisao-editorial/INDICE.md)
-  organiza a fila de rascunhos aguardando revisão humana independente.
-- [`docs/contrato-editorial.md`](./docs/contrato-editorial.md) define IDs,
-  versões, status e taxonomia controlada do conteúdo.
+- `docs/revisao-editorial/`: fontes propostas e registros de revisão humana.
+- `docs/*.md`: critérios, contratos, matrizes e planos correntes indicados
+  acima. Evitar criar novos documentos de roadmap sem apontá-los neste índice.
 
-## Qualidade e operação
+## Manutenção documental
 
-- `npm run validate`: TypeScript, Jest, acessibilidade, Maestro, UI estrutural
-  e Expo Doctor.
-- `npm run relatorio:editorial`: gera inventário estrutural dos resumos e planos
-  em `docs/cobertura-editorial.md`; não substitui revisão humana.
-- `npm run check:content`: verifica conteúdo derivado sem drift.
-- `npm run check:editorial`: valida fontes, derivados, seções e planos e atualiza
-  o inventário de cobertura.
-- `npm run check:revisao-editorial`: verifica a governança mínima dos rascunhos
-  sem aprová-los ou integrá-los ao catálogo.
-- `npm run check:piloto-editorial`: pré-valida estrutura, referências-chave e
-  marcadores de incerteza do piloto de Gênesis.
-- `npm run check:planos-editoriais`: valida duração, sequência e capítulos das
-  referências dos planos contra o cânon local.
-- `npm run export:web`: gera o export web estático.
-- `npm run check:static`: valida rotas e metadados SEO exportados.
-- `npm run check:ui`: protege contratos estruturais de responsividade.
-- `.github/workflows/ci.yml`: pipeline executado em push/PR.
-- `.maestro/`: jornadas E2E declarativas.
+1. Ao mudar prioridade ou status de marco, atualizar `ESTADO-DO-PROJETO.md` e o
+   plano mestre no mesmo incremento.
+2. Ao concluir trabalho, registrar evidência no plano específico e no changelog;
+   atualizar checklist funcional quando houver comportamento novo.
+3. Manter planos antigos como históricos, com link para a fonte atual; não
+   apagar decisões ou evidência só para simplificar o índice.
+4. Distinguir implementação, verificação estrutural, inspeção visual, aceite
+   humano e publicação.
+5. Conteúdo editorial e copy de UI devem ser tratados como produto: fontes,
+   critérios, revisão e status claros; sem anotações internas na interface.
 
-## Regra de manutenção
+## Verificações comuns
 
-1. Estado real e decisões: atualizar `ESTADO-DO-PROJETO.md`.
-2. Funcionalidade ou comportamento de UI: atualizar `FUNCIONALIDADES.md`.
-3. Histórico de implementação: atualizar `CHANGELOG.md`.
-4. Próximas tarefas: atualizar o roadmap ativo e este índice.
-5. Não duplicar roadmap em `TODO.md`; manter apenas decisões fechadas e ponte.
+```bash
+npm run typecheck
+npm run check:copy-ui
+npm run check:a11y
+npm run check:ui
+npm run check:editorial
+npm run export:web
+npm run check:static
+git diff --check
+```

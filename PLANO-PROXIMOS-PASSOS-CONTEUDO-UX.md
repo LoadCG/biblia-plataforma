@@ -1,5 +1,9 @@
 # Plano de próximos passos — conteúdo, UX e publicação
 
+> **Status: ondas históricas substituídas em 2026-10-02.** Use
+> [`docs/PLANO-MESTRE-Q4-2026.md`](./docs/PLANO-MESTRE-Q4-2026.md) para a ordem
+> atual e `PLANO-CONTEUDO-ETAPAS-24-A-28.md` para os critérios editoriais.
+
 Plano operacional posterior às etapas 24–28. O objetivo é converter os
 rascunhos editoriais em incrementos aprováveis, melhorar a descoberta do
 conteúdo e validar a experiência de leitura antes de ampliar o catálogo.

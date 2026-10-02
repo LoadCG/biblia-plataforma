@@ -1,5 +1,10 @@
 # Plano de execução completo — conteúdo, UX, SEO e release
 
+> **Status: plano anterior substituído em 2026-10-02.** Não usar como fila
+> operacional paralela. A ordem atual está em
+> [`docs/PLANO-MESTRE-Q4-2026.md`](./docs/PLANO-MESTRE-Q4-2026.md); a trilha
+> editorial detalhada permanece em `PLANO-CONTEUDO-ETAPAS-24-A-28.md`.
+
 Este plano detalha o próximo ciclo após a consolidação do contrato editorial e
 dos gates automatizados. Ele transforma cinco frentes abertas em tarefas
 executáveis, com dependências e critérios objetivos de saída.

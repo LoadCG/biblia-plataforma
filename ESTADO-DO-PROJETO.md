@@ -1,4 +1,4 @@
-# Estado do projeto e próximos passos (revisado em 2026-10-01)
+# Estado do projeto e próximos passos (revisado em 2026-10-02)
 
 Este é o documento de referência pra responder duas perguntas: **em
 que etapa estamos de verdade** (sem otimismo nem pessimismo) e **o que
@@ -122,65 +122,49 @@ traduções licenciadas, notificações push), a distância é grande e
   nunca fazer — mas sem entrar na lista priorizada abaixo até o app
   nativo estar pronto o bastante pra essa conversa fazer sentido.
 
-## Próximos passos priorizados (realista pro contexto do projeto)
+## Estado verificado e próximos passos — 2026-10-02
 
-> Atualização de 2026-09-10: além das cinco etapas funcionais anteriores, foram
-> implementados CI, SEO híbrido, cenários Maestro, hardening de acessibilidade,
-> prontidão de build nativo e dois ciclos de usabilidade para Busca, Salvo,
-> Planos, estados vazios, navegação e Toast. Evidências em
-> `PLANO-EXECUCAO-ETAPAS-6-A-10.md`, `PLANO-UX-INTERFACE-ETAPAS-11-A-15.md` e
-> `PLANO-UX-INTERFACE-ETAPAS-16-A-20.md`.
+O plano unificado do trimestre está em [`docs/PLANO-MESTRE-Q4-2026.md`](./docs/PLANO-MESTRE-Q4-2026.md).
+Ele separa implementação local, verificação estrutural, inspeção visual,
+revisão humana, execução remota e distribuição.
 
-Ordenados por impacto e pela instrução vigente: aproximar a aplicação web da
-referência, preservando os breakpoints tocados; refinamento mobile dedicado e
-produto nativo ficam para depois. Esta prioridade não reabre decisões de conta,
-tradução ou backend.
+### Concluído com evidência registrada
 
-1. **Concluir o sistema de estados web** — fechar severidades, registrar
-   contratos pendentes e revisar loading/erro/feedback em desktop e nos
-   breakpoints afetados. Estado: migração principal implementada; QA visual e
-   algumas checagens de aceite continuam pendentes.
-2. **Continuar a aproximação da referência** — após os estados, percorrer
-   Descubra, Planos e Início com evidência visual desktop e regressão responsiva
-   dirigida. O Leitor desktop já tem uma rodada registrada; isso não aprova as
-   demais superfícies.
-3. **Confirmar CI remoto e SEO** — observar workflow verde e validar rotas
-   estáticas em preview quando a quota da Vercel permitir.
-4. **Avançar o piloto editorial** — concluir schema mínimo e revisão humana
-   independente dos próximos conteúdos antes de ampliar o catálogo.
-5. **Retomar QA mobile/nativo e acessibilidade física** — Maestro, NVDA,
-   VoiceOver e TalkBack dependem da decisão de retomar essa frente e de um
-   navegador/aparelho/binário apropriado.
-6. **Gerar builds EAS assinados** — somente quando conta e credenciais estiverem
-   disponíveis e o desenvolvimento nativo for retomado.
-7. **Avaliar vulnerabilidades de dependências** sem upgrade forçado, conforme
-   explorabilidade e compatibilidade com Expo 57.
+- Ciclos funcionais iniciais, tela de leitura, planos de leitura existentes,
+  persistência local, busca offline, navegação e controles principais estão
+  descritos no checklist e nos planos históricos. Esses registros não provam
+  gates externos que dependam de emulador, tecnologia assistiva ou preview.
+- Início desktop teve incrementos recentes de sequência de conteúdo, arte do
+  Versículo do Dia e ilustração vetorial do card de jornada. Veja os registros
+  de 2026-10-01 no plano de UI e na matriz.
+- Navegação por tema, estados compartilhados e severidades de feedback têm
+  implementação local e verificações estruturais registradas; aceite completo
+  visual/assistivo segue parcial.
+- `check:copy-ui` foi adicionado nesta revisão para bloquear padrões explícitos
+  de raciocínio interno em fontes de interface e conteúdo integrado. O gate
+  passou ao inspecionar 114 fontes sem sinalizações. É uma checagem literal; a
+  revisão semântica humana continua útil para conteúdo e estados complexos.
 
-### Execução revisada por marcos
+### Próxima ordem de execução
 
-Para evitar manter duas listas concorrentes, a execução detalhada fica nos
-roadmaps operacionais. A ordem recomendada é:
+1. **Home desktop:** capturar viewport integral amplo e revisar a lateral,
+   proporção de colunas, ritmo vertical e estados com dados reproduzíveis.
+2. **Descubra e Planos:** completar auditoria desktop de journeys, estados,
+   foco, tema e regressões responsivas nos breakpoints afetados.
+3. **Estados web:** conferir inventário, duplicações de Toast, retry e estados
+   destrutivos por superfície, sem generalizar aceites parciais.
+4. **CI e SEO:** após o workflow atualizado, confirmar execução verde em GitHub;
+   validar preview Vercel quando disponível. Nesta revisão não havia execuções
+   remotas retornadas pelo GitHub Actions.
+5. **Conteúdo:** evoluir contrato/taxonomia e selecionar um pequeno lote apenas
+   quando houver responsáveis por revisão humana independente.
+6. **Mobile dedicado, validação nativa e lojas:** permanecem deferidos; não são
+   pré-requisitos para avançar o escopo web autorizado.
 
-1. **Marco web ativo:** terminar sistema de estados e avançar a comparação
-   desktop com a referência; manter registro de responsividade nos breakpoints
-   tocados e explicitar cobertura não feita.
-2. **Marco web de qualidade:** confirmar CI remoto e validar SEO em preview
-   quando a quota estiver disponível; iniciar snapshots visuais após a auditoria
-   desktop e correção dos defeitos prioritários.
-3. **Marco editorial piloto — em paralelo:** fechar schema/taxonomia mínimos e
-   produzir apenas um lote curto com revisão independente; QA estrutural e
-   revisão humana são gates daquele lote, não uma etapa tardia após expansão.
-4. **Marco nativo — deferido até retomada:** gerar build instalável e então
-   executar Maestro, leitores de tela, performance e smoke test. Credenciais e
-   publicação em loja continuam dependências futuras, não bloqueiam o web.
-
-Os critérios e a decomposição ficam em `PLANO-MESTRE-UX-ETAPAS-19-A-23.md` e
-`PLANO-CONTEUDO-ETAPAS-24-A-28.md`. Datas anteriores desses documentos são
-marcos de registro, não prova de que um gate externo foi concluído.
-
-Plano operacional expandido: `PLANO-MESTRE-UX-ETAPAS-19-A-23.md`.
-
-Próximo ciclo editorial: `PLANO-CONTEUDO-ETAPAS-24-A-28.md`.
+O benchmark externo registrado acima é uma fotografia datada, não uma medição
+atualizada neste ciclo. Planos anteriores estão classificados em
+[`DOCUMENTACAO.md`](./DOCUMENTACAO.md); use apenas o plano mestre atual como
+ordem de trabalho.
 
 ## Como manter este documento honesto
 

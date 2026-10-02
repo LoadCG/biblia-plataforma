@@ -3,6 +3,20 @@
 Todas as mudanças notáveis feitas no projeto serão documentadas neste arquivo.
 O formato é baseado no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/).
 
+## [Unreleased] - 2026-10-02
+
+### Documentação e qualidade
+- Documentos foram reclassificados em fontes atuais, planos operacionais e
+  registros históricos; criado plano mestre Q4 com etapas, dependências e
+  critérios de aceite para UI, estados, conteúdo e release.
+- README e índice foram atualizados com stack Expo 57 e links canônicos; criado
+  fluxo documentado de Git/CI. O workflow agora dispara em `master` e `main`.
+- Adicionado `npm run check:copy-ui` para sinalizar padrões explícitos de texto
+  interno em fontes de interface e conteúdo integrado.
+- Verificados nesta revisão: `check:copy-ui` (114 fontes, nenhum padrão),
+  `typecheck`, `check:ui` (8 superfícies) e `git diff --check`; suítes de testes
+  não executadas.
+
 ## [Unreleased] - 2026-10-01
 
 ### Interface e qualidade

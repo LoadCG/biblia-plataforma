@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [main]
+    branches: [main, master]
   pull_request:
   workflow_dispatch:
 
@@ -33,6 +33,9 @@ jobs:
 
       - name: Verificar cobertura editorial
         run: npm run check:editorial
+
+      - name: Verificar copy da interface
+        run: npm run check:copy-ui
 
       - name: Validar projeto
         run: npm run validate

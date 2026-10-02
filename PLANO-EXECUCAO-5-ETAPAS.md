@@ -1,5 +1,10 @@
 # Execução das cinco etapas funcionais
 
+**Status em 2026-10-02: ciclo histórico de implementação.** Os itens funcionais
+marcados `[x]` foram executados; gates de dispositivo, hardware limitado e
+revisão humana que ainda aparecem desmarcados não foram encerrados. Eles não são
+fila ativa e só devem voltar mediante priorização no plano mestre Q4.
+
 Data: 2026-09-08
 
 Este documento registra a execução verificável do ciclo de hardening,

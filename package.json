@@ -58,6 +58,7 @@
     "check:a11y": "node scripts/verificar-acessibilidade.js",
     "check:e2e": "node scripts/verificar-maestro.js",
     "check:ui": "node scripts/verificar-ui-responsiva.js",
+    "check:copy-ui": "node scripts/verificar-copy-interface.js",
     "check:static": "node scripts/verificar-export-estatico.js",
     "check:editorial": "node scripts/relatorio-cobertura-editorial.js",
     "check:revisao-editorial": "node scripts/verificar-revisao-editorial.js",

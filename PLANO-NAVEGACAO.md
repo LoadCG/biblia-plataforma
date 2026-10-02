@@ -3,9 +3,12 @@
 > **Classificação documental:** histórico. As decisões implementadas deste
 > plano foram absorvidas pelo código e pelos roadmaps atuais. Para o próximo
 > trabalho, consulte [`DOCUMENTACAO.md`](./DOCUMENTACAO.md) e
-> [`PLANO-MESTRE-UX-ETAPAS-19-A-23.md`](./PLANO-MESTRE-UX-ETAPAS-19-A-23.md).
+> [`docs/PLANO-MESTRE-Q4-2026.md`](./docs/PLANO-MESTRE-Q4-2026.md).
 
-Status: **planejamento** — nada deste documento está implementado ainda.
+**Status: histórico de concepção, substituído.** A navegação por quatro áreas
+foi incorporada ao produto, com ajustes de nomenclatura e implementação. Os
+requisitos não devem ser tratados como backlog atual sem conferir código,
+`FUNCIONALIDADES.md` e o plano mestre do trimestre.
 
 Este documento substitui a primeira versão do plano de navegação (4
 abas genéricas: Início/Leitura Bíblica/Grifos e Notas/Configurações).

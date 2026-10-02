@@ -4,6 +4,12 @@ Atualizado em 2026-09-10. Este documento registra o escopo executado, os
 critérios de aceite e os gates que dependem de infraestrutura externa. Um item
 só recebe `[x]` quando existe evidência local ou automatizada correspondente.
 
+**Status em 2026-10-02: ciclo histórico com gates externos parcialmente abertos.**
+Não confundir estrutura local de CI, cenários Maestro ou build configurável com
+run remoto, execução em dispositivo ou distribuição. Os gates remanescentes
+estão reindexados nos ciclos 6–7 de
+[`docs/PLANO-MESTRE-Q4-2026.md`](./docs/PLANO-MESTRE-Q4-2026.md).
+
 ## Etapa 6 — Integração contínua e quality gates `✅`
 
 **Objetivo:** tornar toda alteração verificável por um pipeline reproduzível,

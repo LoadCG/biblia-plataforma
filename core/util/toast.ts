@@ -8,8 +8,8 @@ export type OpcoesToast = {
   /** Rótulo de um botão de ação opcional (ex. "Desfazer"). */
   acaoLabel?: string;
   onAcao?: () => void;
-  /** Aparência semântica opcional; neutra preserva os consumidores atuais. */
-  severidade?: SeveridadeToast;
+  /** Aparência semântica obrigatória para que o feedback não fique ambíguo. */
+  severidade: SeveridadeToast;
   /** Duração em ms antes de sumir sozinho. Default: 2000ms sem ação, 4000ms com ação (mais tempo pra decidir). */
   duracaoMs?: number;
 };
@@ -20,7 +20,7 @@ type Ouvinte = (payload: PayloadToast) => void;
 
 let ouvintes: Ouvinte[] = [];
 
-export function mostrarToast(mensagem: string, opcoes?: OpcoesToast): void {
+export function mostrarToast(mensagem: string, opcoes: OpcoesToast): void {
   const payload: PayloadToast = { mensagem, ...opcoes };
   ouvintes.forEach((ouvinte) => ouvinte(payload));
 }

@@ -15,6 +15,10 @@ O formato é baseado no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.
   de viewport da sessão.
 - Foco visível e abertura/retorno de tema por teclado conferidos no fluxo inicial
   de Descubra; a auditoria dos demais controles permanece pendente.
+- Varredura AST do Toast encontrou 73 chamadas com severidade explícita; a revisão
+  visual/assistiva do componente e dos consumidores segue pendente.
+- Contrato de `mostrarToast` agora exige severidade em TypeScript, evitando que
+  novos avisos caiam silenciosamente no estilo neutro.
 
 ### Documentação e qualidade
 - Documentos foram reclassificados em fontes atuais, planos operacionais e

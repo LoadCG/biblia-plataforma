@@ -23,7 +23,7 @@ aceite visual, assistivo, nativo ou de publicação.
 | Home desktop | Parcialmente refinada | Jornada reorganizada; paisagem horária e ilustração da jornada implementadas. Nova inspeção no viewport desktop disponível, claro/escuro e perfil local sem histórico; composição e lateral legíveis. A captura em 1280×900 e 1440×900 continua pendente: a API do navegador não expõe dimensão CSS nem permite fixar o viewport nesta sessão. |
 | Descubra | Parcialmente implementada | No viewport desktop disponível, grade de oito temas, detalhe “Esperança”, links, entrada direta, recarga e busca (50 resultados/estado vazio) foram conferidos. Retorno que selecionava Início foi corrigido; tema inválido agora normaliza para `/pesquisa`. Ordem inicial de foco, indicador visível e abrir/voltar tema com Enter foram verificados; auditoria completa e viewports planejados seguem pendentes. |
 | Planos | Implementado com QA parcial | Lista e detalhe em claro/escuro; estado 0/7, sete sessões e ações acessíveis conferidos sem alterar progresso. Erro, conclusão, sessão retomada e viewports planejados permanecem incompletos. |
-| Sistema de estados | Migração principal feita | Inventário/API/migrações e severidades existem; inspeção visual/assistiva de cada estado, duplicações e alguns contratos continuam pendentes. |
+| Sistema de estados | Migração principal feita | Inventário/API/migrações existem. Varredura AST encontrou 73 chamadas a `mostrarToast`, todas classificadas; o contrato TypeScript agora exige severidade. Inspeção visual/assistiva dos consumidores continua pendente. |
 | Copy da interface | Gate estático passou | 114 fontes de app/componentes/conteúdo verificadas localmente e no CI, sem padrões sinalizados; a heurística não substitui revisão semântica. |
 | CI remoto | Primeiro run passou | `37033595191` para o commit `7716388`; gates de conteúdo, copy, validação, export e metadados passaram. Revisar avisos de runtime do Actions/runner; preview não foi comprovado. |
 | Conteúdo editorial | Catálogo funcional; expansão não aprovada | Há 66 resumos e 2 planos. Schema editorial completo, segunda revisão humana e publicação dos novos rascunhos são gates separados. |
@@ -109,6 +109,13 @@ seguem pendentes. A API do navegador não expõe dimensão CSS nem oferece overr
 **Aceite:** inventário reflete o código; cada falha recuperável tem retry ou
 orientação; ações destrutivas têm confirmação e resultado; regressões são
 registradas por rota/tema/viewport.
+
+**Progresso parcial em 2026-10-02:** a comparação estática da API Toast encontrou
+73 chamadas diretas, todas com severidade explícita e sem configuração dinâmica.
+O contrato TypeScript passou a exigir a severidade; `neutra` só pode ser
+escolhida explicitamente, sem fallback silencioso. Isso não comprova
+cor/contraste na tela nem cobre tecnologia assistiva, comportamento temporal ou
+equivalência de mensagens por ação.
 
 ### Ciclo 4 — regressão visual automatizada (P2 após Ciclos 1 e 2)
 

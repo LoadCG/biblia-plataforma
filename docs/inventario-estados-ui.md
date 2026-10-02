@@ -36,7 +36,7 @@ exaustivo; revisão visual e assistiva ainda está pendente.
 | Seletor de livros | catálogo local | não aplicável | `EstadoVazio` | limpar busca quando há termo | A tela preserva o estado original sem ação quando o catálogo estiver vazio sem filtro. |
 | Cards de versículo / popover | `EstadoCarregando` | `EstadoErro` com retry | não aplicável | ações específicas | O card do dia mantém painel próprio de erro em gradiente. |
 | Detalhe de plano | `EstadoCarregando` | `EstadoErro` com retry | estado concluído quando todos os dias finalizam | Toast nas ações | Falhas de progresso não aparecem como conclusão ou progresso zero. |
-| Toast global | — | — | — | alerta com ação opcional e severidade semântica | Chamadas de resultado já declaram severidade; o padrão `neutra` permanece por compatibilidade. Inventário estático ainda deve ser conferido contra novas chamadas e a composição/contraste precisa de inspeção visual. |
+| Toast global | — | — | — | alerta com ação opcional e severidade semântica | Varredura AST em 2026-10-02 encontrou 73 chamadas a `mostrarToast`, todas com severidade explícita e sem opção dinâmica. O contrato agora exige severidade no TypeScript; `neutra` permanece uma escolha explícita, sem fallback silencioso. A composição/contraste ainda precisa de inspeção visual. |
 
 O detalhe de Plano agora diferencia carga do progresso, erro com retry e dados;
 falhas ao iniciar uma sessão ou alterar conclusão dão feedback via Toast. O

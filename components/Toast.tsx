@@ -14,8 +14,8 @@ const ESTILOS_SEVERIDADE: Record<SeveridadeToast, { container: string; texto: st
   informacao: { container: "bg-feedback-info-fundo dark:bg-feedback-info-fundo-dark", texto: "text-feedback-info-texto dark:text-feedback-info-texto-dark", acao: "bg-feedback-info-texto/10 dark:bg-feedback-info-texto-dark/10", icone: "info" },
 };
 
-// Montado uma vez em app/_layout.tsx — qualquer lugar do app dispara
-// um toast chamando `mostrarToast(mensagem)`, sem precisar de Context.
+// Montado uma vez em app/_layout.tsx. Componentes publicam feedback por
+// `mostrarToast(mensagem, { severidade })`, sem depender de Context.
 // Suporta um botão de ação opcional (ex. "Desfazer") — usado hoje pela
 // marcação de capítulos em massa, pra reverter sem precisar refazer a
 // seleção manualmente.
@@ -39,7 +39,7 @@ export function Toast() {
   }, [opacidade]);
 
   if (!payload) return null;
-  const estilo = ESTILOS_SEVERIDADE[payload.severidade ?? "neutra"];
+  const estilo = ESTILOS_SEVERIDADE[payload.severidade];
 
   return (
     <Animated.View

@@ -147,6 +147,10 @@ revisão humana, execução remota e distribuição.
 
 ### Próxima ordem de execução
 
+0. **Foco atual — hover web:** planejamento de cobertura de todas as rotas e
+   componentes registrado em [`docs/PLANO-HOVER-INTERACOES.md`](./docs/PLANO-HOVER-INTERACOES.md).
+   Implementação ainda não iniciada; começar pelo inventário, prova técnica,
+   movimento reduzido e estados de mouse/toque/teclado antes da propagação.
 1. **Home desktop:** a revisão no viewport desktop disponível, em claro/escuro
    e perfil sem histórico, confirmou a hierarquia e não mostrou clipping
    horizontal perceptível. A API do navegador não expõe a dimensão CSS nem

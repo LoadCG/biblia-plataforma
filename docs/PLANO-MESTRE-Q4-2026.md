@@ -16,6 +16,13 @@ aceite visual, assistivo, nativo ou de publicação.
 - Não adicionar dependências, serviços, telemetry, traduções ou conteúdo sem
   necessidade validada e decisão de produto.
 
+## Foco atual de interface
+
+O próximo incremento de UI é planejar e implementar microinterações hover sutis
+em todas as rotas, conforme [`PLANO-HOVER-INTERACOES.md`](./PLANO-HOVER-INTERACOES.md).
+Esse foco não substitui nem fecha os ciclos abaixo; é a prioridade de execução
+imediata, com cobertura rastreável de cada tela e componente compartilhado.
+
 ## Estado comprovado na revisão
 
 | Frente | Estado | Evidência / lacuna |

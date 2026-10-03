@@ -14,7 +14,6 @@ function resolverDestino(url) {
     const destino = path.resolve(raiz, candidato);
     if (destino.startsWith(`${raiz}${path.sep}`) && fs.existsSync(destino) && fs.statSync(destino).isFile()) return destino;
   }
-  if (pathname.startsWith("/biblia/")) return path.join(raiz, "index.html");
   return path.join(raiz, "+not-found.html");
 }
 

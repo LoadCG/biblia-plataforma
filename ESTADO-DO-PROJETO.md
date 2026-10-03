@@ -44,7 +44,7 @@ referências mais citadas em comparativos de 2026.
 | Estudo aprofundado | Blue Letter Bible/Logos: léxico, interlinear, concordância, comentários | Fora de escopo — público-alvo declarado é "leitura", não estudo acadêmico de idioma original |
 | Design/UX 2026 | Tipografia cuidada, modo escuro, Dynamic Type, tela inicial sem feed de comparação social | Modo escuro completo, fonte ajustável, identidade visual própria (não copiada) — ver auditorias de UI já feitas |
 | Confiabilidade | Bible Streak citado por "pontuação clara e progresso de badge confiável" como diferencial | CI versionado, suíte unitária, contratos de acessibilidade/SEO/Maestro e exports por plataforma; o primeiro run remoto e o E2E em dispositivo ainda são gates externos |
-| SEO/descoberta | Apps estabelecidos têm anos de indexação; sites de conteúdo bíblico competem por tráfego orgânico de busca | 66 resumos e 2 planos possuem HTML/metadados por rota; leitor permanece interativo por fallback híbrido restrito |
+| SEO/descoberta | Apps estabelecidos têm anos de indexação; sites de conteúdo bíblico competem por tráfego orgânico de busca | 66 resumos e 2 planos possuem HTML/metadados por rota; export estático agora inclui uma página de shell para cada capítulo, para permitir entrada direta e atualização. A URL de produção reportada retornou 404 antes da correção; deploy e recarga pública ainda precisam ser confirmados. |
 | Widgets/OS nativo | YouVersion tem widget de tela inicial, notificação diária | Configuração e bundles locais Android/iOS validados; sem widget, build assinado ou publicação em loja |
 
 **Leitura honesta desse quadro:** nas áreas onde o projeto decidiu

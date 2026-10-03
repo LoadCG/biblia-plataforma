@@ -5,6 +5,13 @@ O formato é baseado no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.
 
 ## [Unreleased] - 2026-10-02
 
+### Correções
+- Corrigido o acesso direto e a atualização de capítulos bíblicos no deploy
+  estático: o export agora materializa as 1.189 rotas e a regra ampla de rewrite
+  da Vercel foi removida. O servidor local valida 200 para capítulos existentes
+  e 404 para capítulos inválidos; o comportamento público será confirmado após
+  o próximo deploy.
+
 ### Interface
 - Seleção de versículos agora mostra contagem e referências exatas mesmo quando
   os itens são descontínuos; a seleção visual tem contorno dedicado e dica

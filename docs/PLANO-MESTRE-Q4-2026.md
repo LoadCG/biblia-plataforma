@@ -25,6 +25,14 @@ imediata, com cobertura rastreável de cada tela e componente compartilhado.
 
 ## Estado comprovado na revisão
 
+**Incidente de rota direta (2026-10-02):** a URL pública de 1 Coríntios 13
+retornou `404 NOT_FOUND` ao atualizar. O export Expo não materializava os
+segmentos `[livro]/[capitulo]`, enquanto `vercel.json` reescrevia genericamente
+`/biblia/*` para `/index.html`. A correção remove a reescrita e cria páginas
+estáticas de shell para os 1.189 capítulos a partir do HTML exportado; o
+servidor local retornou 200 para capítulos válidos e 404 para capítulo
+inexistente. A validação da URL pública fica pendente até o deploy do commit.
+
 | Frente | Estado | Evidência / lacuna |
 |---|---|---|
 | Home desktop | Parcialmente refinada | Jornada reorganizada; paisagem horária e ilustração da jornada implementadas. Nova inspeção no viewport desktop disponível, claro/escuro e perfil local sem histórico; composição e lateral legíveis. A captura em 1280×900 e 1440×900 continua pendente: a API do navegador não expõe dimensão CSS nem permite fixar o viewport nesta sessão. |

@@ -1,5 +1,5 @@
 {
-  "buildCommand": "node scripts/gerar-conteudo.js && npx expo export --platform web",
+  "buildCommand": "node scripts/gerar-conteudo.js && npx expo export --platform web && node scripts/gerar-rotas-leitura.js",
   "outputDirectory": "dist",
   "installCommand": "npm ci",
   "cleanUrls": true,

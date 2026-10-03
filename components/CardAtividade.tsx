@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Platform, Pressable, Text, View } from "react-native";
 import { obterLivro } from "../core/content/livros";
 import { copiar, compartilhar } from "../core/estatisticas/compartilhador";
-import type { ItemAtividade } from "../core/estatisticas/atividade";
+import { dataMaisRecente, type ItemAtividade } from "../core/estatisticas/atividade";
 import { grifosRepository, notasRepository, pesquisasFavoritasRepository, versiculosSalvosRepository } from "../core/repositories";
 import { linkVersiculo } from "../core/util/linkVersiculo";
 import { tempoRelativo } from "../core/util/tempoRelativo";
@@ -33,6 +33,9 @@ export function CardAtividade({ item, onMudou, selecionado, onSelecionar }: Prop
   const referencia = livro && item.tipo !== "pesquisa" ? `${livro.nome} ${item.capitulo}:${item.versiculo}` : null;
   const link = livro && item.tipo !== "pesquisa" ? linkVersiculo(livro.slug, item.capitulo, item.versiculo) : null;
   const referenciaComLink = referencia ? `${referencia}${link ? `\n${link}` : ""}` : null;
+  const anotacaoComReferencia = item.tipo === "nota"
+    ? `“${item.texto}”${referenciaComLink ? `\n\n${referenciaComLink}` : ""}`
+    : referenciaComLink ?? "";
 
   async function excluir(): Promise<boolean> {
     if (!ownerId) return false;
@@ -66,9 +69,9 @@ export function CardAtividade({ item, onMudou, selecionado, onSelecionar }: Prop
             icone: "open-book",
             onPress: () => router.push(`/biblia/${item.livroSlug}/${item.capitulo}?versiculo=${item.versiculo}`),
           },
-          { label: "Compartilhar", icone: "share", onPress: () => compartilhar(referenciaComLink ?? "") },
+          { label: "Compartilhar", icone: "share", onPress: () => compartilhar(item.tipo === "nota" ? anotacaoComReferencia : (referenciaComLink ?? ""), item.tipo === "nota" && referencia ? { titulo: `Anotação em ${referencia}` } : {}) },
           { label: "Resumo do livro", icone: "book-collection", onPress: () => router.push(`/resumos/${item.livroSlug}`) },
-          { label: "Copiar", icone: "copy", onPress: () => copiar(item.tipo === "nota" ? item.texto : (referencia ?? "")) },
+          { label: "Copiar", icone: "copy", onPress: () => copiar(item.tipo === "nota" ? anotacaoComReferencia : (referencia ?? "")) },
           ...(item.tipo === "nota" ? [{ label: "Editar", icone: "edit" as const, onPress: () => setEditando(true) }] : []),
           { label: "Excluir", icone: "delete", onPress: excluir, destrutiva: true },
         ];
@@ -106,7 +109,7 @@ export function CardAtividade({ item, onMudou, selecionado, onSelecionar }: Prop
         ) : null}
       </View>
       <View className="items-end">
-        <Text className="text-[10px] text-cor-texto-suave dark:text-cor-texto-suave-dark mb-1">{tempoRelativo(item.criadoEm)}</Text>
+        <Text className="text-[10px] text-cor-texto-suave dark:text-cor-texto-suave-dark mb-1">{tempoRelativo(dataMaisRecente(item))}</Text>
         <Pressable onPress={() => setMenuAberto(true)} accessibilityRole="button" accessibilityLabel="Mais opções" hitSlop={10} className="active:opacity-60">
           <Text className="text-cor-texto-suave dark:text-cor-texto-suave-dark text-base">⋮</Text>
         </Pressable>
@@ -118,30 +121,19 @@ export function CardAtividade({ item, onMudou, selecionado, onSelecionar }: Prop
         <ModalNota
           visivel
           versiculo={item.versiculo}
+          referencia={referencia ?? undefined}
           textoInicial={item.texto}
           onFechar={() => setEditando(false)}
           onSalvar={async (texto) => {
-            if (!ownerId) return;
+            if (!ownerId) throw new Error("Identificação local indisponível");
             const ref = { livroSlug: item.livroSlug, capitulo: item.capitulo, versiculo: item.versiculo };
-            // `ModalNota` já manda o texto trimado, mas o valor pode
-            // ter ficado vazio (nota apagada por completo) — nesse
-            // caso remove em vez de salvar uma nota vazia (achado
-            // real, 2026-08-20, mesmo tratamento que já existia em
-            // `salvarNota` na tela de leitura).
-            try {
-              if (texto) {
-                await notasRepository.salvar(ownerId, ref, texto);
-              } else {
-                await notasRepository.remover(ownerId, ref);
-              }
-              setEditando(false);
-              onMudou();
-            } catch {
-              mostrarToast("Não foi possível salvar a nota. Ela continua aberta para você tentar novamente.", { severidade: "erro" });
-            }
+            await notasRepository.salvar(ownerId, ref, texto);
+            onMudou();
           }}
           onRemover={async () => {
-            if (await excluir()) setEditando(false);
+            if (!ownerId) throw new Error("Identificação local indisponível");
+            await notasRepository.remover(ownerId, { livroSlug: item.livroSlug, capitulo: item.capitulo, versiculo: item.versiculo });
+            onMudou();
           }}
         />
       ) : null}

@@ -5,7 +5,7 @@ import { grifosRepository, notasRepository, pesquisasFavoritasRepository, versic
 
 export type ItemAtividade =
   | { tipo: "grifo"; livroSlug: string; capitulo: number; versiculo: number; cor?: string; criadoEm: string }
-  | { tipo: "nota"; livroSlug: string; capitulo: number; versiculo: number; texto: string; criadoEm: string }
+  | { tipo: "nota"; livroSlug: string; capitulo: number; versiculo: number; texto: string; criadoEm: string; atualizadoEm: string }
   | { tipo: "pesquisa"; termo: string; criadoEm: string }
   | { tipo: "salvo"; livroSlug: string; capitulo: number; versiculo: number; criadoEm: string };
 
@@ -33,6 +33,7 @@ export async function carregarAtividade(ownerId: string): Promise<ItemAtividade[
       versiculo: n.versiculo,
       texto: n.texto,
       criadoEm: n.criadoEm,
+      atualizadoEm: n.atualizadoEm || n.criadoEm,
     })),
     ...pesquisas.map((p) => ({ tipo: "pesquisa" as const, termo: p.termo, criadoEm: p.criadoEm })),
     ...salvos.map((s) => ({
@@ -44,7 +45,11 @@ export async function carregarAtividade(ownerId: string): Promise<ItemAtividade[
     })),
   ];
 
-  return itens.sort((a, b) => new Date(b.criadoEm).getTime() - new Date(a.criadoEm).getTime());
+  return itens.sort((a, b) => new Date(dataMaisRecente(b)).getTime() - new Date(dataMaisRecente(a)).getTime());
+}
+
+export function dataMaisRecente(item: ItemAtividade): string {
+  return item.tipo === "nota" ? item.atualizadoEm || item.criadoEm : item.criadoEm;
 }
 
 export function chaveAtividade(item: ItemAtividade): string {

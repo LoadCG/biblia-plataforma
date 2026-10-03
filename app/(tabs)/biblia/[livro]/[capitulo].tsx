@@ -495,39 +495,20 @@ export default function Leitura() {
   }
 
   async function salvarNota(texto: string) {
-    if (!ownerId || !livro || versiculoEditandoNota === null) return;
+    if (!ownerId || !livro || versiculoEditandoNota === null) throw new Error("Não foi possível identificar este versículo");
     const ref = { livroSlug: livro.slug, capitulo, versiculo: versiculoEditandoNota };
-    try {
-      if (texto) {
-        await notasRepository.salvar(ownerId, ref, texto);
-        setNotas((atual) => new Map(atual).set(versiculoEditandoNota, texto));
-      } else {
-        await notasRepository.remover(ownerId, ref);
-        setNotas((atual) => {
-          const novo = new Map(atual);
-          novo.delete(versiculoEditandoNota);
-          return novo;
-        });
-      }
-      setVersiculoEditandoNota(null);
-    } catch {
-      mostrarToast("Não foi possível salvar a nota. Ela continua aberta para você tentar novamente.", { severidade: "erro" });
-    }
+    await notasRepository.salvar(ownerId, ref, texto);
+    setNotas((atual) => new Map(atual).set(versiculoEditandoNota, texto));
   }
 
   async function removerNota() {
-    if (!ownerId || !livro || versiculoEditandoNota === null) return;
-    try {
-      await notasRepository.remover(ownerId, { livroSlug: livro.slug, capitulo, versiculo: versiculoEditandoNota });
-      setNotas((atual) => {
-        const novo = new Map(atual);
-        novo.delete(versiculoEditandoNota);
-        return novo;
-      });
-      setVersiculoEditandoNota(null);
-    } catch {
-      mostrarToast("Não foi possível remover a nota. Tente novamente.", { severidade: "erro" });
-    }
+    if (!ownerId || !livro || versiculoEditandoNota === null) throw new Error("Não foi possível identificar este versículo");
+    await notasRepository.remover(ownerId, { livroSlug: livro.slug, capitulo, versiculo: versiculoEditandoNota });
+    setNotas((atual) => {
+      const novo = new Map(atual);
+      novo.delete(versiculoEditandoNota);
+      return novo;
+    });
   }
 
   function selecionarVersiculo(numero: number) {
@@ -1372,6 +1353,7 @@ export default function Leitura() {
           key={versiculoEditandoNota}
           visivel
           versiculo={versiculoEditandoNota}
+          referencia={livro ? `${livro.nome} ${capitulo}:${versiculoEditandoNota}` : undefined}
           textoInicial={notas.get(versiculoEditandoNota) ?? ""}
           onFechar={() => setVersiculoEditandoNota(null)}
           onSalvar={salvarNota}

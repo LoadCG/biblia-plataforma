@@ -6,7 +6,7 @@ import { CardAtividade } from "../components/CardAtividade";
 import { EstadoVazio } from "../components/EstadoVazio";
 import { EstadoCarregando } from "../components/EstadoCarregando";
 import { EstadoErro } from "../components/EstadoErro";
-import { carregarAtividade, chaveAtividade, type ItemAtividade } from "../core/estatisticas/atividade";
+import { carregarAtividade, chaveAtividade, dataMaisRecente, type ItemAtividade } from "../core/estatisticas/atividade";
 import { useOwnerId } from "../core/useOwnerId";
 import { obterLivro } from "../core/content/livros";
 import { colecoesRepository, grifosRepository, notasRepository, pesquisasFavoritasRepository, versiculosSalvosRepository } from "../core/repositories";
@@ -80,7 +80,7 @@ export default function Salvo() {
       const livro = item.tipo === "pesquisa" ? "" : obterLivro(item.livroSlug)?.nome ?? "";
       return `${livro} ${item.tipo === "nota" ? item.texto : item.tipo === "pesquisa" ? item.termo : `${item.capitulo}:${item.versiculo}`}`.toLowerCase().includes(busca);
     })
-    .sort((a, b) => ordem === "recentes" ? new Date(b.criadoEm).getTime() - new Date(a.criadoEm).getTime() : ordemBiblica(a) - ordemBiblica(b));
+    .sort((a, b) => ordem === "recentes" ? new Date(dataMaisRecente(b)).getTime() - new Date(dataMaisRecente(a)).getTime() : ordemBiblica(a) - ordemBiblica(b));
 
   function ordemBiblica(item: ItemAtividade): number {
     if (item.tipo === "pesquisa") return Number.MAX_SAFE_INTEGER;

@@ -25,27 +25,21 @@ export const sqliteNotasRepository: NotasRepository = {
   },
 
   async salvar(ownerId, ref, texto) {
-    const existente = await db.getFirstAsync<{ id: number }>(
-      `SELECT id FROM notas WHERE ownerId = ? AND livroSlug = ? AND capitulo = ? AND versiculo = ?`,
-      [ownerId, ref.livroSlug, ref.capitulo, ref.versiculo]
+    const agora = new Date().toISOString();
+    await db.runAsync(
+      `INSERT INTO notas (ownerId, livroSlug, capitulo, versiculo, texto, criadoEm, atualizadoEm)
+       VALUES (?, ?, ?, ?, ?, ?, ?)
+       ON CONFLICT(ownerId, livroSlug, capitulo, versiculo)
+       DO UPDATE SET texto = excluded.texto, atualizadoEm = excluded.atualizadoEm`,
+      [ownerId, ref.livroSlug, ref.capitulo, ref.versiculo, texto, agora, agora]
     );
 
-    if (existente) {
-      await db.runAsync(
-        `UPDATE notas SET texto = ? WHERE id = ?`,
-        [texto, existente.id]
-      );
-    } else {
-      await db.runAsync(
-        `INSERT INTO notas (ownerId, livroSlug, capitulo, versiculo, texto, criadoEm) VALUES (?, ?, ?, ?, ?, ?)`,
-        [ownerId, ref.livroSlug, ref.capitulo, ref.versiculo, texto, new Date().toISOString()]
-      );
-    }
-    
-    return (await db.getFirstAsync<Nota>(
+    const nota = await db.getFirstAsync<Nota>(
       `SELECT * FROM notas WHERE ownerId = ? AND livroSlug = ? AND capitulo = ? AND versiculo = ?`,
       [ownerId, ref.livroSlug, ref.capitulo, ref.versiculo]
-    )) as Nota;
+    );
+    if (!nota) throw new Error("Não foi possível recuperar a anotação salva");
+    return nota;
   },
 
   async remover(ownerId, ref) {

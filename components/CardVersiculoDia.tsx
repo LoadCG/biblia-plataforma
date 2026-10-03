@@ -328,32 +328,18 @@ export function CardVersiculoDia({ periodoDoDia }: Props) {
         <ModalNota
           visivel={notaAberta}
           versiculo={ref.versiculo}
+          referencia={dados?.referencia ?? referencia}
           textoInicial={notaTexto}
           onFechar={() => setNotaAberta(false)}
           onSalvar={async (texto) => {
-            if (!ownerId) return;
-            try {
-              if (texto) {
-                await notasRepository.salvar(ownerId, ref, texto);
-                setNotaTexto(texto);
-              } else {
-                await notasRepository.remover(ownerId, ref);
-                setNotaTexto("");
-              }
-              setNotaAberta(false);
-            } catch {
-              mostrarToast("Não foi possível salvar a nota. Ela continua aberta para você tentar novamente.", { severidade: "erro" });
-            }
+            if (!ownerId) throw new Error("Identificação local indisponível");
+            await notasRepository.salvar(ownerId, ref, texto);
+            setNotaTexto(texto);
           }}
           onRemover={async () => {
-            if (!ownerId) return;
-            try {
-              await notasRepository.remover(ownerId, ref);
-              setNotaTexto("");
-              setNotaAberta(false);
-            } catch {
-              mostrarToast("Não foi possível remover a nota. Tente novamente.", { severidade: "erro" });
-            }
+            if (!ownerId) throw new Error("Identificação local indisponível");
+            await notasRepository.remover(ownerId, ref);
+            setNotaTexto("");
           }}
         />
       ) : null}

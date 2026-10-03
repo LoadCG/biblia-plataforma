@@ -15,6 +15,8 @@ type Props = {
    * ("Capítulo N" por padrão, "Versículo N" quando a grade representa
    * versículos em vez de capítulos). */
   rotulo?: string;
+  /** Diferencia estados de leitura de marcações visuais sem confundir a pessoa. */
+  rotuloEstado?: "lido" | "grifado";
   /** Quando presente, a grade entra em modo de seleção múltipla. No web,
    * pressionar-e-arrastar estende a seleção por um intervalo inteiro
    * (ver `useSelecaoArrasto`); em toque simples (ou no app nativo, sem
@@ -43,6 +45,7 @@ export function GradeCapitulos({
   onSelecionar,
   onSelecionarLongo,
   rotulo = "Capítulo",
+  rotuloEstado = "lido",
   selecionados,
   onAlternarSelecionado,
   onMudarSelecaoEmMassa,
@@ -82,28 +85,26 @@ export function GradeCapitulos({
               // @ts-expect-error dataSet é uma extensão do react-native-web pra atributos data-* no DOM, usada pelo useSelecaoArrasto pra achar a célula sob o ponteiro durante o arraste
               dataSet={{ capitulo: String(n) }}
               accessibilityRole={modoSelecao ? "checkbox" : "button"}
-              accessibilityLabel={`${rotulo} ${n}${lido ? ", lido" : ""}`}
-              accessibilityState={modoSelecao ? { checked: selecionado } : { selected: lido }}
-              // accessibilityChecked/accessibilitySelected: extensões do
-              // react-native-web (não existem nos tipos do React Native,
-              // por isso o @ts-expect-error acima em `dataSet` também
-              // cobre estas duas) — accessibilityState sozinho não vira
-              // aria-checked/aria-selected nesta versão do RNW (0.21.2).
+              accessibilityLabel={`${rotulo} ${n}${lido ? `, ${rotuloEstado}` : ""}`}
+              accessibilityState={modoSelecao ? { checked: selecionado } : undefined}
+              // accessibilityChecked é extensão do React Native Web; a
+              // accessibilityState, sozinha, não expõe aria-checked aqui.
               accessibilityChecked={modoSelecao ? selecionado : undefined}
-              accessibilitySelected={!modoSelecao ? lido : undefined}
               className={`aspect-square items-center justify-center rounded-lg border-2 active:opacity-60 ${
                 selecionado
                   ? "border-cor-destaque dark:border-cor-destaque-dark bg-cor-destaque/20"
-                  : lido
+                  : lido && rotuloEstado === "lido"
                     ? "border-green-600 bg-green-600"
-                    : "border-cor-borda dark:border-cor-borda-dark bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark"
+                    : lido
+                      ? "border-yellow-500 bg-yellow-300/40 dark:border-yellow-400 dark:bg-yellow-600/30"
+                      : "border-cor-borda dark:border-cor-borda-dark bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark"
               }`}
             >
               <Text
                 className={`text-sm font-semibold ${
                   selecionado
                     ? "text-cor-destaque dark:text-cor-destaque-dark"
-                    : lido
+                    : lido && rotuloEstado === "lido"
                       ? "text-white"
                       : "text-cor-texto dark:text-cor-texto-dark"
                 }`}

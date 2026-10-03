@@ -1,5 +1,5 @@
 import { Link, router, useLocalSearchParams } from "expo-router";
-import { useEffect, useRef, useState, useMemo } from "react";
+import { useCallback, useEffect, useRef, useState, useMemo } from "react";
 import { ActivityIndicator, Animated, Image, NativeSyntheticEvent, NativeScrollEvent, Pressable, ScrollView, Text, useWindowDimensions, View, Share, LayoutAnimation, Platform, UIManager } from "react-native";
 import * as Clipboard from "expo-clipboard";
 import * as Sharing from "expo-sharing";
@@ -46,6 +46,31 @@ import { useOwnerId } from "../../../../core/useOwnerId";
 const ALTURA_AREA_NAVEGACAO_CAPITULO = 80;
 const ALTURA_RESERVA_SELECAO_DESKTOP = 148;
 const ORIGEM_ABA_BIBLIA = "aba-biblia";
+const ROTULOS_CORES_GRIFO: Record<string, string> = {
+  "bg-yellow-300/40 dark:bg-yellow-600/30": "amarelo",
+  "bg-red-300/40 dark:bg-red-600/30": "vermelho",
+  "bg-green-300/40 dark:bg-green-600/30": "verde",
+  "bg-blue-300/40 dark:bg-blue-600/30": "azul",
+  "bg-purple-300/40 dark:bg-purple-600/30": "roxo",
+  "bg-orange-300/40 dark:bg-orange-600/30": "laranja",
+};
+
+function formatarFaixasVersiculos(versiculos: number[]): string {
+  const ordenados = [...versiculos].sort((a, b) => a - b);
+  const faixas: string[] = [];
+
+  for (let indice = 0; indice < ordenados.length; indice++) {
+    const inicio = ordenados[indice];
+    let fim = inicio;
+    while (ordenados[indice + 1] === fim + 1) {
+      fim = ordenados[indice + 1];
+      indice++;
+    }
+    faixas.push(inicio === fim ? `${inicio}` : `${inicio}–${fim}`);
+  }
+
+  return faixas.join(", ");
+}
 
 function hrefCapitulo(livroSlug: string | undefined, numero: number, origem?: string) {
   if (!livroSlug) return "/biblia/escolher";
@@ -99,6 +124,7 @@ export default function Leitura() {
   const [abaAtual, setAbaAtual] = useState<"texto" | "resumo">("texto");
   const resumo = obterResumo(livro?.slug ?? "");
   const [versiculosSelecionados, setVersiculosSelecionados] = useState<Set<number>>(new Set());
+  const [acoesSelecaoOcupadas, setAcoesSelecaoOcupadas] = useState(false);
   const [mostrarTodasCores, setMostrarTodasCores] = useState(false);
   const CORES_DISPONIVEIS = [
     "bg-yellow-300/40 dark:bg-yellow-600/30",
@@ -127,6 +153,34 @@ export default function Leitura() {
   const [cartaoNativoParaCapturar, setCartaoNativoParaCapturar] = useState<{ texto: string; referencia: string } | null>(null);
   const refCartaoNativo = useRef<View>(null);
   const refBarraSelecao = useArrastarParaRolar();
+  const refScrollAcoesSelecao = useRef<ScrollView>(null);
+  const estadoRolagemAcoes = useRef({ larguraConteudo: 0, larguraVisivel: 0, deslocamento: 0 });
+  const [indicadoresAcoes, setIndicadoresAcoes] = useState({ rolavel: false, voltar: false, avancar: false });
+  const conectarBarraSelecao = useCallback((instancia: ScrollView | null) => {
+    refScrollAcoesSelecao.current = instancia;
+    refBarraSelecao(instancia);
+  }, [refBarraSelecao]);
+
+  function atualizarIndicadoresAcoes(parcial: Partial<typeof estadoRolagemAcoes.current>) {
+    estadoRolagemAcoes.current = { ...estadoRolagemAcoes.current, ...parcial };
+    const { larguraConteudo, larguraVisivel, deslocamento } = estadoRolagemAcoes.current;
+    const podeRolar = larguraConteudo > larguraVisivel + 2;
+    setIndicadoresAcoes({
+      rolavel: podeRolar,
+      voltar: podeRolar && deslocamento > 2,
+      avancar: podeRolar && deslocamento + larguraVisivel < larguraConteudo - 2,
+    });
+  }
+
+  useEffect(() => {
+    if (versiculosSelecionados.size === 0) {
+      estadoRolagemAcoes.current = { larguraConteudo: 0, larguraVisivel: 0, deslocamento: 0 };
+      setIndicadoresAcoes({ rolavel: false, voltar: false, avancar: false });
+      return;
+    }
+    refScrollAcoesSelecao.current?.scrollTo({ x: 0, animated: false });
+    atualizarIndicadoresAcoes({ deslocamento: 0 });
+  }, [versiculosSelecionados.size]);
 
   // Altura real do cabeçalho, medida via onLayout (varia entre a aba
   // Texto — que tem uma linha extra de título — e a aba Resumo).
@@ -474,10 +528,15 @@ export default function Leitura() {
     });
   }
 
+  function limparSelecaoVersiculos() {
+    setVersiculosSelecionados(new Set());
+    setMostrarTodasCores(false);
+  }
+
   function voltarDoLeitor() {
+    if (acoesSelecaoOcupadas) return;
     if (versiculosSelecionados.size > 0) {
-      setVersiculosSelecionados(new Set());
-      setMostrarTodasCores(false);
+      limparSelecaoVersiculos();
       return;
     }
 
@@ -504,7 +563,9 @@ export default function Leitura() {
     router.replace({ pathname: "/biblia/escolher", params: { livro: livro.slug } });
   }
 
-  function aplicarCorGrifo(cor: string) {
+  async function aplicarCorGrifo(cor: string) {
+    if (!ownerId || !livro || versiculosSelecionados.size === 0 || acoesSelecaoOcupadas) return;
+
     // Atualiza a lista de recentes
     setCoresRecentes((atual) => {
       const semACor = atual.filter((c) => c !== cor);
@@ -512,17 +573,44 @@ export default function Leitura() {
     });
     setMostrarTodasCores(false);
     
-    // Aqui no futuro aplicaremos a cor específica no backend/banco de dados
-    // Aplica a cor no repositório local e estado
-    versiculosSelecionados.forEach(v => alternarGrifo(v, cor));
-    setVersiculosSelecionados(new Set());
+    // Mantém a seleção visível até que todas as gravações terminem. Se
+    // houver falha parcial, a pessoa ainda consegue ver e tentar de novo.
+    setAcoesSelecaoOcupadas(true);
+    try {
+      const todosComEstaCor = Array.from(versiculosSelecionados).every((versiculo) =>
+        grifos.has(versiculo) && (grifos.get(versiculo) ?? "bg-cor-grifo dark:bg-cor-grifo-dark") === cor,
+      );
+      for (const versiculo of versiculosSelecionados) {
+        const jaTemEstaCor = grifos.has(versiculo) &&
+          (grifos.get(versiculo) ?? "bg-cor-grifo dark:bg-cor-grifo-dark") === cor;
+        if (!todosComEstaCor && jaTemEstaCor) continue;
+        const ativo = await grifosRepository.alternar(
+          ownerId,
+          { livroSlug: livro.slug, capitulo, versiculo },
+          todosComEstaCor ? undefined : cor,
+        );
+        setGrifos((atual) => {
+          const novo = new Map(atual);
+          if (ativo) novo.set(versiculo, todosComEstaCor ? undefined : cor);
+          else novo.delete(versiculo);
+          return novo;
+        });
+      }
+      mostrarToast(todosComEstaCor ? "Grifos removidos." : "Grifos atualizados.", { severidade: "sucesso" });
+      limparSelecaoVersiculos();
+    } catch {
+      mostrarToast("Não foi possível atualizar todos os grifos. A seleção foi mantida para você tentar novamente.", { severidade: "erro" });
+    } finally {
+      setAcoesSelecaoOcupadas(false);
+    }
   }
 
   function textoDosVersiculosSelecionados(): string | null {
     if (!dados?.versiculos || versiculosSelecionados.size === 0 || !livro) return null;
     const array = Array.from(versiculosSelecionados).sort((a, b) => a - b);
-    const textos = array.map(v => `${v}. ${dados.versiculos!.find(x => x.numero === v)?.texto || ""}`);
-    const referencia = `${livro.nome} ${capitulo}:${array[0]}${array.length > 1 ? `-${array[array.length-1]}` : ""}`;
+    const textosPorNumero = new Map(dados.versiculos.map((versiculo) => [versiculo.numero, versiculo.texto]));
+    const textos = array.map((versiculo) => `${versiculo}. ${textosPorNumero.get(versiculo) || ""}`);
+    const referencia = `${livro.nome} ${capitulo}:${formatarFaixasVersiculos(array)}`;
     const link = linkVersiculo(livro.slug, capitulo, array[0]);
     return `${textos.join("\n")}\n\n${referencia}${link ? `\n${link}` : ""}`;
   }
@@ -572,10 +660,14 @@ export default function Leitura() {
     const referencia = `${livro.nome} ${capitulo}:${numero}`;
 
     if (Platform.OS === "web") {
-      const imagem = gerarImagemVersiculo(texto, referencia);
-      if (imagem) {
-        setImagemVersiculo(imagem);
-        setVersiculosSelecionados(new Set());
+      try {
+        const imagem = gerarImagemVersiculo(texto, referencia);
+        if (imagem) {
+          setImagemVersiculo(imagem);
+          limparSelecaoVersiculos();
+        }
+      } catch {
+        mostrarToast("Não foi possível gerar a imagem. Tente novamente.", { severidade: "erro" });
       }
       return;
     }
@@ -583,8 +675,8 @@ export default function Leitura() {
     // No nativo não dá pra desenhar em Canvas — renderiza o cartão
     // como uma View de verdade fora da tela e captura ela no próximo
     // efeito, depois que já tiver montado com o texto certo.
+    setAcoesSelecaoOcupadas(true);
     setCartaoNativoParaCapturar({ texto, referencia });
-    setVersiculosSelecionados(new Set());
   }
 
   // Captura o cartão nativo assim que ele terminar de montar/renderizar
@@ -595,11 +687,17 @@ export default function Leitura() {
     (async () => {
       try {
         const uri = await captureRef(refCartaoNativo, { format: "png", quality: 1 });
-        if (!cancelado) setImagemVersiculo(uri);
+        if (!cancelado) {
+          setImagemVersiculo(uri);
+          limparSelecaoVersiculos();
+        }
       } catch {
         if (!cancelado) mostrarToast("Não foi possível gerar a imagem.", { severidade: "erro" });
       } finally {
-        if (!cancelado) setCartaoNativoParaCapturar(null);
+        if (!cancelado) {
+          setCartaoNativoParaCapturar(null);
+          setAcoesSelecaoOcupadas(false);
+        }
       }
     })();
     return () => {
@@ -617,31 +715,44 @@ export default function Leitura() {
       mostrarToast("Imagem baixada!", { severidade: "sucesso" });
       return;
     }
-    const disponivel = await Sharing.isAvailableAsync();
-    if (!disponivel) {
-      mostrarToast("Compartilhamento não disponível neste dispositivo.", { severidade: "informacao" });
-      return;
+    try {
+      const disponivel = await Sharing.isAvailableAsync();
+      if (!disponivel) {
+        mostrarToast("Compartilhamento não disponível neste dispositivo.", { severidade: "informacao" });
+        return;
+      }
+      await Sharing.shareAsync(imagemVersiculo, { mimeType: "image/png", dialogTitle: "Compartilhar versículo" });
+    } catch {
+      mostrarToast("Não foi possível compartilhar a imagem. Tente novamente.", { severidade: "erro" });
     }
-    await Sharing.shareAsync(imagemVersiculo, { mimeType: "image/png", dialogTitle: "Compartilhar versículo" });
   }
 
   async function copiarVersiculos() {
     const texto = textoDosVersiculosSelecionados();
-    if (!texto) return;
-    await Clipboard.setStringAsync(texto);
-    mostrarToast("Copiado!", { severidade: "sucesso" });
-    setVersiculosSelecionados(new Set());
+    if (!texto || acoesSelecaoOcupadas) return;
+    setAcoesSelecaoOcupadas(true);
+    try {
+      await Clipboard.setStringAsync(texto);
+      mostrarToast("Versículos copiados.", { severidade: "sucesso" });
+      limparSelecaoVersiculos();
+    } catch {
+      mostrarToast("Não foi possível copiar os versículos. Tente novamente.", { severidade: "erro" });
+    } finally {
+      setAcoesSelecaoOcupadas(false);
+    }
   }
 
   async function compartilharVersiculos() {
     const texto = textoDosVersiculosSelecionados();
-    if (!texto) return;
+    if (!texto || acoesSelecaoOcupadas) return;
     // `Share.share` sozinho não dava nenhum retorno visível além do
     // seletor nativo do navegador/SO — que no navegador do celular
     // pode demorar um instante pra abrir, dando a impressão de que o
     // toque não fez nada (achado real, 2026-08-20). O toast só aparece
     // depois que a pessoa realmente termina de compartilhar (não ao
     // cancelar, pra não soar como erro por uma ação intencional).
+    setAcoesSelecaoOcupadas(true);
+    let compartilhado = false;
     try {
       // No web, `Share.share` (react-native-web) delega direto pro
       // `navigator.share` do navegador, que resolve a Promise com
@@ -651,29 +762,49 @@ export default function Leitura() {
       // toast aparece — sem ele, `resultado.action` lançava
       // `TypeError` no web, caía no catch e o toast nunca aparecia.
       const resultado = await Share.share({ message: texto });
-      if (resultado?.action !== Share.dismissedAction) {
-        mostrarToast("Compartilhado!", { severidade: "sucesso" });
+      if (resultado?.action === Share.dismissedAction) return;
+      compartilhado = true;
+      mostrarToast("Versículos compartilhados.", { severidade: "sucesso" });
+    } catch (erro) {
+      const cancelado = typeof erro === "object" && erro !== null && "name" in erro && erro.name === "AbortError";
+      if (!cancelado) {
+        mostrarToast("Não foi possível compartilhar os versículos. Você ainda pode copiá-los.", { severidade: "aviso" });
       }
-    } catch {
-      // usuário cancelou ou o navegador bloqueou o compartilhamento —
-      // sem feedback de erro pra não incomodar por uma ação normal.
+      // Em cancelamento intencional ou falha, mantém a seleção disponível.
+      return;
+    } finally {
+      setAcoesSelecaoOcupadas(false);
     }
-    setVersiculosSelecionados(new Set());
+    if (compartilhado) limparSelecaoVersiculos();
   }
 
   async function alternarSalvosSelecionados() {
-    if (!ownerId || !livro || versiculosSelecionados.size === 0) return;
+    if (!ownerId || !livro || versiculosSelecionados.size === 0 || acoesSelecaoOcupadas) return;
     const array = Array.from(versiculosSelecionados);
     const setAtual = new Set(salvos);
-    for (const v of array) {
-      const ativo = await versiculosSalvosRepository.alternar(ownerId, { livroSlug: livro.slug, capitulo, versiculo: v });
-      if (ativo) setAtual.add(v);
-      else setAtual.delete(v);
+    const remover = array.every((versiculo) => setAtual.has(versiculo));
+    setAcoesSelecaoOcupadas(true);
+    try {
+      for (const versiculo of array) {
+        const estaSalvo = setAtual.has(versiculo);
+        if (estaSalvo === !remover) continue;
+        const ativo = await versiculosSalvosRepository.alternar(ownerId, { livroSlug: livro.slug, capitulo, versiculo });
+        if (ativo) setAtual.add(versiculo);
+        else setAtual.delete(versiculo);
+        setSalvos(new Set(setAtual));
+      }
+      mostrarToast(remover ? "Versículos removidos dos salvos." : "Versículos salvos.", { severidade: "sucesso" });
+    } catch {
+      mostrarToast("Não foi possível atualizar todos os versículos salvos. Tente novamente.", { severidade: "erro" });
+    } finally {
+      setAcoesSelecaoOcupadas(false);
     }
-    setSalvos(setAtual);
   }
 
   const tamanhoFonte = TAMANHOS_FONTE[indiceFonte];
+  const numerosSelecionados = Array.from(versiculosSelecionados).sort((a, b) => a - b);
+  const referenciaSelecao = formatarFaixasVersiculos(numerosSelecionados);
+  const todosSelecionadosSalvos = numerosSelecionados.length > 0 && numerosSelecionados.every((versiculo) => salvos.has(versiculo));
 
   return (
     <View className="flex-1 bg-cor-fundo dark:bg-cor-fundo-dark">
@@ -857,8 +988,10 @@ export default function Leitura() {
                   <Pressable
                     testID={`versiculo-${v.numero}`}
                     onPress={() => selecionarVersiculo(v.numero)}
+                    disabled={acoesSelecaoOcupadas}
                     accessibilityRole="checkbox"
                     accessibilityLabel={`Versículo ${v.numero}${grifado ? ", grifado" : ""}`}
+                    accessibilityHint={selecionado ? "Ative para remover este versículo da seleção." : "Ative para selecionar este versículo e mostrar as ações disponíveis."}
                     accessibilityState={{ checked: selecionado }}
                     // @ts-expect-error accessibilityChecked é uma extensão do react-native-web, não existe nos tipos do React Native
                     accessibilityChecked={selecionado}
@@ -868,8 +1001,8 @@ export default function Leitura() {
                         : v.numero === versiculoFalando || v.numero === versiculoRealcado
                           ? "bg-cor-destaque-fundo dark:bg-cor-destaque-fundo-dark"
                           : ""
-                    } ${selecionado ? "bg-cor-destaque-fundo dark:bg-cor-destaque-fundo-dark" : ""} ${
-                      v.numero === versiculoAlvo ? "border-l-4 border-cor-destaque dark:border-cor-destaque-dark" : ""
+                    } ${selecionado ? "bg-cor-destaque-fundo dark:bg-cor-destaque-fundo-dark border-l-4 border-cor-destaque dark:border-cor-destaque-dark pl-1" : ""} ${
+                      v.numero === versiculoAlvo && !selecionado ? "border-l-4 border-cor-destaque dark:border-cor-destaque-dark" : ""
                     }`}
                   >
                     <Text
@@ -998,21 +1131,61 @@ export default function Leitura() {
         <View className={`absolute ${desktop ? "bottom-24" : "bottom-0"} left-0 right-0 items-center z-50 ${desktop ? "px-5 pb-5" : "bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark border-t border-cor-borda dark:border-cor-borda-dark pb-4"}`}>
           <View className={`${desktop ? "w-full max-w-[560px] rounded-3xl border border-cor-borda dark:border-cor-borda-dark bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark shadow-xl" : "w-full"}`}>
           <View className="px-5 py-3 border-b border-cor-borda dark:border-cor-borda-dark flex-row justify-between items-center">
-            <Text className="text-cor-texto dark:text-cor-texto-dark font-bold">
-              {livro.nome} {capitulo}:{Math.min(...Array.from(versiculosSelecionados))}
-              {versiculosSelecionados.size > 1 ? `-${Math.max(...Array.from(versiculosSelecionados))}` : ""}
-            </Text>
+            <View className="flex-1 min-w-0 mr-3" accessibilityLiveRegion="polite">
+              <Text numberOfLines={1} ellipsizeMode="tail" className="text-cor-texto dark:text-cor-texto-dark font-bold">
+                {livro.nome} {capitulo}:{referenciaSelecao}
+              </Text>
+              <Text className="text-xs text-cor-texto-suave dark:text-cor-texto-suave-dark mt-0.5">
+                {versiculosSelecionados.size} {versiculosSelecionados.size === 1 ? "versículo selecionado" : "versículos selecionados"}
+              </Text>
+            </View>
             <Pressable
-              onPress={() => setVersiculosSelecionados(new Set())}
+              onPress={limparSelecaoVersiculos}
+              disabled={acoesSelecaoOcupadas}
               accessibilityRole="button"
-              accessibilityLabel="Cancelar seleção"
+              accessibilityLabel={`Limpar seleção de ${versiculosSelecionados.size} ${versiculosSelecionados.size === 1 ? "versículo" : "versículos"}`}
               hitSlop={10}
               className="p-2 -m-2 active:opacity-60"
             >
               <IconeUI name="close" size={24} className="text-cor-texto-suave dark:text-cor-texto-suave-dark" />
             </Pressable>
           </View>
-          <ScrollView ref={refBarraSelecao} horizontal showsHorizontalScrollIndicator={false} className={desktop ? "px-3 py-2" : "px-5 py-3"}>
+          <View className="flex-row items-center">
+          {indicadoresAcoes.rolavel ? (
+            indicadoresAcoes.voltar ? (
+              <Pressable
+                onPress={() => {
+                  const { deslocamento, larguraVisivel } = estadoRolagemAcoes.current;
+                  refScrollAcoesSelecao.current?.scrollTo({
+                    x: Math.max(0, deslocamento - Math.max(120, larguraVisivel * 0.35)),
+                    animated: true,
+                  });
+                }}
+                accessibilityRole="button"
+                accessibilityLabel="Ver ações anteriores"
+                className="w-10 h-12 items-center justify-center bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark"
+              >
+                <IconeUI name="back" size={18} className="text-cor-texto dark:text-cor-texto-dark" />
+              </Pressable>
+            ) : <View className="w-10 h-12" />
+          ) : null}
+          <ScrollView
+            ref={conectarBarraSelecao}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            onLayout={(evento) => atualizarIndicadoresAcoes({ larguraVisivel: evento.nativeEvent.layout.width })}
+            onContentSizeChange={(larguraConteudo) => atualizarIndicadoresAcoes({ larguraConteudo })}
+            onScroll={(evento) => {
+              const { contentOffset, contentSize, layoutMeasurement } = evento.nativeEvent;
+              atualizarIndicadoresAcoes({
+                deslocamento: contentOffset.x,
+                larguraConteudo: contentSize.width,
+                larguraVisivel: layoutMeasurement.width,
+              });
+            }}
+            scrollEventThrottle={16}
+            className={`flex-1 ${desktop ? "px-3 py-2" : "px-5 py-3"}`}
+          >
             <View className={`flex-row items-center ${desktop ? "gap-1" : "gap-4"}`}>
               {/* Cores */}
               <View className={`flex-row items-center ${desktop ? "gap-1 mr-1" : "gap-2 mr-2"}`}>
@@ -1027,22 +1200,24 @@ export default function Leitura() {
                     coresMostrar = [corAtual, ...coresMostrar.filter(c => c !== corAtual)];
                   }
 
-                  return coresMostrar.map((cor, i) => {
-                    const isDesfazer = cor === corAtual && i === 0;
+                  return coresMostrar.map((cor) => {
+                    const todosComEstaCor = numerosSelecionados.every((versiculo) =>
+                      grifos.has(versiculo) && (grifos.get(versiculo) ?? "bg-cor-grifo dark:bg-cor-grifo-dark") === cor,
+                    );
                     const corBolinha = MAPA_CORES_SOLIDAS[cor] || cor;
                     return (
                       <Pressable
-                        key={i}
+                        key={cor}
                         onPress={() => aplicarCorGrifo(cor)}
-                        accessibilityRole="checkbox"
-                        accessibilityLabel={isDesfazer ? "Remover grifo" : "Grifar com esta cor"}
-                        accessibilityState={{ checked: isDesfazer }}
-                        // @ts-expect-error accessibilityChecked é uma extensão do react-native-web, não existe nos tipos do React Native
-                        accessibilityChecked={isDesfazer}
-                        className="w-11 h-11 items-center justify-center active:opacity-70"
+                        accessibilityRole="button"
+                        accessibilityLabel={todosComEstaCor
+                          ? `Remover grifo ${ROTULOS_CORES_GRIFO[cor] ?? "atual"} dos versículos selecionados`
+                          : `Grifar versículos selecionados com ${ROTULOS_CORES_GRIFO[cor] ?? "a cor atual"}`}
+                        disabled={acoesSelecaoOcupadas}
+                        className={`w-11 h-11 items-center justify-center active:opacity-70 ${acoesSelecaoOcupadas ? "opacity-50" : ""}`}
                       >
                         <View className={`w-8 h-8 rounded-full ${corBolinha} shadow-sm items-center justify-center`}>
-                          {isDesfazer && <IconeUI name="close" size={18} color="rgba(0,0,0,0.5)" />}
+                          {todosComEstaCor && <IconeUI name="close" size={18} className="text-black dark:text-[#1b1712]" />}
                         </View>
                       </Pressable>
                     );
@@ -1053,6 +1228,7 @@ export default function Leitura() {
                     onPress={() => setMostrarTodasCores(true)}
                     accessibilityRole="button"
                     accessibilityLabel="Ver todas as cores de grifo"
+                    disabled={acoesSelecaoOcupadas}
                     className="w-11 h-11 items-center justify-center active:opacity-70"
                   >
                     <View className="w-8 h-8 rounded-full bg-cor-borda dark:bg-cor-borda-dark items-center justify-center">
@@ -1064,19 +1240,17 @@ export default function Leitura() {
 
               {/* Botões de Ações */}
               {(() => {
-                const todosSalvos = Array.from(versiculosSelecionados).every(v => salvos.has(v));
                 return (
                   <Pressable
                     onPress={alternarSalvosSelecionados}
-                    accessibilityRole="checkbox"
-                    accessibilityLabel="Salvar versículos selecionados"
-                    accessibilityState={{ checked: todosSalvos }}
-                    // @ts-expect-error accessibilityChecked é uma extensão do react-native-web, não existe nos tipos do React Native
-                    accessibilityChecked={todosSalvos}
-                    className={`items-center justify-center active:opacity-70 ${desktop ? "w-11 h-11 rounded-full bg-cor-destaque-fundo dark:bg-cor-destaque-fundo-dark" : "flex-row gap-1 bg-cor-borda dark:bg-cor-borda-dark px-4 py-2 rounded-lg"}`}
+                    accessibilityRole="button"
+                    accessibilityLabel={todosSelecionadosSalvos ? "Remover versículos selecionados dos salvos" : "Salvar versículos selecionados"}
+                    accessibilityHint={todosSelecionadosSalvos ? "Remove todos os versículos selecionados da lista de salvos." : "Salva todos os versículos selecionados."}
+                    disabled={acoesSelecaoOcupadas}
+                    className={`items-center justify-center active:opacity-70 ${acoesSelecaoOcupadas ? "opacity-50" : ""} ${desktop ? "w-11 h-11 rounded-full bg-cor-destaque-fundo dark:bg-cor-destaque-fundo-dark" : "flex-row gap-1 bg-cor-borda dark:bg-cor-borda-dark px-4 py-2 rounded-lg"}`}
                   >
-                    <IconeUI name={todosSalvos ? "bookmark" : "bookmark-outline"} size={18} className="text-cor-texto dark:text-cor-texto-dark" />
-                    {!desktop ? <Text className="text-cor-texto dark:text-cor-texto-dark font-semibold text-sm">{todosSalvos ? "Salvo" : "Salvar"}</Text> : null}
+                    <IconeUI name={todosSelecionadosSalvos ? "bookmark" : "bookmark-outline"} size={18} className="text-cor-texto dark:text-cor-texto-dark" />
+                    {!desktop ? <Text className="text-cor-texto dark:text-cor-texto-dark font-semibold text-sm">{todosSelecionadosSalvos ? "Remover" : "Salvar"}</Text> : null}
                   </Pressable>
                 );
               })()}
@@ -1087,31 +1261,52 @@ export default function Leitura() {
                   setVersiculoEditandoNota(primeiro);
                 }}
                 accessibilityRole="button"
-                accessibilityLabel="Adicionar anotação aos versículos selecionados"
+                accessibilityLabel={`Adicionar anotação a ${livro.nome} ${capitulo}:${numerosSelecionados[0]}`}
+                disabled={acoesSelecaoOcupadas}
                 className={`items-center justify-center active:opacity-70 ${desktop ? "w-11 h-11 rounded-full bg-cor-borda dark:bg-cor-borda-dark" : "flex-row gap-1 bg-cor-borda dark:bg-cor-borda-dark px-4 py-2 rounded-lg"}`}
               >
                 <IconeUI name="edit" size={18} className="text-cor-texto dark:text-cor-texto-dark" />
-                {!desktop ? <Text className="text-cor-texto dark:text-cor-texto-dark font-semibold text-sm">Anotação</Text> : null}
+                {!desktop ? <Text className="text-cor-texto dark:text-cor-texto-dark font-semibold text-sm">{versiculosSelecionados.size > 1 ? `Nota v. ${numerosSelecionados[0]}` : "Anotação"}</Text> : null}
               </Pressable>
 
-              <Pressable onPress={copiarVersiculos} accessibilityRole="button" accessibilityLabel="Copiar versículos selecionados" className={`items-center justify-center active:opacity-70 ${desktop ? "w-11 h-11 rounded-full bg-cor-borda dark:bg-cor-borda-dark" : "flex-row gap-1 bg-cor-borda dark:bg-cor-borda-dark px-4 py-2 rounded-lg"}`}>
+              <Pressable onPress={copiarVersiculos} disabled={acoesSelecaoOcupadas} accessibilityRole="button" accessibilityLabel="Copiar versículos selecionados" className={`items-center justify-center active:opacity-70 ${acoesSelecaoOcupadas ? "opacity-50" : ""} ${desktop ? "w-11 h-11 rounded-full bg-cor-borda dark:bg-cor-borda-dark" : "flex-row gap-1 bg-cor-borda dark:bg-cor-borda-dark px-4 py-2 rounded-lg"}`}>
                 <IconeUI name="copy" size={18} className="text-cor-texto dark:text-cor-texto-dark" />
                 {!desktop ? <Text className="text-cor-texto dark:text-cor-texto-dark font-semibold text-sm">Copiar</Text> : null}
               </Pressable>
 
-              <Pressable onPress={compartilharVersiculos} accessibilityRole="button" accessibilityLabel="Compartilhar versículos selecionados" className={`items-center justify-center active:opacity-70 ${desktop ? "w-11 h-11 rounded-full bg-cor-borda dark:bg-cor-borda-dark" : `flex-row gap-1 bg-cor-borda dark:bg-cor-borda-dark px-4 py-2 rounded-lg ${versiculosSelecionados.size === 1 ? "" : "mr-6"}`}`}>
+              <Pressable onPress={compartilharVersiculos} disabled={acoesSelecaoOcupadas} accessibilityRole="button" accessibilityLabel="Compartilhar versículos selecionados" className={`items-center justify-center active:opacity-70 ${acoesSelecaoOcupadas ? "opacity-50" : ""} ${desktop ? "w-11 h-11 rounded-full bg-cor-borda dark:bg-cor-borda-dark" : `flex-row gap-1 bg-cor-borda dark:bg-cor-borda-dark px-4 py-2 rounded-lg ${versiculosSelecionados.size === 1 ? "" : "mr-6"}`}`}>
                 <IconeUI name="share" size={18} className="text-cor-texto dark:text-cor-texto-dark" />
                 {!desktop ? <Text className="text-cor-texto dark:text-cor-texto-dark font-semibold text-sm">Compartilhar</Text> : null}
               </Pressable>
 
               {versiculosSelecionados.size === 1 ? (
-                <Pressable onPress={gerarImagemDoVersiculoSelecionado} accessibilityRole="button" accessibilityLabel="Criar imagem deste versículo" className={`items-center justify-center active:opacity-70 ${desktop ? "w-11 h-11 rounded-full bg-cor-borda dark:bg-cor-borda-dark" : "flex-row gap-1 bg-cor-borda dark:bg-cor-borda-dark px-4 py-2 rounded-lg mr-6"}`}>
+                <Pressable onPress={gerarImagemDoVersiculoSelecionado} disabled={acoesSelecaoOcupadas} accessibilityRole="button" accessibilityLabel="Criar imagem deste versículo" className={`items-center justify-center active:opacity-70 ${acoesSelecaoOcupadas ? "opacity-50" : ""} ${desktop ? "w-11 h-11 rounded-full bg-cor-borda dark:bg-cor-borda-dark" : "flex-row gap-1 bg-cor-borda dark:bg-cor-borda-dark px-4 py-2 rounded-lg mr-6"}`}>
                   <IconeUI name="image" size={18} className="text-cor-texto dark:text-cor-texto-dark" />
                   {!desktop ? <Text className="text-cor-texto dark:text-cor-texto-dark font-semibold text-sm">Imagem</Text> : null}
                 </Pressable>
               ) : null}
             </View>
           </ScrollView>
+          {indicadoresAcoes.rolavel ? (
+            indicadoresAcoes.avancar ? (
+              <Pressable
+                onPress={() => {
+                  const { deslocamento, larguraConteudo, larguraVisivel } = estadoRolagemAcoes.current;
+                  const passo = Math.max(120, larguraVisivel * 0.35);
+                  refScrollAcoesSelecao.current?.scrollTo({
+                    x: Math.min(larguraConteudo - larguraVisivel, deslocamento + passo),
+                    animated: true,
+                  });
+                }}
+                accessibilityRole="button"
+                accessibilityLabel="Ver mais ações"
+                className="w-10 h-12 items-center justify-center bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark"
+              >
+                <IconeUI name="next" size={18} className="text-cor-texto dark:text-cor-texto-dark" />
+              </Pressable>
+            ) : <View className="w-10 h-12" />
+          ) : null}
+          </View>
           </View>
         </View>
       )}

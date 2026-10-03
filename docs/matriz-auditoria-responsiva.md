@@ -2,6 +2,35 @@
 
 ## Execução
 
+### Fluxo de seleção de versículos — 2026-10-02
+
+- Revisão estática do Leitor e da grade de escolha encontrou referências
+  apresentadas como intervalo mesmo para itens descontínuos, alternância
+  imprevisível de salvos em seleção mista e perda de contexto em falhas ou
+  cancelamentos.
+- Implementação atual mostra quantidade e faixas exatas; normaliza ação em lote
+  para salvar tudo ou remover tudo; evita alternar grifos já na cor escolhida;
+  bloqueia novas ações durante gravações; mantém a seleção quando persistência,
+  cópia, compartilhamento ou captura falham/cancelam; limpa também o painel de
+  cores ao fechar.
+- A grade intermediária anuncia e apresenta os versículos grifados como
+  “grifados”, não “lidos”. O estado visual de seleção no Leitor recebeu contorno
+  e dica acessível, sem alterar o conteúdo bíblico.
+- Ambiente: navegador Codex, Expo Web local, Leitor em `Gênesis 1`, captura
+  688×860 px e largura intermediária da web responsiva.
+- Foram selecionados os versículos 1 e 3. A barra exibiu `Gênesis 1:1, 3`,
+  contagem 2 e a ação de nota identificou `v. 1`; seleção visual e ações foram
+  inspecionadas em claro e escuro. Os controles laterais percorreram as ações
+  intermediárias e finais, e a árvore alternou “Ver mais ações”/“Ver ações
+  anteriores”.
+- A captura escura revelou uma barra horizontal nativa branca destoante; ela foi
+  ocultada depois de incluir os controles direcionais. A exportação web final e
+  o typecheck passaram depois do ajuste.
+- Não foram acionados grifo, nota, salvar, clipboard, compartilhamento ou imagem;
+  persistência real, modal, folha de compartilhamento, captura, falhas, teclado e
+  tecnologia assistiva seguem pendentes. A seleção temporária foi desfeita;
+  nenhum progresso, grifo, salvo ou anotação foi alterado.
+
 ### Camada de hover semântico — 2026-10-02
 
 - Ambiente: Expo Web local em navegador Codex. As rotas cobertas no inventário
@@ -147,6 +176,12 @@
 | VIS-UI-15 | A dica de primeira leitura ocupava uma faixa alta antes do texto bíblico no desktop, distanciando o capítulo da hierarquia sem distração da referência. | P2 | Manter a dica no fluxo estreito e omiti-la apenas no breakpoint desktop. | Corrigido; captura desktop mostra o texto logo após o cabeçalho. O estado estreito continua usando `DicaContextual`. |
 | VIS-UI-16 | O botão “Voltar aos temas” podia sair de Descubra e selecionar Início quando o histórico do Expo Router incluía a aba anterior. | P1 | Sempre remover o tema selecionado com navegação determinística para `/pesquisa`; remover o parâmetro de origem que só sustentava o fallback pelo histórico. | Corrigido e confirmado no navegador em `/pesquisa`; grade, entrada direta, recarga, quatro links de passagem e acionamento por Enter conferidos. Auditoria completa de foco pendente. |
 | VIS-UI-17 | Um parâmetro `tema` desconhecido mostrava a grade de Descubra, mas continuava na URL, criando diferença entre endereço e estado visível. | P2 | Substituir a rota por `/pesquisa` quando o identificador temático não existir no catálogo. | Corrigido e conferido com entrada direta: a URL termina em `/pesquisa` e a grade de oito temas fica selecionada. |
+| VIS-UI-18 | Seleção descontínua era resumida como intervalo do menor ao maior versículo, incluindo falsamente os itens intermediários. | P1 | Agrupar somente sequências contínuas e mostrar também a contagem selecionada. | Corrigido em código; inspeção visual e tecnologia assistiva pendentes. |
+| VIS-UI-19 | O botão de salvos alternava cada item da seleção mista; o texto “Salvar” podia salvar alguns e remover outros. | P1 | Aplicar operação previsível: seleção parcial/mista converge para salvo; só remover quando todos já estiverem salvos. | Corrigido com feedback e estado atualizado item a item; exercício de persistência em perfil descartável pendente. |
+| VIS-UI-20 | Cancelar/errar compartilhamento ou falhar cópia/captura poderia descartar a seleção ou não oferecer nova tentativa. | P1 | Manter o contexto até confirmação de sucesso; liberar controles ao encerrar a operação. | Corrigido no código; clipboard e compartilhamento real não exercitados nesta sessão. |
+| VIS-UI-21 | A grade de escolha tratava versículos grifados como “lidos”, inclusive no rótulo acessível e na cor verde de capítulo concluído. | P2 | Expor estado “grifado” com cor de marcação distinta, sem usar `selected` como sinônimo de status. | Corrigido estruturalmente; contraste em claro/escuro e navegação ainda pendentes. |
+| VIS-UI-22 | A barra da seleção anotava o versículo de menor número, mas anunciava anotação para o conjunto todo; fechar também podia deixar expansão de cores na próxima seleção. | P2 | Nomear o alvo da nota e limpar o estado secundário junto com a seleção. | Corrigido no código; fluxo de modal/retorno de foco ainda pendente. |
+| VIS-UI-23 | Na captura de 688×860, o fim da barra cortava “Compartilhar” e “Imagem” sem indicar que havia mais opções; a barra de rolagem nativa também ficava branca no modo escuro. | P1 | Mostrar controles laterais acessíveis por páginas com sobreposição entre ações; ocultar a barra nativa. | Corrigido e conferido em claro/escuro; foco, teclado e viewports adicionais pendentes. |
 
 ## Fechamento do incremento de microfeedback
 

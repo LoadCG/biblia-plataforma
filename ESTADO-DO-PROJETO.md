@@ -147,30 +147,38 @@ revisão humana, execução remota e distribuição.
 
 ### Próxima ordem de execução
 
-0. **Foco atual — hover web:** padrão centralizado aplicado a links, botões,
+0. **Foco atual — selecionar versículo:** a barra agora representa referências
+   descontínuas corretamente, ações em lote são consistentes em seleção mista,
+   falhas/cancelamentos preservam contexto e a grade distingue grifado de lido.
+   Seleção simples/descontínua e acesso às ações foram conferidos em 688×860,
+   claro/escuro. Faltam ações persistentes em dados descartáveis, modal/retorno de
+   foco, teclado e outros viewports; veja a seção focal no
+   [`PLANO-MELHORIAS-UI-DESIGN.md`](./PLANO-MELHORIAS-UI-DESIGN.md). Não declarar
+   o fluxo integralmente aceito até essa revisão.
+1. **Hover web:** padrão centralizado aplicado a links, botões,
    abas, opções e switches por capacidade do ponteiro, com preferência de
    movimento reduzido; exportação e 17 rotas conferidas. Estado animado real de
    mouse, foco/teclado completo e coarse pointer continuam pendentes. Detalhes em
    [`docs/PLANO-HOVER-INTERACOES.md`](./docs/PLANO-HOVER-INTERACOES.md).
-1. **Home desktop:** a revisão no viewport desktop disponível, em claro/escuro
+2. **Home desktop:** a revisão no viewport desktop disponível, em claro/escuro
    e perfil sem histórico, confirmou a hierarquia e não mostrou clipping
    horizontal perceptível. A API do navegador não expõe a dimensão CSS nem
    oferece override; faltam capturas integrais em 1280×900 e 1440×900 e estados
    com histórico/plano. Não marcar o Ciclo 1 como concluído até obter esses
    sinais ou revisar explicitamente o critério de viewport.
-2. **Descubra e Planos:** expandir os detalhes temáticos conforme
+3. **Descubra e Planos:** expandir os detalhes temáticos conforme
    [`docs/PLANO-TEMAS-DESCOBERTA.md`](./docs/PLANO-TEMAS-DESCOBERTA.md), mantendo
    o conteúdo novo em revisão; completar a auditoria desktop de journeys,
    estados, foco, tema e regressões responsivas nos breakpoints afetados.
-3. **Estados web:** conferir inventário, duplicações de Toast, retry e estados
+4. **Estados web:** conferir inventário, duplicações de Toast, retry e estados
    destrutivos por superfície, sem generalizar aceites parciais.
-4. **CI e SEO:** após o workflow atualizado, confirmar execução verde em GitHub;
+5. **CI e SEO:** após o workflow atualizado, confirmar execução verde em GitHub;
    run `37033595191` passou em 2026-10-02; validar preview Vercel quando
    disponível e revisar compatibilidade das actions e do runner Ubuntu 26 na
    janela de migração anunciada pelo GitHub.
-5. **Conteúdo:** evoluir contrato/taxonomia e selecionar um pequeno lote apenas
+6. **Conteúdo:** evoluir contrato/taxonomia e selecionar um pequeno lote apenas
    quando houver responsáveis por revisão humana independente.
-6. **Mobile dedicado, validação nativa e lojas:** permanecem deferidos; não são
+7. **Mobile dedicado, validação nativa e lojas:** permanecem deferidos; não são
    pré-requisitos para avançar o escopo web autorizado.
 
 O benchmark externo registrado acima é uma fotografia datada, não uma medição

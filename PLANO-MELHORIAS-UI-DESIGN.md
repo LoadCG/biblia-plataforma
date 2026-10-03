@@ -22,6 +22,51 @@ QA visual desktop do sistema e verificar regressão nos breakpoints afetados;
 aproximar a composição da referência; (5) iniciar snapshots depois da auditoria
 manual. Refinamento mobile dedicado e aplicativo nativo ficam para depois.
 
+### Foco corrente — selecionar um versículo e agir sobre ele
+
+O fluxo atravessa leitor, grade de seleção prévia e ações de grifo, salvo,
+anotação, cópia, compartilhamento e geração de imagem. Esta sequência atualiza a
+ordem geral acima até fechar esta frente, sem antecipar revisão mobile dedicada.
+
+1. **Entrada e estado selecionado — implementação parcial concluída:** deixar
+   distinguível o versículo marcado, o versículo alvo da URL, o que está sendo
+   lido em voz alta e o que tem grifo; preservar texto e número legíveis nos dois
+   temas e manter a seleção alternável por teclado.
+2. **Resumo da seleção — implementação conferida parcialmente:** anunciar
+   quantidade e referência exata, agrupando sequências contínuas e preservando
+   lacunas (ex.: `1–3, 6, 9–10`); seleção simples e descontínua foram vistas
+   em 688×860, claro/escuro. Outros viewports permanecem pendentes.
+3. **Ações persistentes — implementado, gravação real não exercitada nesta
+   sessão:** salvar/remover seleção de modo consistente; grifar/remover cor sem
+   alternar acidentalmente itens de uma seleção mista; bloquear ações duplicadas;
+   manter a seleção após falha ou cancelamento; confirmar êxito.
+4. **Anotação:** deixar claro que a ação individual da seleção múltipla se aplica
+   ao versículo de menor número entre os selecionados; revisar reabertura, edição,
+   remoção e retorno de foco do modal.
+5. **Cópia, compartilhamento e imagem — implementação parcial concluída:** copiar
+   referência fiel, manter seleção se cópia/compartilhamento falhar ou for
+   cancelado e só limpar após êxito na geração/captura de imagem.
+6. **Grade de entrada:** rotular o estado como grifado (não lido), manter alvo
+   clicável e checar `Back`, recarga, erro e livro/capítulo longo.
+7. **Aceite verificável:** typecheck, contratos, export web, árvore acessível e
+   layout claro/escuro; só encerrar depois de inspecionar seleção simples,
+   múltipla/descontínua, barra expandida, persistência recuperada e larguras
+   responsivas. Saltar qualquer interação que a automação não consiga operar e
+   registrar como pendência de revisão do usuário.
+
+**Revisão do plano:** achados estáticos mais críticos eram referência visual
+incorreta para seleções descontínuas, alternância inconsistente em seleção mista,
+falha/cancelamento apagando contexto, estado “grifado” apresentado como “lido” e
+cor sem nome útil para tecnologia assistiva. A rodada atual trata esses pontos
+no código; teste manual de ações persistentes e comparação visual ainda não são
+aceite desta implementação.
+
+**Evidência parcial em 2026-10-02:** no navegador local, viewport de 688×860,
+foram conferidas seleção de um e dois versículos, referência descontínua, rótulo
+da nota e paginação lateral da barra em claro/escuro. Persistência, clipboard,
+modal, folha de compartilhamento, imagem, teclado, outros viewports e tecnologias
+assistivas continuam pendentes.
+
 ## Direção aprovada para o conceito visual
 
 A referência visual criada nesta conversa foi aprovada como **alvo visual do resultado final**, incluindo a composição das quatro telas mostradas (Início, Descubra, Leitor e Planos): interface editorial acolhedora, fundo quente, acentos terrosos/dourados, cartões com respiro, ilustrações de cena, ícones lineares coerentes e microinterações discretas. O objetivo é aproximar o front-end real dessa composição e hierarquia a cada incremento, adaptando dimensões e navegação às plataformas e mantendo as funções e conteúdos do produto. Cada rodada deve registrar diferenças visíveis restantes e escolher a próxima correção que mais reduza a distância para a referência.

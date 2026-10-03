@@ -21,7 +21,7 @@ substituir os estados e critérios mais atuais.
 | Documento | Escopo | Relação com o plano mestre |
 |---|---|---|
 | [`PLANO-MESTRE-UX-ETAPAS-19-A-23.md`](./PLANO-MESTRE-UX-ETAPAS-19-A-23.md) | Auditoria web, estados, QA visual, nativo e release | Detalha ciclos 1–4 e 6; suas caixas só fecham com evidência correspondente. |
-| [`PLANO-MELHORIAS-UI-DESIGN.md`](./PLANO-MELHORIAS-UI-DESIGN.md) | Direção visual, componentes e histórico das inspeções | Referência visual/casos já trabalhados; não mantém uma fila independente do plano mestre. |
+| [`PLANO-MELHORIAS-UI-DESIGN.md`](./PLANO-MELHORIAS-UI-DESIGN.md) | Direção visual, componentes, histórico das inspeções e plano focal atual de seleção de versículo | Referência visual/casos já trabalhados; não mantém uma fila independente do plano mestre. |
 | [`PLANO-TEMAS-DESCOBERTA.md`](./PLANO-TEMAS-DESCOBERTA.md) | Expansão de conteúdo, UX e arquitetura dos detalhes de tema | Detalha a ampliação temática; conteúdo precisa de revisão humana antes de ser publicado. |
 | [`PLANO-HOVER-INTERACOES.md`](./PLANO-HOVER-INTERACOES.md) | Microinterações hover em todas as rotas e componentes acionáveis da web | Foco atual de UI; cobre apenas ponteiro hover-capable e preserva toque, teclado e movimento reduzido. |
 | [`PLANO-CONTEUDO-ETAPAS-24-A-28.md`](./PLANO-CONTEUDO-ETAPAS-24-A-28.md) | Contrato, planos, resumos, curadoria e QA editorial | Detalha o ciclo 5; revisão humana é obrigatória antes de publicar. |

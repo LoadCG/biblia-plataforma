@@ -6,6 +6,21 @@ O formato é baseado no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.
 ## [Unreleased] - 2026-10-02
 
 ### Interface
+- Seleção de versículos agora mostra contagem e referências exatas mesmo quando
+  os itens são descontínuos; a seleção visual tem contorno dedicado e dica
+  acessível de como removê-la.
+- As ações em lote de grifo/salvos passaram a manter estado coerente em seleções
+  mistas, impedir toques concorrentes e apresentar feedback de resultado. Cópia,
+  compartilhamento cancelado/com falha e captura de imagem mantêm a seleção para
+  permitir nova tentativa.
+- A grade que abre um versículo sinaliza “grifado” em vez de “lido”, visual e
+  semanticamente. A barra de ações identifica a anotação como referente ao
+  primeiro versículo escolhido.
+- A barra horizontal ganhou paginação acessível nas duas direções quando as
+  ações excedem a largura disponível; a navegação foi conferida em largura
+  intermediária e a barra nativa que ficava branca no tema escuro foi ocultada.
+- Registrado o plano focal do fluxo de seleção, incluindo evidência pendente de
+  navegação visual e operação persistente em ambiente descartável.
 - Adicionada microinteração web de hover em controles semânticos (links, botões,
   abas, opções e switches), condicionada a ponteiro hover/fino; a transição é
   curta e some com movimento reduzido. O toque e a navegação nativa não recebem

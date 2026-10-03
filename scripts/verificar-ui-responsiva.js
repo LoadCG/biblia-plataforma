@@ -3,6 +3,7 @@ const path = require("path");
 
 const raiz = path.resolve(__dirname, "..");
 const contratos = [
+  ["global.css", ["@media (hover: hover) and (pointer: fine)", "@media (prefers-reduced-motion: reduce)", "transition: opacity 150ms ease-out", "opacity: 0.92"]],
   ["app/(tabs)/_layout.tsx", ["min-h-[44px]", "accessibilityRole=\"tab\""]],
   ["app/(tabs)/pesquisa.tsx", ["testID=\"busca-descubra\"", "testID=\"limpar-busca-descubra\"", "pr-12", "desktop ? \"flex-row items-center p-7\" : \"p-5\"", "desktop ? \"flex-row items-start gap-8\" : undefined", "mb-3 w-full flex-row items-center gap-3"]],
   ["app/salvo.tsx", ["testID=\"busca-salvo\"", "testID=\"limpar-busca-salvo\"", "testID=\"limpar-filtros-salvo\""]],

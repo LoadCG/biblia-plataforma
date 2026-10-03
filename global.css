@@ -17,3 +17,43 @@ html.dark,
 html.dark body {
   background-color: #1b1712;
 }
+
+/* Feedback breve para controles semânticos em ponteiros que realmente têm
+   hover. Como esta folha é carregada pelo NativeWind Web, não modifica o toque
+   nem a aparência/interação das builds nativas. */
+@media (hover: hover) and (pointer: fine) {
+  a[href]:not([aria-disabled="true"]),
+  button:not(:disabled):not([aria-disabled="true"]),
+  [role="button"]:not(:disabled):not([aria-disabled="true"]),
+  [role="link"]:not([aria-disabled="true"]),
+  [role="tab"]:not(:disabled):not([aria-disabled="true"]),
+  [role="radio"]:not(:disabled):not([aria-disabled="true"]),
+  [role="checkbox"]:not(:disabled):not([aria-disabled="true"]),
+  [role="switch"]:not(:disabled):not([aria-disabled="true"]) {
+    transition: opacity 150ms ease-out;
+  }
+
+  a[href]:not([aria-disabled="true"]):hover,
+  button:not(:disabled):not([aria-disabled="true"]):hover,
+  [role="button"]:not(:disabled):not([aria-disabled="true"]):hover,
+  [role="link"]:not([aria-disabled="true"]):hover,
+  [role="tab"]:not(:disabled):not([aria-disabled="true"]):hover,
+  [role="radio"]:not(:disabled):not([aria-disabled="true"]):hover,
+  [role="checkbox"]:not(:disabled):not([aria-disabled="true"]):hover,
+  [role="switch"]:not(:disabled):not([aria-disabled="true"]):hover {
+    opacity: 0.92;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  a[href],
+  button,
+  [role="button"],
+  [role="link"],
+  [role="tab"],
+  [role="radio"],
+  [role="checkbox"],
+  [role="switch"] {
+    transition-duration: 0ms !important;
+  }
+}

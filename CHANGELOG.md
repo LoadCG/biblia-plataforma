@@ -6,7 +6,11 @@ O formato é baseado no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.
 ## [Unreleased] - 2026-10-02
 
 ### Interface
-- Planejado um sistema de microinterações hover web com matriz das 16 rotas,
+- Adicionada microinteração web de hover em controles semânticos (links, botões,
+  abas, opções e switches), condicionada a ponteiro hover/fino; a transição é
+  curta e some com movimento reduzido. O toque e a navegação nativa não recebem
+  regras desta folha web.
+- Planejado um sistema de microinterações hover web com matriz das 17 rotas,
   componentes globais, suporte a teclado/toque/tema escuro e movimento reduzido;
   nenhuma tela deve ser considerada coberta sem inspeção registrada.
 - Corrigido “Voltar aos temas” em Descubra: o detalhe de tema agora retorna à

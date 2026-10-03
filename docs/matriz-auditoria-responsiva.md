@@ -2,6 +2,27 @@
 
 ## Execução
 
+### Camada de hover semântico — 2026-10-02
+
+- Ambiente: Expo Web local em navegador Codex. As rotas cobertas no inventário
+  foram abertas: Home, onboarding, Bíblia/seleção de livro e capítulo/leitor,
+  Descubra/tema, Planos/listagem e detalhe, Salvos, Perfil, Estatísticas,
+  Medalhas, Resumos/listagem e livro, Configurações e Sobre (17 rotas).
+- `npm run export:web` terminou e o CSS de saída contém os media queries para
+  `(hover: hover) and (pointer: fine)`, o seletor `:hover`, a opacidade de 0.92,
+  transição de 150 ms e a regra `prefers-reduced-motion`. O estilo é web global
+  e se restringe a controles semânticos não desabilitados.
+- Home foi vista em claro e escuro; a tela de seleção bíblica também abriu no
+  viewport desktop disponível. A preferência foi restaurada ao claro. Não foi
+  observado clipping nessas capturas; a janela não forneceu dimensão CSS exata.
+- Limite: a automação de navegador desta sessão não expõe movimento do ponteiro,
+  então não foi possível mostrar o estado hover ativo nem comprovar entrada/saída
+  em cada família. Interação com mouse, foco/teclado em todas as rotas e coarse
+  pointer permanecem pendentes; não marcar aceite final do plano.
+- Verificações concluídas: `typecheck`, `check:ui` (10 contratos/superfícies),
+  `check:a11y` (51 contratos), `check:copy-ui` (114 fontes), export web e
+  `git diff --check`. Jest não foi executado.
+
 ### Continuação da Home desktop — 2026-10-02
 
 - Ambiente: Codex In-app Browser, Expo Web local, rota `/`, captura no viewport

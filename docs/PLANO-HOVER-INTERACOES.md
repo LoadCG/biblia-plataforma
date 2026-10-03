@@ -167,9 +167,23 @@ matriz de auditoria. Não se declara auditoria nativa/mobile dedicada.
 
 ## Estado inicial
 
-- Planejamento concluído; implementação ainda não iniciada.
-- A documentação foi baseada nas rotas atuais e no inventário de componentes
-  encontrados em `app/` e `components/`; a primeira etapa reconcilia a matriz com
-  a árvore de acessibilidade e casos condicionais reais.
-- Próximo passo de desenvolvimento: etapa 1 e prova técnica da etapa 2. Só então
-  implementar a primeira onda e registrar o padrão visual aprovado.
+- Planejamento concluído; primeira camada compartilhada implementada.
+- A matriz foi reconciliada com as rotas atuais e os componentes encontrados em
+  `app/` e `components/`. A cobertura dinâmica ainda depende de confirmar
+  mouse/teclado/toque e variações condicionais durante a inspeção manual.
+- Expo SDK 57, React Native Web 0.21.2 e NativeWind 4.2.6 estão instalados. A
+  prova local confirma que `Pressable` aceita eventos de hover; o primeiro
+  incremento usa uma camada CSS web por papel semântico, limitada a ponteiro
+  hover/fino, com transição de opacidade de 150 ms e sem transição quando o
+  sistema pede movimento reduzido.
+- A regra central abrange links, botões, abas, opções radio/checkbox e switches
+  sem `disabled`/`aria-disabled`; como a interação não depende de classes por
+  rota, cobre também os consumidores atuais dessas famílias. O contrato de UI
+  verifica os limites de capacidade do ponteiro e movimento reduzido.
+- A exportação estática incluiu ambos os media queries e a transição curta. Foram
+  abertas as 17 rotas da matriz; Home abriu em claro/escuro, a seleção bíblica
+  também renderizou e nenhum erro visual evidente apareceu nos recortes vistos.
+- A interação hover efetiva (entrar/sair com mouse) não pôde ser acionada pela
+  automação de navegador disponível nesta sessão; portanto a captura não prova
+  o estado animado. Também faltam percursos individuais de foco/teclado e coarse
+  pointer. Registrar esses itens como pendentes, não inferir aceite final.

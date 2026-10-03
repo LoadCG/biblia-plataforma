@@ -1,5 +1,5 @@
 import { router } from "expo-router";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { Animated, Easing, Platform, Pressable, Text, useWindowDimensions, View } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { IconeUI } from "./icone/IconeUI";
@@ -41,6 +41,49 @@ type Props = {
   periodoDoDia: PeriodoDoDia;
 };
 
+type BotaoAcaoProps = {
+  acessibilidade: string;
+  ativo?: boolean;
+  children: ReactNode;
+  disabled?: boolean;
+  movimentoReduzido: boolean;
+  onPress: () => void;
+  role?: "button" | "checkbox";
+};
+
+function BotaoAcaoVersiculo({ acessibilidade, ativo = false, children, disabled, movimentoReduzido, onPress, role = "button" }: BotaoAcaoProps) {
+  const escala = useRef(new Animated.Value(1)).current;
+  const usarDriverNativo = Platform.OS !== "web";
+
+  function animar(toValue: number, mola = false) {
+    if (movimentoReduzido) return;
+    escala.stopAnimation();
+    const animacao = mola
+      ? Animated.spring(escala, { toValue, speed: 24, bounciness: 4, useNativeDriver: usarDriverNativo })
+      : Animated.timing(escala, { toValue, duration: 85, easing: Easing.out(Easing.quad), useNativeDriver: usarDriverNativo });
+    animacao.start();
+  }
+
+  return (
+    <Pressable
+      onPress={onPress}
+      onPressIn={() => animar(0.96)}
+      onPressOut={() => animar(1, true)}
+      disabled={disabled}
+      accessibilityRole={role}
+      accessibilityLabel={acessibilidade}
+      accessibilityState={{ disabled, ...(role === "checkbox" ? { checked: ativo } : {}) }}
+      className={`flex-1 items-center justify-center py-1 ${disabled ? "opacity-45" : ""}`}
+    >
+      <Animated.View style={{ transform: [{ scale: escala }] }} className="items-center justify-center">
+        <View className={`w-11 h-11 rounded-full items-center justify-center ${ativo ? "bg-cor-destaque-fundo dark:bg-cor-destaque-fundo-dark" : ""}`}>
+          {children}
+        </View>
+      </Animated.View>
+    </Pressable>
+  );
+}
+
 export function CardVersiculoDia({ periodoDoDia }: Props) {
   const desktop = useWindowDimensions().width >= 1024;
   const [referencia] = useState(() => referenciaDoDia());
@@ -53,6 +96,8 @@ export function CardVersiculoDia({ periodoDoDia }: Props) {
   const [notaAberta, setNotaAberta] = useState(false);
   const [notaTexto, setNotaTexto] = useState("");
   const [menuAberto, setMenuAberto] = useState(false);
+  const [salvandoVersiculo, setSalvandoVersiculo] = useState(false);
+  const salvamentoEmAndamento = useRef(false);
   const escalaAmem = useRef(new Animated.Value(1)).current;
   const movimentoReduzido = useMovimentoReduzido();
   const { colorScheme } = useColorScheme();
@@ -87,9 +132,13 @@ export function CardVersiculoDia({ periodoDoDia }: Props) {
   }, [ownerId, ref?.livroSlug, ref?.capitulo, ref?.versiculo]);
 
   async function alternarAmem() {
-    if (!ownerId || !ref) return;
+    if (!ownerId || !ref || salvamentoEmAndamento.current) return;
+    salvamentoEmAndamento.current = true;
+    setSalvandoVersiculo(true);
     try {
-      setSalvo(await versiculosSalvosRepository.alternar(ownerId, ref));
+      const novoEstado = await versiculosSalvosRepository.alternar(ownerId, ref);
+      setSalvo(novoEstado);
+      mostrarToast(novoEstado ? "Versículo salvo" : "Versículo removido dos salvos", { severidade: "sucesso" });
       if (movimentoReduzido) return;
       escalaAmem.stopAnimation();
       escalaAmem.setValue(1);
@@ -100,6 +149,9 @@ export function CardVersiculoDia({ periodoDoDia }: Props) {
       ]).start();
     } catch {
       mostrarToast("Não foi possível salvar este versículo", { severidade: "erro" });
+    } finally {
+      salvamentoEmAndamento.current = false;
+      setSalvandoVersiculo(false);
     }
   }
 
@@ -202,44 +254,51 @@ export function CardVersiculoDia({ periodoDoDia }: Props) {
           {/* Actions & Footer */}
           <View>
             <View className="flex-row items-center justify-between mb-5 px-2">
-              <Pressable
+              <BotaoAcaoVersiculo
+                acessibilidade={salvo ? "Remover versículo dos salvos" : "Salvar versículo"}
+                ativo={salvo}
+                disabled={!ref || !ownerId || salvandoVersiculo}
+                movimentoReduzido={movimentoReduzido}
                 onPress={alternarAmem}
-                disabled={!ref}
-                accessibilityRole="checkbox"
-                accessibilityLabel="Salvar este versículo"
-                accessibilityState={{ checked: salvo }}
-                // @ts-expect-error accessibilityChecked é uma extensão do react-native-web, não existe nos tipos do React Native
-                accessibilityChecked={salvo}
-                className="flex-1 items-center py-1 active:opacity-60"
+                role="checkbox"
               >
                 <Animated.View style={{ transform: [{ scale: escalaAmem }] }}>
-                  <IconeUI name={salvo ? "favorite" : "favorite-outline"} size={24} color={salvo ? corDestaque : corIconePadrao} />
+                  <IconeUI name={salvo ? "favorite" : "favorite-outline"} size={23} color={salvo ? corDestaque : corIconePadrao} />
                 </Animated.View>
-                <Text className="text-cor-texto-suave dark:text-white/80 text-xs mt-1">Amém</Text>
-              </Pressable>
-              <Pressable
+                <Text className={`text-[11px] mt-0.5 ${salvo ? "text-cor-destaque dark:text-cor-destaque-dark font-semibold" : "text-cor-texto-suave dark:text-white/80"}`}>
+                  {salvandoVersiculo ? "Salvando" : salvo ? "Salvo" : "Salvar"}
+                </Text>
+              </BotaoAcaoVersiculo>
+              <BotaoAcaoVersiculo
+                acessibilidade={notaTexto ? "Editar nota deste versículo" : "Adicionar nota a este versículo"}
+                ativo={Boolean(notaTexto)}
+                disabled={!ref || !ownerId}
+                movimentoReduzido={movimentoReduzido}
                 onPress={() => setNotaAberta(true)}
-                disabled={!ref}
-                accessibilityRole="button"
-                accessibilityLabel="Anotar sobre este versículo"
-                className="flex-1 items-center py-1 active:opacity-60"
               >
-                <IconeUI name={notaTexto ? "note" : "note-outline"} size={24} color={notaTexto ? corDestaque : corIconePadrao} />
-                <Text className="text-cor-texto-suave dark:text-white/80 text-xs mt-1">Anotar</Text>
-              </Pressable>
-              <Pressable
+                <IconeUI name={notaTexto ? "note" : "note-outline"} size={23} color={notaTexto ? corDestaque : corIconePadrao} />
+                <Text className={`text-[11px] mt-0.5 ${notaTexto ? "text-cor-destaque dark:text-cor-destaque-dark font-semibold" : "text-cor-texto-suave dark:text-white/80"}`}>
+                  Anotar
+                </Text>
+              </BotaoAcaoVersiculo>
+              <BotaoAcaoVersiculo
+                acessibilidade="Compartilhar este versículo"
+                disabled={!dados || carregando}
+                movimentoReduzido={movimentoReduzido}
                 onPress={() => compartilhar(textoParaCompartilhar())}
-                accessibilityRole="button"
-                accessibilityLabel="Enviar este versículo"
-                className="flex-1 items-center py-1 active:opacity-60"
               >
-                <IconeUI name="share" size={24} color={corIconePadrao} />
-                <Text className="text-cor-texto-suave dark:text-white/80 text-xs mt-1">Enviar</Text>
-              </Pressable>
-              <Pressable onPress={() => setMenuAberto(true)} accessibilityRole="button" accessibilityLabel="Mais opções" className="flex-1 items-center py-1 active:opacity-60">
-                <IconeUI name="more" size={24} color={corIconePadrao} />
-                <Text className="text-cor-texto-suave dark:text-white/80 text-xs mt-1">Mais</Text>
-              </Pressable>
+                <IconeUI name="share" size={23} color={corIconePadrao} />
+                <Text className="text-cor-texto-suave dark:text-white/80 text-[11px] mt-0.5">Enviar</Text>
+              </BotaoAcaoVersiculo>
+              <BotaoAcaoVersiculo
+                acessibilidade="Mais ações para este versículo"
+                disabled={!dados || carregando}
+                movimentoReduzido={movimentoReduzido}
+                onPress={() => setMenuAberto(true)}
+              >
+                <IconeUI name="more" size={23} color={corIconePadrao} />
+                <Text className="text-cor-texto-suave dark:text-white/80 text-[11px] mt-0.5">Mais</Text>
+              </BotaoAcaoVersiculo>
             </View>
 
             {/* Mesmo raciocínio do sino da Início: sem servidor não dá

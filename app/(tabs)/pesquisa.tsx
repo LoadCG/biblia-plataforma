@@ -20,6 +20,7 @@ import { useOwnerId } from "../../core/useOwnerId";
 import type { PesquisaFavorita } from "../../core/types/leitura";
 import { normalizarBusca } from "../../core/biblia/relevanciaBusca";
 import { FAMILIA_SERIFADA } from "../../core/leitura/preferenciaFonte";
+import { hrefReferenciaBiblica } from "../../core/biblia/parseReferencia";
 
 function TextoDestacado({ texto, termo }: { texto: string; termo: string }) {
   const tokens = normalizarBusca(termo).replace(/^"|"$/g, "").split(" ").filter(Boolean);
@@ -65,6 +66,7 @@ export default function Pesquisa() {
   const buscaAtiva = useRef(0);
   const idTemaParametro = Array.isArray(parametros.tema) ? parametros.tema[0] : parametros.tema;
   const temaSelecionado = idTemaParametro ? TEMAS_BUSCA.find((tema) => tema.id === idTemaParametro) ?? null : null;
+  const hrefPrimeiraLeitura = temaSelecionado ? hrefReferenciaBiblica(temaSelecionado.referencias[0]) : null;
 
   useEffect(() => {
     if (idTemaParametro && !temaSelecionado) {
@@ -358,11 +360,95 @@ export default function Pesquisa() {
               <Pressable onPress={voltarAosTemas} accessibilityRole="button" className="self-start min-h-11 justify-center mb-3 pr-3 active:opacity-60">
                 <Text className="text-sm text-cor-destaque dark:text-cor-destaque-dark font-semibold">← Voltar aos temas</Text>
               </Pressable>
-              <Text accessibilityRole="header" className="text-xl font-bold text-cor-texto dark:text-cor-texto-dark">{temaSelecionado.titulo}</Text>
-              <Text className="text-sm text-cor-texto-suave dark:text-cor-texto-suave-dark mt-1 mb-4">{temaSelecionado.descricao} Passagens selecionadas para você ler na Bíblia.</Text>
-              {temaSelecionado.referencias.map((ref) => (
-                <CardVersiculoTema key={ref} referencia={ref} />
-              ))}
+              <View
+                className={`mb-6 overflow-hidden rounded-3xl border border-cor-borda dark:border-cor-borda-dark ${desktop ? "flex-row items-center p-7" : "p-5"}`}
+                style={{
+                  backgroundColor: escuro ? temaSelecionado.corBgDark : temaSelecionado.corBg,
+                }}
+              >
+                <View className="flex-1">
+                  <Text className="text-[11px] font-bold uppercase tracking-[1.6px] text-cor-texto-suave dark:text-cor-texto-suave-dark mb-2">
+                    Tema bíblico · {temaSelecionado.referencias.length} leituras
+                  </Text>
+                  <Text
+                    accessibilityRole="header"
+                    className="text-3xl lg:text-4xl font-bold text-cor-texto dark:text-cor-texto-dark"
+                    style={{ fontFamily: FAMILIA_SERIFADA }}
+                  >
+                    {temaSelecionado.titulo}
+                  </Text>
+                  <Text className="text-sm lg:text-base text-cor-texto dark:text-cor-texto-dark mt-2 max-w-2xl">
+                    {temaSelecionado.descricao} Leia as passagens no seu contexto e siga no seu ritmo.
+                  </Text>
+                  {hrefPrimeiraLeitura ? (
+                    <Link href={hrefPrimeiraLeitura} asChild>
+                      <Pressable
+                        accessibilityRole="link"
+                        accessibilityLabel={`Começar leitura em ${temaSelecionado.referencias[0]}`}
+                        className="mt-5 min-h-11 self-start flex-row items-center justify-center gap-2 rounded-full bg-cor-destaque dark:bg-cor-destaque-dark px-5 py-2.5 active:opacity-80"
+                      >
+                        <Text className="text-sm font-bold text-white dark:text-cor-fundo-dark">Começar leitura</Text>
+                        <IconeUI name="next" size={17} color={escuro ? "#1b1712" : "#ffffff"} />
+                      </Pressable>
+                    </Link>
+                  ) : null}
+                </View>
+                <View aria-hidden={true} className={`items-center justify-center ${desktop ? "w-52 h-40 ml-6" : "h-28 mt-3"}`}>
+                  <IlustracaoTema
+                    tema={temaSelecionado.id}
+                    cor={escuro ? temaSelecionado.corTextoDark : temaSelecionado.corTexto}
+                    tamanho={desktop ? 176 : 124}
+                  />
+                </View>
+              </View>
+
+              <View className={desktop ? "flex-row items-start gap-8" : undefined}>
+                <View className={desktop ? "flex-[2]" : undefined}>
+                  <Text accessibilityRole="header" className="text-xl font-bold text-cor-texto dark:text-cor-texto-dark mb-1" style={desktop ? { fontFamily: FAMILIA_SERIFADA } : undefined}>
+                    Leituras para explorar
+                  </Text>
+                  <Text className="text-sm text-cor-texto-suave dark:text-cor-texto-suave-dark mb-4">
+                    Passagens selecionadas para você ler na Bíblia.
+                  </Text>
+                  {temaSelecionado.referencias.map((ref) => (
+                    <CardVersiculoTema key={ref} referencia={ref} />
+                  ))}
+                </View>
+
+                <View className={desktop ? "flex-1" : "mt-6"}>
+                  <Text accessibilityRole="header" className="text-xl font-bold text-cor-texto dark:text-cor-texto-dark mb-1" style={desktop ? { fontFamily: FAMILIA_SERIFADA } : undefined}>
+                    Continue explorando
+                  </Text>
+                  <Text className="text-sm text-cor-texto-suave dark:text-cor-texto-suave-dark mb-3">
+                    Temas que também podem acompanhar sua leitura.
+                  </Text>
+                  <View>
+                    {temaSelecionado.temasRelacionados.map((idRelacionado) => {
+                      const relacionado = TEMAS_BUSCA.find((tema) => tema.id === idRelacionado);
+                      if (!relacionado) return null;
+                      return (
+                        <Link key={relacionado.id} href={{ pathname: "/pesquisa", params: { tema: relacionado.id } }} asChild>
+                          <Pressable
+                            accessibilityRole="link"
+                            accessibilityLabel={`${relacionado.titulo}. ${relacionado.descricao}`}
+                            accessibilityHint={`Abre as leituras sobre ${relacionado.titulo}`}
+                            className="mb-3 w-full flex-row items-center gap-3 rounded-2xl border border-cor-borda dark:border-cor-borda-dark bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark p-3 active:opacity-75"
+                          >
+                            <View aria-hidden={true} className="h-12 w-12 items-center justify-center rounded-xl" style={{ backgroundColor: escuro ? relacionado.corBgDark : relacionado.corBg }}>
+                              <IlustracaoTema tema={relacionado.id} cor={escuro ? relacionado.corTextoDark : relacionado.corTexto} tamanho={52} />
+                            </View>
+                            <View className="flex-1">
+                              <Text className="font-bold text-cor-texto dark:text-cor-texto-dark">{relacionado.titulo}</Text>
+                              <Text className="text-xs text-cor-texto-suave dark:text-cor-texto-suave-dark" numberOfLines={2}>{relacionado.descricao}</Text>
+                            </View>
+                            <IconeUI name="next" size={16} color={escuro ? "#b3a894" : "#6b6153"} />
+                          </Pressable>
+                        </Link>
+                      );
+                    })}
+                  </View>
+                </View>
+              </View>
             </>
           ) : (
             <>

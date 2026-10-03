@@ -30,6 +30,11 @@ O formato é baseado no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.
   acessíveis, com o valor atual limitado à duração definida.
 - “Voltar aos temas” em Descubra agora oferece área mínima de 44 px, facilitando
   o retorno à grade sem alterar a posição ou a hierarquia do controle.
+- O detalhe de tema ganhou cabeçalho ilustrado, atalho para começar a leitura,
+  seção identificada de passagens e dois caminhos para continuar explorando.
+  O layout reorganiza os blocos conforme a largura sem trocar a arte.
+- Registrado um plano para transformar os detalhes temáticos em jornadas de
+  leitura, reflexão e prática, com expansão progressiva e gate de revisão humana.
 
 ### Documentação e qualidade
 - Documentos foram reclassificados em fontes atuais, planos operacionais e
@@ -59,6 +64,16 @@ O formato é baseado no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.
 - Após o alvo de retorno em Descubra: `typecheck`, `check:ui` (8 superfícies),
   `check:a11y` (45 contratos), `check:copy-ui` (114 fontes) e
   `git diff --check` passaram; suítes de testes não foram executadas.
+- A tipagem de `IdTema` saiu do componente SVG e foi para o domínio bíblico.
+- `npm run check:temas` foi integrado à validação e conferiu os 8 temas e 32
+  referências publicadas, mais 32 referências complementares em rascunho,
+  contra livros, capítulos e intervalos da ACF local. O lote fica em
+  `docs/revisao-editorial` e não é importado pelo app.
+- Após a fundação do sistema temático: `typecheck`, `check:temas`, `check:ui`,
+  `check:a11y` (49 contratos), `check:copy-ui`, `check:editorial`,
+  `check:revisao-editorial` (8 rascunhos), `check:planos-editoriais` e
+  `git diff --check` passaram. O lote temático segue em revisão; suíte Jest não
+  executada nesta rodada.
 - CI remoto `37033595191` passou em 1m36s para o commit `7716388`, incluindo
   testes, Expo Doctor, export e metadados; registrou avisos não bloqueantes de
   runtime do GitHub Actions para análise futura.

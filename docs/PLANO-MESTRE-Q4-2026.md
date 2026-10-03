@@ -65,6 +65,8 @@ contraste e foco visíveis; largura sem overflow; evidências e limites anotados
 
 ### Ciclo 2 — comparação desktop de Descubra e Planos (P1)
 
+O detalhe temático será expandido conforme [`PLANO-TEMAS-DESCOBERTA.md`](../PLANO-TEMAS-DESCOBERTA.md): conteúdo adicional permanece em revisão editorial e só aparece após publicação aprovada.
+
 1. Descubra: revisar cabeçalho, busca, categoria, cenas, temas e lista de
    resultados em viewport amplo e intermediário.
 2. Confirmar URL/histórico ao abrir tema, voltar à grade, recarregar e abrir link

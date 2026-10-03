@@ -153,8 +153,10 @@ revisão humana, execução remota e distribuição.
    oferece override; faltam capturas integrais em 1280×900 e 1440×900 e estados
    com histórico/plano. Não marcar o Ciclo 1 como concluído até obter esses
    sinais ou revisar explicitamente o critério de viewport.
-2. **Descubra e Planos:** completar auditoria desktop de journeys, estados,
-   foco, tema e regressões responsivas nos breakpoints afetados.
+2. **Descubra e Planos:** expandir os detalhes temáticos conforme
+   [`docs/PLANO-TEMAS-DESCOBERTA.md`](./docs/PLANO-TEMAS-DESCOBERTA.md), mantendo
+   o conteúdo novo em revisão; completar a auditoria desktop de journeys,
+   estados, foco, tema e regressões responsivas nos breakpoints afetados.
 3. **Estados web:** conferir inventário, duplicações de Toast, retry e estados
    destrutivos por superfície, sem generalizar aceites parciais.
 4. **CI e SEO:** após o workflow atualizado, confirmar execução verde em GitHub;

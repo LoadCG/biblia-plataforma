@@ -4,7 +4,7 @@ const path = require("path");
 const raiz = path.resolve(__dirname, "..");
 const contratos = [
   ["app/(tabs)/_layout.tsx", ["min-h-[44px]", "accessibilityRole=\"tab\""]],
-  ["app/(tabs)/pesquisa.tsx", ["testID=\"busca-descubra\"", "testID=\"limpar-busca-descubra\"", "pr-12"]],
+  ["app/(tabs)/pesquisa.tsx", ["testID=\"busca-descubra\"", "testID=\"limpar-busca-descubra\"", "pr-12", "desktop ? \"flex-row items-center p-7\" : \"p-5\"", "desktop ? \"flex-row items-start gap-8\" : undefined", "mb-3 w-full flex-row items-center gap-3"]],
   ["app/salvo.tsx", ["testID=\"busca-salvo\"", "testID=\"limpar-busca-salvo\"", "testID=\"limpar-filtros-salvo\""]],
   ["app/resumos/index.tsx", ["testID=\"busca-resumos\"", "testID=\"limpar-busca-resumos\""]],
   ["app/estatisticas.tsx", ["testID=\"estatisticas-grade\"", "min-w-0", "flex-row flex-wrap"]],

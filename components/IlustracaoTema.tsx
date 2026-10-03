@@ -1,8 +1,7 @@
 import Svg, { Path, Circle, Line, Ellipse } from "react-native-svg";
+import type { IdTema } from "../core/biblia/tiposTema";
 
 // Mini ilustrações editoriais locais para categorias de Descubra.
-export type IdTema = "amor" | "cura" | "ansiedade" | "raiva" | "alegria" | "perdao" | "esperanca" | "sabedoria";
-
 type Props = {
   tema: IdTema;
   cor: string;

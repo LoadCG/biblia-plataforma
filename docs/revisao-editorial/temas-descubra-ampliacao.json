@@ -1,0 +1,150 @@
+{
+  "versaoLote": 1,
+  "status": "rascunho",
+  "temas": [
+    {
+      "id": "amor",
+      "versao": 1,
+      "status": "rascunho",
+      "abertura": "Nas passagens reunidas aqui, amor aparece como cuidado concreto, fidelidade e busca do bem do próximo. Leia cada texto em sua própria situação: eles falam de comunidades, mandamentos e da relação com Deus, não de uma fórmula única para todos os vínculos.",
+      "leiturasComplementares": [
+        { "referencia": "João 13:34-35", "contexto": "No discurso de despedida, Jesus relaciona o amor entre discípulos à identidade da comunidade; a passagem não reduz amor a sentimento romântico." },
+        { "referencia": "Levítico 19:17-18", "contexto": "O mandamento de amar o próximo está numa seção de instruções para a vida comunitária de Israel e aparece junto a orientações sobre justiça e convivência." },
+        { "referencia": "1 João 4:7-12", "contexto": "A carta relaciona o amor praticado na comunidade ao amor de Deus e à vida em Cristo; leia o trecho como argumento coletivo, não como teste para uma pessoa suportar abuso." },
+        { "referencia": "Romanos 12:9-18", "contexto": "Paulo descreve práticas de cuidado e paz entre pessoas da comunidade, incluindo a ressalva de fazer o possível para viver em paz." }
+      ],
+      "perguntas": [
+        "Que gesto de cuidado, verdade ou respeito aparece nas passagens que você leu?",
+        "Em qual relação é importante expressar cuidado sem abandonar limites e dignidade?"
+      ],
+      "pratica": "Escolha um gesto possível de cuidado para hoje — oferecer ajuda, escutar com atenção ou agradecer — respeitando os limites de todas as pessoas envolvidas.",
+      "oracao": "Deus, ensina-me a praticar o amor com verdade, cuidado e respeito. Ajuda-me a reconhecer os limites que protegem a dignidade de cada pessoa. Amém."
+    },
+    {
+      "id": "cura",
+      "versao": 1,
+      "status": "rascunho",
+      "abertura": "A Bíblia reúne imagens de consolo, restauração e cuidado em situações muito diferentes. Estas passagens não garantem que uma doença ou sofrimento terminará de determinada forma; podem ser lidas como companhia espiritual durante processos que também pedem apoio de pessoas e profissionais.",
+      "leiturasComplementares": [
+        { "referencia": "Salmos 23:1-4", "contexto": "O salmo usa a imagem de um pastor para falar de cuidado e presença mesmo num vale escuro; sua linguagem não afirma que a pessoa nunca enfrentará perigo." },
+        { "referencia": "Marcos 2:1-12", "contexto": "A narrativa da cura do paralítico também trata de perdão e da autoridade de Jesus; os amigos que o levam participam ativamente da cena." },
+        { "referencia": "Isaías 40:27-31", "contexto": "O texto responde ao cansaço de um povo que se sente esquecido no exílio e fala de renovar forças; não prescreve um prazo para recuperação individual." },
+        { "referencia": "2 Coríntios 12:7-10", "contexto": "Paulo descreve uma aflição que não foi removida apesar de sua oração e reflete sobre graça e fraqueza; a passagem impede tratar toda cura como resultado garantido." }
+      ],
+      "perguntas": [
+        "Que formas de presença e apoio aparecem nas passagens, além da mudança das circunstâncias?",
+        "Que tipo de ajuda concreta — de alguém próximo ou de um profissional — você pode considerar neste momento?"
+      ],
+      "pratica": "Se fizer sentido para você, compartilhe uma necessidade específica com alguém de confiança ou procure o cuidado profissional adequado. Você não precisa atravessar tudo sozinho.",
+      "oracao": "Deus, acolhe quem atravessa dor e cansaço. Dá sabedoria para buscar ajuda, presença para quem acompanha e consolo sem promessas fáceis. Amém."
+    },
+    {
+      "id": "ansiedade",
+      "versao": 1,
+      "status": "rascunho",
+      "abertura": "Os textos bíblicos sobre preocupação falam a pessoas e comunidades em contextos próprios; não descrevem diagnósticos clínicos nem culpam quem sofre. Leia-os como convites à confiança e ao cuidado possível, sem substituir acompanhamento de saúde quando necessário.",
+      "leiturasComplementares": [
+        { "referencia": "Salmos 55:16-23", "contexto": "O salmista apresenta angústia, conflito e pedido de socorro antes de falar em entregar o cuidado a Deus; a passagem preserva espaço para nomear o sofrimento." },
+        { "referencia": "Mateus 6:25-34", "contexto": "No Sermão do Monte, Jesus fala a discípulos sobre preocupações cotidianas e confiança no cuidado de Deus; o trecho não deve ser usado para repreender quem vive ansiedade intensa." },
+        { "referencia": "João 14:25-27", "contexto": "No discurso de despedida, Jesus promete paz aos discípulos diante de sua partida; essa promessa pertence à cena e não elimina automaticamente todo medo." },
+        { "referencia": "Salmos 131:1-3", "contexto": "O salmo usa a imagem de uma criança acalmada para expressar humildade e confiança; é uma oração poética, não uma técnica clínica." }
+      ],
+      "perguntas": [
+        "Que preocupação concreta você consegue nomear sem se julgar por senti-la?",
+        "Qual próximo passo pequeno está ao seu alcance hoje, e que parte precisa ser compartilhada com alguém?"
+      ],
+      "pratica": "Anote uma preocupação e separe o que está ao seu alcance agora do que depende de outras pessoas ou do tempo. Se a ansiedade estiver afetando sua vida, considere buscar apoio profissional.",
+      "oracao": "Deus, recebe minhas preocupações sem que eu precise escondê-las. Dá-me clareza para o próximo passo e coragem para pedir apoio quando precisar. Amém."
+    },
+    {
+      "id": "raiva",
+      "versao": 1,
+      "status": "rascunho",
+      "abertura": "A Bíblia não trata toda indignação como igual: há textos sobre ira, injustiça, conflito e domínio próprio. As passagens convidam a examinar como responder, sem usar autocontrole para silenciar denúncias legítimas nem justificar agressão.",
+      "leiturasComplementares": [
+        { "referencia": "Provérbios 14:29", "contexto": "O provérbio contrasta respostas apressadas e paciência como observação prática sobre consequências, não como regra para aceitar injustiça." },
+        { "referencia": "Provérbios 16:32", "contexto": "A comparação entre força física e domínio próprio integra a coleção de provérbios sobre sabedoria cotidiana." },
+        { "referencia": "Romanos 12:17-21", "contexto": "Paulo orienta a comunidade a não retribuir o mal e a buscar a paz quando possível; isso não exige permanecer em perigo ou dispensar proteção e justiça." },
+        { "referencia": "Efésios 4:25-32", "contexto": "A carta trata de fala, ira e convivência numa comunidade; seu objetivo é abandonar práticas que ferem e construir relações que cuidem umas das outras." }
+      ],
+      "perguntas": [
+        "O que sua raiva pode estar apontando: uma injustiça, um limite ultrapassado, uma perda ou outra necessidade?",
+        "Que resposta protege as pessoas envolvidas e evita aumentar o dano?"
+      ],
+      "pratica": "Antes de responder no calor do momento, faça uma pausa segura. Se houver risco de violência, priorize afastamento e proteção; depois, considere uma conversa mediada ou apoio adequado.",
+      "oracao": "Deus, ajuda-me a reconhecer o que sinto e a responder sem ferir. Dá-me discernimento para buscar justiça, estabelecer limites e reparar o que estiver ao meu alcance. Amém."
+    },
+    {
+      "id": "alegria",
+      "versao": 1,
+      "status": "rascunho",
+      "abertura": "A alegria bíblica convive com lamento, espera e mudanças de estação. Estes textos não pedem que alguém esconda tristeza; ajudam a observar gratidão, comunhão e esperança sem transformar alegria em obrigação emocional.",
+      "leiturasComplementares": [
+        { "referencia": "Salmos 30:1-5", "contexto": "O salmo de ação de graças relembra aflição e restauração; a imagem da manhã não estabelece prazo para que o luto de alguém termine." },
+        { "referencia": "Eclesiastes 3:1-8", "contexto": "O poema apresenta tempos diferentes da experiência humana, incluindo chorar e rir; ele não ordena que a pessoa apresse uma mudança de sentimento." },
+        { "referencia": "João 16:16-22", "contexto": "No discurso de despedida, Jesus prepara os discípulos para tristeza e reencontro; a alegria prometida pertence ao contexto da partida e volta de Jesus." },
+        { "referencia": "Gálatas 5:22-26", "contexto": "Paulo descreve o fruto do Espírito no contraste entre modos de vida da comunidade; alegria aparece junto a amor, paz, paciência e domínio próprio." }
+      ],
+      "perguntas": [
+        "Que detalhe simples merece gratidão sem diminuir as dificuldades que continuam presentes?",
+        "Com quem você poderia compartilhar uma alegria ou receber companhia neste momento?"
+      ],
+      "pratica": "Registre uma coisa pela qual sente gratidão e uma dificuldade que ainda merece cuidado. As duas podem ser verdadeiras ao mesmo tempo.",
+      "oracao": "Deus, recebe minha alegria e também aquilo que ainda pesa. Ajuda-me a agradecer sem esconder a dor e a compartilhar o que é bom com outras pessoas. Amém."
+    },
+    {
+      "id": "perdao",
+      "versao": 1,
+      "status": "rascunho",
+      "abertura": "Os textos sobre perdão falam de misericórdia e convivência, mas não autorizam encobrir violência nem exigem reconciliação imediata. Leia cada passagem distinguindo perdão, responsabilização, segurança e retomada de uma relação.",
+      "leiturasComplementares": [
+        { "referencia": "Gênesis 50:15-21", "contexto": "José responde aos irmãos que o venderam depois de anos e reconhece o mal cometido; a narrativa não apaga o dano nem transforma a traição em algo bom." },
+        { "referencia": "Mateus 18:21-35", "contexto": "A parábola da dívida aparece num discurso sobre a vida da comunidade e a busca de quem erra; sua aplicação não deve pressionar vítimas a voltar a situações inseguras." },
+        { "referencia": "Lucas 17:1-4", "contexto": "Jesus fala de tropeços, repreensão e perdão num contexto comunitário; a passagem inclui responsabilidade e não descreve confiança restaurada automaticamente." },
+        { "referencia": "Salmos 103:8-14", "contexto": "O salmo celebra a compaixão de Deus com imagens de cuidado e reconhece a fragilidade humana; é uma oração sobre Deus, não uma ordem para dispensar justiça." }
+      ],
+      "perguntas": [
+        "Que diferença você percebe entre perdoar, confiar novamente e retomar contato?",
+        "Que apoio ou limite pode ser necessário para cuidar da sua segurança e dignidade?"
+      ],
+      "pratica": "Não se apresse para tomar uma decisão sobre uma relação. Converse com alguém confiável e, se houve violência ou ameaça, priorize proteção e orientação especializada.",
+      "oracao": "Deus, acolhe quem foi ferido e quem busca reparar o mal que praticou. Dá discernimento para que misericórdia caminhe com verdade, justiça e segurança. Amém."
+    },
+    {
+      "id": "esperanca",
+      "versao": 1,
+      "status": "rascunho",
+      "abertura": "Esperança bíblica não é certeza de que cada situação terminará como desejamos. Em lamentos e cartas, ela aparece ao lado da espera, da dor e da perseverança; leia estes textos sem usar esperança para apressar o sofrimento de alguém.",
+      "leiturasComplementares": [
+        { "referencia": "Lamentações 3:19-26", "contexto": "O poema lembra a destruição de Jerusalém e a aflição antes de falar de esperança; a confiança nasce dentro do lamento, não pela negação dele." },
+        { "referencia": "Romanos 8:18-25", "contexto": "Paulo descreve sofrimento presente e esperança ainda não vista, usando imagens da criação que geme e aguarda; não promete solução imediata para cada dor." },
+        { "referencia": "Salmos 130:1-8", "contexto": "O salmista clama das profundezas, espera e convida Israel à esperança; o texto preserva o tempo de espera e o pedido de misericórdia." },
+        { "referencia": "Isaías 40:27-31", "contexto": "A mensagem se dirige a um povo cansado no exílio e afirma que Deus não se esqueceu dele; a aplicação pessoal deve respeitar esse contexto coletivo." }
+      ],
+      "perguntas": [
+        "Como os textos sustentam esperança sem negar o sofrimento que descrevem?",
+        "Qual pessoa, recurso ou próximo passo pode ajudar você a atravessar o período de espera?"
+      ],
+      "pratica": "Escolha um passo pequeno e realista para esta semana e identifique alguém com quem possa conversar sobre o que ainda é incerto.",
+      "oracao": "Deus, permanece com quem espera sem saber o desfecho. Dá companhia para o caminho, coragem para o próximo passo e espaço para lamentar com honestidade. Amém."
+    },
+    {
+      "id": "sabedoria",
+      "versao": 1,
+      "status": "rascunho",
+      "abertura": "Sabedoria bíblica envolve escuta, discernimento e atenção às consequências, não acesso a respostas infalíveis para toda decisão. Leia os provérbios como ensinamentos poéticos e as demais passagens em seus contextos antes de aplicá-las a uma escolha concreta.",
+      "leiturasComplementares": [
+        { "referencia": "Provérbios 2:1-6", "contexto": "O poema convida a buscar sabedoria como um tesouro e associa esse caminho ao temor do Senhor; é uma instrução formativa, não uma promessa de saber tudo." },
+        { "referencia": "Eclesiastes 7:11-14", "contexto": "O mestre pondera valor da sabedoria e limites do entendimento diante dos dias bons e difíceis; a passagem reconhece que nem tudo pode ser controlado." },
+        { "referencia": "Lucas 14:25-33", "contexto": "Jesus usa os exemplos de construir uma torre e avaliar uma batalha ao falar do custo do discipulado; a imagem não é um conselho financeiro isolado." },
+        { "referencia": "Tiago 3:13-18", "contexto": "Tiago contrasta rivalidade com uma sabedoria marcada por pureza, paz e misericórdia na comunidade; o fruto da decisão importa tanto quanto a alegação de ser sábio." }
+      ],
+      "perguntas": [
+        "Quais pessoas e consequências precisam ser consideradas antes de decidir?",
+        "Que diferença há entre buscar discernimento e esperar uma resposta sem incerteza?"
+      ],
+      "pratica": "Escreva as opções, as pessoas afetadas e uma pergunta que ainda precisa ser respondida. Se possível, converse com alguém confiável antes de agir.",
+      "oracao": "Deus, dá-me humildade para escutar, clareza para considerar consequências e coragem para escolher com justiça e misericórdia. Amém."
+    }
+  ]
+}

@@ -22,6 +22,7 @@ substituir os estados e critérios mais atuais.
 |---|---|---|
 | [`PLANO-MESTRE-UX-ETAPAS-19-A-23.md`](./PLANO-MESTRE-UX-ETAPAS-19-A-23.md) | Auditoria web, estados, QA visual, nativo e release | Detalha ciclos 1–4 e 6; suas caixas só fecham com evidência correspondente. |
 | [`PLANO-MELHORIAS-UI-DESIGN.md`](./PLANO-MELHORIAS-UI-DESIGN.md) | Direção visual, componentes e histórico das inspeções | Referência visual/casos já trabalhados; não mantém uma fila independente do plano mestre. |
+| [`PLANO-TEMAS-DESCOBERTA.md`](./PLANO-TEMAS-DESCOBERTA.md) | Expansão de conteúdo, UX e arquitetura dos detalhes de tema | Detalha a ampliação temática; conteúdo precisa de revisão humana antes de ser publicado. |
 | [`PLANO-CONTEUDO-ETAPAS-24-A-28.md`](./PLANO-CONTEUDO-ETAPAS-24-A-28.md) | Contrato, planos, resumos, curadoria e QA editorial | Detalha o ciclo 5; revisão humana é obrigatória antes de publicar. |
 | [`PLANO-TECNICO-BUSCA.md`](./PLANO-TECNICO-BUSCA.md) | Arquitetura e evolução técnica da busca | Backlog especializado; iniciar somente se priorizado no plano mestre. |
 

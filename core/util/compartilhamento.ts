@@ -3,8 +3,9 @@ import * as Clipboard from "expo-clipboard";
 
 export type ResultadoCompartilhamento = "compartilhado" | "copiado" | "cancelado";
 
-type OpcoesCompartilhamento = {
+export type OpcoesCompartilhamento = {
   titulo?: string;
+  url?: string;
   textoCopiado?: string;
 };
 
@@ -32,7 +33,7 @@ export async function compartilharTexto(
       : undefined;
 
     if (compartilhador?.share) {
-      const dados: DadosCompartilhamentoWeb = { title: opcoes.titulo, text: conteudo };
+      const dados: DadosCompartilhamentoWeb = { title: opcoes.titulo, text: conteudo, url: opcoes.url };
       try {
         if (!compartilhador.canShare || compartilhador.canShare(dados)) {
           await compartilhador.share(dados);
@@ -43,11 +44,13 @@ export async function compartilharTexto(
         // Falhas da API de compartilhamento usam a cópia como alternativa.
       }
     }
-    return copiarTexto(opcoes.textoCopiado ?? conteudo);
+    const textoComLink = opcoes.url ? `${conteudo}\n\n${opcoes.url}` : conteudo;
+    return copiarTexto(opcoes.textoCopiado ?? textoComLink);
   }
 
   try {
-    const resultado = await Share.share({ message: conteudo, title: opcoes.titulo }, { dialogTitle: opcoes.titulo });
+    const mensagem = opcoes.url ? `${conteudo}\n\n${opcoes.url}` : conteudo;
+    const resultado = await Share.share({ message: mensagem, title: opcoes.titulo }, { dialogTitle: opcoes.titulo });
     return resultado.action === Share.dismissedAction ? "cancelado" : "compartilhado";
   } catch (erro) {
     if (erroFoiCancelamento(erro)) return "cancelado";

@@ -15,6 +15,10 @@ O formato é baseado no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.
   suportada, com cópia alternativa em falha/indisponibilidade; cancelamento não
   gera cópia nem incrementa o contador. Ações “Copiar” usam Clipboard também no
   nativo e o contador só avança após conclusão bem-sucedida.
+- Compartilhamento de vários versículos preserva número e texto de cada item,
+  referência exata e link que reabre a mesma seleção (inclusive descontínua),
+  com foco no primeiro versículo. Cópia e compartilhamento mostram contagem e
+  usam o contador comum de ações concluídas.
 
 ### Interface
 - Seleção de versículos agora mostra contagem e referências exatas mesmo quando

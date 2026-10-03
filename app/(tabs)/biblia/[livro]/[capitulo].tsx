@@ -1,7 +1,6 @@
 import { Link, router, useLocalSearchParams } from "expo-router";
 import { useCallback, useEffect, useRef, useState, useMemo } from "react";
 import { ActivityIndicator, Animated, Image, NativeSyntheticEvent, NativeScrollEvent, Pressable, ScrollView, Text, useWindowDimensions, View, LayoutAnimation, Platform, UIManager } from "react-native";
-import * as Clipboard from "expo-clipboard";
 import * as Sharing from "expo-sharing";
 import { captureRef } from "react-native-view-shot";
 
@@ -33,12 +32,12 @@ import {
 } from "../../../../core/leitura/preferenciaFonte";
 import { salvarUltimaLeitura } from "../../../../core/leitura/ultimaLeitura";
 import { grifosRepository, notasRepository, planosRepository, progressoRepository, versiculosSalvosRepository } from "../../../../core/repositories";
-import { compartilhar } from "../../../../core/estatisticas/compartilhador";
+import { copiar, compartilhar } from "../../../../core/estatisticas/compartilhador";
 import { falarCapitulo, pararAudio, suportaAudio } from "../../../../core/leitura/audio";
 import { alternarTema, useColorScheme } from "../../../../core/theme";
 import { gerarImagemVersiculo } from "../../../../core/util/gerarImagemVersiculo";
 import { mensagemErroAmigavel } from "../../../../core/util/erroAmigavel";
-import { linkVersiculo } from "../../../../core/util/linkVersiculo";
+import { linkVersiculos } from "../../../../core/util/linkVersiculo";
 import { mostrarToast } from "../../../../core/util/toast";
 import { scrollSuave } from "../../../../core/util/scrollSuave";
 import { useArrastarParaRolar } from "../../../../core/util/useArrastarParaRolar";
@@ -73,6 +72,13 @@ function formatarFaixasVersiculos(versiculos: number[]): string {
   return faixas.join(", ");
 }
 
+function lerNumerosVersiculos(parametro?: string | string[]): number[] {
+  const valor = Array.isArray(parametro) ? parametro[0] : parametro;
+  if (!valor) return [];
+  return [...new Set(valor.split(",").map(Number).filter((numero) => Number.isInteger(numero) && numero > 0))]
+    .sort((a, b) => a - b);
+}
+
 function hrefCapitulo(livroSlug: string | undefined, numero: number, origem?: string) {
   if (!livroSlug) return "/biblia/escolher";
   const href = `/biblia/${livroSlug}/${numero}`;
@@ -81,11 +87,12 @@ function hrefCapitulo(livroSlug: string | undefined, numero: number, origem?: st
 
 export default function Leitura() {
   const desktop = useWindowDimensions().width >= 1024;
-  const params = useLocalSearchParams<{ livro: string; capitulo: string; versiculo?: string; planoId?: string; diaPlano?: string; indicePlano?: string; origem?: string }>();
+  const params = useLocalSearchParams<{ livro: string; capitulo: string; versiculo?: string; versiculos?: string; planoId?: string; diaPlano?: string; indicePlano?: string; origem?: string }>();
   const abertaPelaAbaBiblia = params.origem === ORIGEM_ABA_BIBLIA;
   const livro = obterLivro(params.livro ?? "");
   const capitulo = parseInt(params.capitulo ?? "", 10);
-  const versiculoAlvo = params.versiculo ? parseInt(params.versiculo, 10) : null;
+  const versiculosDoLink = lerNumerosVersiculos(params.versiculos);
+  const versiculoAlvo = params.versiculo ? parseInt(params.versiculo, 10) : (versiculosDoLink[0] ?? null);
   const numeroDiaPlano = params.diaPlano ? parseInt(params.diaPlano, 10) : null;
   const indicePlano = params.indicePlano ? parseInt(params.indicePlano, 10) : 0;
   const planoEmAndamento = params.planoId ? obterPlano(params.planoId) : undefined;
@@ -117,14 +124,14 @@ export default function Leitura() {
   const [salvos, setSalvos] = useState<Set<number>>(new Set());
   const [focoAtivo, setFocoAtivo] = useState(false);
   const [versiculoAutoScrollRealizado, setVersiculoAutoScrollRealizado] = useState(false);
-  const [destaqueAlvo, setDestaqueAlvo] = useState(!!versiculoAlvo);
+  const [destaqueAlvo, setDestaqueAlvo] = useState(!!versiculoAlvo && versiculosDoLink.length <= 1);
   const [capituloLido, setCapituloLido] = useState(false);
   const [notas, setNotas] = useState<Map<number, string>>(new Map());
   const [versiculoEditandoNota, setVersiculoEditandoNota] = useState<number | null>(null);
   const [modalAjustesAberto, setModalAjustesAberto] = useState(false);
   const [abaAtual, setAbaAtual] = useState<"texto" | "resumo">("texto");
   const resumo = obterResumo(livro?.slug ?? "");
-  const [versiculosSelecionados, setVersiculosSelecionados] = useState<Set<number>>(new Set());
+  const [versiculosSelecionados, setVersiculosSelecionados] = useState<Set<number>>(() => new Set(versiculosDoLink));
   const [acoesSelecaoOcupadas, setAcoesSelecaoOcupadas] = useState(false);
   const [mostrarTodasCores, setMostrarTodasCores] = useState(false);
   const CORES_DISPONIVEIS = [
@@ -296,10 +303,16 @@ export default function Leitura() {
   useEffect(() => {
     jaRolou.current = false;
     setVersiculoAutoScrollRealizado(false);
-    setVersiculosSelecionados(new Set());
+    const versiculosValidos = new Set(
+      dados?.versiculos
+        ?.filter((versiculo) => versiculosDoLink.includes(versiculo.numero))
+        .map((versiculo) => versiculo.numero) ?? []
+    );
+    setVersiculosSelecionados(versiculosValidos);
+    setDestaqueAlvo(!!versiculoAlvo && versiculosValidos.size <= 1);
     setMostrarTodasCores(false);
     setProgresso(0);
-  }, [versiculoAlvo, dados]);
+  }, [versiculoAlvo, params.versiculos, dados]);
 
   const aoMedirVersiculo = (numero: number, y: number) => {
     posicoes.current[numero] = y;
@@ -606,14 +619,18 @@ export default function Leitura() {
     }
   }
 
-  function textoDosVersiculosSelecionados(): string | null {
+  function conteudoVersiculosSelecionados(): { texto: string; textoCopiado: string; url: string | null } | null {
     if (!dados?.versiculos || versiculosSelecionados.size === 0 || !livro) return null;
     const array = Array.from(versiculosSelecionados).sort((a, b) => a - b);
     const textosPorNumero = new Map(dados.versiculos.map((versiculo) => [versiculo.numero, versiculo.texto]));
-    const textos = array.map((versiculo) => `${versiculo}. ${textosPorNumero.get(versiculo) || ""}`);
+    const textos = array
+      .filter((versiculo) => textosPorNumero.has(versiculo))
+      .map((versiculo) => `${versiculo}. ${textosPorNumero.get(versiculo)}`);
+    if (textos.length === 0) return null;
     const referencia = `${livro.nome} ${capitulo}:${formatarFaixasVersiculos(array)}`;
-    const link = linkVersiculo(livro.slug, capitulo, array[0]);
-    return `${textos.join("\n")}\n\n${referencia}${link ? `\n${link}` : ""}`;
+    const texto = `${textos.join("\n")}\n\n${referencia}`;
+    const url = linkVersiculos(livro.slug, capitulo, array);
+    return { texto, url, textoCopiado: `${texto}${url ? `\n\n${url}` : ""}` };
   }
 
   function alternarAudio() {
@@ -729,26 +746,33 @@ export default function Leitura() {
   }
 
   async function copiarVersiculos() {
-    const texto = textoDosVersiculosSelecionados();
-    if (!texto || acoesSelecaoOcupadas) return;
+    const conteudo = conteudoVersiculosSelecionados();
+    if (!conteudo || acoesSelecaoOcupadas) return;
     setAcoesSelecaoOcupadas(true);
     try {
-      await Clipboard.setStringAsync(texto);
-      mostrarToast("Versículos copiados.", { severidade: "sucesso" });
-      limparSelecaoVersiculos();
-    } catch {
-      mostrarToast("Não foi possível copiar os versículos. Tente novamente.", { severidade: "erro" });
+      const quantidade = versiculosSelecionados.size;
+      const resultado = await copiar(conteudo.textoCopiado, {
+        mensagemCopiado: `${quantidade} ${quantidade === 1 ? "versículo copiado" : "versículos copiados"}.`,
+      });
+      if (resultado === "copiado") limparSelecaoVersiculos();
     } finally {
       setAcoesSelecaoOcupadas(false);
     }
   }
 
   async function compartilharVersiculos() {
-    const texto = textoDosVersiculosSelecionados();
-    if (!texto || acoesSelecaoOcupadas) return;
+    const conteudo = conteudoVersiculosSelecionados();
+    if (!conteudo || acoesSelecaoOcupadas) return;
     setAcoesSelecaoOcupadas(true);
     try {
-      const resultado = await compartilhar(texto);
+      const quantidade = versiculosSelecionados.size;
+      const resultado = await compartilhar(conteudo.texto, {
+        titulo: `Compartilhar ${quantidade} ${quantidade === 1 ? "versículo" : "versículos"}`,
+        url: conteudo.url ?? undefined,
+        textoCopiado: conteudo.textoCopiado,
+        mensagemCompartilhado: quantidade === 1 ? "Versículo compartilhado." : `${quantidade} versículos compartilhados.`,
+        mensagemCopiado: quantidade === 1 ? "Versículo copiado." : `${quantidade} versículos copiados.`,
+      });
       if (resultado === "compartilhado" || resultado === "copiado") limparSelecaoVersiculos();
     } finally {
       setAcoesSelecaoOcupadas(false);

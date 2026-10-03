@@ -1069,6 +1069,17 @@ estruturais passaram; abrir o sheet real do dispositivo, as permissões de
 clipboard e o cancelamento pelo usuário ainda dependem de validação manual nos
 navegadores/dispositivos alvo.
 
+**Compartilhamento de múltiplos versículos (2026-10-03):** o leitor monta uma
+mensagem com número e texto de cada versículo selecionado, seguida da referência
+exata (inclui seleções descontínuas). Na web, o endereço vai no campo `url` da
+Web Share API; cópia alternativa e compartilhamento nativo mantêm o link junto
+do texto. O link carrega `versiculos` e `versiculo` (primeiro selecionado),
+restaura apenas números existentes no capítulo, seleciona o mesmo conjunto e
+rola até o primeiro. A ação copiar do leitor usa o wrapper comum e registra
+somente conclusão bem-sucedida. Typecheck e contratos de acessibilidade
+passaram; o sheet e a abertura visual do link compartilhado aguardam inspeção
+manual nos navegadores e aparelhos alvo.
+
 ### 5.3 Toast com botão de ação (Desfazer) `✅`
 **Funcionalidade:** pedido do usuário — "evoluir componente toast
 também", no contexto da marcação em massa (2.4c/2.4d): marcar ou

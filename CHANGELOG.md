@@ -33,6 +33,9 @@ O formato é baseado no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.
 - O detalhe de tema ganhou cabeçalho ilustrado, atalho para começar a leitura,
   seção identificada de passagens e dois caminhos para continuar explorando.
   O layout reorganiza os blocos conforme a largura sem trocar a arte.
+- Cartões de passagem em Descubra agora separam visualmente texto e referência,
+  indicam que abrem o leitor, comunicam a ação a leitores de tela e usam o parser
+  bíblico compartilhado para validar e montar o destino.
 - Registrado um plano para transformar os detalhes temáticos em jornadas de
   leitura, reflexão e prática, com expansão progressiva e gate de revisão humana.
 

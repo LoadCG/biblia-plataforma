@@ -4,27 +4,10 @@ import { Link } from "expo-router";
 import { EstadoCarregando } from "./EstadoCarregando";
 import { EstadoErro } from "./EstadoErro";
 import { buscarReferencia } from "../core/biblia/BibliaAPI";
+import { hrefReferenciaBiblica } from "../core/biblia/parseReferencia";
 import type { CapituloTexto } from "../core/biblia/tipos";
-import { livros } from "../core/content/livros";
 import { mensagemErroAmigavel } from "../core/util/erroAmigavel";
-
-function getLinkHref(ref: string): any {
-  const match = ref.match(/(.+?)\s+(\d+):(\d+)/);
-  if (!match) return null;
-  const nomeLivro = match[1].trim();
-  const capitulo = match[2];
-  const versiculo = match[3];
-
-  const chaveNormalizada = nomeLivro.toLowerCase().replace(/[.\s]/g, "");
-  
-  const livro = livros.find(
-    (l) => l.nome.toLowerCase() === nomeLivro.toLowerCase() || 
-           (l.abreviacao && l.abreviacao === chaveNormalizada)
-  );
-  if (!livro) return null;
-
-  return `/biblia/${livro.slug}/${capitulo}?versiculo=${versiculo}`;
-}
+import { IconeUI } from "./icone/IconeUI";
 
 export function CardVersiculoTema({ referencia }: { referencia: string }) {
   const [dados, setDados] = useState<CapituloTexto | null>(null);
@@ -41,11 +24,11 @@ export function CardVersiculoTema({ referencia }: { referencia: string }) {
     return () => { ativo = false; };
   }, [referencia, tentativa]);
 
-  const href = getLinkHref(referencia);
+  const href = hrefReferenciaBiblica(referencia);
 
   const conteudo = (
     <View
-      className="rounded-2xl bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark px-4 py-3.5 mb-2.5 shadow-sm"
+      className="rounded-2xl border border-cor-borda dark:border-cor-borda-dark bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark px-4 py-4 mb-3 shadow-sm"
       style={{ shadowColor: "#000", shadowOpacity: 0.06, shadowRadius: 4, shadowOffset: { width: 0, height: 1 } }}
     >
       {erro ? (
@@ -55,9 +38,12 @@ export function CardVersiculoTema({ referencia }: { referencia: string }) {
       ) : (
         <>
           <Text className="text-cor-texto dark:text-cor-texto-dark italic leading-6">{dados.texto}</Text>
-          <Text className="text-xs font-semibold text-cor-texto-suave dark:text-cor-texto-suave-dark mt-1.5">
-            {dados.referencia}
-          </Text>
+          <View className="mt-3 pt-2.5 border-t border-cor-borda/70 dark:border-cor-borda-dark flex-row items-center justify-between gap-3">
+            <Text className="text-sm font-semibold text-cor-destaque dark:text-cor-destaque-dark">
+              {dados.referencia}
+            </Text>
+            {href ? <IconeUI name="open-book" size={18} /> : null}
+          </View>
         </>
       )}
     </View>
@@ -66,7 +52,13 @@ export function CardVersiculoTema({ referencia }: { referencia: string }) {
   if (href && dados) {
     return (
       <Link href={href} asChild>
-        <Pressable accessibilityRole="link" className="active:opacity-80">{conteudo}</Pressable>
+        <Pressable
+          accessibilityRole="link"
+          accessibilityHint={`Abre ${dados.referencia} na Bíblia`}
+          className="active:opacity-80 focus-visible:ring-2 focus-visible:ring-cor-destaque dark:focus-visible:ring-cor-destaque-dark rounded-2xl"
+        >
+          {conteudo}
+        </Pressable>
       </Link>
     );
   }

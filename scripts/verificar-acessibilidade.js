@@ -26,6 +26,8 @@ const contratos = [
   ["app/estatisticas.tsx", 'accessibilityRole="summary"'],
   ["components/PopoverVersiculo.tsx", 'rotulo="Carregando referência bíblica"'],
   ["components/CardVersiculoTema.tsx", 'rotulo="Carregando versículo"'],
+  ["components/CardVersiculoTema.tsx", 'accessibilityHint={`Abre ${dados.referencia} na Bíblia`}'],
+  ["components/CardVersiculoTema.tsx", "focus-visible:ring-2"],
   ["components/CardVersiculoDia.tsx", 'rotulo="Carregando versículo do dia"'],
   ["components/EstadoErro.tsx", 'accessibilityRole="alert"'],
   ["components/EstadoErro.tsx", "min-h-11 justify-center rounded-full"],

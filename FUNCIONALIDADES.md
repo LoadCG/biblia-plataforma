@@ -1080,6 +1080,12 @@ somente conclusão bem-sucedida. Typecheck e contratos de acessibilidade
 passaram; o sheet e a abertura visual do link compartilhado aguardam inspeção
 manual nos navegadores e aparelhos alvo.
 
+**Formatação da cópia (2026-10-03):** alinhada ao padrão de citação do bible.com:
+o texto dos versículos selecionados é unido em uma citação corrida, seguido pela
+referência exata (incluindo saltos) e pelo link em linhas separadas. O toast
+informa a quantidade e deixa explícito que o conteúdo foi para a área de
+transferência.
+
 ### 5.3 Toast com botão de ação (Desfazer) `✅`
 **Funcionalidade:** pedido do usuário — "evoluir componente toast
 também", no contexto da marcação em massa (2.4c/2.4d): marcar ou

@@ -619,18 +619,22 @@ export default function Leitura() {
     }
   }
 
-  function conteudoVersiculosSelecionados(): { texto: string; textoCopiado: string; url: string | null } | null {
+  function conteudoVersiculosSelecionados(): { texto: string; textoCopiado: string; url: string | null; quantidade: number } | null {
     if (!dados?.versiculos || versiculosSelecionados.size === 0 || !livro) return null;
     const array = Array.from(versiculosSelecionados).sort((a, b) => a - b);
     const textosPorNumero = new Map(dados.versiculos.map((versiculo) => [versiculo.numero, versiculo.texto]));
-    const textos = array
-      .filter((versiculo) => textosPorNumero.has(versiculo))
-      .map((versiculo) => `${versiculo}. ${textosPorNumero.get(versiculo)}`);
-    if (textos.length === 0) return null;
-    const referencia = `${livro.nome} ${capitulo}:${formatarFaixasVersiculos(array)}`;
-    const texto = `${textos.join("\n")}\n\n${referencia}`;
-    const url = linkVersiculos(livro.slug, capitulo, array);
-    return { texto, url, textoCopiado: `${texto}${url ? `\n\n${url}` : ""}` };
+    const numerosValidos = array.filter((versiculo) => textosPorNumero.has(versiculo));
+    if (numerosValidos.length === 0) return null;
+    const textoBiblico = numerosValidos
+      .map((versiculo) => textosPorNumero.get(versiculo)?.trim().replace(/\s+/g, " ") ?? "")
+      .filter(Boolean)
+      .join(" ");
+    if (!textoBiblico) return null;
+    const referencia = `${livro.nome} ${capitulo}:${formatarFaixasVersiculos(numerosValidos)}`;
+    const texto = `“${textoBiblico}”\n\n${referencia}`;
+    const url = linkVersiculos(livro.slug, capitulo, numerosValidos);
+    const textoCopiado = `${texto}${url ? `\n${url}` : ""}`;
+    return { texto, url, textoCopiado, quantidade: numerosValidos.length };
   }
 
   function alternarAudio() {
@@ -750,9 +754,11 @@ export default function Leitura() {
     if (!conteudo || acoesSelecaoOcupadas) return;
     setAcoesSelecaoOcupadas(true);
     try {
-      const quantidade = versiculosSelecionados.size;
+      const quantidade = conteudo.quantidade;
       const resultado = await copiar(conteudo.textoCopiado, {
-        mensagemCopiado: `${quantidade} ${quantidade === 1 ? "versículo copiado" : "versículos copiados"}.`,
+        mensagemCopiado: quantidade === 1
+          ? "Versículo copiado para a área de transferência."
+          : `${quantidade} versículos copiados para a área de transferência.`,
       });
       if (resultado === "copiado") limparSelecaoVersiculos();
     } finally {
@@ -765,13 +771,15 @@ export default function Leitura() {
     if (!conteudo || acoesSelecaoOcupadas) return;
     setAcoesSelecaoOcupadas(true);
     try {
-      const quantidade = versiculosSelecionados.size;
+      const quantidade = conteudo.quantidade;
       const resultado = await compartilhar(conteudo.texto, {
         titulo: `Compartilhar ${quantidade} ${quantidade === 1 ? "versículo" : "versículos"}`,
         url: conteudo.url ?? undefined,
         textoCopiado: conteudo.textoCopiado,
         mensagemCompartilhado: quantidade === 1 ? "Versículo compartilhado." : `${quantidade} versículos compartilhados.`,
-        mensagemCopiado: quantidade === 1 ? "Versículo copiado." : `${quantidade} versículos copiados.`,
+        mensagemCopiado: quantidade === 1
+          ? "Versículo copiado para a área de transferência."
+          : `${quantidade} versículos copiados para a área de transferência.`,
       });
       if (resultado === "compartilhado" || resultado === "copiado") limparSelecaoVersiculos();
     } finally {

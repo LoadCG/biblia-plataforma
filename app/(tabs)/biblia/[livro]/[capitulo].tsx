@@ -626,8 +626,11 @@ export default function Leitura() {
     const numerosValidos = array.filter((versiculo) => textosPorNumero.has(versiculo));
     if (numerosValidos.length === 0) return null;
     const textoBiblico = numerosValidos
-      .map((versiculo) => textosPorNumero.get(versiculo)?.trim().replace(/\s+/g, " ") ?? "")
-      .filter(Boolean)
+      .map((versiculo) => {
+        const texto = textosPorNumero.get(versiculo)?.trim().replace(/\s+/g, " ");
+        return texto ? `${versiculo}. ${texto}` : "";
+      })
+      .filter((texto) => texto.length > 0)
       .join(" ");
     if (!textoBiblico) return null;
     const referencia = `${livro.nome} ${capitulo}:${formatarFaixasVersiculos(numerosValidos)}`;

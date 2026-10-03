@@ -20,8 +20,9 @@ O formato é baseado no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.
   com foco no primeiro versículo. Cópia e compartilhamento mostram contagem e
   usam o contador comum de ações concluídas.
 - Texto copiado de seleções múltiplas segue o formato de citação corrida,
-  seguido por referência única e link em linhas separadas. A confirmação informa
-  a quantidade e a área de transferência.
+  com o número visível sempre que começa outro versículo, seguido por referência
+  única e link em linhas separadas. A confirmação informa a quantidade e a área
+  de transferência.
 
 ### Interface
 - Seleção de versículos agora mostra contagem e referências exatas mesmo quando

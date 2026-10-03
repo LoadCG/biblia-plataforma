@@ -1081,10 +1081,10 @@ passaram; o sheet e a abertura visual do link compartilhado aguardam inspeção
 manual nos navegadores e aparelhos alvo.
 
 **Formatação da cópia (2026-10-03):** alinhada ao padrão de citação do bible.com:
-o texto dos versículos selecionados é unido em uma citação corrida, seguido pela
-referência exata (incluindo saltos) e pelo link em linhas separadas. O toast
-informa a quantidade e deixa explícito que o conteúdo foi para a área de
-transferência.
+o texto dos versículos selecionados é unido em uma citação corrida, com o número
+visível na transição de cada versículo, seguido pela referência exata (incluindo
+saltos) e pelo link em linhas separadas. O toast informa a quantidade e deixa
+explícito que o conteúdo foi para a área de transferência.
 
 ### 5.3 Toast com botão de ação (Desfazer) `✅`
 **Funcionalidade:** pedido do usuário — "evoluir componente toast

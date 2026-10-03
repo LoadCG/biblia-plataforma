@@ -57,3 +57,15 @@ html.dark body {
     transition-duration: 0ms !important;
   }
 }
+
+/* A grade só permite arrastar quando está em seleção múltipla; o atributo é
+   emitido pelo React Native Web e não muda a plataforma nativa. */
+@media (hover: hover) and (pointer: fine) {
+  [data-selecao-arrasto="true"] [data-capitulo] {
+    cursor: grab;
+  }
+
+  [data-selecao-arrasto="true"] [data-capitulo]:active {
+    cursor: grabbing;
+  }
+}

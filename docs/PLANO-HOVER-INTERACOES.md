@@ -187,3 +187,7 @@ matriz de auditoria. Não se declara auditoria nativa/mobile dedicada.
   automação de navegador disponível nesta sessão; portanto a captura não prova
   o estado animado. Também faltam percursos individuais de foco/teclado e coarse
   pointer. Registrar esses itens como pendentes, não inferir aceite final.
+- Cursor de arraste refinado: o filtro horizontal por livro em Descubra agora usa
+  o mesmo hook de arrastar-para-rolar das outras faixas; seleção múltipla de
+  capítulos mostra `grab` e `grabbing` apenas em ponteiro web hover/fino. A saída
+  estática confirmou os dois cursores no CSS compilado.

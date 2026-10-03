@@ -59,7 +59,12 @@ export function GradeCapitulos({
   });
 
   return (
-    <View ref={refArrasto as any} className="flex-row flex-wrap -m-1">
+    <View
+      ref={refArrasto as any}
+      // @ts-expect-error dataSet é suportado por React Native Web para esta pista visual exclusivamente web.
+      dataSet={{ selecaoArrasto: String(modoSelecao) }}
+      className="flex-row flex-wrap -m-1"
+    >
       {capitulos.map((n) => {
         const lido = lidos.has(n);
         const selecionado = selecionados?.has(n) ?? false;

@@ -10,6 +10,9 @@ O formato é baseado no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.
   abas, opções e switches), condicionada a ponteiro hover/fino; a transição é
   curta e some com movimento reduzido. O toque e a navegação nativa não recebem
   regras desta folha web.
+- Atualizados os cursores de superfícies realmente arrastáveis: carrosséis e
+  barra horizontal usam `grab`/`grabbing`, Descubra ganhou arraste no filtro
+  horizontal por livro e a grade expõe `grab` na seleção múltipla por arraste.
 - Planejado um sistema de microinterações hover web com matriz das 17 rotas,
   componentes globais, suporte a teclado/toque/tema escuro e movimento reduzido;
   nenhuma tela deve ser considerada coberta sem inspeção registrada.

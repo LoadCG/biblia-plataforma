@@ -21,6 +21,7 @@ import type { PesquisaFavorita } from "../../core/types/leitura";
 import { normalizarBusca } from "../../core/biblia/relevanciaBusca";
 import { FAMILIA_SERIFADA } from "../../core/leitura/preferenciaFonte";
 import { hrefReferenciaBiblica } from "../../core/biblia/parseReferencia";
+import { useArrastarParaRolar } from "../../core/util/useArrastarParaRolar";
 
 function TextoDestacado({ texto, termo }: { texto: string; termo: string }) {
   const tokens = normalizarBusca(termo).replace(/^"|"$/g, "").split(" ").filter(Boolean);
@@ -64,6 +65,7 @@ export default function Pesquisa() {
   const desktop = useWindowDimensions().width >= 1024;
   const ownerId = useOwnerId();
   const buscaAtiva = useRef(0);
+  const refFiltroLivro = useArrastarParaRolar();
   const idTemaParametro = Array.isArray(parametros.tema) ? parametros.tema[0] : parametros.tema;
   const temaSelecionado = idTemaParametro ? TEMAS_BUSCA.find((tema) => tema.id === idTemaParametro) ?? null : null;
   const hrefPrimeiraLeitura = temaSelecionado ? hrefReferenciaBiblica(temaSelecionado.referencias[0]) : null;
@@ -253,7 +255,7 @@ export default function Pesquisa() {
               </Pressable>
             ))}
           </View>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} accessibilityLabel="Filtrar por livro">
+          <ScrollView ref={refFiltroLivro} horizontal showsHorizontalScrollIndicator={false} accessibilityLabel="Filtrar por livro">
             <Pressable onPress={() => setLivroFiltro(undefined)} accessibilityRole="radio" accessibilityState={{ checked: !livroFiltro }}
               // @ts-expect-error accessibilityChecked é uma extensão do react-native-web
               accessibilityChecked={!livroFiltro} className={`mr-2 px-3 py-1.5 rounded-full border ${!livroFiltro ? "border-cor-destaque dark:border-cor-destaque-dark" : "border-cor-borda dark:border-cor-borda-dark"}`}><Text className="text-xs text-cor-texto dark:text-cor-texto-dark">Todos os livros</Text></Pressable>

@@ -23,6 +23,19 @@
   `check:a11y` (51 contratos), `check:copy-ui` (114 fontes), export web e
   `git diff --check`. Jest não foi executado.
 
+### Cursores em superfícies arrastáveis — 2026-10-02
+
+- Início, carrossel de Medalhas do Perfil e barra horizontal de ações do Leitor
+  já usam `useArrastarParaRolar`, que define `grab` em repouso e `grabbing` ao
+  segurar. O filtro horizontal por livro em Descubra foi ligado ao mesmo hook.
+- A grade de capítulos/versículos em seleção múltipla sinaliza `grab` em cada
+  célula e `grabbing` durante o pressionamento somente em hover/fine pointer;
+  leitura simples, toque e app nativo não recebem esse cursor.
+- `typecheck`, `check:ui` (11 superfícies/contratos), exportação estática e
+  confirmação das regras `data-selecao-arrasto`, `cursor:grab` e
+  `cursor:grabbing` no CSS exportado passaram. A ação de arrastar não foi
+  fisicamente reproduzida pelo controlador de navegador desta sessão.
+
 ### Continuação da Home desktop — 2026-10-02
 
 - Ambiente: Codex In-app Browser, Expo Web local, rota `/`, captura no viewport

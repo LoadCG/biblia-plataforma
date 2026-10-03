@@ -12,9 +12,9 @@ import { Stack } from "expo-router";
 // (voltar).
 export default function BibliaLayout() {
   return (
-    <Stack screenOptions={{ headerShown: false }}>
+    <Stack screenOptions={{ headerShown: false, animation: "fade", animationDuration: 190 }}>
       <Stack.Screen name="index" />
-      <Stack.Screen name="escolher/index" options={{ presentation: "modal" }} />
+      <Stack.Screen name="escolher/index" options={{ presentation: "modal", animation: "slide_from_bottom" }} />
       <Stack.Screen name="[livro]/[capitulo]" />
     </Stack>
   );

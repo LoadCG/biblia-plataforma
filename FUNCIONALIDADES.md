@@ -1050,39 +1050,24 @@ da decisão final de domínio (`PLANO-PLATAFORMA.md`). Só funciona na
 versão *web*: o app nativo não tem esquema de URL customizado
 configurado, então lá o compartilhamento continua sendo só texto/
 referência, sem link (registrado como limitação conhecida, não
-bloqueante). Aplicado em `compartilharVersiculos`/`copiarVersiculos`
-na leitura do capítulo e na ação "Compartilhar" do `CardAtividade`
-(grifo/nota/salvo). Usa `Share.share` do React Native no nativo
-(sheet do sistema) e a Clipboard API no web (`core/estatisticas/
-compartilhador.ts`), já existentes.
-**UX/UI:** confirmação visual "Copiado!" no fallback web via um toast
-global mínimo (`core/util/toast.ts` + `components/Toast.tsx`, montado
-uma vez em `app/_layout.tsx`, pub-sub simples sem Context — qualquer
-lugar do app chama `mostrarToast(mensagem)`, mesmo fora da árvore de
-componentes). No nativo o próprio sheet do sistema (`Share.share`) já
-serve de confirmação, sem precisar do toast.
+bloqueante). Aplicado ao texto compartilhado no leitor e em `CardAtividade`
+(grifo/nota/salvo). O serviço `core/util/compartilhamento.ts` usa Web Share API
+no navegador compatível, com fallback para cópia; no nativo abre `Share.share`
+do sistema. As ações explicitamente chamadas "Copiar" sempre usam Clipboard,
+incluindo no nativo (`expo-clipboard`). O wrapper `core/estatisticas/
+compartilhador.ts` só mostra confirmação e incrementa o contador após cópia ou
+compartilhamento concluído; cancelar mantém a tela sem erro, cópia alternativa
+ou incremento. Falha de registro do contador não mascara sucesso da ação.
 
-**Bug real, reportado pelo usuário (2026-08-20): "o botão compartilhar
-[...] não mostra resposta na tela além da resposta que é nativa do
-navegador ou dispositivo, não apresentando resposta imediata"
-(testado no navegador do celular).** O botão "Compartilhar" da barra
-de seleção de versículos (`compartilharVersiculos`, distinto do fluxo
-de 5.1/5.2 acima) chama `Share.share` do RN direto, sem nenhum toast
-— diferente do botão "Copiar" ao lado, que sempre mostrou "Copiado!".
-Corrigido: toast "Compartilhado!" depois que a pessoa termina de
-compartilhar de verdade (não ao cancelar, pra não soar como erro por
-uma ação intencional). **Achado real ao implementar:** no web,
-`Share.share` (react-native-web) delega pro `navigator.share` do
-navegador, que resolve a Promise com `undefined` — só o RN nativo
-devolve um objeto `{ action }`. A primeira tentativa (`resultado.action
-!== Share.dismissedAction`) lançava `TypeError` no web porque
-`resultado` era `undefined`, caía no `catch` silencioso, e o toast
-**nunca aparecia** — exatamente o bug relatado, reintroduzido pela
-própria correção até eu testar de verdade com um `navigator.share`
-mockado. Corrigido com optional chaining (`resultado?.action`).
-Testado ao vivo simulando os dois casos (`navigator.share` mockado
-resolvendo normalmente vs. lançando `AbortError` como um cancelamento
-real): toast aparece só no caminho de sucesso.
+**Revisão do sistema (2026-10-03):** substituído o caminho web de `Share.share`
+por uma integração direta com `navigator.share`, já que o wrapper React Native
+Web varia em suporte entre navegadores. Ausência/falha de suporte tenta copiar;
+`AbortError` é tratado como cancelamento e não aciona fallback. Rótulos de
+"Copiar" agora correspondem à ação real também no nativo. Compartilhar e copiar
+mantêm mensagens diferentes e só contam êxitos. Typecheck e verificações
+estruturais passaram; abrir o sheet real do dispositivo, as permissões de
+clipboard e o cancelamento pelo usuário ainda dependem de validação manual nos
+navegadores/dispositivos alvo.
 
 ### 5.3 Toast com botão de ação (Desfazer) `✅`
 **Funcionalidade:** pedido do usuário — "evoluir componente toast

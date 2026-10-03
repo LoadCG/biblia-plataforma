@@ -7,7 +7,7 @@ import { buscarReferencia } from "../core/biblia/BibliaAPI";
 import { parseReferenciaVersiculo } from "../core/biblia/parseReferencia";
 import { referenciaDoDia } from "../core/biblia/versiculoDoDia";
 import type { CapituloTexto } from "../core/biblia/tipos";
-import { compartilhar } from "../core/estatisticas/compartilhador";
+import { copiar, compartilhar } from "../core/estatisticas/compartilhador";
 import { notasRepository, versiculosSalvosRepository } from "../core/repositories";
 import { useColorScheme } from "../core/theme";
 import { mensagemErroAmigavel } from "../core/util/erroAmigavel";
@@ -109,7 +109,7 @@ export function CardVersiculoDia({ periodoDoDia }: Props) {
   }
 
   const acoesMais: AcaoMenu[] = [
-    { label: "Copiar", icone: "copy", onPress: () => compartilhar(textoParaCompartilhar()) },
+    { label: "Copiar", icone: "copy", onPress: () => copiar(textoParaCompartilhar()) },
     ...(ref ? [{ label: "Ver capítulo inteiro", icone: "open-book" as const, onPress: () => router.push(`/biblia/${ref.livroSlug}/${ref.capitulo}?versiculo=${ref.versiculo}`) }] : []),
     ...(ref ? [{ label: "Resumo do livro", icone: "book-collection" as const, onPress: () => router.push(`/resumos/${ref.livroSlug}`) }] : []),
   ];

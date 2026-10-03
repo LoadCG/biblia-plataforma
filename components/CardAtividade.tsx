@@ -2,7 +2,7 @@ import { router } from "expo-router";
 import { useState } from "react";
 import { Platform, Pressable, Text, View } from "react-native";
 import { obterLivro } from "../core/content/livros";
-import { compartilhar } from "../core/estatisticas/compartilhador";
+import { copiar, compartilhar } from "../core/estatisticas/compartilhador";
 import type { ItemAtividade } from "../core/estatisticas/atividade";
 import { grifosRepository, notasRepository, pesquisasFavoritasRepository, versiculosSalvosRepository } from "../core/repositories";
 import { linkVersiculo } from "../core/util/linkVersiculo";
@@ -57,7 +57,7 @@ export function CardAtividade({ item, onMudou, selecionado, onSelecionar }: Prop
   const acoes: AcaoMenu[] =
     item.tipo === "pesquisa"
       ? [
-          { label: "Copiar termo", icone: "copy", onPress: () => compartilhar(item.termo) },
+          { label: "Copiar termo", icone: "copy", onPress: () => copiar(item.termo) },
           { label: "Excluir", icone: "delete", onPress: excluir, destrutiva: true },
         ]
       : [
@@ -68,7 +68,7 @@ export function CardAtividade({ item, onMudou, selecionado, onSelecionar }: Prop
           },
           { label: "Compartilhar", icone: "share", onPress: () => compartilhar(referenciaComLink ?? "") },
           { label: "Resumo do livro", icone: "book-collection", onPress: () => router.push(`/resumos/${item.livroSlug}`) },
-          { label: "Copiar", icone: "copy", onPress: () => compartilhar(item.tipo === "nota" ? item.texto : (referencia ?? "")) },
+          { label: "Copiar", icone: "copy", onPress: () => copiar(item.tipo === "nota" ? item.texto : (referencia ?? "")) },
           ...(item.tipo === "nota" ? [{ label: "Editar", icone: "edit" as const, onPress: () => setEditando(true) }] : []),
           { label: "Excluir", icone: "delete", onPress: excluir, destrutiva: true },
         ];

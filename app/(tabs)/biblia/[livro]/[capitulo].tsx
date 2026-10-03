@@ -1,6 +1,6 @@
 import { Link, router, useLocalSearchParams } from "expo-router";
 import { useCallback, useEffect, useRef, useState, useMemo } from "react";
-import { ActivityIndicator, Animated, Image, NativeSyntheticEvent, NativeScrollEvent, Pressable, ScrollView, Text, useWindowDimensions, View, Share, LayoutAnimation, Platform, UIManager } from "react-native";
+import { ActivityIndicator, Animated, Image, NativeSyntheticEvent, NativeScrollEvent, Pressable, ScrollView, Text, useWindowDimensions, View, LayoutAnimation, Platform, UIManager } from "react-native";
 import * as Clipboard from "expo-clipboard";
 import * as Sharing from "expo-sharing";
 import { captureRef } from "react-native-view-shot";
@@ -33,6 +33,7 @@ import {
 } from "../../../../core/leitura/preferenciaFonte";
 import { salvarUltimaLeitura } from "../../../../core/leitura/ultimaLeitura";
 import { grifosRepository, notasRepository, planosRepository, progressoRepository, versiculosSalvosRepository } from "../../../../core/repositories";
+import { compartilhar } from "../../../../core/estatisticas/compartilhador";
 import { falarCapitulo, pararAudio, suportaAudio } from "../../../../core/leitura/audio";
 import { alternarTema, useColorScheme } from "../../../../core/theme";
 import { gerarImagemVersiculo } from "../../../../core/util/gerarImagemVersiculo";
@@ -745,37 +746,13 @@ export default function Leitura() {
   async function compartilharVersiculos() {
     const texto = textoDosVersiculosSelecionados();
     if (!texto || acoesSelecaoOcupadas) return;
-    // `Share.share` sozinho não dava nenhum retorno visível além do
-    // seletor nativo do navegador/SO — que no navegador do celular
-    // pode demorar um instante pra abrir, dando a impressão de que o
-    // toque não fez nada (achado real, 2026-08-20). O toast só aparece
-    // depois que a pessoa realmente termina de compartilhar (não ao
-    // cancelar, pra não soar como erro por uma ação intencional).
     setAcoesSelecaoOcupadas(true);
-    let compartilhado = false;
     try {
-      // No web, `Share.share` (react-native-web) delega direto pro
-      // `navigator.share` do navegador, que resolve a Promise com
-      // `undefined` (sem `.action` — só o RN nativo devolve esse
-      // objeto). Por isso o optional chaining: em `undefined?.action`
-      // dá `undefined`, diferente de `Share.dismissedAction`, e o
-      // toast aparece — sem ele, `resultado.action` lançava
-      // `TypeError` no web, caía no catch e o toast nunca aparecia.
-      const resultado = await Share.share({ message: texto });
-      if (resultado?.action === Share.dismissedAction) return;
-      compartilhado = true;
-      mostrarToast("Versículos compartilhados.", { severidade: "sucesso" });
-    } catch (erro) {
-      const cancelado = typeof erro === "object" && erro !== null && "name" in erro && erro.name === "AbortError";
-      if (!cancelado) {
-        mostrarToast("Não foi possível compartilhar os versículos. Você ainda pode copiá-los.", { severidade: "aviso" });
-      }
-      // Em cancelamento intencional ou falha, mantém a seleção disponível.
-      return;
+      const resultado = await compartilhar(texto);
+      if (resultado === "compartilhado" || resultado === "copiado") limparSelecaoVersiculos();
     } finally {
       setAcoesSelecaoOcupadas(false);
     }
-    if (compartilhado) limparSelecaoVersiculos();
   }
 
   async function alternarSalvosSelecionados() {

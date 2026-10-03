@@ -11,6 +11,10 @@ O formato é baseado no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.
   da Vercel foi removida. O servidor local valida 200 para capítulos existentes
   e 404 para capítulos inválidos; o comportamento público será confirmado após
   o próximo deploy.
+- Compartilhamento de texto agora usa a API nativa do navegador quando
+  suportada, com cópia alternativa em falha/indisponibilidade; cancelamento não
+  gera cópia nem incrementa o contador. Ações “Copiar” usam Clipboard também no
+  nativo e o contador só avança após conclusão bem-sucedida.
 
 ### Interface
 - Seleção de versículos agora mostra contagem e referências exatas mesmo quando

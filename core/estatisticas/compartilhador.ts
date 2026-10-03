@@ -1,26 +1,42 @@
-// Ação de "compartilhar" de verdade (link/versículo/texto) ainda não
-// existe como funcionalidade própria (seção 5 do FUNCIONALIDADES.md).
-// Esta é a versão mínima que dá função real ao botão "Compartilhar"/
-// "Copiar" dos cards de Atividade/Salvo sem depender de uma dependência
-// nova: no web usa a Clipboard API do navegador; no nativo usa o Share
-// do próprio React Native (sempre disponível, sem instalar nada).
-import { Platform, Share } from "react-native";
 import { mostrarToast } from "../util/toast";
+import { copiarTexto, compartilharTexto, type ResultadoCompartilhamento } from "../util/compartilhamento";
 import { registrarCompartilhamento } from "./compartilhamentos";
 
-export async function compartilhar(texto: string): Promise<void> {
-  if (Platform.OS === "web") {
+type ResultadoAcao = ResultadoCompartilhamento | "falhou";
+
+async function registrarSucesso(resultado: ResultadoCompartilhamento): Promise<void> {
+  if (resultado !== "cancelado") {
     try {
-      await navigator.clipboard.writeText(texto);
-      mostrarToast("Copiado!", { severidade: "sucesso" });
+      await registrarCompartilhamento();
     } catch {
-      // Permissão de clipboard pode falhar (ex. contexto não seguro) —
-      // não é crítico o suficiente pra travar a ação com um alerta.
+      // Uma falha no contador local não deve alterar o resultado da ação.
     }
-  } else {
-    // No nativo o próprio sheet de compartilhamento do sistema (Share.share)
-    // já serve de confirmação visual — não precisa de toast extra.
-    await Share.share({ message: texto }).catch(() => {});
   }
-  await registrarCompartilhamento();
+  if (resultado === "compartilhado") {
+    mostrarToast("Conteúdo compartilhado.", { severidade: "sucesso" });
+  } else if (resultado === "copiado") {
+    mostrarToast("Conteúdo copiado.", { severidade: "sucesso" });
+  }
+}
+
+export async function compartilhar(texto: string): Promise<ResultadoAcao> {
+  try {
+    const resultado = await compartilharTexto(texto, { titulo: "Compartilhar versículo" });
+    await registrarSucesso(resultado);
+    return resultado;
+  } catch {
+    mostrarToast("Não foi possível compartilhar nem copiar o conteúdo. Verifique as permissões do navegador.", { severidade: "erro" });
+    return "falhou";
+  }
+}
+
+export async function copiar(texto: string): Promise<ResultadoAcao> {
+  try {
+    const resultado = await copiarTexto(texto);
+    await registrarSucesso(resultado);
+    return resultado;
+  } catch {
+    mostrarToast("Não foi possível copiar o conteúdo. Tente novamente.", { severidade: "erro" });
+    return "falhou";
+  }
 }

@@ -18,7 +18,9 @@ import { CircleIcon as Circle } from "phosphor-react-native/src/icons/Circle";
 import { CopyIcon as Copy } from "phosphor-react-native/src/icons/Copy";
 import { DotsThreeIcon as DotsThree } from "phosphor-react-native/src/icons/DotsThree";
 import { DownloadSimpleIcon as DownloadSimple } from "phosphor-react-native/src/icons/DownloadSimple";
+import { EnvelopeSimpleIcon as EnvelopeSimple } from "phosphor-react-native/src/icons/EnvelopeSimple";
 import { FlagIcon as Flag } from "phosphor-react-native/src/icons/Flag";
+import { FeatherIcon as Feather } from "phosphor-react-native/src/icons/Feather";
 import { FunnelXIcon as FunnelX } from "phosphor-react-native/src/icons/FunnelX";
 import { GearSixIcon as GearSix } from "phosphor-react-native/src/icons/GearSix";
 import { GlobeHemisphereWestIcon as GlobeHemisphereWest } from "phosphor-react-native/src/icons/GlobeHemisphereWest";
@@ -29,6 +31,7 @@ import { InfoIcon as Info } from "phosphor-react-native/src/icons/Info";
 import { LightbulbIcon as Lightbulb } from "phosphor-react-native/src/icons/Lightbulb";
 import { ListChecksIcon as ListChecks } from "phosphor-react-native/src/icons/ListChecks";
 import { MagnifyingGlassIcon as MagnifyingGlass } from "phosphor-react-native/src/icons/MagnifyingGlass";
+import { MegaphoneIcon as Megaphone } from "phosphor-react-native/src/icons/Megaphone";
 import { MapPinIcon as MapPin } from "phosphor-react-native/src/icons/MapPin";
 import { MoonStarsIcon as MoonStars } from "phosphor-react-native/src/icons/MoonStars";
 import { NotePencilIcon as NotePencil } from "phosphor-react-native/src/icons/NotePencil";
@@ -36,6 +39,7 @@ import { PauseCircleIcon as PauseCircle } from "phosphor-react-native/src/icons/
 import { PencilSimpleIcon as PencilSimple } from "phosphor-react-native/src/icons/PencilSimple";
 import { SealCheckIcon as SealCheck } from "phosphor-react-native/src/icons/SealCheck";
 import { ShareNetworkIcon as ShareNetwork } from "phosphor-react-native/src/icons/ShareNetwork";
+import { ScrollIcon as Scroll } from "phosphor-react-native/src/icons/Scroll";
 import { SparkleIcon as Sparkle } from "phosphor-react-native/src/icons/Sparkle";
 import { SpeakerHighIcon as SpeakerHigh } from "phosphor-react-native/src/icons/SpeakerHigh";
 import { StarIcon as Star } from "phosphor-react-native/src/icons/Star";
@@ -60,6 +64,7 @@ const ICONES = {
   "moon-stars": MoonStars,
   delete: Trash,
   download: DownloadSimple,
+  letter: EnvelopeSimple,
   edit: PencilSimple,
   "edit-note": NotePencil,
   warning: WarningCircle,
@@ -84,6 +89,9 @@ const ICONES = {
   settings: GearSix,
   share: ShareNetwork,
   featured: Star,
+  feather: Feather,
+  proclamation: Megaphone,
+  scroll: Scroll,
   sparkle: Sparkle,
   verified: SealCheck,
   image: Image,

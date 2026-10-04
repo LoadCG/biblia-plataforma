@@ -345,3 +345,22 @@ como aprovado, defeito reproduzível ou bloqueado.
   falha real do repositório; tema, foco de teclado/leitor de tela e estados
   visuais continuam pendentes de conferência runtime. A matriz não declara o
   detalhe visualmente aprovado até essas verificações ocorrerem.
+
+## Medalhas — novas coleções bíblicas — 2026-10-04
+
+- Conteúdo: catálogo ampliado de seis para dez marcos. Foram adicionadas
+  “Memória de Israel” (12 livros históricos do Antigo Testamento), “Poesia e
+  Sabedoria” (5 livros poéticos), “Vozes Proféticas” (17 livros classificados
+  como proféticos) e “Cartas às Comunidades” (21 escritos classificados como
+  cartas no Novo Testamento). Os requisitos vêm dos gêneros/testamentos do
+  catálogo, sem duplicação manual dos slugs.
+- Detalhes: cada medalha agora explica o percurso em “Sobre este percurso”. Os
+  quatro marcos novos têm ícones Phosphor próprios, com suporte ao esquema de
+  cores claro/escuro no componente de ícones existente. A lista, destaques e
+  carrossel reutilizam o mesmo cálculo de dez marcos.
+- Qualidade: cobertura unitária confirma total de 10 marcos, conclusão do
+  catálogo completo e os totais editoriais 12/5/17/21. Typecheck, testes focados,
+  contratos de acessibilidade e UI, exportação web e diff check foram executados
+  depois da mudança; resultados registrados no relatório de execução.
+- Limite: detalhes e ícones ainda precisam de inspeção visual em browser nos
+  temas claro/escuro; a matriz não os marca como aprovados visualmente.

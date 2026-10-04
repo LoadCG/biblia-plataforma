@@ -12,7 +12,8 @@ import { useOwnerId } from "../core/useOwnerId";
 
 type Estado = { status: "carregando" } | { status: "erro" } | { status: "disponivel"; lidos: string[] };
 const IDS_CONQUISTA = new Set<IdConquista>([
-  "primeiro-livro", "pentateuco", "evangelhos", "antigo-testamento", "novo-testamento", "biblia-completa",
+  "primeiro-livro", "pentateuco", "evangelhos", "antigo-testamento", "novo-testamento",
+  "historia-israel", "poesia-sabedoria", "profetas", "cartas", "biblia-completa",
 ]);
 
 function LinhaConquista({ conquista, origem }: { conquista: Conquista; origem: "inicio" | "voce" }) {
@@ -100,7 +101,7 @@ export default function Medalhas() {
           <BotaoTema />
         </View>
         <Text accessibilityRole="header" className="text-2xl font-bold text-cor-texto dark:text-cor-texto-dark mb-1">
-          {conquistaAtiva?.titulo ?? (detalheSelecionado ? "Detalhe da medalha" : "Medalhas")}
+          {detalheSelecionado ? "Detalhe da medalha" : "Medalhas"}
         </Text>
 
         {estado.status === "carregando" || !ownerId ? <EstadoCarregando rotulo="Carregando seu progresso de leitura" /> : null}
@@ -127,6 +128,10 @@ export default function Medalhas() {
               </View>
               <Text accessibilityRole="header" className="text-2xl font-bold text-cor-texto dark:text-cor-texto-dark text-center">{conquistaAtiva.titulo}</Text>
               <Text className="text-sm text-cor-texto-suave dark:text-cor-texto-suave-dark text-center mt-2">{conquistaAtiva.descricao}</Text>
+              <View className="w-full rounded-2xl bg-cor-fundo dark:bg-cor-fundo-dark px-4 py-3 mt-4">
+                <Text className="text-xs font-semibold uppercase tracking-wide text-cor-destaque dark:text-cor-destaque-dark mb-1">Sobre este percurso</Text>
+                <Text className="text-sm leading-5 text-cor-texto-suave dark:text-cor-texto-suave-dark">{conquistaAtiva.contexto}</Text>
+              </View>
               <Text accessibilityLiveRegion="polite" className="text-sm font-semibold text-cor-destaque dark:text-cor-destaque-dark mt-4">
                 {conquistaAtiva.conquistada ? "Conquistada" : conquistaAtiva.progressoAtual > 0 ? "Em andamento" : "Ainda não iniciada"} · {conquistaAtiva.progressoAtual} de {conquistaAtiva.progressoTotal}
               </Text>

@@ -21,10 +21,10 @@ describe("calcularConquistas", () => {
     expect(completa.find((item) => item.id === "pentateuco")?.conquistada).toBe(true);
   });
 
-  it("conclui os seis marcos quando todos os livros canônicos foram lidos", () => {
+  it("conclui todos os marcos quando todos os livros canônicos foram lidos", () => {
     const conquistas = calcularConquistas(new Set(livros.map((livro) => livro.slug)));
 
-    expect(conquistas).toHaveLength(6);
+    expect(conquistas).toHaveLength(10);
     expect(conquistas.every((item) => item.conquistada)).toBe(true);
     expect(conquistas.find((item) => item.id === "biblia-completa")?.progressoAtual).toBe(66);
   });
@@ -51,5 +51,16 @@ describe("selecionarDestaquesConquistas", () => {
     expect(obterLivrosPendentes("pentateuco", new Set(["01-genesis", "slug-invalido"])).map((livro) => livro.slug)).toEqual([
       "02-exodo", "03-levitico", "04-numeros", "05-deuteronomio",
     ]);
+  });
+
+  it("deriva as novas medalhas das coleções editoriais do catálogo", () => {
+    const conquistas = calcularConquistas(new Set());
+    const porId = new Map(conquistas.map((item) => [item.id, item]));
+
+    expect(porId.get("historia-israel")?.progressoTotal).toBe(12);
+    expect(porId.get("poesia-sabedoria")?.progressoTotal).toBe(5);
+    expect(porId.get("profetas")?.progressoTotal).toBe(17);
+    expect(porId.get("cartas")?.progressoTotal).toBe(21);
+    expect(obterLivrosPendentes("cartas", new Set()).map((livro) => livro.slug)).toHaveLength(21);
   });
 });

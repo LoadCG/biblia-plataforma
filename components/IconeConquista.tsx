@@ -7,6 +7,10 @@ const ICONES_POR_CONQUISTA: Record<IdConquista, IconeUINome> = {
   evangelhos: "open-book",
   "antigo-testamento": "world",
   "novo-testamento": "sparkle",
+  "historia-israel": "scroll",
+  "poesia-sabedoria": "feather",
+  profetas: "proclamation",
+  cartas: "letter",
   "biblia-completa": "verified",
 };
 

@@ -2103,7 +2103,9 @@ Descubra substitui atalhos sem destino por links para Salvos e Ajuda. A página
 `/privacidade` explica o armazenamento local e leva às ações de exportar/apagar
 em Configurações; não se apresenta como política jurídica. `typecheck`, suíte
 unitária, contratos de acessibilidade, copy, UI, rotas estáticas e temas foram
-verificados. A captura visual dos novos caminhos ainda está pendente.
+verificados. A página `/privacidade` foi inspecionada no deploy em 1280×720 no
+tema claro e seus links/títulos apareceram na árvore acessível. A checagem visual
+de Descubra estreito, tema escuro e navegação por cada atalho continua pendente.
 
 ## Como usar este documento
 

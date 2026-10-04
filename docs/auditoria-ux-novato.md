@@ -87,7 +87,12 @@ Também foi criada `/privacidade`, um resumo funcional sobre dados locais ligado
 `npm run check:e2e`, `npm run check:temas`, `npm run export:web` e `npm run
 check:static` passaram. O export contém 96 rotas e 1.189 capítulos; o verificador
 conferiu 1.285 arquivos HTML.
-Não foi feita nova inspeção visual de navegador nesta continuação.
+Após o deploy, `/privacidade` foi aberta e inspecionada em 1280×720 no tema
+claro; hierarquia, cartões e links estavam visíveis, e a árvore de acessibilidade
+anunciou títulos, explicações e destinos. Descubra abriu no desktop com os oito
+temas, mas seus atalhos de Salvos/Ajuda aparecem somente no layout estreito e
+ainda não foram inspecionados visualmente. Tema escuro e viewport estreito
+continuam pendentes.
 
 ## Validação e limites
 

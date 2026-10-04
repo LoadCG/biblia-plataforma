@@ -146,8 +146,9 @@ revisão humana, execução remota e distribuição.
   revisão semântica humana continua útil para conteúdo e estados complexos.
 - Ajuda permanente e explicações de armazenamento local agora estão disponíveis
   nas rotas `/ajuda` e `/privacidade`, também acessíveis por Descubra e
-  Configurações. Os links substituíram atalhos sem destino no Descubra. A
-  inspeção visual após essas mudanças ainda não foi feita.
+  Configurações. Os links substituíram atalhos sem destino no Descubra. A tela
+  `/privacidade` foi inspecionada no deploy em 1280×720 claro; tema escuro e
+  viewport estreito permanecem sem inspeção visual.
 
 ### Próxima ordem de execução
 

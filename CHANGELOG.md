@@ -10,6 +10,8 @@ O formato é baseado no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.
   perfil descartável antes de encerrar a frente de seleção; em seguida retomar
   os ciclos de UI. Os documentos agora distinguem implementação concluída de
   evidência funcional/visual ainda pendente.
+- Atualizado o workflow de CI para `actions/checkout@v7` e
+  `actions/setup-node@v7`, mantendo Node 22 para o projeto.
 
 ### Correções
 - Corrigido o acesso direto e a atualização de capítulos bíblicos no deploy
@@ -31,6 +33,11 @@ O formato é baseado no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.
   de transferência.
 
 ### Interface
+- Home agora apresenta carregamento e erro recuperável no painel de progresso;
+  valores zero só aparecem após leitura bem-sucedida, e a ausência de histórico
+  não é presumida durante a consulta.
+- Toast global respeita movimento reduzido, evita que a saída de uma mensagem
+  feche a seguinte e limpa animações/temporizadores ao desmontar.
 - Seleção de versículos agora mostra contagem e referências exatas mesmo quando
   os itens são descontínuos; a seleção visual tem contorno dedicado e dica
   acessível de como removê-la.

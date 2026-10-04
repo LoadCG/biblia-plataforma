@@ -30,7 +30,7 @@ exaustivo; revisão visual e assistiva ainda está pendente.
 
 | Superfície | Carregando | Erro | Vazio | Ação/feedback | Observação |
 |---|---|---|---|---|---|
-| Início (desktop) | progresso ainda pendente; não antecipa vazio | Toast se o progresso falhar | CTA “Escolha um livro para começar” quando não há histórico | abre `/biblia/escolher` | O CTA substitui o espaço de “Continue lendo” apenas sem histórico; mobile preserva a composição atual. |
+| Início | `EstadoCarregando` para a coluna de apoio | `EstadoErro` inline com retry para falha de leituras/progresso | CTA “Escolha um livro para começar” somente após confirmar histórico vazio | abre `/biblia/escolher`; falha do lembrete opcional usa Toast de aviso | Dados antigos são limpos ao recarregar/trocar owner; não apresenta zero enquanto a leitura do repositório está pendente ou falha. Layout responsivo existente foi preservado. |
 | Descubra / Busca | `EstadoCarregando` | `EstadoErro` com retry | `EstadoVazio` | Limpar busca ou trocar para Bíblia; Toast para ações | Erro e vazio são distintos; retry repete a mesma consulta; “Voltar aos temas” mantém alvo mínimo de 44 px. |
 | Leitor bíblico | skeleton `progressbar` | painel com retry | parcial conforme conteúdo | Toast | Dados pessoais são carregados em conjunto por capítulo; respostas antigas são descartadas. |
 | Seletor de versículos | `EstadoCarregando` | `EstadoErro` com retry | não aplicável | — | Respostas após desmontagem ou troca de referência são ignoradas. |
@@ -41,7 +41,13 @@ exaustivo; revisão visual e assistiva ainda está pendente.
 | Seletor de livros | catálogo local | não aplicável | `EstadoVazio` | limpar busca quando há termo | A tela preserva o estado original sem ação quando o catálogo estiver vazio sem filtro. |
 | Cards de versículo / popover | `EstadoCarregando` | `EstadoErro` com retry | não aplicável | ações específicas | O card do dia mantém painel próprio de erro em gradiente. |
 | Detalhe de plano | `EstadoCarregando` | `EstadoErro` com retry | estado concluído quando todos os dias finalizam | Toast nas ações | Progresso anuncia papel e valor; falhas não aparecem como conclusão ou zero; retorno, marcação, referências e ações por dia têm alvo mínimo de 44 px. |
-| Toast global | — | — | — | alerta com ação opcional e severidade semântica | Varredura AST em 2026-10-02 encontrou 73 chamadas a `mostrarToast`, todas com severidade explícita e sem opção dinâmica. O contrato agora exige severidade no TypeScript; `neutra` permanece uma escolha explícita, sem fallback silencioso. A composição/contraste ainda precisa de inspeção visual. |
+| Toast global | — | — | — | alerta com ação opcional e severidade semântica | Varredura AST em 2026-10-02 encontrou 73 chamadas a `mostrarToast`, todas com severidade explícita e sem opção dinâmica. O contrato exige severidade; a animação evita corrida entre mensagens, limpa o temporizador no unmount e respeita movimento reduzido. Inspeção visual do Toast isolado/tema escuro e expiração automática permanecem pendentes. |
+
+Na inspeção local de 2026-10-04, a Home mostrou estados de carregamento e dados
+vazios confirmados, em vez de zeros provisórios; falha de armazenamento não foi
+induzida. Um Toast de sucesso foi acionado ao salvar e remover o Versículo do Dia
+no perfil local, e ambos os avisos apareceram na árvore acessível. O estado salvo
+foi revertido em seguida. A preferência local de tema foi restaurada ao claro.
 
 O detalhe de Plano agora diferencia carga do progresso, erro com retry e dados;
 falhas ao iniciar uma sessão ou alterar conclusão dão feedback via Toast. O

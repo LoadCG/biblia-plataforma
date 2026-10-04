@@ -169,21 +169,27 @@ revisão humana, execução remota e distribuição.
    integrais em 1280×900 e 1440×900, estados com histórico/lembrete, falha
    induzida e viewport CSS conhecido. A imagem CUA recorta a janela e não serve
    como evidência de clipping nem de proporção das colunas.
-3. **Descubra e Planos:** expandir os detalhes temáticos conforme
-   [`PLANO-TEMAS-DESCOBERTA.md`](./PLANO-TEMAS-DESCOBERTA.md), mantendo conteúdo
-   novo em revisão; completar auditoria desktop de jornadas, estados, foco, tema
-   e regressões responsivas.
-4. **Estados web:** conferir inventário, duplicações de Toast, retry e estados
-   destrutivos por superfície, sem generalizar aceites parciais.
+3. **Descubra e Planos — inspeção parcial feita:** Descubra/Esperança mostrou
+   quatro referências e temas relacionados; Planos/Sabedoria ficou em 0/7 dias.
+   Conteúdo adicional continua condicionado às duas revisões humanas. Completar
+   os estados e viewports registrados no plano mestre e seguir
+   [`PLANO-TEMAS-DESCOBERTA.md`](./PLANO-TEMAS-DESCOBERTA.md) antes de publicar
+   conteúdo novo.
+4. **Estados web — em andamento:** Home tem carga/erro/retry explícitos; Toast
+   agora cancela a animação anterior, evita que um temporizador antigo feche uma
+   mensagem nova, respeita movimento reduzido e desliga native driver na web.
+   Salvamento/remoção no Versículo do Dia foi observado localmente e revertido.
+   Falta a revisão visual dos consumidores, tema escuro do Toast, erros induzidos
+   e leitor de tela real.
 5. **Hover web:** padrão centralizado aplicado a links, botões,
    abas, opções e switches por capacidade do ponteiro, com preferência de
    movimento reduzido; exportação e 17 rotas conferidas. Estado animado real de
    mouse, foco/teclado completo e coarse pointer continuam pendentes. Detalhes em
    [`docs/PLANO-HOVER-INTERACOES.md`](./docs/PLANO-HOVER-INTERACOES.md).
-6. **CI e SEO:** após o workflow atualizado, confirmar execução verde em GitHub;
-   run `37033595191` passou em 2026-10-02; validar preview Vercel quando
-   disponível e revisar compatibilidade das actions e do runner Ubuntu 26 na
-   janela de migração anunciada pelo GitHub.
+6. **CI e SEO:** workflow atualizado para `actions/checkout@v7` e
+   `actions/setup-node@v7`, preservando Node 22 do projeto. O run
+   `37033595191` passou em 2026-10-02; confirmar próximo run em `master`, validar
+   preview Vercel quando disponível e observar a migração do runner Ubuntu 26.
 7. **Conteúdo:** evoluir contrato/taxonomia e selecionar um pequeno lote apenas
    quando houver responsáveis por revisão humana independente.
 8. **Mobile dedicado, validação nativa e lojas:** permanecem deferidos; não são

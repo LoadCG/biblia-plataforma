@@ -18,13 +18,12 @@ aceite visual, assistivo, nativo ou de publicação.
 
 ## Foco atual de interface
 
-O incremento mais recente implementou anotações compartilhadas entre vários
-versículos (`5a1e745`). A validação web funcional foi executada em origem local
-descartável e registrada na matriz; o aceite nativo e de viewport segue aberto.
-Concluir os gates pendentes da frente de seleção conforme
-[`PLANO-MELHORIAS-UI-DESIGN.md`](../PLANO-MELHORIAS-UI-DESIGN.md), sem iniciar
-mudança funcional concorrente que possa obscurecer regressões. Depois, retomar o
-Ciclo 1 abaixo. O plano de hover permanece implementado com QA parcial.
+O trabalho está avançando pelos Ciclos 1–3 em paralelo por superfície: a Home
+agora diferencia carga, erro e dados confirmados; Descubra e Planos tiveram
+inspeção manual parcial; o Toast protege mensagens concorrentes e respeita
+movimento reduzido. Os gates nativos e de viewport da seleção continuam
+registrados, mas não bloqueiam trabalho web independente. O plano de hover
+segue implementado com QA parcial.
 
 ## Estado comprovado na revisão
 
@@ -47,6 +46,15 @@ inexistente. A validação da URL pública fica pendente até o deploy do commit
 | CI remoto | Primeiro run passou | `37033595191` para o commit `7716388`; gates de conteúdo, copy, validação, export e metadados passaram. Revisar avisos de runtime do Actions/runner; preview não foi comprovado. |
 | Conteúdo editorial | Catálogo funcional; expansão não aprovada | Há 66 resumos e 2 planos. Schema editorial completo, segunda revisão humana e publicação dos novos rascunhos são gates separados. |
 | Mobile/nativo | Deferido | Não fazer redesenho nem declarar aceite sem retomada explícita; validar regressões responsivas web em componentes compartilhados. |
+
+Em 2026-10-04, o detalhe de Esperança carregou quatro leituras e temas
+relacionados; listagem e detalhe de Planos foram vistos no recorte 1280×720,
+sem alterar sessões. Esse recorte não substitui os viewports/estados pendentes.
+
+**Atualização do workflow (2026-10-04):** `actions/checkout` e
+`actions/setup-node` foram atualizadas para as majors atuais compatíveis com
+Node 24 no runtime das actions; a versão de Node do projeto permanece 22. O
+resultado remoto desta alteração depende do próximo run em `master`.
 
 ## Ordem de execução
 
@@ -158,6 +166,14 @@ não foram cobertos. Em Planos, a lista e o detalhe em 0/7 foram vistos nos dois
 temas, sem alterar progresso pessoal. Os estados intermediário, concluído e erro
 seguem pendentes. A API do navegador não expõe dimensão CSS nem oferece override.
 
+**Atualização em 2026-10-04:** tema Esperança e as quatro referências carregaram
+na rota direta; os links relacionados ficaram visíveis. A lista e o detalhe
+Semana da Sabedoria foram revistos em 1280×720, claro, com 0/7 dias e sem alterar
+progresso. O modelo atual oferece leituras complementares em rascunho, que
+seguem bloqueadas até duas revisões humanas; não adicioná-las ao app antes desse
+gate. Tema escuro, 1280×900/1440×900, erro e estados concluídos continuam
+pendentes.
+
 ### Ciclo 3 — fechar sistema de estados web (P1)
 
 1. Comparar cada consumidor de `EstadoCarregando`, `EstadoErro`, `EstadoVazio` e
@@ -182,6 +198,15 @@ escolhida explicitamente, sem fallback silencioso. Isso não comprova
 cor/contraste na tela nem cobre tecnologia assistiva, comportamento temporal ou
 equivalência de mensagens por ação.
 
+**Atualização em 2026-10-04:** a Home agora mantém loading, erro recuperável e
+dados confirmados separados. O Toast global cancela a animação anterior ao
+receber uma mensagem nova, protege o temporizador contra fechamento atrasado,
+respeita movimento reduzido e não solicita native driver no web. Na origem local,
+salvar/remover o Versículo do Dia exibiu os respectivos anúncios; o dado foi
+revertido. `typecheck`, contratos UI/a11y e check de copy passaram. Não foi
+possível induzir falha, testar leitor de tela real nem inspecionar o Toast em
+tema escuro; esta evidência não fecha o ciclo inteiro.
+
 ### Ciclo 4 — regressão visual automatizada (P2 após Ciclos 1 e 2)
 
 1. Comparar a ferramenta disponível com o dev server/Expo SDK 57 e CI Linux;
@@ -198,6 +223,12 @@ equivalência de mensagens por ação.
 **Aceite:** execução reproduzível local/CI, diagnóstico legível e nenhuma
 atualização de baseline sem revisão humana.
 
+**Disponibilidade verificada em 2026-10-04:** `agent-browser`, Playwright e
+Puppeteer não estão instalados no ambiente/projeto. A sessão CUA permite inspeção
+manual, mas não captura com viewport configurável nem fornece CSS viewport. Não
+adicionar dependência visual sem a decisão de produto prevista nas regras do
+projeto; automação de baselines permanece pendente.
+
 ### Ciclo 5 — piloto editorial controlado (paralelo, P1)
 
 1. Separar estrutura atual de fonte editorial e propor o schema mínimo de ID,
@@ -213,15 +244,21 @@ atualização de baseline sem revisão humana.
 **Aceite:** revisão independente registrada, validações estruturais/editoriais
 verdes, rotas/busca/offline revisadas e nenhum conteúdo pendente exposto.
 
+**Gate pendente:** os rascunhos dos oito temas já estão preparados e validados
+estruturalmente. O plano exige dois revisores humanos independentes e decisão
+editorial registrada; nenhuma entrada foi promovida pelo agente.
+
 ### Ciclo 6 — CI, SEO e release web (P1, dependência externa)
 
 1. Após o workflow atualizado chegar ao GitHub, confirmar um run verde em
    `master`; registrar run ID, commit e eventuais falhas reais.
-2. Revisar avisos de runtime do GitHub Actions: o primeiro run foi aprovado,
-   mas anotou que `actions/checkout@v4` e `actions/setup-node@v4` ainda declaram
-   Node 20; esse runtime foi removido dos runners GitHub-hosted em 2026-09-23 e
-   o job foi forçado a Node 24. Identificar versões atuais compatíveis e
-   atualizar com base no [aviso oficial](https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/).
+2. Revisar avisos de runtime do GitHub Actions: o primeiro run executou actions
+   que declaravam Node 20 após a remoção desse runtime dos runners GitHub-hosted.
+   `checkout` e `setup-node` agora usam majors atuais com suporte ao runtime
+   Node 24; a versão Node 22 do projeto foi preservada. A compatibilidade de
+   `ubuntu-latest` deve ser confirmada no próximo run. Referências oficiais:
+   [checkout](https://github.com/actions/checkout/releases) e
+   [setup-node](https://github.com/actions/setup-node/releases).
    O runner `ubuntu-latest` inicia migração para Ubuntu 26 em 2026-10-19, com
    término planejado para 2026-11-19 ([anúncio](https://github.com/actions/runner-images/issues/14748)); confirmar o workflow após a mudança.
 3. Corrigir falhas futuras do CI sem reduzir cobertura nem elevar tolerâncias

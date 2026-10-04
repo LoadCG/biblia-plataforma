@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from "react";
-import { Animated, Pressable, Text, View } from "react-native";
+import { Animated, Platform, Pressable, Text, View } from "react-native";
 import { IconeUI } from "./icone/IconeUI";
 import { ouvirToast, type PayloadToast, type SeveridadeToast } from "../core/util/toast";
+import { useMovimentoReduzido } from "../core/util/useMovimentoReduzido";
 
 const DURACAO_PADRAO_MS = 2000;
 const DURACAO_COM_ACAO_MS = 4000;
@@ -23,22 +24,78 @@ export function Toast() {
   const [payload, setPayload] = useState<PayloadToast | null>(null);
   const opacidade = useRef(new Animated.Value(0)).current;
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const animacaoRef = useRef<Animated.CompositeAnimation | null>(null);
+  const idToastRef = useRef(0);
+  const movimentoReduzido = useMovimentoReduzido();
+  const movimentoReduzidoRef = useRef(movimentoReduzido);
+  movimentoReduzidoRef.current = movimentoReduzido;
 
-  function esconder() {
-    Animated.timing(opacidade, { toValue: 0, duration: 200, useNativeDriver: true }).start(() => setPayload(null));
+  function esconder(id: number) {
+    if (id !== idToastRef.current) return;
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+      timeoutRef.current = null;
+    }
+    if (movimentoReduzidoRef.current) {
+      opacidade.setValue(0);
+      setPayload(null);
+      return;
+    }
+
+    const animacao = Animated.timing(opacidade, {
+      toValue: 0,
+      duration: 200,
+      useNativeDriver: Platform.OS !== "web",
+    });
+    animacaoRef.current = animacao;
+    animacao.start(({ finished }) => {
+      if (animacaoRef.current === animacao) animacaoRef.current = null;
+      if (finished && id === idToastRef.current) setPayload(null);
+    });
   }
 
   useEffect(() => {
     return ouvirToast((novoPayload) => {
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
+      timeoutRef.current = null;
+      const id = ++idToastRef.current;
+      animacaoRef.current?.stop();
+      animacaoRef.current = null;
       setPayload(novoPayload);
-      Animated.timing(opacidade, { toValue: 1, duration: 150, useNativeDriver: true }).start();
+      if (movimentoReduzidoRef.current) {
+        opacidade.setValue(1);
+      } else {
+        const animacao = Animated.timing(opacidade, {
+          toValue: 1,
+          duration: 150,
+          useNativeDriver: Platform.OS !== "web",
+        });
+        animacaoRef.current = animacao;
+        animacao.start(() => {
+          if (animacaoRef.current === animacao) animacaoRef.current = null;
+        });
+      }
       const duracao = novoPayload.duracaoMs ?? (novoPayload.acaoLabel ? DURACAO_COM_ACAO_MS : DURACAO_PADRAO_MS);
-      timeoutRef.current = setTimeout(esconder, duracao);
+      timeoutRef.current = setTimeout(() => esconder(id), duracao);
     });
   }, [opacidade]);
 
+  useEffect(() => () => {
+    idToastRef.current += 1;
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    animacaoRef.current?.stop();
+    animacaoRef.current = null;
+  }, []);
+
+  useEffect(() => {
+    if (!payload || !movimentoReduzido) return;
+    animacaoRef.current?.stop();
+    animacaoRef.current = null;
+    opacidade.setValue(1);
+  }, [payload, movimentoReduzido, opacidade]);
+
   if (!payload) return null;
+  const id = idToastRef.current;
   const estilo = ESTILOS_SEVERIDADE[payload.severidade];
 
   return (
@@ -68,9 +125,8 @@ export function Toast() {
         {payload.acaoLabel ? (
           <Pressable
             onPress={() => {
-              if (timeoutRef.current) clearTimeout(timeoutRef.current);
               payload.onAcao?.();
-              esconder();
+              esconder(id);
             }}
             accessibilityRole="button"
             accessibilityLabel={payload.acaoLabel}

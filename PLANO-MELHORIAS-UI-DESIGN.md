@@ -30,17 +30,20 @@ O fluxo atravessa leitor, grade de seleção prévia e ações de grifo, salvo,
 anotação, cópia, compartilhamento e geração de imagem. Esta sequência atualiza a
 ordem geral acima até fechar esta frente, sem antecipar revisão mobile dedicada.
 
-1. **Anotações compartilhadas — implementação concluída; validação funcional
-   pendente.** A seleção múltipla agora grava um grupo lógico, apresenta uma
-   anotação principal e identifica os demais vínculos. Validar, nesta ordem:
+1. **Anotações compartilhadas — implementação e QA web funcional concluídos;
+   aceite integral parcial.** A seleção múltipla grava um grupo lógico,
+   apresenta uma anotação principal e identifica os demais vínculos. Em
+   `localhost:8082`, com perfil de QA descartável, foram exercitados:
    criação em seleção contínua e descontínua; reabertura por cada versículo do
-   grupo; edição do texto e extensão do grupo sem mudar o texto; incorporação de
-   uma nota individual existente; conflito com duas notas/grupos sem perda de
-   dados; exclusão pelo leitor e por “Salvos”; atualização de busca, atividade e
-   Versículo do Dia. Confirmar persistência após recarga/reabertura e consistência
-   entre AsyncStorage (web) e SQLite (nativo) por verificação estrutural; teste
-   nativo em aparelho continua fora de escopo. Registrar comportamento realmente
-   exercitado e não presumir paridade de runtime pelo typecheck.
+   grupo; edição e extensão sem mudar o texto; promoção de uma nota individual;
+   conflito entre notas independentes sem sobrescrita; persistência após
+   recarga; item único, busca, edição e exclusão em “Salvos”; atividade agrupada;
+   abertura pelo Versículo do Dia com todas as referências. Dados temporários
+   removidos. A lista/modal em claro e escuro foram inspecionados. Cinco testes
+   de repositório local foram adicionados. Ainda faltam exclusão pelo leitor,
+   estados de erro/ocupado e retorno de foco, viewport CSS conhecido e runtime
+   SQLite em dispositivo/emulador. A verificação estrutural de SQLite não prova
+   paridade de runtime nativo.
 2. **Entrada e estado selecionado — implementação parcial:** distinguir
    versículo selecionado, alvo da URL, leitura em voz alta e grifo; conferir
    legibilidade em claro/escuro e alternância por teclado.

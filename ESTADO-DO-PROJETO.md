@@ -147,14 +147,16 @@ revisão humana, execução remota e distribuição.
 
 ### Próxima ordem de execução
 
-0. **Validar anotações multi-versículo:** o commit `5a1e745` implementou grupos
-   lógicos, extensão/edição, conflito seguro, exibição agrupada em “Salvos” e
-   suporte aos consumidores; typecheck e diff check passaram. Ainda não houve
-   inspeção visual nem persistência pós-recarga. Exercitar o plano prévio em
-   perfil descartável: criação contínua/descontínua, reabertura por qualquer
-   membro, edição, extensão sem alterar texto, promoção de nota individual,
-   conflito sem sobrescrita, exclusão, recarga e consistência entre Salvos,
-   pesquisa, atividade e Versículo do Dia. Atualizar evidências em
+0. **Anotações multi-versículo — QA web funcional concluído, com gates nativos e
+   visuais pendentes:** em `localhost:8082`, perfil descartável, foram conferidos
+   criação contínua/descontínua, abertura pelo membro secundário, extensão sem
+   alterar o texto, promoção de nota individual, conflito sem sobrescrita,
+   persistência após recarga e exclusão. “Salvos” exibiu um item por grupo;
+   busca/edição, atividade e o cartão do Versículo do Dia preservaram as
+   referências. Os dados temporários foram removidos. Cinco testes focados e os
+   checks registrados na matriz passaram. Ainda faltam runtime SQLite em
+   dispositivo/emulador, estados de erro/ocupado/foco, tecnologia assistiva
+   física e inspeção em viewport CSS medido. Evidências em
    [`PLANO-MELHORIAS-UI-DESIGN.md`](./PLANO-MELHORIAS-UI-DESIGN.md) e na matriz.
 1. **Fechar fluxo de seleção:** conferir a11y de teclado/modal/foco, ações em
    lote, cópia/compartilhamento/imagem e grade; cobrir claro/escuro e breakpoints

@@ -272,3 +272,31 @@ como aprovado, defeito reproduzível ou bloqueado.
 - O documento permaneceu com 1280 px de largura. A captura visual disponível
   recorta a borda direita do viewport, então não se registra inspeção visual
   integral da lateral nesta rodada.
+
+## QA de anotações compartilhadas — 2026-10-04
+
+- Ambiente: Codex In-app Browser, Expo Web local em `http://localhost:8082`,
+  origem e perfil descartáveis. Nenhuma gravação foi feita no site publicado ou
+  no perfil pessoal. Ao final, os grupos temporários foram excluídos e “Salvos”
+  mostrou estado vazio.
+- Fluxo validado: criação de grupos contínuos e descontínuos; abertura pelo
+  versículo secundário; extensão mantendo o texto; promoção de nota individual;
+  conflito entre grupos sem sobrescrita; persistência após reload. Em Salvos,
+  um item por grupo, busca, edição e exclusão; em Você > Atividade, uma entrada
+  com `Salmos 139:14–15`; no cartão do Versículo do Dia, modal com as duas
+  referências e texto persistido. A lista e o modal foram vistos em claro e
+  escuro.
+- Testes locais: cinco casos focados do `LocalNotasRepository` passaram; também
+  `typecheck`, `check:a11y` (56 contratos), `check:ui` (11 contratos/superfícies),
+  `check:copy-ui` (114 fontes), `export:web` (1.189 rotas) e `git diff --check`.
+- Limites: o leitor de tela físico, estados de erro/ocupado/retorno de foco e
+  execução de SQLite em dispositivo/emulador não foram testados. A sessão não
+  expôs dimensões CSS nem override do viewport; uma captura do leitor aparentou
+  corte horizontal, mas isso não foi reproduzido com geometria mensurável e não
+  é classificado como defeito confirmado. Após a exportação houve uma tela branca
+  transitória; o servidor local foi reiniciado e Home/capítulo voltaram a abrir,
+  sem exceção de aplicação observada. O agente-browser CLI não estava instalado;
+  a verificação usou a sessão CUA disponível.
+- Conclusão: funcionalidade web/AsyncStorage aprovada nos cenários listados;
+  aceite global permanece parcial até fechar os limites acima. Isso não bloqueia
+  ciclos de interface que não dependam desses gates.

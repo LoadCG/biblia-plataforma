@@ -19,12 +19,12 @@ aceite visual, assistivo, nativo ou de publicação.
 ## Foco atual de interface
 
 O incremento mais recente implementou anotações compartilhadas entre vários
-versículos (`5a1e745`). A próxima entrega é validar esse fluxo em contexto
-descartável e atualizar a evidência da frente de seleção conforme
-[`PLANO-MELHORIAS-UI-DESIGN.md`](../PLANO-MELHORIAS-UI-DESIGN.md). Até esse aceite,
-não iniciar outra mudança funcional na seleção que possa obscurecer regressões.
-Depois, retomar o Ciclo 1 abaixo. O plano de hover permanece implementado com QA
-parcial e não é a prioridade imediata.
+versículos (`5a1e745`). A validação web funcional foi executada em origem local
+descartável e registrada na matriz; o aceite nativo e de viewport segue aberto.
+Concluir os gates pendentes da frente de seleção conforme
+[`PLANO-MELHORIAS-UI-DESIGN.md`](../PLANO-MELHORIAS-UI-DESIGN.md), sem iniciar
+mudança funcional concorrente que possa obscurecer regressões. Depois, retomar o
+Ciclo 1 abaixo. O plano de hover permanece implementado com QA parcial.
 
 ## Estado comprovado na revisão
 
@@ -42,7 +42,7 @@ inexistente. A validação da URL pública fica pendente até o deploy do commit
 | Descubra | Parcialmente implementada | No viewport desktop disponível, grade de oito temas, detalhe “Esperança”, links, entrada direta, recarga e busca (50 resultados/estado vazio) foram conferidos. Retorno que selecionava Início foi corrigido; tema inválido agora normaliza para `/pesquisa`. Ordem inicial de foco, indicador visível e abrir/voltar tema com Enter foram verificados; auditoria completa e viewports planejados seguem pendentes. |
 | Planos | Implementado com QA parcial | Lista e detalhe em claro/escuro; estado 0/7, sete sessões e ações acessíveis conferidos sem alterar progresso. Erro, conclusão, sessão retomada e viewports planejados permanecem incompletos. |
 | Sistema de estados | Migração principal feita | Inventário/API/migrações existem. Varredura AST encontrou 73 chamadas a `mostrarToast`, todas classificadas; o contrato TypeScript agora exige severidade. Inspeção visual/assistiva dos consumidores continua pendente. |
-| Anotações compartilhadas | Implementadas; validação pendente | Commit `5a1e745` adiciona grupos multi-versículo em AsyncStorage e SQLite, edição/extensão, proteção contra conflito, exibição agrupada e suporte nos consumidores. `typecheck` e `git diff --check` passaram; interação visual, persistência pós-recarga e exclusão ainda não foram exercitadas. Ver plano focal de UI. |
+| Anotações compartilhadas | Implementadas; QA web funcional concluído, aceite integral parcial | Commit `5a1e745` adiciona grupos multi-versículo em AsyncStorage e SQLite. Em `localhost:8082`, perfil descartável: criação contínua/descontínua, reabertura por membro, extensão, promoção de nota individual, conflito sem sobrescrita, recarga, Salvos/busca/edição/exclusão, atividade e cartão do Versículo do Dia conferidos; dados de QA removidos. Cinco testes do repositório, typecheck, checks a11y/UI/copy e export passaram. Falta runtime SQLite em dispositivo/emulador, estados de erro/foco e medição visual com viewport conhecido. |
 | Copy da interface | Gate estático passou | 114 fontes de app/componentes/conteúdo verificadas localmente e no CI, sem padrões sinalizados; a heurística não substitui revisão semântica. |
 | CI remoto | Primeiro run passou | `37033595191` para o commit `7716388`; gates de conteúdo, copy, validação, export e metadados passaram. Revisar avisos de runtime do Actions/runner; preview não foi comprovado. |
 | Conteúdo editorial | Catálogo funcional; expansão não aprovada | Há 66 resumos e 2 planos. Schema editorial completo, segunda revisão humana e publicação dos novos rascunhos são gates separados. |
@@ -66,7 +66,7 @@ inexistente. A validação da URL pública fica pendente até o deploy do commit
 ativos; o check de copy passa e é executado no CI; pipeline inclui `master`;
 nenhum aceite humano/nativo/de preview é inferido.
 
-### Ciclo prévio — validar anotações compartilhadas e fechar evidência da seleção (P0)
+### Ciclo prévio — validar anotações compartilhadas e fechar evidência da seleção (P0; validação web concluída em 2026-10-04)
 
 1. Preparar perfil/armazenamento descartável e registrar o estado inicial; não
    usar dados pessoais persistentes nem ambiente público para operações de
@@ -88,10 +88,15 @@ nenhum aceite humano/nativo/de preview é inferido.
    viewports, dados descartáveis e limitações na matriz. Atualizar o plano focal
    e a funcionalidade somente com evidência observada.
 
-**Aceite:** grupo criado/editado/estendido/removido sem perda ou duplicação,
-conflitos não sobrescrevem notas, recarga mantém vínculos, referências e foco
-são compreensíveis, tema e breakpoints verificados. O que não puder ser testado
-fica explicitamente pendente e não bloqueia a retomada dos ciclos independentes.
+**Resultado observado:** grupos criados, estendidos, promovidos, reabertos após
+recarga, agrupados nas superfícies e excluídos sem duplicação; conflito preservou
+as notas originais. O conteúdo temporário foi removido ao final. A etapa está
+funcionalmente concluída para web/AsyncStorage; não equivale a aceite visual
+integral ou nativo. O modal/lista em claro e escuro foram inspecionados. O browser
+não ofereceu medição de viewport CSS/override; uma captura do leitor aparentou
+corte à direita, sem evidência suficiente para classificar como defeito. Também
+ficam pendentes leitor de tela físico, estados de erro/ocupado/foco e runtime
+SQLite em dispositivo/emulador. Esses gates não bloqueiam ciclos independentes.
 
 ### Ciclo 1 — concluir a composição da Home desktop (P0; após o ciclo prévio)
 

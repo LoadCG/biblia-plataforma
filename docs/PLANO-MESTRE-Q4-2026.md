@@ -39,7 +39,7 @@ inexistente. A validação da URL pública fica pendente até o deploy do commit
 |---|---|---|
 | Home desktop | Parcialmente refinada | Jornada reorganizada; paisagem horária e ilustração da jornada implementadas. Nova inspeção no viewport desktop disponível, claro/escuro e perfil local sem histórico; composição e lateral legíveis. A captura em 1280×900 e 1440×900 continua pendente: a API do navegador não expõe dimensão CSS nem permite fixar o viewport nesta sessão. |
 | Descubra | Parcialmente implementada | No viewport desktop disponível, grade de oito temas, detalhe “Esperança”, links, entrada direta, recarga e busca (50 resultados/estado vazio) foram conferidos. Retorno que selecionava Início foi corrigido; tema inválido agora normaliza para `/pesquisa`. Ordem inicial de foco, indicador visível e abrir/voltar tema com Enter foram verificados; auditoria completa e viewports planejados seguem pendentes. |
-| Planos | Implementado com QA parcial | Lista e detalhe em claro/escuro; estado 0/7, sete sessões e ações acessíveis conferidos sem alterar progresso. Erro, conclusão, sessão retomada e viewports planejados permanecem incompletos. |
+| Planos | Implementado com QA parcial | Lista e detalhe em claro/escuro; estado 0/7, sete sessões e ações acessíveis conferidos sem alterar progresso. O detalhe Semana da Sabedoria foi revisto em 1280×720 no tema escuro nesta rodada. Erro, conclusão, sessão retomada e viewports planejados permanecem incompletos. |
 | Sistema de estados | Migração principal feita | Inventário/API/migrações existem. Varredura AST encontrou 73 chamadas a `mostrarToast`, todas classificadas; o contrato TypeScript agora exige severidade. Inspeção visual/assistiva dos consumidores continua pendente. |
 | Anotações compartilhadas | Implementadas; QA web funcional concluído, aceite integral parcial | Commit `5a1e745` adiciona grupos multi-versículo em AsyncStorage e SQLite. Em `localhost:8082`, perfil descartável: criação contínua/descontínua, reabertura por membro, extensão, promoção de nota individual, conflito sem sobrescrita, recarga, Salvos/busca/edição/exclusão, atividade e cartão do Versículo do Dia conferidos; dados de QA removidos. Cinco testes do repositório, typecheck, checks a11y/UI/copy e export passaram. Falta runtime SQLite em dispositivo/emulador, estados de erro/foco e medição visual com viewport conhecido. |
 | Copy da interface | Gate estático passou | 114 fontes de app/componentes/conteúdo verificadas localmente e no CI, sem padrões sinalizados; a heurística não substitui revisão semântica. |
@@ -174,8 +174,10 @@ na rota direta; os links relacionados ficaram visíveis. A lista e o detalhe
 Semana da Sabedoria foram revistos em 1280×720, claro, com 0/7 dias e sem alterar
 progresso. O modelo atual oferece leituras complementares em rascunho, que
 seguem bloqueadas até duas revisões humanas; não adicioná-las ao app antes desse
-gate. Tema escuro, 1280×900/1440×900, erro e estados concluídos continuam
-pendentes.
+gate. O detalhe foi revisto também em escuro; contraste de texto, ilustração,
+indicador 0/7 e ação principal permaneceram distinguíveis. A preferência foi
+restaurada ao claro. A lista escura, 1280×900/1440×900, erro e estados
+concluídos continuam pendentes.
 
 ### Ciclo 3 — fechar sistema de estados web (P1)
 

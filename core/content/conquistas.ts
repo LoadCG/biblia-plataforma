@@ -21,6 +21,8 @@ export type IdConquista =
   | "novo-testamento"
   | "biblia-completa";
 
+const SLUGS_VALIDOS = new Set(livros.map((livro) => livro.slug));
+
 const PENTATEUCO = ["01-genesis", "02-exodo", "03-levitico", "04-numeros", "05-deuteronomio"];
 const EVANGELHOS = ["40-mateus", "41-marcos", "42-lucas", "43-joao"];
 const SLUGS_AT = livros.filter((l) => l.testamento === "Antigo Testamento").map((l) => l.slug);
@@ -31,11 +33,12 @@ function contarLidos(slugs: string[], lidos: Set<string>): number {
 }
 
 export function calcularConquistas(lidos: Set<string>): Conquista[] {
-  const noPentateuco = contarLidos(PENTATEUCO, lidos);
-  const nosEvangelhos = contarLidos(EVANGELHOS, lidos);
-  const noAT = contarLidos(SLUGS_AT, lidos);
-  const noNT = contarLidos(SLUGS_NT, lidos);
-  const noTotal = Math.min(lidos.size, livros.length);
+  const lidosValidos = new Set([...lidos].filter((slug) => SLUGS_VALIDOS.has(slug)));
+  const noPentateuco = contarLidos(PENTATEUCO, lidosValidos);
+  const nosEvangelhos = contarLidos(EVANGELHOS, lidosValidos);
+  const noAT = contarLidos(SLUGS_AT, lidosValidos);
+  const noNT = contarLidos(SLUGS_NT, lidosValidos);
+  const noTotal = lidosValidos.size;
 
   return [
     {
@@ -87,4 +90,46 @@ export function calcularConquistas(lidos: Set<string>): Conquista[] {
       conquistada: noTotal >= livros.length,
     },
   ];
+}
+
+/** Seleciona até três marcos para a Home sem depender da ordem incidental do array. */
+export function selecionarDestaquesConquistas(conquistas: Conquista[]): Conquista[] {
+  const primeiroPasso = conquistas.find((conquista) => conquista.id === "primeiro-livro");
+  const bibliaCompleta = conquistas.find((conquista) => conquista.id === "biblia-completa");
+  const emAndamento = conquistas
+    .filter((conquista) => !conquista.conquistada && conquista.progressoAtual > 0 && conquista.id !== "biblia-completa")
+    .sort((a, b) => {
+      const proporcaoA = a.progressoAtual / a.progressoTotal;
+      const proporcaoB = b.progressoAtual / b.progressoTotal;
+      return proporcaoB - proporcaoA || a.progressoTotal - b.progressoTotal;
+    });
+  const conquistadas = conquistas.filter((conquista) => conquista.conquistada && conquista.id !== "biblia-completa");
+
+  const candidatas = emAndamento.length > 0
+    ? [emAndamento[0], primeiroPasso, bibliaCompleta]
+    : [primeiroPasso, ...conquistadas.slice(-1), bibliaCompleta];
+
+  const idsIncluidos = new Set<IdConquista>();
+  return candidatas.filter((conquista): conquista is Conquista => {
+    if (!conquista || idsIncluidos.has(conquista.id)) return false;
+    idsIncluidos.add(conquista.id);
+    return true;
+  });
+}
+
+export function obterLivrosPendentes(id: IdConquista, lidos: Set<string>) {
+  const validos = new Set([...lidos].filter((slug) => SLUGS_VALIDOS.has(slug)));
+  if (id === "primeiro-livro") {
+    const sugestao = livros.find((livro) => !validos.has(livro.slug));
+    return sugestao ? [sugestao] : [];
+  }
+  const requisitos: Partial<Record<IdConquista, string[]>> = {
+    pentateuco: PENTATEUCO,
+    evangelhos: EVANGELHOS,
+    "antigo-testamento": SLUGS_AT,
+    "novo-testamento": SLUGS_NT,
+    "biblia-completa": livros.map((livro) => livro.slug),
+  };
+  const slugs = requisitos[id] ?? [];
+  return livros.filter((livro) => slugs.includes(livro.slug) && !validos.has(livro.slug));
 }

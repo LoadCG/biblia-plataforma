@@ -43,9 +43,9 @@ function MedalhaCarrossel({ conquista }: { conquista: Conquista }) {
 
   return (
     <Pressable
-      onPress={() => router.push("/medalhas")}
+      onPress={() => router.push({ pathname: "/medalhas", params: { conquista: conquista.id } })}
       accessibilityRole="button"
-      accessibilityLabel={`${conquista.titulo}, ${conquista.progressoAtual} de ${conquista.progressoTotal}`}
+      accessibilityLabel={`${conquista.titulo}, ${conquista.conquistada ? "conquistada" : `${conquista.progressoAtual} de ${conquista.progressoTotal}`}`}
       className="w-28 mr-3 items-center active:opacity-70"
     >
       <View

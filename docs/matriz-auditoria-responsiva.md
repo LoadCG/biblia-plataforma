@@ -151,7 +151,7 @@
 | Leitor | `/biblia/01-genesis/1` | toolbar, texto, rolagem e espaço da navegação | Claro/escuro a 1280×900; título serifado, números de versículo em acento terroso, conteúdo preservado como texto-primeiro e sem overflow. Preferência de fonte mantém escolha da pessoa. Histórico mobile: texto/toolbar em claro 375×812 e rolagem em escuro 320×800; seleção/fonte/foco seguem pendentes. |
 | Configurações | `/configuracoes` | fonte, tema, switches, dados | Hierarquia e controles conferidos em claro 375×812; switches não alterados nesta auditoria. |
 | Estatísticas | `/estatisticas` | cards e quebra em largura estreita | Cards conferidos em claro 375×812; último card sozinho na terceira linha, sem overflow. |
-| Perfil e medalhas | `/voce`, `/medalhas` | carrossel de conquistas, ícones, descrições e cards | Conferidos em claro e escuro em 320×800 e 375×812; medalhas do Perfil aparecem em carrossel horizontal e a página completa mantém descrições/progresso legíveis. |
+| Perfil e medalhas | `/voce`, `/medalhas`, `/medalhas?conquista=…` | carrossel, destaques, progresso, estados assíncronos, detalhe e livros pendentes | Histórico de claro/escuro em 320×800 e 375×812 cobre Perfil e lista; detalhe e estados de erro/carregamento adicionados em 2026-10-04 ainda aguardam inspeção visual em navegador. |
 
 ## Achados
 
@@ -321,3 +321,27 @@ como aprovado, defeito reproduzível ou bloqueado.
   sem observação da interação em runtime. Capturas em 1280×900/1440×900 e estados
   com histórico/lembrete seguem pendentes. Este incremento parcial não conclui o
   Ciclo 1.
+
+## Medalhas — integridade, navegação e próximos passos — 2026-10-04
+
+- Cálculo: slugs lidos são validados contra o catálogo canônico antes de compor
+  progresso total. Foi adicionada seleção explícita de até três destaques da
+  Home: marco em andamento mais próximo, primeiro passo e conclusão, sem
+  duplicatas; sem progresso iniciado, exibe primeiro passo, conquista existente
+  e conclusão.
+- Navegação: Home, Perfil e lista completa abrem `/medalhas?conquista=…` para o
+  marco específico, reutilizando uma rota estática existente. O detalhe informa
+  estado e progresso e lista até seis resumos pendentes como próximos passos,
+  mantendo acesso ao restante da lista.
+- Estados: lista e detalhe carregam dados ao ganhar foco e descartam resposta
+  tardia ao perder foco. Carregamento, erro recuperável e dados disponíveis são
+  estados distintos; falha não aparece como zero conquistas. Barras de progresso
+  declaram valor acessível, rótulo e faixa.
+- Qualidade: seis testes unitários cobrem slugs inválidos, progressos parciais,
+  catálogo completo, seleção de destaques, ausência de duplicatas e livros
+  pendentes. `npm run typecheck`, os testes focados, `npm run check:a11y`,
+  `npm run check:ui`, `npm run export:web` e `git diff --check` passaram.
+- Limites: esta rodada não inspecionou as rotas novas em browser nem induziu
+  falha real do repositório; tema, foco de teclado/leitor de tela e estados
+  visuais continuam pendentes de conferência runtime. A matriz não declara o
+  detalhe visualmente aprovado até essas verificações ocorrerem.

@@ -1,13 +1,10 @@
 import { router } from "expo-router";
-import { useState } from "react";
-import { Modal, Pressable, Text, View } from "react-native";
-import type { Conquista } from "../core/content/conquistas";
+import { Pressable, Text, View } from "react-native";
+import { selecionarDestaquesConquistas, type Conquista } from "../core/content/conquistas";
 import { IconeConquista } from "./IconeConquista";
 
 export function CardConquistas({ conquistas }: { conquistas: Conquista[] }) {
-  // Mostra apenas 3 medalhas de destaque por enquanto
-  const topConquistas = conquistas.slice(1, 4); // Ignora a "Primeiro Passo" pra focar nas maiores
-  const [conquistaAberta, setConquistaAberta] = useState<Conquista | null>(null);
+  const destaques = selecionarDestaquesConquistas(conquistas);
 
   return (
     <View className="rounded-3xl bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark p-6 mb-4 shadow-sm">
@@ -16,14 +13,14 @@ export function CardConquistas({ conquistas }: { conquistas: Conquista[] }) {
       </Text>
       
       <View className="flex-row justify-between mb-6">
-        {topConquistas.map((c, index) => {
+        {destaques.map((c) => {
           const completa = c.conquistada;
           return (
             <Pressable
               key={c.id}
-              onPress={() => setConquistaAberta(c)}
+              onPress={() => router.push({ pathname: "/medalhas", params: { conquista: c.id } })}
               accessibilityRole="button"
-              accessibilityLabel={`${c.titulo}${completa ? ", conquistada" : `, ${c.progressoAtual} de ${c.progressoTotal}`}`}
+              accessibilityLabel={`${c.titulo}, ${completa ? "conquistada" : `${c.progressoAtual} de ${c.progressoTotal}`}`}
               className="items-center flex-1 active:opacity-70"
             >
               <View
@@ -55,36 +52,6 @@ export function CardConquistas({ conquistas }: { conquistas: Conquista[] }) {
         <Text className="text-xs font-semibold text-cor-texto dark:text-cor-texto-dark">Ver todos</Text>
       </Pressable>
 
-      <Modal visible={!!conquistaAberta} transparent animationType="fade" onRequestClose={() => setConquistaAberta(null)}>
-        <Pressable className="flex-1 items-center justify-center bg-black/40 px-6" onPress={() => setConquistaAberta(null)}>
-          <Pressable onPress={(e) => e.stopPropagation()} className="w-full max-w-sm rounded-2xl bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark p-6">
-            {conquistaAberta ? (
-              <>
-                <Text className="text-lg font-bold text-cor-texto dark:text-cor-texto-dark mb-1.5">{conquistaAberta.titulo}</Text>
-                <Text className="text-sm text-cor-texto-suave dark:text-cor-texto-suave-dark mb-4">{conquistaAberta.descricao}</Text>
-                <Text className="text-xs font-semibold text-cor-destaque dark:text-cor-destaque-dark mb-4">
-                  {conquistaAberta.conquistada ? "Conquistada ✓" : `${conquistaAberta.progressoAtual} de ${conquistaAberta.progressoTotal}`}
-                </Text>
-                <View className="flex-row items-center justify-between">
-                  <Pressable
-                    onPress={() => {
-                      setConquistaAberta(null);
-                      router.push("/medalhas");
-                    }}
-                    accessibilityRole="button"
-                    className="px-3 py-2 active:opacity-70"
-                  >
-                    <Text className="text-cor-destaque dark:text-cor-destaque-dark font-semibold text-sm">Ver todas</Text>
-                  </Pressable>
-                  <Pressable onPress={() => setConquistaAberta(null)} accessibilityRole="button" className="px-4 py-2 rounded-full bg-cor-destaque dark:bg-cor-destaque-dark active:opacity-70">
-                    <Text className="text-white font-semibold text-sm">Fechar</Text>
-                  </Pressable>
-                </View>
-              </>
-            ) : null}
-          </Pressable>
-        </Pressable>
-      </Modal>
     </View>
   );
 }

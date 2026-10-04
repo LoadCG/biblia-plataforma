@@ -300,3 +300,24 @@ como aprovado, defeito reproduzível ou bloqueado.
 - Conclusão: funcionalidade web/AsyncStorage aprovada nos cenários listados;
   aceite global permanece parcial até fechar os limites acima. Isso não bloqueia
   ciclos de interface que não dependam desses gates.
+
+## Home — estados do painel de progresso — 2026-10-04
+
+- Implementação: a coluna de apoio não exibe mais zeros enquanto os repositórios
+  ainda carregam ou quando falha a leitura de progresso. O carregamento usa o
+  estado compartilhado acessível; falha dos dados principais apresenta erro
+  inline recuperável. A ação de começar a leitura depende da confirmação de que
+  o histórico foi carregado, evitando apresentar ausência de dados como certeza
+  durante a consulta. Falha ao carregar o lembrete opcional tem aviso próprio.
+- Ambiente: Expo Web local em `localhost:8082`, perfil local. A árvore acessível
+  mostrou primeiro “Carregando seu progresso de leitura” e, depois, a Home com
+  os dados de perfil vazio retornados com sucesso. Claro e escuro foram
+  inspecionados; o tema local foi restaurado ao claro.
+- Checks: `npm run typecheck`, `npm run check:ui` (11 superfícies/contratos) e
+  `npm run check:a11y` (56 contratos) passaram.
+- Limites: a sessão não expõe viewport CSS nem override; a captura CUA de 1000 px
+  é recortada e não permite aprovar as colunas ou classificar clipping. O erro de
+  armazenamento não foi induzido; a recuperação está presente estruturalmente,
+  sem observação da interação em runtime. Capturas em 1280×900/1440×900 e estados
+  com histórico/lembrete seguem pendentes. Este incremento parcial não conclui o
+  Ciclo 1.

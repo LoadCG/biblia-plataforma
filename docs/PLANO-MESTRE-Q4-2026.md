@@ -98,7 +98,7 @@ corte à direita, sem evidência suficiente para classificar como defeito. Tamb�
 ficam pendentes leitor de tela físico, estados de erro/ocupado/foco e runtime
 SQLite em dispositivo/emulador. Esses gates não bloqueiam ciclos independentes.
 
-### Ciclo 1 — concluir a composição da Home desktop (P0; após o ciclo prévio)
+### Ciclo 1 — concluir a composição da Home desktop (P0; em andamento)
 
 1. Capturar Home com janela integral em 1440×900 e 1280×900, claro/escuro;
    documentar largura do documento, scroll, foco e estado de progresso utilizado.
@@ -113,6 +113,18 @@ SQLite em dispositivo/emulador. Esses gates não bloqueiam ciclos independentes.
 
 **Aceite:** captura integral sem recorte/clipping; ordem de leitura clara;
 contraste e foco visíveis; largura sem overflow; evidências e limites anotados.
+
+**Progresso em 2026-10-04:** a coluna de apoio deixou de apresentar progresso,
+sequência e medalhas como zero antes da leitura local terminar ou quando a
+consulta principal falha. A carga agora tem estado acessível e a falha oferece
+nova tentativa; o convite “Escolha um livro” só aparece após confirmar que o
+perfil não tem leituras recentes. `typecheck`, `check:ui` e `check:a11y` passaram;
+na origem local, a árvore acessível mostrou carga e, após sucesso, o perfil vazio
+com progresso zero real. A Home foi vista em claro/escuro, mas a captura CUA é
+recortada e não fornece viewport CSS; não comprova colunas sem clipping. Forçar
+falha de armazenamento também não foi possível. Permanecem pendentes capturas
+integrais em 1280×900 e 1440×900, outros estados de histórico/lembrete, erro
+induzido e medição responsiva.
 
 ### Ciclo 2 — comparação desktop de Descubra e Planos (P1)
 

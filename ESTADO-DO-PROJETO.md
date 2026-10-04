@@ -162,12 +162,13 @@ revisão humana, execução remota e distribuição.
    lote, cópia/compartilhamento/imagem e grade; cobrir claro/escuro e breakpoints
    web tocados. Não inferir QA de dispositivo nem usar armazenamento pessoal para
    gravações. Critérios detalhados estão no plano focal.
-2. **Home desktop:** a revisão no viewport disponível, em claro/escuro e perfil
-   sem histórico, confirmou a hierarquia sem clipping horizontal perceptível.
-   A API do navegador não expõe dimensão CSS nem oferece override; faltam
-   capturas integrais em 1280×900 e 1440×900 e estados com histórico/plano.
-   Não marcar o Ciclo 1 como concluído até obter esses sinais ou revisar
-   explicitamente o critério de viewport.
+2. **Home desktop — em andamento:** a coluna de apoio agora diferencia carga,
+   erro recuperável e valores carregados; o estado zero só aparece após resposta
+   bem-sucedida. `typecheck`, `check:ui` e `check:a11y` passaram; a origem local
+   mostrou a carga e o perfil vazio carregado em claro/escuro. Faltam capturas
+   integrais em 1280×900 e 1440×900, estados com histórico/lembrete, falha
+   induzida e viewport CSS conhecido. A imagem CUA recorta a janela e não serve
+   como evidência de clipping nem de proporção das colunas.
 3. **Descubra e Planos:** expandir os detalhes temáticos conforme
    [`PLANO-TEMAS-DESCOBERTA.md`](./PLANO-TEMAS-DESCOBERTA.md), mantendo conteúdo
    novo em revisão; completar auditoria desktop de jornadas, estados, foco, tema

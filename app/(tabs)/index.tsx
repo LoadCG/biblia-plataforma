@@ -1,6 +1,8 @@
 import { Link, router, useLocalSearchParams } from "expo-router";
 import { useEffect, useMemo, useState } from "react";
 import { Platform, Pressable, ScrollView, Text, useWindowDimensions, View } from "react-native";
+import { EstadoCarregando } from "../../components/EstadoCarregando";
+import { EstadoErro } from "../../components/EstadoErro";
 import { IconeUI } from "../../components/icone/IconeUI";
 import { CardConquistas } from "../../components/CardConquistas";
 import { CardStreak } from "../../components/CardStreak";
@@ -99,13 +101,36 @@ function CardComecarLeitura({ escuro }: { escuro: boolean }) {
   );
 }
 
+function EstadoColunaDeApoio({
+  carregando,
+  aoTentarNovamente,
+}: {
+  carregando: boolean;
+  aoTentarNovamente: () => void;
+}) {
+  return (
+    <View className="rounded-3xl border border-cor-borda dark:border-cor-borda-dark bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark mb-4 min-h-44 justify-center">
+      {carregando ? (
+        <EstadoCarregando rotulo="Carregando seu progresso de leitura" />
+      ) : (
+        <EstadoErro
+          titulo="Seu progresso não está disponível"
+          descricao="Tente carregar novamente para ver sua jornada, sequência e medalhas."
+          aoTentarNovamente={aoTentarNovamente}
+        />
+      )}
+    </View>
+  );
+}
+
 export default function Inicio() {
   const parametros = useLocalSearchParams<{ previewPeriodo?: string | string[] }>();
   const ownerId = useOwnerId();
   const [lidos, setLidos] = useState<string[]>([]);
   const [sequencia, setSequencia] = useState(0);
   const [recentes, setRecentes] = useState<CapituloLido[]>([]);
-  const [progressoCarregado, setProgressoCarregado] = useState(false);
+  const [estadoProgresso, setEstadoProgresso] = useState<"carregando" | "disponivel" | "erro">("carregando");
+  const [tentativaCarregar, setTentativaCarregar] = useState(0);
   const [lembretePlano, setLembretePlano] = useState<LembretePlano | null>(null);
   const { colorScheme } = useColorScheme();
   const escuro = colorScheme === "dark";
@@ -120,29 +145,32 @@ export default function Inicio() {
   useEffect(() => {
     if (!ownerId) return;
     let ativo = true;
-    setProgressoCarregado(false);
+    setEstadoProgresso("carregando");
+    setLidos([]);
+    setSequencia(0);
     setRecentes([]);
+    setLembretePlano(null);
     Promise.allSettled([
       livrosLidosRepository.listar(ownerId),
       progressoRepository.listarTodos(ownerId),
       obterLembretePlano(ownerId, planosLeitura),
     ]).then(([resultadoLidos, resultadoProgresso, resultadoLembrete]) => {
       if (!ativo) return;
-      let falhou = false;
+      const falhaDadosDeProgresso = resultadoLidos.status === "rejected" || resultadoProgresso.status === "rejected";
       if (resultadoLidos.status === "fulfilled") setLidos(resultadoLidos.value);
-      else falhou = true;
       if (resultadoProgresso.status === "fulfilled") {
         const itens = resultadoProgresso.value;
         setSequencia(calcularSequenciaAtual(itens.map((i) => i.lidoEm)));
         setRecentes(capitulosRecentes(itens, 10));
-        setProgressoCarregado(true);
-      } else falhou = true;
+      }
       if (resultadoLembrete.status === "fulfilled") setLembretePlano(resultadoLembrete.value);
-      else falhou = true;
-      if (falhou) mostrarToast("Não foi possível carregar alguns dados da página inicial", { severidade: "erro" });
+      setEstadoProgresso(falhaDadosDeProgresso ? "erro" : "disponivel");
+      if (resultadoLembrete.status === "rejected") {
+        mostrarToast("Não foi possível carregar o lembrete do plano", { severidade: "aviso" });
+      }
     });
     return () => { ativo = false; };
-  }, [ownerId]);
+  }, [ownerId, tentativaCarregar]);
 
   const lidosSet = useMemo(() => new Set(lidos), [lidos]);
   const conquistas = useMemo(() => calcularConquistas(lidosSet), [lidosSet]);
@@ -201,7 +229,7 @@ export default function Inicio() {
                   ))}
                 </ScrollView>
               </View>
-            ) : desktop && progressoCarregado ? <CardComecarLeitura escuro={escuro} /> : null}
+            ) : desktop && estadoProgresso === "disponivel" ? <CardComecarLeitura escuro={escuro} /> : null}
 
             {desktop ? (
               <View className="mt-7">
@@ -240,6 +268,8 @@ export default function Inicio() {
 
           {/* Progresso pessoal e conquistas ficam agrupados na coluna de apoio. */}
           <View className="xl:flex-[0.85] xl:min-w-0 xl:pt-1">
+        {estadoProgresso === "disponivel" ? (
+          <>
         {lembretePlano ? (
           <Link href={`/planos/${lembretePlano.plano.id}`} asChild>
             <Pressable accessibilityRole="link" className="flex-row items-center justify-between rounded-2xl bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark border border-cor-borda dark:border-cor-borda-dark px-4 py-3.5 mb-4 active:opacity-80">
@@ -298,6 +328,13 @@ export default function Inicio() {
         <Link href="/estatisticas" className="mt-4 text-sm font-semibold text-cor-destaque dark:text-cor-destaque-dark self-center py-2">
           Ver todas as estatísticas
         </Link>
+          </>
+        ) : (
+          <EstadoColunaDeApoio
+            carregando={estadoProgresso === "carregando"}
+            aoTentarNovamente={() => setTentativaCarregar((tentativa) => tentativa + 1)}
+          />
+        )}
           </View>
         </View>
       </View>

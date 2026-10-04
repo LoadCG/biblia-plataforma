@@ -4,6 +4,7 @@ import { Platform, Pressable, Text, View } from "react-native";
 import { obterLivro } from "../core/content/livros";
 import { copiar, compartilhar } from "../core/estatisticas/compartilhador";
 import { dataMaisRecente, type ItemAtividade } from "../core/estatisticas/atividade";
+import { formatarReferenciaVersiculos } from "../core/biblia/formatarReferenciaVersiculos";
 import { grifosRepository, notasRepository, pesquisasFavoritasRepository, versiculosSalvosRepository } from "../core/repositories";
 import { linkVersiculo } from "../core/util/linkVersiculo";
 import { tempoRelativo } from "../core/util/tempoRelativo";
@@ -30,7 +31,14 @@ export function CardAtividade({ item, onMudou, selecionado, onSelecionar }: Prop
   const [editando, setEditando] = useState(false);
 
   const livro = item.tipo !== "pesquisa" ? obterLivro(item.livroSlug) : null;
-  const referencia = livro && item.tipo !== "pesquisa" ? `${livro.nome} ${item.capitulo}:${item.versiculo}` : null;
+  const referenciasNota = item.tipo === "nota"
+    ? item.referencias ?? [{ livroSlug: item.livroSlug, capitulo: item.capitulo, versiculo: item.versiculo }]
+    : [];
+  const referencia = livro && item.tipo !== "pesquisa"
+    ? item.tipo === "nota"
+      ? formatarReferenciaVersiculos(referenciasNota)
+      : `${livro.nome} ${item.capitulo}:${item.versiculo}`
+    : null;
   const link = livro && item.tipo !== "pesquisa" ? linkVersiculo(livro.slug, item.capitulo, item.versiculo) : null;
   const referenciaComLink = referencia ? `${referencia}${link ? `\n${link}` : ""}` : null;
   const anotacaoComReferencia = item.tipo === "nota"
@@ -120,19 +128,22 @@ export function CardAtividade({ item, onMudou, selecionado, onSelecionar }: Prop
       {editando && item.tipo === "nota" ? (
         <ModalNota
           visivel
-          versiculo={item.versiculo}
+          referencias={referenciasNota}
           referencia={referencia ?? undefined}
           textoInicial={item.texto}
           onFechar={() => setEditando(false)}
           onSalvar={async (texto) => {
             if (!ownerId) throw new Error("Identificação local indisponível");
             const ref = { livroSlug: item.livroSlug, capitulo: item.capitulo, versiculo: item.versiculo };
-            await notasRepository.salvar(ownerId, ref, texto);
+            if (item.grupoId) await notasRepository.salvarGrupo(ownerId, item.grupoId, texto);
+            else await notasRepository.salvar(ownerId, ref, texto);
+            setEditando(false);
             onMudou();
           }}
           onRemover={async () => {
             if (!ownerId) throw new Error("Identificação local indisponível");
             await notasRepository.remover(ownerId, { livroSlug: item.livroSlug, capitulo: item.capitulo, versiculo: item.versiculo });
+            setEditando(false);
             onMudou();
           }}
         />

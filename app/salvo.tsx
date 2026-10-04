@@ -78,7 +78,12 @@ export default function Salvo() {
     .filter((item) => {
       const busca = termo.trim().toLowerCase(); if (!busca) return true;
       const livro = item.tipo === "pesquisa" ? "" : obterLivro(item.livroSlug)?.nome ?? "";
-      return `${livro} ${item.tipo === "nota" ? item.texto : item.tipo === "pesquisa" ? item.termo : `${item.capitulo}:${item.versiculo}`}`.toLowerCase().includes(busca);
+      const referenciasNota = item.tipo === "nota"
+        ? (item.referencias ?? [{ livroSlug: item.livroSlug, capitulo: item.capitulo, versiculo: item.versiculo }])
+            .map((ref) => `${ref.capitulo}:${ref.versiculo}`)
+            .join(" ")
+        : item.tipo === "pesquisa" ? "" : `${item.capitulo}:${item.versiculo}`;
+      return `${livro} ${item.tipo === "nota" ? `${referenciasNota} ${item.texto}` : item.tipo === "pesquisa" ? item.termo : referenciasNota}`.toLowerCase().includes(busca);
     })
     .sort((a, b) => ordem === "recentes" ? new Date(dataMaisRecente(b)).getTime() - new Date(dataMaisRecente(a)).getTime() : ordemBiblica(a) - ordemBiblica(b));
 
@@ -154,7 +159,10 @@ export default function Salvo() {
     if (!ownerId) return;
     const ref = item.tipo === "pesquisa" ? null : { livroSlug: item.livroSlug, capitulo: item.capitulo, versiculo: item.versiculo };
     if (item.tipo === "grifo") await grifosRepository.alternar(ownerId, ref!, item.cor);
-    else if (item.tipo === "nota") await notasRepository.salvar(ownerId, ref!, item.texto);
+    else if (item.tipo === "nota") {
+      if (item.grupoId) await notasRepository.salvarVarios(ownerId, item.referencias ?? [ref!], item.texto, item.grupoId);
+      else await notasRepository.salvar(ownerId, ref!, item.texto);
+    }
     else if (item.tipo === "salvo") await versiculosSalvosRepository.alternar(ownerId, ref!);
     else await pesquisasFavoritasRepository.alternar(ownerId, item.termo);
   }

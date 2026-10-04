@@ -14,6 +14,8 @@ import { Tooltip } from "../../../../components/Tooltip";
 import { Modal } from "react-native";
 import { buscarReferencia } from "../../../../core/biblia/BibliaAPI";
 import type { CapituloTexto } from "../../../../core/biblia/tipos";
+import { formatarReferenciaVersiculos } from "../../../../core/biblia/formatarReferenciaVersiculos";
+import type { Nota, ReferenciaVersiculo } from "../../../../core/types/leitura";
 import { livros, obterLivro, obterResumo } from "../../../../core/content/livros";
 import { obterDiaPlano, obterPlano } from "../../../../core/content/planos";
 import { hrefReferenciaBiblica } from "../../../../core/biblia/parseReferencia";
@@ -53,6 +55,13 @@ const ROTULOS_CORES_GRIFO: Record<string, string> = {
   "bg-blue-300/40 dark:bg-blue-600/30": "azul",
   "bg-purple-300/40 dark:bg-purple-600/30": "roxo",
   "bg-orange-300/40 dark:bg-orange-600/30": "laranja",
+};
+
+type AlvoAnotacao = {
+  referencias: ReferenciaVersiculo[];
+  referenciasAlteradas?: boolean;
+  grupoId?: string;
+  textoInicial: string;
 };
 
 function formatarFaixasVersiculos(versiculos: number[]): string {
@@ -126,8 +135,8 @@ export default function Leitura() {
   const [versiculoAutoScrollRealizado, setVersiculoAutoScrollRealizado] = useState(false);
   const [destaqueAlvo, setDestaqueAlvo] = useState(!!versiculoAlvo && versiculosDoLink.length <= 1);
   const [capituloLido, setCapituloLido] = useState(false);
-  const [notas, setNotas] = useState<Map<number, string>>(new Map());
-  const [versiculoEditandoNota, setVersiculoEditandoNota] = useState<number | null>(null);
+  const [notas, setNotas] = useState<Map<number, Nota>>(new Map());
+  const [anotacaoEditando, setAnotacaoEditando] = useState<AlvoAnotacao | null>(null);
   const [modalAjustesAberto, setModalAjustesAberto] = useState(false);
   const [abaAtual, setAbaAtual] = useState<"texto" | "resumo">("texto");
   const resumo = obterResumo(livro?.slug ?? "");
@@ -291,7 +300,7 @@ export default function Leitura() {
       if (!ativo) return;
       setGrifos(new Map(grifosCarregados.map((g) => [g.versiculo, g.cor])));
       setCapituloLido(lido);
-      setNotas(new Map(notasCarregadas.map((n) => [n.versiculo, n.texto])));
+      setNotas(new Map(notasCarregadas.map((nota) => [nota.versiculo, nota])));
       setSalvos(new Set(salvosCarregados.map((s) => s.versiculo)));
     }).catch(() => {
       if (ativo) mostrarToast("Não foi possível carregar seus grifos, notas e salvos deste capítulo.", { severidade: "erro" });
@@ -495,20 +504,89 @@ export default function Leitura() {
   }
 
   async function salvarNota(texto: string) {
-    if (!ownerId || !livro || versiculoEditandoNota === null) throw new Error("Não foi possível identificar este versículo");
-    const ref = { livroSlug: livro.slug, capitulo, versiculo: versiculoEditandoNota };
-    await notasRepository.salvar(ownerId, ref, texto);
-    setNotas((atual) => new Map(atual).set(versiculoEditandoNota, texto));
+    if (!ownerId || !anotacaoEditando) throw new Error("Não foi possível identificar este versículo");
+    const alvo = anotacaoEditando;
+    let nota: Nota;
+    if (alvo.grupoId) {
+      nota = await notasRepository.salvarVarios(ownerId, alvo.referencias, texto, alvo.grupoId);
+    } else if (alvo.referencias.length > 1) {
+      nota = await notasRepository.salvarVarios(ownerId, alvo.referencias, texto);
+    } else {
+      nota = await notasRepository.salvar(ownerId, alvo.referencias[0], texto);
+    }
+    const referenciasSalvas = nota.referencias ?? alvo.referencias;
+    setNotas((atual) => {
+      const novo = new Map(atual);
+      for (const ref of referenciasSalvas) novo.set(ref.versiculo, { ...nota, ...ref, referencias: referenciasSalvas });
+      return novo;
+    });
   }
 
   async function removerNota() {
-    if (!ownerId || !livro || versiculoEditandoNota === null) throw new Error("Não foi possível identificar este versículo");
-    await notasRepository.remover(ownerId, { livroSlug: livro.slug, capitulo, versiculo: versiculoEditandoNota });
+    if (!ownerId || !anotacaoEditando) throw new Error("Não foi possível identificar este versículo");
+    const alvo = anotacaoEditando;
+    await notasRepository.remover(ownerId, alvo.referencias[0]);
     setNotas((atual) => {
       const novo = new Map(atual);
-      novo.delete(versiculoEditandoNota);
+      for (const ref of alvo.referencias) novo.delete(ref.versiculo);
       return novo;
     });
+  }
+
+  function abrirAnotacaoDaSelecao() {
+    if (!livro || numerosSelecionados.length === 0) return;
+    const refsSelecionadas = numerosSelecionados.map((versiculo) => ({ livroSlug: livro.slug, capitulo, versiculo }));
+    const notasSelecionadas = numerosSelecionados.map((versiculo) => notas.get(versiculo) ?? null);
+    const existentes = notasSelecionadas.filter((nota): nota is Nota => nota !== null);
+
+    if (numerosSelecionados.length === 1 && existentes.length === 1) {
+      const nota = existentes[0];
+      setAnotacaoEditando({
+        referencias: nota.referencias ?? [{ livroSlug: nota.livroSlug, capitulo: nota.capitulo, versiculo: nota.versiculo }],
+        grupoId: nota.grupoId,
+        textoInicial: nota.texto,
+      });
+      return;
+    }
+
+    if (existentes.length === 0) {
+      setAnotacaoEditando({ referencias: refsSelecionadas, textoInicial: "" });
+      return;
+    }
+
+    if (existentes.length === 1 && !existentes[0].grupoId) {
+      setAnotacaoEditando({
+        referencias: refsSelecionadas,
+        referenciasAlteradas: true,
+        textoInicial: existentes[0].texto,
+      });
+      return;
+    }
+
+    const grupoId = existentes[0]?.grupoId;
+    const mesmaAnotacao = grupoId !== undefined && existentes.every((nota) => nota.grupoId === grupoId);
+    if (mesmaAnotacao) {
+      const nota = existentes[0];
+      const referenciasDoGrupo = nota.referencias ?? refsSelecionadas.filter((ref) => existentes.some((item) => item.versiculo === ref.versiculo));
+      const referenciasComNovas = [...referenciasDoGrupo];
+      for (const ref of refsSelecionadas) {
+        if (!referenciasComNovas.some((existente) => existente.livroSlug === ref.livroSlug && existente.capitulo === ref.capitulo && existente.versiculo === ref.versiculo)) {
+          referenciasComNovas.push(ref);
+        }
+      }
+      setAnotacaoEditando({
+        referencias: referenciasComNovas,
+        referenciasAlteradas: referenciasComNovas.length > referenciasDoGrupo.length,
+        grupoId,
+        textoInicial: nota.texto,
+      });
+      return;
+    }
+
+    mostrarToast(
+      "A seleção inclui anotações existentes. Edite o grupo atual ou selecione versículos sem anotação para criar outra.",
+      { severidade: "aviso" },
+    );
   }
 
   function selecionarVersiculo(numero: number) {
@@ -974,7 +1052,10 @@ export default function Leitura() {
               const corGrifo = grifos.get(v.numero);
               const grifado = grifos.has(v.numero);
               const salvo = salvos.has(v.numero);
-              const temNota = notas.has(v.numero);
+              const nota = notas.get(v.numero);
+              const temNota = nota !== undefined;
+              const primeiroVersiculoDaNota = nota?.referencias?.reduce((menor, ref) => Math.min(menor, ref.versiculo), nota.versiculo) ?? nota?.versiculo;
+              const notaEhReferenciaPrincipal = !nota?.grupoId || primeiroVersiculoDaNota === v.numero;
               const selecionado = versiculosSelecionados.has(v.numero);
               return (
                 <View key={v.numero} onLayout={(e) => aoMedirVersiculo(v.numero, e.nativeEvent.layout.y)} className={`mb-0.5 -mx-2 ${destaqueAlvo && v.numero !== versiculoAlvo ? "opacity-30" : ""}`}>
@@ -983,7 +1064,7 @@ export default function Leitura() {
                     onPress={() => selecionarVersiculo(v.numero)}
                     disabled={acoesSelecaoOcupadas}
                     accessibilityRole="checkbox"
-                    accessibilityLabel={`Versículo ${v.numero}${grifado ? ", grifado" : ""}`}
+                    accessibilityLabel={`Versículo ${v.numero}${grifado ? ", grifado" : ""}${temNota ? ", com anotação" : ""}`}
                     accessibilityHint={selecionado ? "Ative para remover este versículo da seleção." : "Ative para selecionar este versículo e mostrar as ações disponíveis."}
                     accessibilityState={{ checked: selecionado }}
                     // @ts-expect-error accessibilityChecked é uma extensão do react-native-web, não existe nos tipos do React Native
@@ -1022,7 +1103,7 @@ export default function Leitura() {
                         className="text-cor-texto-suave dark:text-cor-texto-suave-dark mt-0.5"
                         style={{ fontSize: tamanhoFonte * 0.78 }}
                       >
-                        📝 {notas.get(v.numero)}
+                        📝 {notaEhReferenciaPrincipal ? nota?.texto : `Anotação compartilhada com v. ${primeiroVersiculoDaNota}`}
                       </Text>
                     ) : null}
                   </Pressable>
@@ -1249,17 +1330,17 @@ export default function Leitura() {
               })()}
               
               <Pressable
-                onPress={() => {
-                  const primeiro = Math.min(...Array.from(versiculosSelecionados));
-                  setVersiculoEditandoNota(primeiro);
-                }}
+                onPress={abrirAnotacaoDaSelecao}
                 accessibilityRole="button"
-                accessibilityLabel={`Adicionar anotação a ${livro.nome} ${capitulo}:${numerosSelecionados[0]}`}
+                accessibilityLabel={versiculosSelecionados.size > 1
+                  ? `Adicionar ou editar anotação para ${versiculosSelecionados.size} versículos selecionados`
+                  : `Adicionar ou editar anotação em ${livro.nome} ${capitulo}:${numerosSelecionados[0]}`}
+                accessibilityHint="Uma anotação compartilhada fica vinculada a todos os versículos selecionados. Notas existentes não serão sobrescritas."
                 disabled={acoesSelecaoOcupadas}
                 className={`items-center justify-center active:opacity-70 ${desktop ? "w-11 h-11 rounded-full bg-cor-borda dark:bg-cor-borda-dark" : "flex-row gap-1 bg-cor-borda dark:bg-cor-borda-dark px-4 py-2 rounded-lg"}`}
               >
                 <IconeUI name="edit" size={18} className="text-cor-texto dark:text-cor-texto-dark" />
-                {!desktop ? <Text className="text-cor-texto dark:text-cor-texto-dark font-semibold text-sm">{versiculosSelecionados.size > 1 ? `Nota v. ${numerosSelecionados[0]}` : "Anotação"}</Text> : null}
+                {!desktop ? <Text className="text-cor-texto dark:text-cor-texto-dark font-semibold text-sm">{versiculosSelecionados.size > 1 ? `Anotar ${versiculosSelecionados.size}` : "Anotação"}</Text> : null}
               </Pressable>
 
               <Pressable onPress={copiarVersiculos} disabled={acoesSelecaoOcupadas} accessibilityRole="button" accessibilityLabel="Copiar versículos selecionados" className={`items-center justify-center active:opacity-70 ${acoesSelecaoOcupadas ? "opacity-50" : ""} ${desktop ? "w-11 h-11 rounded-full bg-cor-borda dark:bg-cor-borda-dark" : "flex-row gap-1 bg-cor-borda dark:bg-cor-borda-dark px-4 py-2 rounded-lg"}`}>
@@ -1348,14 +1429,15 @@ export default function Leitura() {
         </View>
       </View>
 
-      {versiculoEditandoNota !== null ? (
+      {anotacaoEditando !== null ? (
         <ModalNota
-          key={versiculoEditandoNota}
+          key={anotacaoEditando.grupoId ?? anotacaoEditando.referencias.map((ref) => ref.versiculo).join("-")}
           visivel
-          versiculo={versiculoEditandoNota}
-          referencia={livro ? `${livro.nome} ${capitulo}:${versiculoEditandoNota}` : undefined}
-          textoInicial={notas.get(versiculoEditandoNota) ?? ""}
-          onFechar={() => setVersiculoEditandoNota(null)}
+          referencias={anotacaoEditando.referencias}
+          referenciasAlteradas={anotacaoEditando.referenciasAlteradas}
+          referencia={formatarReferenciaVersiculos(anotacaoEditando.referencias)}
+          textoInicial={anotacaoEditando.textoInicial}
+          onFechar={() => setAnotacaoEditando(null)}
           onSalvar={salvarNota}
           onRemover={removerNota}
         />

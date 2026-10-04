@@ -35,6 +35,7 @@ export function initDB() {
       texto TEXT NOT NULL,
       criadoEm TEXT NOT NULL,
       atualizadoEm TEXT NOT NULL DEFAULT '',
+      grupoId TEXT,
       UNIQUE(ownerId, livroSlug, capitulo, versiculo)
     );
 
@@ -127,12 +128,16 @@ export function initDB() {
 
   // Migração aditiva para bancos já instalados antes de a data de edição
   // fazer parte do modelo de notas. O valor original é preservado.
-  const colunasNotas = db.getAllSync<{ name: string }>("PRAGMA table_info(notas)");
+  let colunasNotas = db.getAllSync<{ name: string }>("PRAGMA table_info(notas)");
   if (!colunasNotas.some((coluna) => coluna.name === "atualizadoEm")) {
     db.execSync(`
       ALTER TABLE notas ADD COLUMN atualizadoEm TEXT NOT NULL DEFAULT '';
       UPDATE notas SET atualizadoEm = criadoEm WHERE atualizadoEm = '';
     `);
+    colunasNotas = db.getAllSync<{ name: string }>("PRAGMA table_info(notas)");
+  }
+  if (!colunasNotas.some((coluna) => coluna.name === "grupoId")) {
+    db.execSync("ALTER TABLE notas ADD COLUMN grupoId TEXT;");
   }
 }
 

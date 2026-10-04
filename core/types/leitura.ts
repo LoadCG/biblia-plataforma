@@ -30,6 +30,8 @@ export type CapituloLido = ReferenciaCapitulo & {
 export type Nota = ReferenciaVersiculo & {
   id?: number;
   ownerId: string;
+  grupoId?: string;
+  referencias?: ReferenciaVersiculo[];
   texto: string;
   criadoEm: string;
   atualizadoEm: string;

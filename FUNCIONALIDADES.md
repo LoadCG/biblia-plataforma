@@ -797,36 +797,30 @@ correspondente em `app/salvo.tsx` ("Salvos") e ação de excluir no
 da nota (📝); tela `/salvo` e o botão "Salvos" da aba Você agora
 mostram os versículos salvos de verdade.
 
-### 2.8 Notas pessoais por versículo `✅`
-**Funcionalidade:** campo de texto livre por versículo, editável e
-removível (`components/ModalNota.tsx` + `NotasRepository`, com o método
-`listarPorCapitulo` adicionado pra carregar todas as notas do capítulo
-de uma vez, mesmo padrão de `GrifosRepository`). Testado: criar nota,
-persistência confirmada no armazenamento, reabrir pra editar (mostra o
-texto salvo e o botão "Remover"), remover.
-**UX/UI:** ação de anotar acessada pela barra de seleção do versículo
-(ver 2.3), não por um ícone fixo; nota editada em modal (não atrapalha a
-leitura do capítulo em volta); prévia do texto da nota aparece embaixo
-do versículo com um 📝, então não precisa abrir o modal só pra lembrar o
-que escreveu. `ModalNota` já manda o texto trimado (`texto.trim()`) pro
-callback `onSalvar`, e nota vazia (ou só espaços, que vira `""` depois
-do trim) remove em vez de salvar — nunca existiu nota vazia persistida
-de verdade.
+### 2.8 Anotações pessoais `✅`
+**Funcionalidade:** cada anotação continua indexada pelos versículos a
+que pertence. A seleção de vários versículos cria uma única anotação
+lógica ligada a todos eles; `grupoId` agrupa as referências no
+repositório, sem duplicar o cartão na atividade. A leitura continua
+carregando as notas por capítulo para marcar cada versículo. O SQLite
+adiciona `grupoId` por migração aditiva e preserva as notas anteriores;
+na web, o mesmo modelo fica no armazenamento local.
 
-**Bug real, achado investigando um pedido do usuário pra confirmar esse
-comportamento (2026-08-20):** esse tratamento (`if (texto) salvar; else
-remover`) já existia em `salvarNota` na tela de leitura
-(`app/(tabs)/biblia/[livro]/[capitulo].tsx`) e em `CardVersiculoDia.tsx`
-(nota no card "Versículo do Dia"), mas **faltava em
-`components/CardAtividade.tsx`** — o `onSalvar` do modal de editar nota
-acessado pelo menu "⋮" > "Editar" na tela `/salvo` (ou no card "Salvo"
-resumido de Você) chamava `notasRepository.salvar` incondicionalmente,
-sem checar se o texto tinha ficado vazio. Editar uma nota existente
-apagando tudo salvava uma nota vazia em vez de removê-la. Corrigido pro
-mesmo padrão dos outros dois lugares. Testado ao vivo: criar nota no
-versículo 3 de Salmos 119, editar em `/salvo` apagando tudo (só
-espaços) e salvar — a nota some da lista (`EstadoVazio` "Nada aqui
-ainda"), confirmando remoção em vez de nota vazia persistida.
+**Regras de edição:** novas anotações só são criadas para versículos sem
+nota. Ao selecionar parte de um grupo existente, é possível editar o
+texto compartilhado e vincular também versículos selecionados que ainda
+não tenham nota. Notas independentes ou grupos diferentes não são
+sobrescritos em conjunto; o sistema avisa para resolver a seleção. A
+exclusão de um grupo remove todos os vínculos daquela anotação.
+
+**UX/UI:** o modal mostra a referência completa (incluindo faixas de
+versículos), diferencia texto alterado de novos vínculos ainda não
+salvos, protege o descarte e a exclusão com confirmação e mantém o
+editor aberto se a persistência falhar. A leitura mostra o texto da
+anotação uma vez e indica nos outros versículos quando ela é
+compartilhada. Em `/salvo`, grupos aparecem como um cartão, podem ser
+copiados ou compartilhados com todas as referências e voltam à lista na
+ordem da última edição.
 
 ### 2.9 Trocar tradução do texto bíblico `⬜`
 **Funcionalidade:** bible-api.com tem outras traduções além da Almeida —

@@ -3,10 +3,13 @@ import { ActivityIndicator, KeyboardAvoidingView, Modal, Platform, Pressable, Sc
 import { IconeUI } from "./icone/IconeUI";
 import { useColorScheme } from "../core/theme";
 import { mostrarToast } from "../core/util/toast";
+import { ConflitoAnotacaoExistente } from "../core/repositories/NotasRepository";
+import type { ReferenciaVersiculo } from "../core/types/leitura";
 
 type Props = {
   visivel: boolean;
-  versiculo: number;
+  referencias: ReferenciaVersiculo[];
+  referenciasAlteradas?: boolean;
   referencia?: string;
   textoInicial: string;
   onFechar: () => void;
@@ -16,7 +19,7 @@ type Props = {
 
 // `key` no ponto de uso deve mudar por versículo (ver leitura bíblica),
 // pra cada anotação abrir com o próprio texto e estado de edição.
-export function ModalNota({ visivel, versiculo, referencia, textoInicial, onFechar, onSalvar, onRemover }: Props) {
+export function ModalNota({ visivel, referencias, referenciasAlteradas = false, referencia, textoInicial, onFechar, onSalvar, onRemover }: Props) {
   const [texto, setTexto] = useState(textoInicial);
   const [salvando, setSalvando] = useState(false);
   const [removendo, setRemovendo] = useState(false);
@@ -28,7 +31,8 @@ export function ModalNota({ visivel, versiculo, referencia, textoInicial, onFech
   const ocupado = salvando || removendo;
   const textoLimpo = texto.trim();
   const textoOriginal = textoInicial.trim();
-  const alterado = textoLimpo !== textoOriginal;
+  const textoAlterado = textoLimpo !== textoOriginal;
+  const alterado = textoAlterado || referenciasAlteradas;
 
   useEffect(() => {
     if (!visivel) return;
@@ -55,8 +59,13 @@ export function ModalNota({ visivel, versiculo, referencia, textoInicial, onFech
       await onSalvar(textoLimpo);
       mostrarToast("Anotação salva", { severidade: "sucesso" });
       onFechar();
-    } catch {
-      setErro("Não foi possível salvar. A anotação continua aberta para você tentar novamente.");
+    } catch (falha) {
+      if (falha instanceof ConflitoAnotacaoExistente) {
+        const versiculosEmConflito = falha.referencias.map((ref) => `v. ${ref.versiculo}`).join(", ");
+        setErro(`Já existe anotação em ${versiculosEmConflito}. Selecione versículos sem anotação ou edite o grupo existente.`);
+      } else {
+        setErro("Não foi possível salvar. A anotação continua aberta para você tentar novamente.");
+      }
     } finally {
       operacaoEmAndamento.current = false;
       setSalvando(false);
@@ -107,8 +116,13 @@ export function ModalNota({ visivel, versiculo, referencia, textoInicial, onFech
                   <Text className="text-lg font-bold text-cor-texto dark:text-cor-texto-dark">Anotação</Text>
                 </View>
                 <Text className="text-sm text-cor-texto-suave dark:text-cor-texto-suave-dark">
-                  {referencia ?? `Versículo ${versiculo}`}
+                  {referencia ?? `Versículo ${referencias[0]?.versiculo ?? ""}`}
                 </Text>
+                {referencias.length > 1 ? (
+                  <Text className="text-xs font-semibold text-cor-destaque dark:text-cor-destaque-dark mt-1">
+                    Vinculada a {referencias.length} versículos
+                  </Text>
+                ) : null}
               </View>
               <Pressable
                 onPress={fecharOuConfirmar}
@@ -138,7 +152,11 @@ export function ModalNota({ visivel, versiculo, referencia, textoInicial, onFech
             />
             <View className="flex-row justify-between items-center mt-2 mb-4">
               <Text className="text-xs text-cor-texto-suave dark:text-cor-texto-suave-dark">
-                {alterado ? "Alterações não salvas" : textoOriginal ? "Anotação salva" : "Sua anotação é privada neste dispositivo"}
+                {referenciasAlteradas && !textoAlterado
+                  ? "Novos versículos ainda não vinculados"
+                  : alterado
+                    ? "Alterações não salvas"
+                    : textoOriginal ? "Anotação salva" : "Sua anotação é privada neste dispositivo"}
               </Text>
               <Text className="text-xs text-cor-texto-suave dark:text-cor-texto-suave-dark" accessibilityLabel={`${texto.length} caracteres`}>
                 {texto.length} caracteres
@@ -154,7 +172,11 @@ export function ModalNota({ visivel, versiculo, referencia, textoInicial, onFech
             {confirmacao === "descartar" ? (
               <View className="rounded-2xl border border-cor-borda dark:border-cor-borda-dark bg-cor-fundo dark:bg-cor-fundo-dark p-3 mb-3">
                 <Text className="text-sm font-semibold text-cor-texto dark:text-cor-texto-dark">Descartar as alterações?</Text>
-                <Text className="text-xs text-cor-texto-suave dark:text-cor-texto-suave-dark mt-1 mb-3">O texto que você escreveu ainda não foi salvo.</Text>
+                <Text className="text-xs text-cor-texto-suave dark:text-cor-texto-suave-dark mt-1 mb-3">
+                  {referenciasAlteradas && !textoAlterado
+                    ? "Os novos vínculos com versículos ainda não foram salvos."
+                    : "O texto que você escreveu ainda não foi salvo."}
+                </Text>
                 <View className="flex-row justify-end gap-2">
                   <Pressable onPress={() => setConfirmacao(null)} accessibilityRole="button" className="rounded-full px-3 py-2 active:opacity-70">
                     <Text className="text-sm font-semibold text-cor-texto dark:text-cor-texto-dark">Continuar editando</Text>
@@ -170,7 +192,7 @@ export function ModalNota({ visivel, versiculo, referencia, textoInicial, onFech
               <View className="rounded-2xl border border-red-200 dark:border-red-900 bg-red-50 dark:bg-red-950/40 p-3 mb-3">
                 <Text className="text-sm font-semibold text-red-900 dark:text-red-100">Excluir esta anotação?</Text>
                 <Text className="text-xs text-red-800 dark:text-red-200 mt-1 mb-3">
-                  {alterado ? "A anotação salva e as alterações não salvas serão perdidas." : "Essa ação não pode ser desfeita."}
+                  {alterado ? "A anotação salva e as alterações ainda não salvas serão perdidas." : "Essa ação não pode ser desfeita."}
                 </Text>
                 <View className="flex-row justify-end gap-2">
                   <Pressable onPress={() => setConfirmacao(null)} accessibilityRole="button" className="rounded-full px-3 py-2 active:opacity-70">

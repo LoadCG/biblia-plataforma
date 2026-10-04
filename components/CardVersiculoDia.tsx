@@ -5,8 +5,10 @@ import { LinearGradient } from "expo-linear-gradient";
 import { IconeUI } from "./icone/IconeUI";
 import { buscarReferencia } from "../core/biblia/BibliaAPI";
 import { parseReferenciaVersiculo } from "../core/biblia/parseReferencia";
+import { formatarReferenciaVersiculos } from "../core/biblia/formatarReferenciaVersiculos";
 import { referenciaDoDia } from "../core/biblia/versiculoDoDia";
 import type { CapituloTexto } from "../core/biblia/tipos";
+import type { Nota } from "../core/types/leitura";
 import { copiar, compartilhar } from "../core/estatisticas/compartilhador";
 import { notasRepository, versiculosSalvosRepository } from "../core/repositories";
 import { useColorScheme } from "../core/theme";
@@ -94,7 +96,8 @@ export function CardVersiculoDia({ periodoDoDia }: Props) {
   const ref = parseReferenciaVersiculo(referencia);
   const [salvo, setSalvo] = useState(false);
   const [notaAberta, setNotaAberta] = useState(false);
-  const [notaTexto, setNotaTexto] = useState("");
+  const [nota, setNota] = useState<Nota | null>(null);
+  const notaTexto = nota?.texto ?? "";
   const [menuAberto, setMenuAberto] = useState(false);
   const [salvandoVersiculo, setSalvandoVersiculo] = useState(false);
   const salvamentoEmAndamento = useRef(false);
@@ -123,7 +126,7 @@ export function CardVersiculoDia({ periodoDoDia }: Props) {
       .then(([estaSalvo, nota]) => {
         if (!ativo) return;
         setSalvo(estaSalvo);
-        setNotaTexto(nota?.texto ?? "");
+        setNota(nota);
       })
       .catch(() => {
         if (ativo) mostrarToast("Não foi possível carregar suas ações neste versículo", { severidade: "erro" });
@@ -326,20 +329,25 @@ export function CardVersiculoDia({ periodoDoDia }: Props) {
 
       {ref ? (
         <ModalNota
+          key={nota?.grupoId ?? `${ref.livroSlug}-${ref.capitulo}-${ref.versiculo}`}
           visivel={notaAberta}
-          versiculo={ref.versiculo}
-          referencia={dados?.referencia ?? referencia}
+          referencias={nota?.referencias ?? [ref]}
+          referencia={nota?.referencias && nota.referencias.length > 1
+            ? formatarReferenciaVersiculos(nota.referencias)
+            : dados?.referencia ?? referencia}
           textoInicial={notaTexto}
           onFechar={() => setNotaAberta(false)}
           onSalvar={async (texto) => {
             if (!ownerId) throw new Error("Identificação local indisponível");
-            await notasRepository.salvar(ownerId, ref, texto);
-            setNotaTexto(texto);
+            const salva = nota?.grupoId
+              ? await notasRepository.salvarGrupo(ownerId, nota.grupoId, texto)
+              : await notasRepository.salvar(ownerId, ref, texto);
+            setNota(salva);
           }}
           onRemover={async () => {
             if (!ownerId) throw new Error("Identificação local indisponível");
             await notasRepository.remover(ownerId, ref);
-            setNotaTexto("");
+            setNota(null);
           }}
         />
       ) : null}

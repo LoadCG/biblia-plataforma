@@ -5,6 +5,12 @@ O formato é baseado no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.
 
 ## [Unreleased] - 2026-10-04
 
+### Interface
+- Descubra agora oferece atalhos funcionais para Salvos e Ajuda no lugar de
+  “Favoritos” e “Apoie” desabilitados.
+- Criada a página Dados e privacidade com explicação do armazenamento local,
+  sem conta e sem sincronização, ligada à Ajuda e às Configurações.
+
 ### Documentação
 - Revisada a ordem do plano de melhorias: validar anotações compartilhadas em
   perfil descartável antes de encerrar a frente de seleção; em seguida retomar

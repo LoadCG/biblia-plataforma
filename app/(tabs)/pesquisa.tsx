@@ -35,15 +35,9 @@ function TextoDestacado({ texto, termo }: { texto: string; termo: string }) {
   );
 }
 
-// "Planos" agora navega de verdade pra /planos (ver app/planos/index.tsx).
-// "Favoritos" e "Apoie" continuam sem tela/funcionalidade própria —
-// desabilitados de verdade (mesmo padrão do sino de notificações da
-// Início e do "Enviar diariamente" do Versículo do Dia), não fingem
-// ser clicáveis com um alerta falso. Quando existirem, troque `disabled`
-// por navegação de verdade.
-const ATALHOS_EM_BREVE: { id: string; rotulo: string; icone: IconeUINome }[] = [
-  { id: "favoritos", rotulo: "Favoritos", icone: "featured" },
-  { id: "apoie", rotulo: "Apoie", icone: "favorite-outline" },
+const ATALHOS_DESCUBRA: { id: string; rotulo: string; icone: IconeUINome; destino: "salvos" | "ajuda" }[] = [
+  { id: "salvos", rotulo: "Salvos", icone: "bookmark-outline", destino: "salvos" },
+  { id: "ajuda", rotulo: "Ajuda", icone: "info", destino: "ajuda" },
 ];
 
 export default function Pesquisa() {
@@ -169,18 +163,22 @@ export default function Pesquisa() {
               <IconeUI name="reading-plan" size={20} color={escuro ? "#e0a75e" : "#8a5a2b"} />
               <Text className="text-xs font-semibold text-cor-texto dark:text-cor-texto-dark">Planos</Text>
             </Pressable>
-            {ATALHOS_EM_BREVE.map((atalho) => (
-              <Pressable
+            {ATALHOS_DESCUBRA.map((atalho) => (
+              <Link
                 key={atalho.id}
-                disabled
-                accessibilityRole="button"
-                accessibilityLabel={`${atalho.rotulo} (em breve)`}
-                accessibilityState={{ disabled: true }}
-                className="flex-1 items-center gap-1.5 mx-1 rounded-2xl bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark py-3.5 opacity-40"
+                href={atalho.destino === "salvos" ? { pathname: "/salvo", params: { filtro: "salvo" } } : "/ajuda"}
+                asChild
               >
-                <IconeUI name={atalho.icone} size={20} color={escuro ? "#e0a75e" : "#8a5a2b"} />
-                <Text className="text-xs font-semibold text-cor-texto dark:text-cor-texto-dark">{atalho.rotulo}</Text>
-              </Pressable>
+                <Pressable
+                  accessibilityRole="link"
+                  accessibilityLabel={atalho.rotulo}
+                  accessibilityHint={atalho.destino === "salvos" ? "Abre seus versículos salvos" : "Abre as orientações de uso"}
+                  className="flex-1 items-center gap-1.5 mx-1 rounded-2xl bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark py-3.5 active:opacity-70"
+                >
+                  <IconeUI name={atalho.icone} size={20} color={escuro ? "#e0a75e" : "#8a5a2b"} />
+                  <Text className="text-xs font-semibold text-cor-texto dark:text-cor-texto-dark">{atalho.rotulo}</Text>
+                </Pressable>
+              </Link>
             ))}
           </View>
         ) : null}

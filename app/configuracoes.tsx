@@ -309,6 +309,14 @@ export default function Configuracoes() {
 
         <Secao titulo="Meus dados">
           <Linha>
+            <Link href="/privacidade" asChild>
+              <Pressable accessibilityRole="link" className="flex-row items-center justify-between active:opacity-70">
+                <View><Text className="text-cor-texto dark:text-cor-texto-dark font-semibold">Como meus dados são guardados</Text><Text className="text-xs text-cor-texto-suave dark:text-cor-texto-suave-dark mt-0.5">Privacidade e armazenamento neste dispositivo</Text></View>
+                <Text className="text-cor-texto-suave dark:text-cor-texto-suave-dark">→</Text>
+              </Pressable>
+            </Link>
+          </Linha>
+          <Linha>
             <Pressable
               onPress={exportarMeusDados}
               disabled={exportando}

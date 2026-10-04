@@ -67,6 +67,7 @@ app/                      Rotas (Expo Router — cada arquivo é uma tela basead
   estatisticas.tsx         Estatísticas pessoais de leitura
   configuracoes.tsx        Fonte, tema e outras preferências
   ajuda.tsx                Orientação para primeira visita e dúvidas de progresso
+  privacidade.tsx          Resumo do armazenamento local e controle dos dados
   sobre.tsx                Página "Sobre o projeto"
 
 core/                     Lógica de Negócios e Dados (Desacoplada da UI)

@@ -142,8 +142,12 @@ revisão humana, execução remota e distribuição.
   visual/assistivo segue parcial.
 - `check:copy-ui` foi adicionado nesta revisão para bloquear padrões explícitos
   de raciocínio interno em fontes de interface e conteúdo integrado. O gate
-  passou ao inspecionar 114 fontes sem sinalizações. É uma checagem literal; a
+  passou ao inspecionar 116 fontes sem sinalizações. É uma checagem literal; a
   revisão semântica humana continua útil para conteúdo e estados complexos.
+- Ajuda permanente e explicações de armazenamento local agora estão disponíveis
+  nas rotas `/ajuda` e `/privacidade`, também acessíveis por Descubra e
+  Configurações. Os links substituíram atalhos sem destino no Descubra. A
+  inspeção visual após essas mudanças ainda não foi feita.
 
 ### Próxima ordem de execução
 

@@ -35,6 +35,7 @@ const DESTINOS = [
   { href: "/biblia/escolher", rotulo: "Escolher um livro da Bíblia" },
   { href: "/resumos", rotulo: "Explorar os resumos dos livros" },
   { href: "/planos", rotulo: "Ver planos de leitura" },
+  { href: "/privacidade", rotulo: "Entender meus dados e privacidade" },
   { href: "/configuracoes", rotulo: "Exportar ou apagar meus dados" },
   { href: "/sobre", rotulo: "Conhecer o projeto e a metodologia" },
 ] as const;

@@ -1750,6 +1750,11 @@ não usado mais) removido; `ATALHOS_MOCK` renomeado pra
 vivo: `aria-disabled="true"` confirmado no DOM, clicar não dispara
 mais nenhum alerta.
 
+**Atualização em 2026-10-04:** os atalhos desabilitados foram substituídos por
+destinos úteis já existentes: “Salvos” abre o filtro de versículos salvos e
+“Ajuda” abre o guia permanente; “Planos” continua disponível. Não há atalho
+“Apoie”, coerente com o escopo atual sem monetização.
+
 ### 9.5 Pesquisa: busca por palavra na Bíblia inteira `✅`
 **Funcionalidade:** resolvido junto com a migração pro SQLite (ver
 2.6) — índice de texto completo virou uma tabela virtual FTS5 do
@@ -2091,6 +2096,14 @@ principais. A migração de código está feita em grupos, mas a revisão exaust
 duplicações, composição visual em claro/escuro e aceitação assistiva ainda está
 pendente. Ver `PLANO-MESTRE-UX-ETAPAS-19-A-23.md` e
 `docs/inventario-estados-ui.md`.
+
+### 13.7 Ajuda e dados locais para novos usuários `🔶`
+
+Descubra substitui atalhos sem destino por links para Salvos e Ajuda. A página
+`/privacidade` explica o armazenamento local e leva às ações de exportar/apagar
+em Configurações; não se apresenta como política jurídica. `typecheck`, suíte
+unitária, contratos de acessibilidade, copy, UI, rotas estáticas e temas foram
+verificados. A captura visual dos novos caminhos ainda está pendente.
 
 ## Como usar este documento
 

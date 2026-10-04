@@ -170,11 +170,12 @@ revisão humana, execução remota e distribuição.
    induzida e viewport CSS conhecido. A imagem CUA recorta a janela e não serve
    como evidência de clipping nem de proporção das colunas.
 3. **Descubra e Planos — inspeção parcial feita:** Descubra/Esperança mostrou
-   quatro referências e temas relacionados; Planos/Sabedoria ficou em 0/7 dias.
-   O detalhe do plano foi revisto em claro/escuro no recorte 1280×720 sem alterar
-   progresso, e o tema local foi restaurado ao claro. Conteúdo adicional continua
-   condicionado às duas revisões humanas. Completar os estados e viewports
-   registrados no plano mestre e seguir
+   quatro referências e temas relacionados. Em origem localhost isolada, o plano
+   foi conferido em 0/7, 1/7 e 7/7 (“Plano concluído”); os sete dias foram
+   desmarcados e a origem voltou a 0/7. O detalhe foi revisto em claro/escuro no
+   recorte 1280×720, preferência restaurada ao claro. Conteúdo adicional continua
+   condicionado às duas revisões humanas. Completar estados de erro/retomada e
+   viewports registrados no plano mestre e seguir
    [`PLANO-TEMAS-DESCOBERTA.md`](./PLANO-TEMAS-DESCOBERTA.md) antes de publicar
    conteúdo novo.
 4. **Estados web — em andamento:** Home tem carga/erro/retry explícitos; Toast

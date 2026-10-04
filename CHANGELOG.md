@@ -3,7 +3,13 @@
 Todas as mudanças notáveis feitas no projeto serão documentadas neste arquivo.
 O formato é baseado no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/).
 
-## [Unreleased] - 2026-10-02
+## [Unreleased] - 2026-10-04
+
+### Documentação
+- Revisada a ordem do plano de melhorias: validar anotações compartilhadas em
+  perfil descartável antes de encerrar a frente de seleção; em seguida retomar
+  os ciclos de UI. Os documentos agora distinguem implementação concluída de
+  evidência funcional/visual ainda pendente.
 
 ### Correções
 - Corrigido o acesso direto e a atualização de capítulos bíblicos no deploy

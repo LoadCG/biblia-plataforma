@@ -16,11 +16,13 @@ Este documento reúne o plano de execução e um registro incremental do que já
 - `ESTADO-DO-PROJETO.md` é resumo de marcos, atualizado quando a prioridade muda,
   não registro de cada incremento.
 
-**Ordem vigente:** (1) concluir a semântica transversal dos estados; (2) fazer
-QA visual desktop do sistema e verificar regressão nos breakpoints afetados;
-(3) corrigir defeitos P0/P1; (4) avançar por Descubra, Planos e Início para
-aproximar a composição da referência; (5) iniciar snapshots depois da auditoria
-manual. Refinamento mobile dedicado e aplicativo nativo ficam para depois.
+**Ordem vigente:** (1) fechar a validação funcional das anotações compartilhadas
+recém-implementadas; (2) concluir a auditoria do fluxo de seleção de versículos,
+incluindo estados visuais/assistivos e regressão responsiva; (3) retomar os
+Ciclos 1–3 do plano mestre na ordem registrada — Home desktop, Descubra/Planos e
+estados web; (4) tratar gates externos de CI/Preview/rotas; (5) iniciar snapshots
+após a auditoria manual. Refinamento mobile dedicado e aplicativo nativo ficam
+deferidos, sem dispensar a preservação responsiva web.
 
 ### Foco corrente — selecionar um versículo e agir sobre ele
 
@@ -28,44 +30,60 @@ O fluxo atravessa leitor, grade de seleção prévia e ações de grifo, salvo,
 anotação, cópia, compartilhamento e geração de imagem. Esta sequência atualiza a
 ordem geral acima até fechar esta frente, sem antecipar revisão mobile dedicada.
 
-1. **Entrada e estado selecionado — implementação parcial concluída:** deixar
-   distinguível o versículo marcado, o versículo alvo da URL, o que está sendo
-   lido em voz alta e o que tem grifo; preservar texto e número legíveis nos dois
-   temas e manter a seleção alternável por teclado.
-2. **Resumo da seleção — implementação conferida parcialmente:** anunciar
-   quantidade e referência exata, agrupando sequências contínuas e preservando
-   lacunas (ex.: `1–3, 6, 9–10`); seleção simples e descontínua foram vistas
-   em 688×860, claro/escuro. Outros viewports permanecem pendentes.
-3. **Ações persistentes — implementado, gravação real não exercitada nesta
-   sessão:** salvar/remover seleção de modo consistente; grifar/remover cor sem
-   alternar acidentalmente itens de uma seleção mista; bloquear ações duplicadas;
-   manter a seleção após falha ou cancelamento; confirmar êxito.
-4. **Anotação:** deixar claro que a ação individual da seleção múltipla se aplica
-   ao versículo de menor número entre os selecionados; revisar reabertura, edição,
-   remoção e retorno de foco do modal.
-5. **Cópia, compartilhamento e imagem — implementação parcial concluída:** copiar
-   referência fiel, manter seleção se cópia/compartilhamento falhar ou for
-   cancelado e só limpar após êxito na geração/captura de imagem.
-6. **Grade de entrada:** rotular o estado como grifado (não lido), manter alvo
-   clicável e checar `Back`, recarga, erro e livro/capítulo longo.
-7. **Aceite verificável:** typecheck, contratos, export web, árvore acessível e
-   layout claro/escuro; só encerrar depois de inspecionar seleção simples,
-   múltipla/descontínua, barra expandida, persistência recuperada e larguras
-   responsivas. Saltar qualquer interação que a automação não consiga operar e
-   registrar como pendência de revisão do usuário.
+1. **Anotações compartilhadas — implementação concluída; validação funcional
+   pendente.** A seleção múltipla agora grava um grupo lógico, apresenta uma
+   anotação principal e identifica os demais vínculos. Validar, nesta ordem:
+   criação em seleção contínua e descontínua; reabertura por cada versículo do
+   grupo; edição do texto e extensão do grupo sem mudar o texto; incorporação de
+   uma nota individual existente; conflito com duas notas/grupos sem perda de
+   dados; exclusão pelo leitor e por “Salvos”; atualização de busca, atividade e
+   Versículo do Dia. Confirmar persistência após recarga/reabertura e consistência
+   entre AsyncStorage (web) e SQLite (nativo) por verificação estrutural; teste
+   nativo em aparelho continua fora de escopo. Registrar comportamento realmente
+   exercitado e não presumir paridade de runtime pelo typecheck.
+2. **Entrada e estado selecionado — implementação parcial:** distinguir
+   versículo selecionado, alvo da URL, leitura em voz alta e grifo; conferir
+   legibilidade em claro/escuro e alternância por teclado.
+3. **Resumo da seleção — parcialmente conferido:** anunciar quantidade e
+   referências exatas, agrupando sequências e preservando lacunas (ex.: `1–3, 6,
+   9–10`). Seleção simples/descontínua foi vista em 688×860, claro/escuro;
+   repetir nos viewports responsivos disponíveis.
+4. **Ações em lote:** em perfil descartável, exercitar salvar/remover, grifar em
+   seleção mista, estados ocupados, falha e cancelamento. Confirmar que feedback
+   e seleção permanecem coerentes e não há gravação duplicada.
+5. **Cópia, compartilhamento e imagem — implementação parcial:** conferir
+   referência e numeração copiadas, folha nativa/web, cancelamento/falha sem
+   perder seleção e limpeza somente após sucesso na imagem. Não enviar conteúdo
+   a terceiros durante a validação.
+6. **Modal e acessibilidade:** abrir/fechar anotação por teclado, conferir foco
+   inicial e retorno de foco, rótulo com referências completas, mensagens de
+   conflito/erro, confirmação de exclusão, contraste e movimento reduzido.
+   Tecnologia assistiva física permanece como gate humano se indisponível.
+7. **Grade e navegação:** distinguir grifado de lido; verificar alvo clicável,
+   `Back`, recarga, erro e capítulo longo, sem desviar o retorno da leitura.
+8. **Aceite da frente:** typecheck, contratos/checks existentes e export web;
+   revisão visual clara/escura e nos breakpoints tocados; recuperação após
+   recarga; seleção simples, múltipla/descontínua e barra de ações; fluxo anotação
+   integral e estados de falha/cancelamento. Ações com gravação exigem perfil
+   descartável. Pular interações indisponíveis e registrar a pendência com
+   evidência precisa, sem declarar aceite total.
 
-**Revisão do plano:** achados estáticos mais críticos eram referência visual
-incorreta para seleções descontínuas, alternância inconsistente em seleção mista,
-falha/cancelamento apagando contexto, estado “grifado” apresentado como “lido” e
-cor sem nome útil para tecnologia assistiva. A rodada atual trata esses pontos
-no código; teste manual de ações persistentes e comparação visual ainda não são
-aceite desta implementação.
+**Revisão do plano em 2026-10-04:** a ação de anotação deixou de se referir
+somente ao menor versículo. Uma única nota lógica pode agora pertencer a todos
+os versículos selecionados; o grupo pode ser reaberto por qualquer membro,
+estendido e editado, aparece agrupado em “Salvos”, e conflitos são protegidos.
+Persistência real, interação do modal, exclusão, comportamento após recarga e
+consistência nos consumidores ainda precisam de validação. Os demais achados
+anteriores — seleção descontínua, lote misto, falha/cancelamento, semântica de
+grifo e nomes acessíveis — continuam no escopo até evidência de aceite.
 
-**Evidência parcial em 2026-10-02:** no navegador local, viewport de 688×860,
-foram conferidas seleção de um e dois versículos, referência descontínua, rótulo
-da nota e paginação lateral da barra em claro/escuro. Persistência, clipboard,
-modal, folha de compartilhamento, imagem, teclado, outros viewports e tecnologias
-assistivas continuam pendentes.
+**Evidência registrada até 2026-10-04:** no navegador local, viewport de
+688×860, foram conferidas seleção simples e descontínua, paginação da barra e
+temas claro/escuro em rodada anterior. A implementação de grupos de anotação
+passou `npm run typecheck` e `git diff --check`; não houve inspeção visual nem
+teste de persistência nesta entrega. Clipboard, modal, folha de compartilhamento,
+imagem, teclado completo, outros viewports e tecnologias assistivas permanecem
+pendentes conforme a matriz e a disponibilidade do ambiente.
 
 ## Direção aprovada para o conceito visual
 

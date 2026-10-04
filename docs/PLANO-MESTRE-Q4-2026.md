@@ -1,6 +1,6 @@
 # Plano mestre de evolução — outubro a dezembro de 2026
 
-Atualizado em 2026-10-02. Este documento define a ordem das próximas entregas
+Atualizado em 2026-10-04. Este documento define a ordem das próximas entregas
 e aponta para a decomposição técnica/editorial existente. O estado real deve ser
 comprovado por diff, verificações e evidências; itens instalados não equivalem a
 aceite visual, assistivo, nativo ou de publicação.
@@ -18,10 +18,13 @@ aceite visual, assistivo, nativo ou de publicação.
 
 ## Foco atual de interface
 
-O próximo incremento de UI é planejar e implementar microinterações hover sutis
-em todas as rotas, conforme [`PLANO-HOVER-INTERACOES.md`](./PLANO-HOVER-INTERACOES.md).
-Esse foco não substitui nem fecha os ciclos abaixo; é a prioridade de execução
-imediata, com cobertura rastreável de cada tela e componente compartilhado.
+O incremento mais recente implementou anotações compartilhadas entre vários
+versículos (`5a1e745`). A próxima entrega é validar esse fluxo em contexto
+descartável e atualizar a evidência da frente de seleção conforme
+[`PLANO-MELHORIAS-UI-DESIGN.md`](../PLANO-MELHORIAS-UI-DESIGN.md). Até esse aceite,
+não iniciar outra mudança funcional na seleção que possa obscurecer regressões.
+Depois, retomar o Ciclo 1 abaixo. O plano de hover permanece implementado com QA
+parcial e não é a prioridade imediata.
 
 ## Estado comprovado na revisão
 
@@ -39,6 +42,7 @@ inexistente. A validação da URL pública fica pendente até o deploy do commit
 | Descubra | Parcialmente implementada | No viewport desktop disponível, grade de oito temas, detalhe “Esperança”, links, entrada direta, recarga e busca (50 resultados/estado vazio) foram conferidos. Retorno que selecionava Início foi corrigido; tema inválido agora normaliza para `/pesquisa`. Ordem inicial de foco, indicador visível e abrir/voltar tema com Enter foram verificados; auditoria completa e viewports planejados seguem pendentes. |
 | Planos | Implementado com QA parcial | Lista e detalhe em claro/escuro; estado 0/7, sete sessões e ações acessíveis conferidos sem alterar progresso. Erro, conclusão, sessão retomada e viewports planejados permanecem incompletos. |
 | Sistema de estados | Migração principal feita | Inventário/API/migrações existem. Varredura AST encontrou 73 chamadas a `mostrarToast`, todas classificadas; o contrato TypeScript agora exige severidade. Inspeção visual/assistiva dos consumidores continua pendente. |
+| Anotações compartilhadas | Implementadas; validação pendente | Commit `5a1e745` adiciona grupos multi-versículo em AsyncStorage e SQLite, edição/extensão, proteção contra conflito, exibição agrupada e suporte nos consumidores. `typecheck` e `git diff --check` passaram; interação visual, persistência pós-recarga e exclusão ainda não foram exercitadas. Ver plano focal de UI. |
 | Copy da interface | Gate estático passou | 114 fontes de app/componentes/conteúdo verificadas localmente e no CI, sem padrões sinalizados; a heurística não substitui revisão semântica. |
 | CI remoto | Primeiro run passou | `37033595191` para o commit `7716388`; gates de conteúdo, copy, validação, export e metadados passaram. Revisar avisos de runtime do Actions/runner; preview não foi comprovado. |
 | Conteúdo editorial | Catálogo funcional; expansão não aprovada | Há 66 resumos e 2 planos. Schema editorial completo, segunda revisão humana e publicação dos novos rascunhos são gates separados. |
@@ -62,7 +66,34 @@ inexistente. A validação da URL pública fica pendente até o deploy do commit
 ativos; o check de copy passa e é executado no CI; pipeline inclui `master`;
 nenhum aceite humano/nativo/de preview é inferido.
 
-### Ciclo 1 — concluir a composição da Home desktop (P0)
+### Ciclo prévio — validar anotações compartilhadas e fechar evidência da seleção (P0)
+
+1. Preparar perfil/armazenamento descartável e registrar o estado inicial; não
+   usar dados pessoais persistentes nem ambiente público para operações de
+   gravação.
+2. Exercitar criação de anotação em vários versículos contínuos e descontínuos,
+   abertura do grupo por cada membro, edição do texto, extensão do grupo sem
+   alterar texto e incorporação de uma nota individual existente.
+3. Criar cenário de conflito com notas/grupos independentes; confirmar mensagem
+   clara e que nenhum conteúdo é sobrescrito. Exercitar exclusão do grupo a
+   partir do leitor e de “Salvos”.
+4. Conferir recarga/reabertura, agrupamento em “Salvos”, pesquisa, atividade e
+   Versículo do Dia; verificar que cada superfície mostra referência coerente e
+   não duplica o item lógico.
+5. Conferir modal, estados de ocupado/erro, foco e retorno de foco, tema claro e
+   escuro, além de regressão nos breakpoints disponíveis. Validar AsyncStorage na
+   web; avaliar SQLite estruturalmente. Aparelho/emulador nativo e leitor de tela
+   físico continuam gates externos, não aceites presumidos.
+6. Rodar typecheck, checks de UI/copy aplicáveis e export web; registrar rotas,
+   viewports, dados descartáveis e limitações na matriz. Atualizar o plano focal
+   e a funcionalidade somente com evidência observada.
+
+**Aceite:** grupo criado/editado/estendido/removido sem perda ou duplicação,
+conflitos não sobrescrevem notas, recarga mantém vínculos, referências e foco
+são compreensíveis, tema e breakpoints verificados. O que não puder ser testado
+fica explicitamente pendente e não bloqueia a retomada dos ciclos independentes.
+
+### Ciclo 1 — concluir a composição da Home desktop (P0; após o ciclo prévio)
 
 1. Capturar Home com janela integral em 1440×900 e 1280×900, claro/escuro;
    documentar largura do documento, scroll, foco e estado de progresso utilizado.

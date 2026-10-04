@@ -41,13 +41,13 @@ exaustivo; revisão visual e assistiva ainda está pendente.
 | Seletor de livros | catálogo local | não aplicável | `EstadoVazio` | limpar busca quando há termo | A tela preserva o estado original sem ação quando o catálogo estiver vazio sem filtro. |
 | Cards de versículo / popover | `EstadoCarregando` | `EstadoErro` com retry | não aplicável | ações específicas | O card do dia mantém painel próprio de erro em gradiente. |
 | Detalhe de plano | `EstadoCarregando` | `EstadoErro` com retry | estado concluído quando todos os dias finalizam | Toast nas ações | Progresso anuncia papel e valor; falhas não aparecem como conclusão ou zero; retorno, marcação, referências e ações por dia têm alvo mínimo de 44 px. |
-| Toast global | — | — | — | alerta com ação opcional e severidade semântica | Varredura AST em 2026-10-02 encontrou 73 chamadas a `mostrarToast`, todas com severidade explícita e sem opção dinâmica. O contrato exige severidade; a animação evita corrida entre mensagens, limpa o temporizador no unmount e respeita movimento reduzido. Inspeção visual do Toast isolado/tema escuro e expiração automática permanecem pendentes. |
+| Toast global | — | — | — | alerta com ação opcional e severidade semântica | Varredura AST em 2026-10-02 encontrou 73 chamadas a `mostrarToast`, todas com severidade explícita e sem opção dinâmica. O contrato exige severidade; a animação evita corrida entre mensagens, limpa o temporizador no unmount e respeita movimento reduzido. Toast de sucesso ao remover o Versículo do Dia foi visto em tema escuro, com texto e símbolo distinguíveis; faltam as demais severidades, Toast isolado, expiração automática e movimento reduzido. |
 
 Na inspeção local de 2026-10-04, a Home mostrou estados de carregamento e dados
 vazios confirmados, em vez de zeros provisórios; falha de armazenamento não foi
-induzida. Um Toast de sucesso foi acionado ao salvar e remover o Versículo do Dia
-no perfil local, e ambos os avisos apareceram na árvore acessível. O estado salvo
-foi revertido em seguida. A preferência local de tema foi restaurada ao claro.
+induzida. Toasts de sucesso apareceram ao salvar/remover o Versículo do Dia. A
+remoção foi capturada em tema escuro com contraste legível, depois o estado
+salvo foi revertido e a preferência restaurada ao claro.
 
 O detalhe de Plano agora diferencia carga do progresso, erro com retry e dados;
 falhas ao iniciar uma sessão ou alterar conclusão dão feedback via Toast. O

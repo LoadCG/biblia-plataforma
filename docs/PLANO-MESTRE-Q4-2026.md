@@ -208,9 +208,12 @@ dados confirmados separados. O Toast global cancela a animação anterior ao
 receber uma mensagem nova, protege o temporizador contra fechamento atrasado,
 respeita movimento reduzido e não solicita native driver no web. Na origem local,
 salvar/remover o Versículo do Dia exibiu os respectivos anúncios; o dado foi
-revertido. `typecheck`, contratos UI/a11y e check de copy passaram. Não foi
-possível induzir falha, testar leitor de tela real nem inspecionar o Toast em
-tema escuro; esta evidência não fecha o ciclo inteiro.
+revertido. A remoção também foi capturada no tema escuro: texto e símbolo do
+Toast de sucesso ficaram distinguíveis do fundo. A preferência foi restaurada
+ao claro e o versículo terminou não salvo. `typecheck`, contratos UI/a11y e
+check de copy passaram. Não foi possível induzir falha, testar leitor de tela
+real, inspecionar outras severidades/expiração ou preferências de movimento; a
+evidência não fecha o ciclo inteiro.
 
 ### Ciclo 4 — regressão visual automatizada (P2 após Ciclos 1 e 2)
 

@@ -39,7 +39,7 @@ inexistente. A validação da URL pública fica pendente até o deploy do commit
 |---|---|---|
 | Home desktop | Parcialmente refinada | Jornada reorganizada; paisagem horária e ilustração da jornada implementadas. Nova inspeção no viewport desktop disponível, claro/escuro e perfil local sem histórico; composição e lateral legíveis. A captura em 1280×900 e 1440×900 continua pendente: a API do navegador não expõe dimensão CSS nem permite fixar o viewport nesta sessão. |
 | Descubra | Parcialmente implementada | No viewport desktop disponível, grade de oito temas, detalhe “Esperança”, links, entrada direta, recarga e busca (50 resultados/estado vazio) foram conferidos. Retorno que selecionava Início foi corrigido; tema inválido agora normaliza para `/pesquisa`. Ordem inicial de foco, indicador visível e abrir/voltar tema com Enter foram verificados; auditoria completa e viewports planejados seguem pendentes. |
-| Planos | Implementado com QA parcial | Lista e detalhe em claro/escuro; estado 0/7, intermediário 1/7 e concluído 7/7 foram conferidos numa origem local isolada, com restauração final para 0/7. O detalhe Semana da Sabedoria foi revisto em 1280×720 no tema escuro. Erro, sessão retomada e viewports planejados permanecem incompletos. |
+| Planos | Implementado com QA parcial | Lista e detalhe em claro/escuro; estados 0/7, 1/7 e 7/7 foram conferidos em origem local isolada e o progresso voltou a 0/7. A abertura de sessão e retomada do primeiro capítulo também foram vistas. O botão Voltar do leitor tinha levado a Início; agora retorna ao detalhe do plano quando há contexto de sessão. Erro e viewports planejados permanecem incompletos. |
 | Sistema de estados | Migração principal feita | Inventário/API/migrações existem. Varredura AST encontrou 73 chamadas a `mostrarToast`, todas classificadas; o contrato TypeScript agora exige severidade. Inspeção visual/assistiva dos consumidores continua pendente. |
 | Anotações compartilhadas | Implementadas; QA web funcional concluído, aceite integral parcial | Commit `5a1e745` adiciona grupos multi-versículo em AsyncStorage e SQLite. Em `localhost:8082`, perfil descartável: criação contínua/descontínua, reabertura por membro, extensão, promoção de nota individual, conflito sem sobrescrita, recarga, Salvos/busca/edição/exclusão, atividade e cartão do Versículo do Dia conferidos; dados de QA removidos. Cinco testes do repositório, typecheck, checks a11y/UI/copy e export passaram. Falta runtime SQLite em dispositivo/emulador, estados de erro/foco e medição visual com viewport conhecido. |
 | Copy da interface | Gate estático passou | 114 fontes de app/componentes/conteúdo verificadas localmente e no CI, sem padrões sinalizados; a heurística não substitui revisão semântica. |
@@ -178,7 +178,11 @@ Os sete dias foram desmarcados ao final; o perfil isolado voltou a 0/7. O modelo
 atual oferece leituras complementares em rascunho, bloqueadas até duas revisões
 humanas. O detalhe foi revisto também em escuro: texto, ilustração, indicador
 0/7 e ação principal ficaram distinguíveis; preferência restaurada ao claro.
-Lista escura, 1280×900/1440×900, falha e retomar sessão seguem pendentes.
+Ao iniciar o Dia 1, Voltar levou a Início (defeito reproduzido); o leitor agora
+retorna a `/planos/sabedoria-7` quando recebe `planoId` e `diaPlano`. A sessão
+continuou disponível após voltar e o botão Continuar sessão reabriu a leitura.
+Resta testar retomada após avançar uma referência. Lista escura, 1280×900/1440×900
+e falha induzida seguem pendentes.
 
 ### Ciclo 3 — fechar sistema de estados web (P1)
 

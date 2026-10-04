@@ -173,9 +173,11 @@ revisão humana, execução remota e distribuição.
    quatro referências e temas relacionados. Em origem localhost isolada, o plano
    foi conferido em 0/7, 1/7 e 7/7 (“Plano concluído”); os sete dias foram
    desmarcados e a origem voltou a 0/7. O detalhe foi revisto em claro/escuro no
-   recorte 1280×720, preferência restaurada ao claro. Conteúdo adicional continua
-   condicionado às duas revisões humanas. Completar estados de erro/retomada e
-   viewports registrados no plano mestre e seguir
+   recorte 1280×720, preferência restaurada ao claro. Ao iniciar uma sessão, o
+   botão Voltar retornava a Início; foi corrigido para voltar ao detalhe do plano
+   e a sessão continuou disponível. A retomada abriu o primeiro capítulo.
+   Conteúdo adicional continua condicionado às duas revisões humanas. Completar
+   erro, checkpoint após avançar e viewports do plano mestre e seguir
    [`PLANO-TEMAS-DESCOBERTA.md`](./PLANO-TEMAS-DESCOBERTA.md) antes de publicar
    conteúdo novo.
 4. **Estados web — em andamento:** Home tem carga/erro/retry explícitos; Toast

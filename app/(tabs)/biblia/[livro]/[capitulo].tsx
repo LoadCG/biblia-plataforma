@@ -613,6 +613,11 @@ export default function Leitura() {
       return;
     }
 
+    if (planoEmAndamento && numeroDiaPlano) {
+      router.replace(`/planos/${planoEmAndamento.id}`);
+      return;
+    }
+
     if (abertaPelaAbaBiblia) {
       if (livro) {
         router.replace({ pathname: "/biblia/escolher", params: { livro: livro.slug } });
@@ -935,6 +940,8 @@ export default function Leitura() {
             accessibilityLabel={versiculosSelecionados.size > 0 ? "Cancelar seleção de versículos" : "Voltar"}
             accessibilityHint={versiculosSelecionados.size > 0
               ? "Cancela a seleção atual sem sair do capítulo."
+              : planoEmAndamento && numeroDiaPlano
+                ? `Volta para o plano ${planoEmAndamento.titulo}.`
               : abertaPelaAbaBiblia
                 ? "Volta à escolha de livros da Bíblia."
                 : "Volta à tela de onde você abriu esta leitura."}

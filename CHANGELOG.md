@@ -14,6 +14,8 @@ O formato é baseado no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.
   `actions/setup-node@v7`, mantendo Node 22 para o projeto.
 
 ### Correções
+- Ao abrir uma sessão de leitura por um plano, o botão Voltar do leitor agora
+  retorna ao detalhe do plano, preservando o contexto da sessão para retomada.
 - Corrigido o acesso direto e a atualização de capítulos bíblicos no deploy
   estático: o export agora materializa as 1.189 rotas e a regra ampla de rewrite
   da Vercel foi removida. O servidor local valida 200 para capítulos existentes

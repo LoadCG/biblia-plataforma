@@ -300,13 +300,10 @@ export default function Configuracoes() {
         </Secao>
 
         <Secao titulo="Dados">
-          <Linha>
-            <Text className="text-cor-texto dark:text-cor-texto-dark font-semibold">Cores de grifo</Text>
-            <Text className="text-xs text-cor-texto-suave dark:text-cor-texto-suave-dark mt-0.5">Em breve</Text>
-          </Linha>
           <Linha ultima>
-            <Text className="text-cor-texto dark:text-cor-texto-dark font-semibold">Contraste</Text>
-            <Text className="text-xs text-cor-texto-suave dark:text-cor-texto-suave-dark mt-0.5">Em breve</Text>
+            <Text className="text-sm leading-5 text-cor-texto-suave dark:text-cor-texto-suave-dark">
+              Personalização de cores de grifo e contraste ainda não está disponível.
+            </Text>
           </Linha>
         </Secao>
 
@@ -342,6 +339,14 @@ export default function Configuracoes() {
         </Secao>
 
         <Secao titulo="Sobre">
+          <Linha>
+            <Link href="/ajuda" asChild>
+              <Pressable accessibilityRole="link" className="flex-row items-center justify-between active:opacity-70">
+                <View><Text className="text-cor-texto dark:text-cor-texto-dark font-semibold">Ajuda e como usar</Text><Text className="text-xs text-cor-texto-suave dark:text-cor-texto-suave-dark mt-0.5">Entenda seu progresso e os recursos do app</Text></View>
+                <Text className="text-cor-texto-suave dark:text-cor-texto-suave-dark">→</Text>
+              </Pressable>
+            </Link>
+          </Linha>
           <Linha>
             <Pressable onPress={async () => {
               try {

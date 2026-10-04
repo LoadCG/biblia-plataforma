@@ -292,7 +292,7 @@ export default function Inicio() {
         <Link href="/resumos" asChild>
           <Pressable
             accessibilityRole="link"
-            accessibilityLabel={`Estudo por Resumos, ${lidos.length} de ${livros.length} livros lidos`}
+            accessibilityLabel={`Estudo por resumos. ${lidos.length} de ${livros.length} resumos de livros marcados como lidos`}
             className="flex-row items-center justify-between rounded-[28px] bg-cor-destaque-fundo dark:bg-cor-destaque-dark px-5 py-5 mb-4 shadow-sm active:opacity-90"
           >
             <View className="flex-1 pr-5">
@@ -301,7 +301,10 @@ export default function Inicio() {
               </Text>
               <Text className="text-xl font-bold text-cor-texto dark:text-cor-texto mb-1">Estudo por Resumos</Text>
               <Text className="text-sm text-cor-texto-suave dark:text-cor-texto/75 mb-3">
-                {lidos.length} de {livros.length} livros lidos
+                {lidos.length} de {livros.length} resumos marcados como lidos
+              </Text>
+              <Text className="text-xs text-cor-texto-suave dark:text-cor-texto/75 mb-3">
+                Esse progresso é separado dos capítulos da Bíblia.
               </Text>
               <View
                 accessibilityRole="progressbar"

@@ -1,4 +1,4 @@
-# Estado do projeto e próximos passos (revisado em 2026-10-02)
+# Estado do projeto e próximos passos (revisado em 2026-10-04)
 
 Este é o documento de referência pra responder duas perguntas: **em
 que etapa estamos de verdade** (sem otimismo nem pessimismo) e **o que
@@ -37,7 +37,7 @@ referências mais citadas em comparativos de 2026.
 |---|---|---|
 | Traduções | YouVersion: centenas de traduções, 1400+ Bíblias, 1200+ idiomas (Plataforma própria lançada em 2026) | Só Almeida ACF — **decisão consciente**, não lacuna técnica (ver `TODO.md`) |
 | Planos de leitura | YouVersion: 100 mil+ planos, de 3 dias a plurianuais, com devocionais e vídeo | 2 planos guiados e curados, com 21 devocionais, pergunta diária e retomada persistente |
-| Streak e gamificação | YouVersion reforçou "Community Plans" com streaks sociais em 2026; apps como Bible Streak têm pontuação/badges dedicados | Streak individual + 6 medalhas por marco do cânon — sólido, mas sem componente social |
+| Streak e gamificação | YouVersion reforçou "Community Plans" com streaks sociais em 2026; apps como Bible Streak têm pontuação/badges dedicados | Streak individual + 10 medalhas por marcos do cânon — sólido, mas sem componente social |
 | Comunidade | YouVersion: camada de Amigos, pedidos de oração, comentar/grifar junto com quem você conhece | Nenhuma — **decisão consciente** (sem conta = sem comunidade possível ainda) |
 | Áudio | Bible Gateway destacado por qualidade de áudio pra "ouvir enquanto lê"; Dwell foca 100% em áudio com faixas de sono | TTS do sistema operacional (`Ouvir capítulo em voz alta`) — funcional, mas não é narração profissional |
 | Offline | Citado como parte central de retenção em 2026 ("reduz fricção, ajuda a manter o streak") | Forte: Bíblia inteira embutida, leitura e busca funcionam 100% offline (web e nativo) — ver `FUNCIONALIDADES.md` 7.3 |

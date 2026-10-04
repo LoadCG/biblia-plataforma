@@ -7,7 +7,7 @@ Uma plataforma bíblica completa, rápida e imersiva (Web + App), construída co
 
 Este projeto unifica a experiência de leitura bíblica, resumos teológicos, acompanhamento de progresso diário e medalhas num único código-fonte escalável, substituindo projetos fragmentados anteriores. O plano arquitetural original que guiou essa unificação está em [`PLANO-PLATAFORMA.md`](./PLANO-PLATAFORMA.md).
 
-Toda a documentação tem um índice em [`DOCUMENTACAO.md`](./DOCUMENTACAO.md). O estado atual e as prioridades estão em [`ESTADO-DO-PROJETO.md`](./ESTADO-DO-PROJETO.md); o plano executável está em [`docs/PLANO-MESTRE-Q4-2026.md`](./docs/PLANO-MESTRE-Q4-2026.md). O checklist funcional fica em [`FUNCIONALIDADES.md`](./FUNCIONALIDADES.md), as decisões fechadas em [`TODO.md`](./TODO.md), o histórico em [`CHANGELOG.md`](./CHANGELOG.md), e o fluxo Git/CI em [`docs/FLUXO-GIT.md`](./docs/FLUXO-GIT.md).
+Toda a documentação tem um índice em [`DOCUMENTACAO.md`](./DOCUMENTACAO.md). O estado atual e as prioridades estão em [`ESTADO-DO-PROJETO.md`](./ESTADO-DO-PROJETO.md); o plano executável está em [`docs/PLANO-MESTRE-Q4-2026.md`](./docs/PLANO-MESTRE-Q4-2026.md). A auditoria de UX de visitante novo está em [`docs/auditoria-ux-novato.md`](./docs/auditoria-ux-novato.md). O checklist funcional fica em [`FUNCIONALIDADES.md`](./FUNCIONALIDADES.md), as decisões fechadas em [`TODO.md`](./TODO.md), o histórico em [`CHANGELOG.md`](./CHANGELOG.md), e o fluxo Git/CI em [`docs/FLUXO-GIT.md`](./docs/FLUXO-GIT.md).
 
 ## Tecnologias
 
@@ -66,6 +66,7 @@ app/                      Rotas (Expo Router — cada arquivo é uma tela basead
   medalhas.tsx             Tela própria de conquistas/medalhas
   estatisticas.tsx         Estatísticas pessoais de leitura
   configuracoes.tsx        Fonte, tema e outras preferências
+  ajuda.tsx                Orientação para primeira visita e dúvidas de progresso
   sobre.tsx                Página "Sobre o projeto"
 
 core/                     Lógica de Negócios e Dados (Desacoplada da UI)

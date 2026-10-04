@@ -147,13 +147,13 @@ export default function EscolherLivro() {
             setLivroExpandido(expandido ? null : item.slug);
           }}
           accessibilityRole="button"
-          accessibilityLabel={item.nome}
+          accessibilityLabel={`${item.nome}, ${lidos.size} de ${item.capitulos} capítulos lidos`}
           accessibilityState={{ expanded: expandido }}
           className={`flex-row items-center justify-between px-4 py-4 rounded-xl active:bg-cor-fundo-elevado dark:active:bg-cor-fundo-elevado-dark ${expandido ? 'bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark' : ''}`}
         >
           <Text className="text-cor-texto dark:text-cor-texto-dark text-lg font-semibold">{item.nome}</Text>
           <Text className="text-xs text-cor-texto-suave dark:text-cor-texto-suave-dark">
-            {lidos.size} de {item.capitulos}
+            {lidos.size} de {item.capitulos} capítulos
           </Text>
         </Pressable>
 
@@ -244,7 +244,8 @@ export default function EscolherLivro() {
           <TextInput
             value={termo}
             onChangeText={setTermo}
-            placeholder="Buscar livro..."
+            accessibilityLabel="Buscar livro da Bíblia"
+            placeholder="Buscar livro da Bíblia..."
             placeholderTextColor="#9ca3af"
             className="px-4 py-2.5 pr-10 rounded-full border border-cor-borda dark:border-cor-borda-dark bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark text-cor-texto dark:text-cor-texto-dark"
           />

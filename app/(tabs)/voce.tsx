@@ -140,7 +140,7 @@ export default function Voce() {
             <Text className="text-xs text-cor-destaque dark:text-cor-destaque-dark font-semibold mt-0.5">Editar perfil ✎</Text>
             <View className="flex-row items-center gap-1 mt-1">
               <IconeUI name="location" size={13} color={cores.textoSuave} />
-              <Text className="text-xs text-cor-texto-suave dark:text-cor-texto-suave-dark">Sem conta ainda</Text>
+              <Text className="text-xs text-cor-texto-suave dark:text-cor-texto-suave-dark">Perfil local neste dispositivo</Text>
             </View>
           </View>
           <View className="w-16 h-16 rounded-full bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark items-center justify-center border-2 border-cor-destaque dark:border-cor-destaque-dark overflow-hidden">
@@ -274,6 +274,16 @@ export default function Voce() {
             style={SOMBRA}
           >
             <Text className="text-cor-texto dark:text-cor-texto-dark font-semibold">⚙️ Configurações</Text>
+            <Text className="text-cor-texto-suave dark:text-cor-texto-suave-dark">→</Text>
+          </Pressable>
+        </Link>
+        <Link href="/ajuda" asChild>
+          <Pressable
+            accessibilityRole="link"
+            className="flex-row items-center justify-between rounded-2xl bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark px-4 py-3.5 mt-2 shadow-sm active:opacity-80"
+            style={SOMBRA}
+          >
+            <Text className="text-cor-texto dark:text-cor-texto-dark font-semibold">Ajuda e como usar</Text>
             <Text className="text-cor-texto-suave dark:text-cor-texto-suave-dark">→</Text>
           </Pressable>
         </Link>

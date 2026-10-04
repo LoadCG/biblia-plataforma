@@ -201,6 +201,9 @@ export default function ResumoLivro() {
             {lido ? "✓ Livro lido" : "Marcar como lido"}
           </Text>
         </Pressable>
+        <Text className="text-xs text-cor-texto-suave dark:text-cor-texto-suave-dark -mt-4 mb-6">
+          Isso atualiza seu progresso nos resumos. A leitura dos capítulos é acompanhada separadamente na Bíblia.
+        </Text>
 
         <View className="border border-cor-borda dark:border-cor-borda-dark rounded-xl bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark mb-8">
           {resumo.fichaRapida.map((item, i) => (

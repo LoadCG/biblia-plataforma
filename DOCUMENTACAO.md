@@ -12,6 +12,7 @@ substituir os estados e critérios mais atuais.
 | Saber o que está concluído e o que vem primeiro | [`ESTADO-DO-PROJETO.md`](./ESTADO-DO-PROJETO.md) | Atualizar quando um marco ou prioridade mudar; nunca inferir aceite. |
 | Executar o plano do trimestre | [`docs/PLANO-MESTRE-Q4-2026.md`](./docs/PLANO-MESTRE-Q4-2026.md) | Ordem canônica das próximas frentes e critérios de saída. |
 | Seguir branch, commit, CI e recuperação | [`docs/FLUXO-GIT.md`](./docs/FLUXO-GIT.md) | Descreve apenas políticas observadas/autorizadas e evidências reais. |
+| Consultar dúvidas e lacunas de UX para visitantes novos | [`docs/auditoria-ux-novato.md`](./docs/auditoria-ux-novato.md) | Achados confirmados no fluxo e status das correções. |
 | Conferir implementação funcional | [`FUNCIONALIDADES.md`](./FUNCIONALIDADES.md) | Checklist legado amplo; confirmar código/evidência antes de marcar item. |
 | Consultar decisões fechadas | [`TODO.md`](./TODO.md) | Não reabrir decisões do usuário sem pedido. |
 | Consultar histórico | [`CHANGELOG.md`](./CHANGELOG.md) | Registro cronológico; não é roadmap. |

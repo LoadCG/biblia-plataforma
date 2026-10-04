@@ -21,11 +21,12 @@ function CardPlano({ plano, diasConcluidos, desktop }: { plano: PlanoLeitura; di
     ? Math.min(1, diasConcluidos / plano.duracaoDias)
     : null;
   const concluido = diasConcluidos !== null && diasConcluidos >= plano.duracaoDias;
+  const acao = concluido ? "Plano concluído" : diasConcluidos === null ? "Progresso indisponível" : diasConcluidos > 0 ? "Continuar plano" : "Conhecer plano";
   const icone = plano.id === "sabedoria-7" ? "wisdom" : "book-collection";
 
   return (
     <Link href={`/planos/${plano.id}`} asChild>
-      <Pressable accessibilityRole="link" accessibilityLabel={`${plano.titulo}. ${concluido ? "Plano concluído" : diasConcluidos === null ? "Progresso indisponível" : "Continuar plano"}`} accessibilityHint="Abre o plano de leitura guiado" className={`rounded-2xl bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark px-4 py-4 mb-3 shadow-sm active:opacity-80 ${desktop ? "w-[48.5%]" : ""}`} style={SOMBRA}>
+      <Pressable accessibilityRole="link" accessibilityLabel={`${plano.titulo}. ${acao}`} accessibilityHint="Abre o plano de leitura guiado" className={`rounded-2xl bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark px-4 py-4 mb-3 shadow-sm active:opacity-80 ${desktop ? "w-[48.5%]" : ""}`} style={SOMBRA}>
         <View className="flex-row items-center gap-3 mb-3">
           <View aria-hidden={true} className="w-11 h-11 rounded-2xl bg-cor-destaque-fundo dark:bg-cor-destaque-fundo-dark items-center justify-center">
             <IconeUI name={icone} size={22} className="text-cor-destaque dark:text-cor-destaque-dark" />
@@ -56,9 +57,17 @@ function CardPlano({ plano, diasConcluidos, desktop }: { plano: PlanoLeitura; di
           </View>
         ) : (
           <Text accessibilityRole="text" className="text-xs text-cor-texto-suave dark:text-cor-texto-suave-dark">
-            Progresso indisponível
+            {diasConcluidos === null ? "Progresso indisponível" : "Ainda não iniciado"}
           </Text>
         )}
+        <View className="flex-row items-center justify-between mt-3 pt-3 border-t border-cor-borda dark:border-cor-borda-dark">
+          <Text className="text-xs text-cor-texto-suave dark:text-cor-texto-suave-dark">
+            {diasConcluidos === null ? "Abra para ver o plano" : concluido ? "Trilha finalizada" : diasConcluidos > 0 ? "Retome no seu ritmo" : "Ainda não iniciado"}
+          </Text>
+          <Text className="text-xs font-bold text-cor-destaque dark:text-cor-destaque-dark">
+            {diasConcluidos === null ? "Abrir plano →" : concluido ? "Ver plano →" : diasConcluidos > 0 ? "Continuar →" : "Conhecer plano →"}
+          </Text>
+        </View>
       </Pressable>
     </Link>
   );

@@ -23,6 +23,8 @@ const contratos = [
   ["app/medalhas.tsx", 'accessibilityRole="progressbar"'],
   ["app/medalhas.tsx", "accessibilityValue={{ min: 0, max: conquistaAtiva.progressoTotal"],
   ["app/medalhas.tsx", 'accessibilityHint="Abre os detalhes deste marco de leitura"'],
+  ["app/medalhas.tsx", "obterDestinoVoltaMedalhas(origem, detalheSelecionado)"],
+  ["app/medalhas.tsx", 'accessibilityLabel={detalheSelecionado'],
   ["app/(tabs)/biblia/[livro]/[capitulo].tsx", 'accessibilityLabel="Copiar versículos selecionados"'],
   ["app/(tabs)/biblia/[livro]/[capitulo].tsx", 'accessibilityLabel="Compartilhar versículos selecionados"'],
   ["app/(tabs)/biblia/[livro]/[capitulo].tsx", "accessibilityHint={selecionado ? \"Ative para remover este versículo da seleção.\""],

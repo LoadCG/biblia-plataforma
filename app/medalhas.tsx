@@ -6,6 +6,7 @@ import { EstadoCarregando } from "../components/EstadoCarregando";
 import { EstadoErro } from "../components/EstadoErro";
 import { IconeConquista } from "../components/IconeConquista";
 import { calcularConquistas, obterLivrosPendentes, type Conquista, type IdConquista } from "../core/content/conquistas";
+import { normalizarOrigemMedalhas, obterDestinoVoltaMedalhas } from "../core/leitura/navegacaoMedalhas";
 import { livrosLidosRepository } from "../core/repositories";
 import { useOwnerId } from "../core/useOwnerId";
 
@@ -14,14 +15,14 @@ const IDS_CONQUISTA = new Set<IdConquista>([
   "primeiro-livro", "pentateuco", "evangelhos", "antigo-testamento", "novo-testamento", "biblia-completa",
 ]);
 
-function LinhaConquista({ conquista }: { conquista: Conquista }) {
+function LinhaConquista({ conquista, origem }: { conquista: Conquista; origem: "inicio" | "voce" }) {
   const progresso = conquista.progressoTotal > 0 ? Math.min(1, conquista.progressoAtual / conquista.progressoTotal) : 0;
   const completa = conquista.conquistada;
   const estado = completa ? "Conquistada" : conquista.progressoAtual > 0 ? "Em andamento" : "Não iniciada";
 
   return (
     <Pressable
-      onPress={() => router.push({ pathname: "/medalhas", params: { conquista: conquista.id } })}
+      onPress={() => router.push({ pathname: "/medalhas", params: { conquista: conquista.id, origem } })}
       accessibilityRole="button"
       accessibilityLabel={`${conquista.titulo}, ${estado}, ${conquista.progressoAtual} de ${conquista.progressoTotal}`}
       accessibilityHint="Abre os detalhes deste marco de leitura"
@@ -49,8 +50,9 @@ function LinhaConquista({ conquista }: { conquista: Conquista }) {
 }
 
 export default function Medalhas() {
-  const params = useLocalSearchParams<{ conquista?: string }>();
+  const params = useLocalSearchParams<{ conquista?: string; origem?: string }>();
   const idSelecionado = Array.isArray(params.conquista) ? params.conquista[0] : params.conquista;
+  const origem = normalizarOrigemMedalhas(params.origem);
   const detalheSelecionado = Boolean(idSelecionado);
   const idValido = Boolean(idSelecionado && IDS_CONQUISTA.has(idSelecionado as IdConquista));
   const ownerId = useOwnerId();
@@ -83,9 +85,18 @@ export default function Medalhas() {
     <ScrollView className="flex-1 bg-cor-fundo dark:bg-cor-fundo-dark">
       <View className="px-5 pt-6 pb-10 max-w-2xl w-full mx-auto">
         <View className="flex-row items-center justify-between mb-2">
-          <Link href={detalheSelecionado ? "/medalhas" : "/voce"} className="text-cor-destaque dark:text-cor-destaque-dark text-sm">
-            {detalheSelecionado ? "← Todas as medalhas" : "← Você"}
-          </Link>
+          <Pressable
+            onPress={() => router.replace(obterDestinoVoltaMedalhas(origem, detalheSelecionado))}
+            accessibilityRole="button"
+            accessibilityLabel={detalheSelecionado
+              ? "Voltar para todas as medalhas"
+              : `Voltar para ${origem === "inicio" ? "Início" : "seu perfil"}`}
+            className="min-h-11 justify-center pr-3 active:opacity-70"
+          >
+            <Text className="text-cor-destaque dark:text-cor-destaque-dark text-sm">
+              {detalheSelecionado ? "← Todas as medalhas" : `← ${origem === "inicio" ? "Início" : "Você"}`}
+            </Text>
+          </Pressable>
           <BotaoTema />
         </View>
         <Text accessibilityRole="header" className="text-2xl font-bold text-cor-texto dark:text-cor-texto-dark mb-1">
@@ -103,7 +114,9 @@ export default function Medalhas() {
         {detalheSelecionado && estado.status === "disponivel" && (!idValido || !conquistaAtiva) ? (
           <View className="rounded-2xl bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark p-5">
             <Text accessibilityRole="header" className="text-lg font-bold text-cor-texto dark:text-cor-texto-dark mb-2">Medalha não encontrada</Text>
-            <Link href="/medalhas" className="text-cor-destaque dark:text-cor-destaque-dark">Ver todas as medalhas</Link>
+            <Pressable onPress={() => router.replace({ pathname: "/medalhas", params: { origem } })} accessibilityRole="button" className="min-h-11 justify-center self-start">
+              <Text className="text-cor-destaque dark:text-cor-destaque-dark">Ver todas as medalhas</Text>
+            </Pressable>
           </View>
         ) : null}
         {conquistaAtiva ? (
@@ -151,7 +164,7 @@ export default function Medalhas() {
             <Text className="text-sm text-cor-texto-suave dark:text-cor-texto-suave-dark mb-5">
               {totalConquistadas} de {conquistas.length} conquistadas — marcos privados de leitura, sem pontuação nem ranking.
             </Text>
-            {conquistas.map((conquista) => <LinhaConquista key={conquista.id} conquista={conquista} />)}
+            {conquistas.map((conquista) => <LinhaConquista key={conquista.id} conquista={conquista} origem={origem} />)}
           </>
         ) : null}
       </View>

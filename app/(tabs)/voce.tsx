@@ -43,7 +43,7 @@ function MedalhaCarrossel({ conquista }: { conquista: Conquista }) {
 
   return (
     <Pressable
-      onPress={() => router.push({ pathname: "/medalhas", params: { conquista: conquista.id } })}
+      onPress={() => router.push({ pathname: "/medalhas", params: { conquista: conquista.id, origem: "voce" } })}
       accessibilityRole="button"
       accessibilityLabel={`${conquista.titulo}, ${conquista.conquistada ? "conquistada" : `${conquista.progressoAtual} de ${conquista.progressoTotal}`}`}
       className="w-28 mr-3 items-center active:opacity-70"
@@ -248,7 +248,7 @@ export default function Voce() {
               <MedalhaCarrossel key={c.id} conquista={c} />
             ))}
           </ScrollView>
-          <Pressable onPress={() => router.push("/medalhas")} accessibilityRole="button" className="self-start mt-3 active:opacity-70">
+          <Pressable onPress={() => router.push({ pathname: "/medalhas", params: { origem: "voce" } })} accessibilityRole="button" className="self-start mt-3 active:opacity-70">
             <Text style={{ color: cores.destaque }} className="text-xs font-bold">
               Ver todas as medalhas →
             </Text>

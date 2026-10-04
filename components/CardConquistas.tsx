@@ -18,7 +18,7 @@ export function CardConquistas({ conquistas }: { conquistas: Conquista[] }) {
           return (
             <Pressable
               key={c.id}
-              onPress={() => router.push({ pathname: "/medalhas", params: { conquista: c.id } })}
+              onPress={() => router.push({ pathname: "/medalhas", params: { conquista: c.id, origem: "inicio" } })}
               accessibilityRole="button"
               accessibilityLabel={`${c.titulo}, ${completa ? "conquistada" : `${c.progressoAtual} de ${c.progressoTotal}`}`}
               className="items-center flex-1 active:opacity-70"
@@ -48,7 +48,7 @@ export function CardConquistas({ conquistas }: { conquistas: Conquista[] }) {
         })}
       </View>
 
-      <Pressable onPress={() => router.push("/medalhas")} accessibilityRole="button" className="bg-cor-borda dark:bg-cor-borda-dark self-start px-5 py-2 rounded-full active:opacity-70">
+      <Pressable onPress={() => router.push({ pathname: "/medalhas", params: { origem: "inicio" } })} accessibilityRole="button" className="bg-cor-borda dark:bg-cor-borda-dark self-start px-5 py-2 rounded-full active:opacity-70">
         <Text className="text-xs font-semibold text-cor-texto dark:text-cor-texto-dark">Ver todos</Text>
       </Pressable>
 

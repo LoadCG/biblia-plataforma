@@ -43,7 +43,7 @@ inexistente. A validação da URL pública fica pendente até o deploy do commit
 | Sistema de estados | Migração principal feita | Inventário/API/migrações existem. Varredura AST encontrou 73 chamadas a `mostrarToast`, todas classificadas; o contrato TypeScript agora exige severidade. Inspeção visual/assistiva dos consumidores continua pendente. |
 | Anotações compartilhadas | Implementadas; QA web funcional concluído, aceite integral parcial | Commit `5a1e745` adiciona grupos multi-versículo em AsyncStorage e SQLite. Em `localhost:8082`, perfil descartável: criação contínua/descontínua, reabertura por membro, extensão, promoção de nota individual, conflito sem sobrescrita, recarga, Salvos/busca/edição/exclusão, atividade e cartão do Versículo do Dia conferidos; dados de QA removidos. Cinco testes do repositório, typecheck, checks a11y/UI/copy e export passaram. Falta runtime SQLite em dispositivo/emulador, estados de erro/foco e medição visual com viewport conhecido. |
 | Copy da interface | Gate estático passou | 114 fontes de app/componentes/conteúdo verificadas localmente e no CI, sem padrões sinalizados; a heurística não substitui revisão semântica. |
-| CI remoto | Primeiro run passou | `37033595191` para o commit `7716388`; gates de conteúdo, copy, validação, export e metadados passaram. Revisar avisos de runtime do Actions/runner; preview não foi comprovado. |
+| CI remoto | Passou no workflow atualizado | Run [`37225958581`](https://github.com/LoadCG/biblia-plataforma/actions/runs/37225958581) para `42333ac`; checkout, setup-node, instalação reproduzível, validação, export e metadados passaram. O runner avisou da migração agendada de `ubuntu-latest` para Ubuntu 26; preview não foi comprovado. |
 | Conteúdo editorial | Catálogo funcional; expansão não aprovada | Há 66 resumos e 2 planos. Schema editorial completo, segunda revisão humana e publicação dos novos rascunhos são gates separados. |
 | Mobile/nativo | Deferido | Não fazer redesenho nem declarar aceite sem retomada explícita; validar regressões responsivas web em componentes compartilhados. |
 
@@ -54,7 +54,10 @@ sem alterar sessões. Esse recorte não substitui os viewports/estados pendentes
 **Atualização do workflow (2026-10-04):** `actions/checkout` e
 `actions/setup-node` foram atualizadas para as majors atuais compatíveis com
 Node 24 no runtime das actions; a versão de Node do projeto permanece 22. O
-resultado remoto desta alteração depende do próximo run em `master`.
+run [`37225958581`](https://github.com/LoadCG/biblia-plataforma/actions/runs/37225958581)
+passou em `master` (1m25s), incluindo validação e export estático. O único aviso
+foi a migração futura do runner `ubuntu-latest` para Ubuntu 26; preview Vercel
+continua pendente.
 
 ## Ordem de execução
 
@@ -251,7 +254,9 @@ editorial registrada; nenhuma entrada foi promovida pelo agente.
 ### Ciclo 6 — CI, SEO e release web (P1, dependência externa)
 
 1. Após o workflow atualizado chegar ao GitHub, confirmar um run verde em
-   `master`; registrar run ID, commit e eventuais falhas reais.
+   `master`; registrar run ID, commit e eventuais falhas reais. **Concluído:**
+   [`37225958581`](https://github.com/LoadCG/biblia-plataforma/actions/runs/37225958581)
+   passou para `42333ac` em 1m25s.
 2. Revisar avisos de runtime do GitHub Actions: o primeiro run executou actions
    que declaravam Node 20 após a remoção desse runtime dos runners GitHub-hosted.
    `checkout` e `setup-node` agora usam majors atuais com suporte ao runtime

@@ -188,8 +188,10 @@ revisão humana, execução remota e distribuição.
    [`docs/PLANO-HOVER-INTERACOES.md`](./docs/PLANO-HOVER-INTERACOES.md).
 6. **CI e SEO:** workflow atualizado para `actions/checkout@v7` e
    `actions/setup-node@v7`, preservando Node 22 do projeto. O run
-   `37033595191` passou em 2026-10-02; confirmar próximo run em `master`, validar
-   preview Vercel quando disponível e observar a migração do runner Ubuntu 26.
+   [`37225958581`](https://github.com/LoadCG/biblia-plataforma/actions/runs/37225958581)
+   passou para `42333ac` em 1m25s; checkout, setup-node, validação, export e
+   metadados ficaram verdes. O runner mantém o aviso da migração agendada do
+   Ubuntu 26; validar preview Vercel quando disponível.
 7. **Conteúdo:** evoluir contrato/taxonomia e selecionar um pequeno lote apenas
    quando houver responsáveis por revisão humana independente.
 8. **Mobile dedicado, validação nativa e lojas:** permanecem deferidos; não são

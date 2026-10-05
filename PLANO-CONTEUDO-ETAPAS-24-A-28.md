@@ -103,32 +103,105 @@ status e relações sem depender de parsing frágil do texto exibido.
 
 ## Etapa 25 — Novos planos de leitura
 
-### 25.1 Definir portfólio `⬜`
+### Replanejamento de portfólio (2026-10-04)
 
-- [ ] Planejar um plano curto de 7 dias para primeira experiência.
-- [ ] Planejar um plano de 14 dias para temas de formação espiritual.
-- [ ] Planejar um plano de 30 dias com progressão equilibrada.
-- [ ] Avaliar um plano canônico de 90 dias somente após validar a operação.
-- [ ] Evitar criar planos apenas por volume; cada um precisa de objetivo claro.
+O catálogo publicado tem dois itens: **Semana da Sabedoria** (7 dias) e
+**Os Evangelhos em 14 Dias**. Há duas propostas completas ainda fora do app:
+[`plano-primeiros-passos-7-dias.md`](./docs/revisao-editorial/plano-primeiros-passos-7-dias.md)
+e
+[`plano-justica-cuidado-esperanca-14-dias.md`](./docs/revisao-editorial/plano-justica-cuidado-esperanca-14-dias.md).
+Há também a especificação
+[`plano-formacao-30-dias.md`](./docs/revisao-editorial/plano-formacao-30-dias.md),
+sem referências e conteúdo diário completos. Nenhuma dessas propostas está
+aprovada para publicação; a redação assistida não conta como revisão humana.
 
-### 25.2 Especificar cada plano `⬜`
+| Ordem | Plano/candidato | Público e necessidade | Valor distinto | Decisão/estado |
+|---:|---|---|---|---|
+| 0 | Semana da Sabedoria — 7 dias | Leitor que quer começar por poesia e sabedoria | Jornada curta já publicada | Manter; usar como comparação de carga e retomada. |
+| 0 | Os Evangelhos em 14 Dias | Leitor que busca uma leitura panorâmica de Jesus | Jornada narrativa já publicada | Manter; não criar outro plano genérico de Evangelhos. |
+| 1 | Primeiros passos: da criação à esperança — 7 dias | Iniciante ou pessoa retomando a leitura | Um arco bíblico amplo, com trechos curtos e explicação de contexto | Piloto prioritário; revisar a proposta existente e reduzir interseções desnecessárias com os dois planos publicados. |
+| 2 | Justiça, cuidado e esperança — 14 dias | Leitor temático interessado em dignidade, sofrimento, comunidade e esperança | Comparação de gêneros e passagens dos dois testamentos, preservando seus contextos | Próximo lote, depois do piloto; revisão pastoral cuidadosa e referências cruzadas justificadas. |
+| 3 | Formação bíblica — 30 dias | Leitor regular após uma experiência curta | Progressão narrativa e temática de maior fôlego | Manter em especificação até resolver carga, recuperação e currículo; não abrir nova redação ainda. |
 
-- [ ] Definir título, descrição, objetivo e público.
-- [ ] Definir duração, carga diária e referências.
-- [ ] Definir reflexão e pergunta por dia quando aplicável.
-- [ ] Definir critérios de conclusão e retomada.
-- [ ] Revisar distribuição entre Antigo e Novo Testamento.
+**Decisão de portfólio:** executar os candidatos já preparados antes de propor
+mais títulos. A proposta genérica “Evangelhos essenciais” da estratégia antiga
+foi removida porque duplicava `evangelhos-14`. “Salmos para cada dia” também
+fica fora da primeira sequência: sobrepõe a Semana da Sabedoria e compete com o
+plano de 30 dias ainda não definido. Um plano de 90 dias é adiado até haver
+evidência de uso, conclusão e retomada dos formatos curtos; não se coletam dados
+pessoais para essa avaliação.
 
-### 25.3 Produzir e revisar `⬜`
+### 25.1 Fechar hipótese e carga de cada candidato `⬜`
 
-- [ ] Criar conteúdo em arquivo fonte versionado.
-- [ ] Validar todas as referências contra a base ACF.
-- [ ] Fazer revisão teológica/editorial independente.
-- [ ] Fazer revisão de linguagem, clareza e adequação do tom.
-- [ ] Gerar dados derivados somente pelo script oficial.
+- [ ] Para o piloto de 7 dias, confirmar que o objetivo é introduzir a narrativa
+  bíblica com trechos manejáveis, não resumir novamente os Evangelhos.
+- [ ] Para o temático de 14 dias, definir perguntas de comparação sem tratar
+  textos de épocas e gêneros distintos como se tivessem o mesmo contexto.
+- [ ] Para o de 30 dias, escolher entre 30 sessões de leitura ou um calendário
+  maior com dias opcionais. O modelo atual exige exatamente uma sessão para cada
+  dia numerado; pausa sem referência não é suportada corretamente.
+- [ ] Medir a carga usando palavras/versículos reais da ACF, e só então definir
+  uma estimativa de tempo. Não prometer uma duração precisa sem medição.
+- [ ] Registrar leituras repetidas entre planos com motivo editorial; repetir
+  uma passagem pode ser válido, mas não deve ocorrer por conveniência do rascunho.
+- [ ] Adiar filtros e categorias na interface enquanto a lista continuar curta;
+  verificar apenas a clareza do título, descrição, duração e público.
 
-**Aceite:** cada plano passa por schema, referências, revisão editorial e teste
-de retomada antes de aparecer no catálogo.
+### 25.2 Fechar contrato e integridade de dados `⬜`
+
+- [ ] Tornar explícitos no conteúdo fonte o objetivo, público, tags, versão e
+  status editorial de cada plano; preservar metadados dos dois planos existentes.
+- [ ] Remover a publicação implícita baseada apenas em estar dentro do JSON do
+  catálogo: somente itens aprovados entram em `core/content/dados/planos.json`.
+- [ ] Expandir `verificar-planos-editoriais.js` para conferir início/fim de
+  faixas contra a contagem de versículos de cada capítulo ACF. Hoje ele confirma
+  livro e capítulo e início positivo, mas não detecta fim além do capítulo ou
+  faixa invertida.
+- [ ] Validar IDs e dias únicos, sequência completa, conteúdo obrigatório,
+  referências não vazias, links navegáveis e duplicações não justificadas.
+- [ ] Manter ID publicado e numeração dos dias imutáveis: o progresso local é
+  armazenado por `planoId` e número do dia. Mudança estrutural em plano publicado
+  exige versão/ID novo ou migração explícita, nunca renumeração silenciosa.
+- [ ] Atualizar relações plano–livro em `core/content/relacoesCatalogo.ts` com
+  justificativa editorial para as relações selecionadas.
+
+### 25.3 Produzir por lotes e revisar independentemente `⬜`
+
+- [ ] Trabalhar em arquivos fonte versionados na fila editorial; rascunhos não
+  são importados pela interface nem pelo bundle offline publicado.
+- [ ] Completar primeiro somente o piloto de 7 dias e submetê-lo a duas leituras
+  humanas independentes: coerência bíblica, referências, clareza, carga e tom.
+- [ ] Registrar decisão, revisores, versão e pendências resolvidas no item. Se
+  houver divergência teológica relevante, contextualizar ou ajustar o escopo.
+- [ ] Depois do piloto aprovado, revisar o plano temático de 14 dias. Atenção a
+  luto, ansiedade, injustiça e abuso: perguntas não devem culpar a pessoa,
+  substituir apoio profissional ou sugerir que fé elimina sofrimento.
+- [ ] Só então completar o plano de 30 dias, usando um currículo distinto e uma
+  regra de recuperação que o produto consiga representar sem corromper progresso.
+- [ ] Promover para o catálogo apenas após aprovação humana explícita e gates
+  técnicos; atualizar cobertura editorial e changelog no mesmo incremento.
+
+### 25.4 Validar experiência e publicação de cada lote `⬜`
+
+- [ ] Testar leitura inicial, avanço entre referências, fechamento/retorno ao
+  detalhe, retomada da sessão, conclusão e desmarcação do dia.
+- [ ] Confirmar que incluir planos novos não altera o progresso dos dois planos
+  existentes e que IDs distintos não compartilham sessões.
+- [ ] Conferir rota direta e refresh das páginas estáticas geradas a partir do
+  catálogo, referências clicáveis, funcionamento offline e layouts web estreitos
+  e largos em claro/escuro.
+- [ ] Não declarar QA visual mobile nativo sem executar esse ambiente; manter a
+  validação responsiva web, pois as telas são compartilhadas.
+- [ ] Publicar lote pequeno, observar problemas de qualidade e só depois liberar
+  o próximo. Não adicionar mecanismos de ranking, sequência punitiva ou metas
+  obrigatórias.
+
+**Aceite por plano:** objetivo e público distinguíveis dos itens publicados;
+carga conferida; todas as referências dentro da ACF; conteúdo diário completo;
+duas revisões humanas independentes registradas; status publicado explícito;
+teste de retomada e progresso isolado; rota, exportação, offline e apresentação
+responsiva verificados. Nenhum rascunho avança por passar apenas na validação
+automática.
 
 ---
 
@@ -236,16 +309,15 @@ renderização passam pelos gates automatizados e revisão humana.
 
 ### Portfólio mínimo recomendado
 
-O catálogo deve crescer em camadas, com uma hipótese explícita por item:
-
-1. **Entrada:** “Primeiros passos” (7 dias), carga baixa e referências curtas.
-2. **Formação:** “Evangelhos essenciais” (14 dias), narrativa contínua.
-3. **Prática:** “Salmos para cada dia” (30 dias), recorrência e reflexão.
-4. **Panorama:** “Bíblia em 90 dias” (90 dias), somente após validar o modelo.
+Aplicar a ordem e as decisões da seção **Replanejamento de portfólio** da etapa
+25 acima. A recomendação anterior de “Evangelhos essenciais” duplicava um plano
+já publicado, e “Salmos para cada dia” não tinha currículo próprio nem regra
+clara em relação à Semana da Sabedoria; ambas foram substituídas por candidatos
+já documentados e ainda não aprovados. O plano de 90 dias permanece adiado.
 
 Cada proposta precisa declarar objetivo, público, carga diária, livros cobertos,
-critério de conclusão e motivo editorial para existir. Não criar um plano apenas
-para aumentar a contagem do catálogo.
+critério de conclusão, distinção dos planos publicados e motivo editorial para
+existir. Não criar um plano apenas para aumentar a contagem do catálogo.
 
 ## Backlog editorial priorizado
 

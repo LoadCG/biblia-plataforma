@@ -1,100 +1,101 @@
-import Svg, { Path, Circle, Line, Ellipse } from "react-native-svg";
+import Svg, { Circle, Ellipse, Line, Path } from "react-native-svg";
 import type { IdTema } from "../core/biblia/tiposTema";
 
-// Mini ilustrações editoriais locais para categorias de Descubra.
+// Ilustrações editoriais locais de Descubra. Os títulos dos temas carregam o
+// significado acessível; a arte é decorativa e não depende de recursos remotos.
 type Props = {
   tema: IdTema;
   cor: string;
   tamanho?: number;
 };
 
+const OURO = "#d5a457";
+const SÁLVIA = "#89936f";
+const TERRA = "#a7764d";
+const TRAÇO = 2.6;
+
 export function IlustracaoTema({ tema, cor, tamanho = 64 }: Props) {
   const comuns = { width: tamanho, height: tamanho * 0.8, viewBox: "0 0 120 96", fill: "none" as const };
-  const tinta = cor;
-  const folha = tema === "cura" || tema === "perdao" ? "#89936b" : "#a28a62";
+  const linha = { stroke: cor, strokeWidth: TRAÇO, strokeLinecap: "round" as const, strokeLinejoin: "round" as const };
 
-  // Mini cenas editoriais, em formas locais e sem texto: os títulos e
-  // descrições reais permanecem no card e a arte é ocultada da árvore A11y.
   switch (tema) {
     case "amor":
       return (
         <Svg {...comuns}>
-          <Ellipse cx="61" cy="84" rx="44" ry="7" fill={folha} fillOpacity={0.18} />
-          <Path d="M18 78c17-8 31-8 45 0s27 8 40 0" stroke={folha} strokeWidth="2" />
-          <Path d="M60 70C39 57 36 44 43 38c7-6 15 0 17 7 3-8 12-13 19-7 9 8 1 22-19 32Z" fill={cor} fillOpacity={0.2} stroke={tinta} strokeWidth="2.2" strokeLinejoin="round" />
-          <Path d="M60 70c0-11 1-17 5-25" stroke={tinta} strokeWidth="1.6" strokeLinecap="round" />
-          <Circle cx="35" cy="31" r="3" fill={cor} fillOpacity="0.45" />
-          <Circle cx="89" cy="34" r="2" fill={cor} fillOpacity="0.35" />
+          <Ellipse cx="60" cy="83" rx="35" ry="5" fill={TERRA} fillOpacity={0.14} />
+          <Path d="M60 75C49 65 31 53 31 40c0-9 6-15 15-15 7 0 12 4 14 10 3-6 8-10 15-10 9 0 15 6 15 15 0 13-18 25-30 35Z" fill={cor} fillOpacity={0.2} {...linha} />
+          <Path d="M60 74c-14 5-27 1-36-9m36 9c14 5 27 1 36-9" stroke={SÁLVIA} strokeWidth="3" strokeLinecap="round" />
+          <Path d="M41 59c5 4 10 6 16 7m22-7c-5 4-10 6-16 7" stroke={cor} strokeWidth="1.8" strokeLinecap="round" opacity={0.75} />
+          <Circle cx="23" cy="31" r="2.5" fill={OURO} /><Circle cx="97" cy="31" r="2.5" fill={OURO} />
         </Svg>
       );
     case "cura":
       return (
         <Svg {...comuns}>
-          <Path d="M11 82c24-4 48-4 96 0" stroke={folha} strokeWidth="2" strokeLinecap="round" />
-          <Path d="M57 78c8-15 16-27 30-39M64 65 43 50m32 1 18 9M54 74 39 67" stroke={folha} strokeWidth="2.4" strokeLinecap="round" />
-          <Path d="M85 39c-2-13 5-21 19-23 0 14-7 22-19 23Zm-21 27C50 65 42 58 40 47c13 1 21 7 24 19Zm30-7c2-12 10-18 22-18-2 12-10 18-22 18ZM55 75c-11 1-19-4-24-14 12-2 20 3 24 14Z" fill={folha} fillOpacity="0.72" stroke={tinta} strokeWidth="1.2" />
-          <Circle cx="22" cy="33" r="9" fill="#e8c88b" fillOpacity="0.55" />
+          <Path d="M16 82c24-3 54-3 88 0" stroke={TERRA} strokeWidth="2.4" strokeLinecap="round" />
+          <Path d="M59 79c1-17 7-31 21-44" stroke={SÁLVIA} strokeWidth="3.2" strokeLinecap="round" />
+          <Path d="M70 57c-15 1-23-6-25-19 14 0 22 6 25 19Zm8-14c0-13 7-20 20-22 1 14-6 21-20 22Zm-15 28c-12 0-20-6-23-17 12-1 20 5 23 17Z" fill={SÁLVIA} fillOpacity={0.58} stroke={cor} strokeWidth="1.8" strokeLinejoin="round" />
+          <Circle cx="31" cy="29" r="11" fill={OURO} fillOpacity={0.25} stroke={OURO} strokeWidth="1.8" />
+          <Path d="M31 23v12m-6-6h12" stroke={cor} strokeWidth="2.4" strokeLinecap="round" />
+          <Path d="M21 44c-4 4-6 9-6 15m27-18c3 4 5 8 5 13" stroke={OURO} strokeWidth="1.8" strokeLinecap="round" opacity={0.8} />
         </Svg>
       );
     case "ansiedade":
       return (
         <Svg {...comuns}>
-          <Path d="M5 81c23-8 47-7 109 0" stroke={folha} strokeWidth="2" />
-          <Path d="M17 69c12-8 25-8 38 0m-44-9c13-7 26-7 39 0m11 8c13-8 27-8 40 0m-37-9c13-7 26-7 39 0" stroke={tinta} strokeWidth="2" strokeLinecap="round" opacity="0.58" />
-          <Path d="M17 49c4-11 13-18 27-19-1 13-9 21-24 23m3 2c8-7 16-9 25-8" fill={folha} fillOpacity="0.48" stroke={tinta} strokeWidth="1.5" strokeLinejoin="round" />
-          <Path d="M86 48c4-10 12-16 25-17-2 12-9 19-22 21m2 2c7-6 14-8 22-7" fill={folha} fillOpacity="0.4" stroke={tinta} strokeWidth="1.5" strokeLinejoin="round" />
-          <Circle cx="63" cy="25" r="8" fill="#e8c88b" fillOpacity="0.55" />
+          <Path d="M14 74c13-11 26-11 39 0s26 11 53 0M10 83c15-8 28-8 42 0s29 8 58 0" stroke={SÁLVIA} strokeWidth="2.8" strokeLinecap="round" />
+          <Path d="M18 60c13-10 25-10 38 0m8 0c12-10 24-10 37 0" stroke={cor} strokeWidth="2.4" strokeLinecap="round" opacity={0.72} />
+          <Path d="M73 18a23 23 0 1 0 27 31A20 20 0 0 1 73 18Z" fill={OURO} fillOpacity={0.32} stroke={cor} strokeWidth="2.4" strokeLinejoin="round" />
+          <Circle cx="34" cy="37" r="2" fill={OURO} /><Circle cx="48" cy="27" r="1.8" fill={OURO} />
+          <Path d="M24 49c5 2 9 2 14 0" stroke={cor} strokeWidth="1.8" strokeLinecap="round" opacity={0.55} />
         </Svg>
       );
     case "raiva":
       return (
         <Svg {...comuns}>
-          <Ellipse cx="61" cy="81" rx="40" ry="7" fill="#9e7144" fillOpacity="0.2" />
-          <Path d="M21 78c10-11 20-14 32-8m14 8c12-10 24-12 38-5" stroke={folha} strokeWidth="2.2" strokeLinecap="round" />
-          <Path d="M63 73c-15-8-21-21-15-31 4-7 11-8 16-2 1-11 9-17 17-12 9 6 4 18 1 24 10-4 17 1 16 10-2 12-18 16-35 11Z" fill="#e1a953" fillOpacity="0.36" stroke={tinta} strokeWidth="2.1" strokeLinejoin="round" />
-          <Path d="M63 71c-5-9-4-18 2-27 4 8 5 16 1 27m6-1c1-7 5-12 12-16-1 8-5 13-12 16Z" fill="#d78a38" fillOpacity="0.6" />
-          <Circle cx="30" cy="38" r="2" fill="#e8c88b" />
+          <Ellipse cx="61" cy="82" rx="33" ry="5" fill={TERRA} fillOpacity={0.16} />
+          <Path d="M60 78C47 68 39 58 40 47c1-9 7-17 16-24 0 10 4 14 8 18 1-13 8-23 18-31 0 15 12 22 12 39 0 13-11 25-34 29Z" fill={OURO} fillOpacity={0.34} stroke={cor} strokeWidth="2.8" strokeLinejoin="round" />
+          <Path d="M62 72c-7-6-10-12-8-19 2-5 5-8 9-12 1 7 5 10 8 13 0-6 4-11 8-15 0 8 7 12 7 21 0 8-8 13-24 12Z" fill={TERRA} fillOpacity={0.6} stroke={TERRA} strokeWidth="1.4" strokeLinejoin="round" />
+          <Path d="M25 37l7 5m-3-17 5 8m59 4 6-5m-3 14 8-2" stroke={OURO} strokeWidth="2.2" strokeLinecap="round" />
         </Svg>
       );
     case "alegria":
       return (
         <Svg {...comuns}>
-          <Path d="M9 80c25-4 47-4 102 0" stroke={folha} strokeWidth="2" />
-          <Path d="M13 78 49 49m0 0L36 34m13 15 16-23m-4 39 27-29m-21 50 28-26m-45-1L29 63" stroke={folha} strokeWidth="2" strokeLinecap="round" />
-          <Path d="M49 50c-10 2-17-3-19-13 10-2 17 3 19 13Zm1-2c-2-10 3-17 13-20 2 10-3 17-13 20Zm11 18c-9 2-16-2-19-11 10-2 16 2 19 11Zm26-25c-9 1-15-4-16-13 9-1 15 4 16 13Zm-1 25c-8 2-15-2-17-10 9-2 15 2 17 10Z" fill={folha} fillOpacity="0.75" stroke={tinta} strokeWidth="1.3" />
-          <Circle cx="91" cy="27" r="10" fill="#e8c88b" fillOpacity="0.62" />
+          <Path d="M15 79c25-5 57-5 90 0" stroke={SÁLVIA} strokeWidth="2.6" strokeLinecap="round" />
+          <Circle cx="61" cy="42" r="18" fill={OURO} fillOpacity={0.32} stroke={cor} strokeWidth="2.5" />
+          <Path d="M61 12v7m0 46v7M31 42h7m46 0h7M40 21l5 5m32 32 5 5m0-42-5 5M45 58l-5 5" stroke={OURO} strokeWidth="2.8" strokeLinecap="round" />
+          <Path d="M24 76c4-11 11-17 22-19-1 12-8 18-22 19Zm1 1c12-2 20 1 25 9m46-10c-4-10-11-16-22-18 1 12 8 17 22 18Zm-1 1c-11-2-19 1-24 8" fill={SÁLVIA} fillOpacity={0.54} stroke={cor} strokeWidth="1.8" strokeLinejoin="round" />
         </Svg>
       );
     case "perdao":
       return (
         <Svg {...comuns}>
-          <Path d="M13 77c15-17 27-26 49-32 14-4 27-3 43 1" stroke={folha} strokeWidth="2.3" strokeLinecap="round" />
-          <Path d="M61 46c-9-12-7-23 3-27 9-4 16 3 17 12 6-8 17-9 22-1 7 11-4 22-26 27Z" fill={folha} fillOpacity="0.48" stroke={tinta} strokeWidth="1.8" strokeLinejoin="round" />
-          <Path d="M59 48c-12-8-24-10-39-7m39 7c-9-2-17-1-25 3m56-18c10-8 20-10 31-8m-31 8c8-2 15-1 22 2" stroke={tinta} strokeWidth="1.6" strokeLinecap="round" />
-          <Path d="M38 69c14 4 28 4 42 0" stroke="#c89c64" strokeWidth="2" strokeLinecap="round" opacity="0.8" />
+          <Path d="M27 47c2-15 17-25 32-20l7 3-7 9m34 10c-2 15-17 25-32 20l-7-3 7-9" stroke={cor} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+          <Path d="M39 46c2-8 10-13 18-11m24 15c-2 8-10 13-18 11" stroke={SÁLVIA} strokeWidth="2.5" strokeLinecap="round" />
+          <Path d="M60 39c-8-7-7-15 0-18 6 3 7 9 3 14m-3 22c8 7 7 15 0 18-6-3-7-9-3-14" fill={SÁLVIA} fillOpacity={0.56} stroke={cor} strokeWidth="1.8" strokeLinejoin="round" />
+          <Circle cx="24" cy="72" r="2.4" fill={OURO} /><Circle cx="96" cy="24" r="2.4" fill={OURO} />
+          <Path d="M14 82c15-4 27-4 39 0m14 0c13-4 25-4 39 0" stroke={TERRA} strokeWidth="2" strokeLinecap="round" opacity={0.65} />
         </Svg>
       );
     case "esperanca":
       return (
         <Svg {...comuns}>
-          <Path d="M5 79c22-14 38-12 58 0s35 10 53-1" stroke="#8b9a68" strokeWidth="3" />
-          <Path d="M4 84c24-7 42-5 61 2 18 6 35 2 51-4" stroke="#b49a70" strokeWidth="2" />
-          <Path d="M15 73c14-8 26-8 39 0m22 1c13-8 24-8 37-1" stroke={folha} strokeWidth="2" strokeLinecap="round" />
-          <Circle cx="67" cy="42" r="19" fill="#eab65f" fillOpacity="0.52" />
-          <Path d="M28 73a39 39 0 0 1 78 0" stroke={tinta} strokeWidth="1.8" strokeOpacity="0.45" />
-          <Line x1="67" y1="12" x2="67" y2="18" stroke={tinta} strokeWidth="1.8" strokeLinecap="round" />
-          <Line x1="38" y1="28" x2="43" y2="32" stroke={tinta} strokeWidth="1.8" strokeLinecap="round" />
-          <Line x1="96" y1="28" x2="91" y2="32" stroke={tinta} strokeWidth="1.8" strokeLinecap="round" />
+          <Path d="M13 78c15-12 30-12 47 0s32 12 47 0v8H13v-8Z" fill={SÁLVIA} fillOpacity={0.28} />
+          <Path d="M13 78c15-12 30-12 47 0s32 12 47 0" stroke={SÁLVIA} strokeWidth="2.8" strokeLinecap="round" />
+          <Path d="M29 71a31 31 0 0 1 62 0" fill={OURO} fillOpacity={0.22} stroke={cor} strokeWidth="2.8" strokeLinecap="round" />
+          <Path d="M60 34V23m-22 20-8-7m52 7 8-7m-44 2-5-9m34 9 5-9" stroke={OURO} strokeWidth="2.4" strokeLinecap="round" />
+          <Path d="M8 88c21-4 41-4 55 0s32 4 49 0" stroke={TERRA} strokeWidth="2" strokeLinecap="round" opacity={0.72} />
+          <Circle cx="60" cy="69" r="3" fill={OURO} />
         </Svg>
       );
     case "sabedoria":
       return (
         <Svg {...comuns}>
-          <Ellipse cx="63" cy="80" rx="43" ry="7" fill="#806346" fillOpacity="0.18" />
-          <Path d="M22 52c16-6 29-6 43 0v25c-14-6-27-6-43 0V52Zm43 0c14-6 28-6 43 0v25c-15-6-29-6-43 0V52Z" fill="#f8f0df" stroke={tinta} strokeWidth="2" strokeLinejoin="round" />
-          <Path d="M65 54v22m-36-16c9-3 17-3 27 1m19-1c9-4 18-4 27-1" stroke={tinta} strokeWidth="1.4" strokeLinecap="round" opacity="0.65" />
-          <Path d="M17 78c31-8 64-8 104 0v6c-40-7-73-7-104 0v-6Z" fill="#c89c64" fillOpacity="0.78" />
-          <Path d="M89 48c5-11 10-18 18-25m-17 17c-8-1-13-5-16-12 9 0 15 4 16 12Zm10-13c0-9 4-15 12-19 1 8-3 15-12 19Z" stroke={folha} strokeWidth="1.8" strokeLinejoin="round" />
+          <Path d="M14 73c17-5 32-4 46 3 14-7 29-8 46-3v12c-17-5-32-4-46 3-14-7-29-8-46-3V73Z" fill={OURO} fillOpacity={0.2} stroke={cor} strokeWidth="2.8" strokeLinejoin="round" />
+          <Path d="M60 76V40m0 36c-12-7-26-8-40-5V39c14-3 28-2 40 5m0 32c12-7 26-8 40-5V39c-14-3-28-2-40 5" fill="#fffaf0" fillOpacity={0.8} stroke={cor} strokeWidth="2.6" strokeLinejoin="round" />
+          <Path d="M28 49c9-1 17 0 24 4m-24 4c9-1 17 0 24 4m40-12c-9-1-17 0-24 4m24 4c-9-1-17 0-24 4" stroke={TERRA} strokeWidth="1.8" strokeLinecap="round" opacity={0.72} />
+          <Path d="m60 15 3.3 7.2 7.7.8-5.8 5.2 1.6 7.6-6.8-3.9-6.8 3.9 1.6-7.6-5.8-5.2 7.7-.8L60 15Z" fill={OURO} stroke={cor} strokeWidth="1.4" strokeLinejoin="round" />
         </Svg>
       );
     default:

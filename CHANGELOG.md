@@ -6,6 +6,9 @@ O formato é baseado no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.
 ## [Unreleased] - 2026-10-04
 
 ### Interface
+- Redesenhadas as oito ilustrações SVG de Descubra com motivos próprios para
+  cada tema, traços mais legíveis em miniatura e cores consistentes entre os
+  contextos claro e escuro.
 - Descubra agora oferece atalhos funcionais para Salvos e Ajuda no lugar de
   “Favoritos” e “Apoie” desabilitados.
 - Criada a página Dados e privacidade com explicação do armazenamento local,

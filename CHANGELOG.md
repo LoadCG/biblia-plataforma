@@ -6,6 +6,9 @@ O formato é baseado no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.
 ## [Unreleased] - 2026-10-04
 
 ### Interface
+- Paletas explícitas de ilustrações de temas e medalhas agora acompanham os
+  modos claro e escuro; detalhes secundários dos temas e medalhas bloqueadas
+  também preservam contraste em ambos.
 - As dez medalhas ganharam artes vetoriais próprias dentro de molduras
   consistentes, com símbolos distintos por conquista e paleta legível nos
   estados bloqueado e conquistado, em tema claro ou escuro. O tamanho das artes

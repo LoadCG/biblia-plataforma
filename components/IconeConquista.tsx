@@ -1,5 +1,6 @@
 import Svg, { Circle, Path } from "react-native-svg";
 import type { IdConquista } from "../core/content/conquistas";
+import { useColorScheme } from "../core/theme";
 
 type Props = {
   conquistaId: IdConquista;
@@ -7,14 +8,22 @@ type Props = {
   tamanho?: number;
 };
 
-const PALETA = {
-  conquistada: { metal: "#d7a956", brilho: "#f8e5b8", tinta: "#68411f", fita: "#a44f3d" },
-  bloqueada: { metal: "#c9c3b8", brilho: "#eeeae2", tinta: "#746e64", fita: "#989185" },
+const PALETAS = {
+  claro: {
+    conquistada: { metal: "#d7a956", brilho: "#f8e5b8", tinta: "#68411f", fita: "#a44f3d" },
+    bloqueada: { metal: "#c9c3b8", brilho: "#eeeae2", tinta: "#746e64", fita: "#989185" },
+  },
+  escuro: {
+    conquistada: { metal: "#d6ad63", brilho: "#493b27", tinta: "#f6e5bf", fita: "#b96f60" },
+    bloqueada: { metal: "#514d45", brilho: "#302e29", tinta: "#cec8bb", fita: "#777166" },
+  },
 } as const;
 
 /** Medalhões vetoriais próprios; o nome e o estado são anunciados pelo card. */
 export function IconeConquista({ conquistaId, conquistada, tamanho = 48 }: Props) {
-  const cores = conquistada ? PALETA.conquistada : PALETA.bloqueada;
+  const { colorScheme } = useColorScheme();
+  const paleta = colorScheme === "dark" ? PALETAS.escuro : PALETAS.claro;
+  const cores = conquistada ? paleta.conquistada : paleta.bloqueada;
 
   return (
     <Svg width={tamanho} height={tamanho} viewBox="0 0 80 80" fill="none" aria-hidden={true}>

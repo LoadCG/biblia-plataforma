@@ -6,6 +6,9 @@ O formato é baseado no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.
 ## [Unreleased] - 2026-10-04
 
 ### Interface
+- O favicon web padrão do Expo foi substituído por um símbolo próprio de Bíblia
+  aberta com sol nascente. O desenho tem fonte SVG editável e PNG compatível com
+  a exportação web do Expo.
 - Removidas molduras circulares e fitas das conquistas; Início, Você, a lista e
   o detalhe de medalhas agora exibem somente ícones vetoriais proporcionais,
   com símbolos próprios por título e cor adaptada ao estado e ao tema.

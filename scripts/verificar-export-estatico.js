@@ -31,6 +31,17 @@ for (const [arquivo, esperado, conteudo] of casos) {
   }
 }
 
+const caminhoFavicon = path.join(raiz, "favicon.ico");
+if (!fs.existsSync(caminhoFavicon)) throw new Error("Favicon web ausente: favicon.ico.");
+const favicon = fs.readFileSync(caminhoFavicon);
+if (favicon.length < 6 || favicon.readUInt16LE(0) !== 0 || favicon.readUInt16LE(2) !== 1 || favicon.readUInt16LE(4) < 1) {
+  throw new Error("Favicon web inválido: favicon.ico não contém um cabeçalho ICO válido.");
+}
+const htmlInicial = fs.readFileSync(path.join(raiz, "index.html"), "utf8");
+if (!htmlInicial.includes('rel="icon" href="/favicon.ico"')) {
+  throw new Error("Referência ao favicon web ausente no HTML inicial.");
+}
+
 const totalCapitulos = biblia.reduce((soma, livro) => soma + livro.chapters.length, 0);
 let capitulosGerados = 0;
 for (let indiceLivro = 0; indiceLivro < biblia.length; indiceLivro++) {
@@ -57,4 +68,4 @@ if (quantidadeHtml < 70) {
   throw new Error(`Export incompleto: apenas ${quantidadeHtml} arquivos HTML encontrados.`);
 }
 
-console.log(`SEO: ${casos.length} rotas críticas e ${quantidadeHtml} arquivos HTML verificados; leitura estática: ${capitulosGerados} capítulos.`);
+console.log(`SEO e favicon: ${casos.length} rotas críticas e ${quantidadeHtml} arquivos HTML verificados; leitura estática: ${capitulosGerados} capítulos.`);

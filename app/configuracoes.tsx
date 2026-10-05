@@ -11,9 +11,9 @@ import {
   salvarIndiceFonte,
   TAMANHOS_FONTE,
 } from "../core/leitura/preferenciaFonte";
-import { agendarLembreteDiario, cancelarTodosLembretes } from "../core/notifications/notificacoes";
+import { agendarLembreteDiario, cancelarLembreteDiario } from "../core/notifications/notificacoes";
 import { HORARIO_LEMBRETE_PADRAO, lembreteDiarioAtivo, salvarLembreteDiarioAtivo } from "../core/notifications/preferenciaNotificacao";
-import { alternarTema, useColorScheme } from "../core/theme";
+import { alternarTema, restaurarTemaPadrao, useColorScheme } from "../core/theme";
 import { apagarDadosPessoais, coletarDadosPessoais } from "../core/util/dadosPessoais";
 import { mostrarToast } from "../core/util/toast";
 import { useOwnerId } from "../core/useOwnerId";
@@ -31,6 +31,14 @@ function Secao({ titulo, children }: { titulo: string; children: React.ReactNode
         {children}
       </View>
     </View>
+  );
+}
+
+function Descricao({ children }: { children: React.ReactNode }) {
+  return (
+    <Text className="text-sm leading-5 text-cor-texto-suave dark:text-cor-texto-suave-dark mb-3 px-1">
+      {children}
+    </Text>
   );
 }
 
@@ -91,7 +99,7 @@ export default function Configuracoes() {
           return;
         }
       } else {
-        await cancelarTodosLembretes();
+        await cancelarLembreteDiario();
       }
       await salvarLembreteDiarioAtivo(novo);
       setLembreteAtivo(novo);
@@ -163,8 +171,24 @@ export default function Configuracoes() {
     try {
       const dados = await coletarDadosPessoais(ownerId);
       await apagarDadosPessoais(ownerId, dados);
+      // A exclusão de preferências locais também precisa retirar o lembrete do SO.
+      let lembreteCancelado = true;
+      try {
+        await cancelarLembreteDiario();
+      } catch {
+        lembreteCancelado = false;
+      }
+      setIndiceFonte(INDICE_PADRAO);
+      setFonteSerifada(false);
+      setLembreteAtivo(false);
+      restaurarTemaPadrao();
       apagado = true;
-      mostrarToast("Todos os seus dados foram apagados", { severidade: "sucesso" });
+      mostrarToast(
+        lembreteCancelado
+          ? "Todos os seus dados foram apagados"
+          : "Dados apagados, mas não foi possível cancelar o lembrete agendado",
+        { severidade: lembreteCancelado ? "sucesso" : "aviso" }
+      );
     } catch {
       mostrarToast("Não foi possível apagar todos os dados. Tente novamente.", { severidade: "erro" });
     } finally {
@@ -183,8 +207,10 @@ export default function Configuracoes() {
           <BotaoTema />
         </View>
         <Text accessibilityRole="header" className="text-2xl font-bold text-cor-texto dark:text-cor-texto-dark mb-5">Configurações</Text>
+        <Descricao>Personalize sua leitura e gerencie os dados guardados neste dispositivo.</Descricao>
 
         <Secao titulo="Leitura">
+          <Descricao>Esses ajustes são compartilhados pela leitura da Bíblia e pelos resumos.</Descricao>
           <Linha>
             <Text className="text-cor-texto dark:text-cor-texto-dark font-semibold mb-2.5">Tamanho da fonte</Text>
             <View className="flex-row items-center gap-2">
@@ -222,6 +248,14 @@ export default function Configuracoes() {
                 {TAMANHOS_FONTE[indiceFonte]}px
               </Text>
             </View>
+            <Text
+              accessibilityRole="text"
+              accessibilityLabel="Prévia do texto bíblico"
+              style={{ fontSize: TAMANHOS_FONTE[indiceFonte], fontFamily: fonteSerifada ? FAMILIA_SERIFADA : undefined }}
+              className="text-cor-texto dark:text-cor-texto-dark mt-3 leading-7"
+            >
+              A tua palavra é lâmpada para os meus pés.
+            </Text>
           </Linha>
           <Linha ultima>
             <Pressable
@@ -252,6 +286,7 @@ export default function Configuracoes() {
         </Secao>
 
         <Secao titulo="Aparência">
+          <Descricao>O tema escolhido é aplicado em todas as telas deste dispositivo.</Descricao>
           <Linha ultima>
             <Pressable
               onPress={alternarTema}
@@ -271,7 +306,14 @@ export default function Configuracoes() {
         </Secao>
 
         <Secao titulo="Notificações">
-          <Linha ultima>
+          {Platform.OS === "web" ? (
+            <Linha ultima>
+              <Text className="text-cor-texto dark:text-cor-texto-dark font-semibold">Lembrete diário</Text>
+              <Text className="text-xs leading-5 text-cor-texto-suave dark:text-cor-texto-suave-dark mt-1">
+                Lembretes locais estão disponíveis no app instalado para Android e iOS. A versão web não agenda notificações.
+              </Text>
+            </Linha>
+          ) : <Linha ultima>
             <Pressable
               onPress={alternarLembreteDiario}
               disabled={alterandoLembrete}
@@ -285,7 +327,7 @@ export default function Configuracoes() {
               <View className="flex-1 pr-3">
                 <Text className="text-cor-texto dark:text-cor-texto-dark font-semibold">Lembrete diário</Text>
                 <Text className="text-xs text-cor-texto-suave dark:text-cor-texto-suave-dark mt-0.5">
-                  Um aviso todo dia às {String(HORARIO_LEMBRETE_PADRAO.hora).padStart(2, "0")}h pra não perder a leitura
+                  Um aviso diário às {String(HORARIO_LEMBRETE_PADRAO.hora).padStart(2, "0")}:{String(HORARIO_LEMBRETE_PADRAO.minuto).padStart(2, "0")}. O horário é fixo nesta versão.
                 </Text>
               </View>
               <View
@@ -296,18 +338,11 @@ export default function Configuracoes() {
                 <View className="w-5 h-5 rounded-full bg-white" />
               </View>
             </Pressable>
-          </Linha>
-        </Secao>
-
-        <Secao titulo="Dados">
-          <Linha ultima>
-            <Text className="text-sm leading-5 text-cor-texto-suave dark:text-cor-texto-suave-dark">
-              Personalização de cores de grifo e contraste ainda não está disponível.
-            </Text>
-          </Linha>
+          </Linha>}
         </Secao>
 
         <Secao titulo="Meus dados">
+          <Descricao>Seu perfil e sua atividade ficam neste dispositivo e não são sincronizados entre aparelhos.</Descricao>
           <Linha>
             <Link href="/privacidade" asChild>
               <Pressable accessibilityRole="link" className="flex-row items-center justify-between active:opacity-70">
@@ -327,7 +362,7 @@ export default function Configuracoes() {
               <View className="flex-1 pr-3">
                 <Text className="text-cor-texto dark:text-cor-texto-dark font-semibold">Exportar meus dados</Text>
                 <Text className="text-xs text-cor-texto-suave dark:text-cor-texto-suave-dark mt-0.5">
-                  Baixa um arquivo com tudo que você grifou, anotou, salvou e marcou como lido
+                  Arquivo JSON com perfil, preferências, grifos, notas, salvos, pesquisas favoritas, coleções e progresso de leitura e planos.
                 </Text>
               </View>
               <Text className="text-cor-texto-suave dark:text-cor-texto-suave-dark">→</Text>
@@ -338,7 +373,7 @@ export default function Configuracoes() {
               <View className="flex-1 pr-3">
                 <Text className="text-red-600 font-semibold">Apagar todos os meus dados</Text>
                 <Text className="text-xs text-cor-texto-suave dark:text-cor-texto-suave-dark mt-0.5">
-                  Remove grifos, notas, salvos, progresso e planos deste dispositivo — não pode ser desfeito
+                  Remove perfil, preferências, grifos, notas, salvos, pesquisas favoritas, coleções e progresso deste dispositivo. A ação não pode ser desfeita.
                 </Text>
               </View>
               <Text className="text-red-600">→</Text>
@@ -384,8 +419,8 @@ export default function Configuracoes() {
           <Pressable onPress={(e) => e.stopPropagation()} className="w-full max-w-sm rounded-2xl bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark p-6">
             <Text className="text-lg font-bold text-cor-texto dark:text-cor-texto-dark mb-1.5">Apagar todos os meus dados?</Text>
             <Text className="text-sm text-cor-texto-suave dark:text-cor-texto-suave-dark mb-5">
-              Isso remove permanentemente grifos, notas, versículos salvos, progresso de leitura e progresso de planos
-              deste dispositivo. Essa ação não pode ser desfeita.
+              Isso remove permanentemente seu perfil e preferências locais, grifos, notas, salvos, pesquisas favoritas,
+              coleções e progresso de leitura e planos deste dispositivo. Essa ação não pode ser desfeita.
             </Text>
             <View className="flex-row justify-end gap-2">
               <Pressable

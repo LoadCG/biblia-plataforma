@@ -1065,7 +1065,7 @@ construída nesta fase.
       — não têm tela/funcionalidade própria ainda.
 - [x] 11.4 Toggle de lembrete diário em Configurações
       (`app/configuracoes.tsx`, nova seção "Notificações"): liga/desliga
-      chamando `agendarLembreteDiario`/`cancelarTodosLembretes` de
+      chamando `agendarLembreteDiario`/`cancelarLembreteDiario` de
       `core/notifications/notificacoes.ts`. Estado do toggle persistido
       em `core/notifications/preferenciaNotificacao.ts` (novo módulo,
       mesmo padrão de `core/leitura/preferenciaFonte.ts` — as funções

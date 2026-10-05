@@ -22,4 +22,9 @@ export function alternarTema(): void {
   });
 }
 
+/** Restaura o tema padrão após a exclusão explícita das preferências locais. */
+export function restaurarTemaPadrao(): void {
+  colorScheme.set("light");
+}
+
 export { useColorScheme };

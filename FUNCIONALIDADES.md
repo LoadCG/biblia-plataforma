@@ -1897,25 +1897,27 @@ pra "Cauan" e salvar atualiza a tela na hora; reload da página mantém
 **Funcionalidade:** tamanho de fonte, fonte serifada (lê/escreve
 `core/leitura/preferenciaFonte.ts`, mesmo módulo das telas de leitura,
 sem duplicar lógica) e tema, agrupados em `app/configuracoes.tsx`, com
-mais 3 seções: "Notificações" (ver lembrete diário abaixo), "Dados"
-(placeholders "Em breve" pra cores de grifo/contraste, ainda não
-implementados) e "Meus dados" (exportar/apagar, ver 6.4).
+mais seções: "Notificações" (lembrete local nativo; indisponível na web),
+"Meus dados" (exportar/apagar, ver 6.4) e "Sobre" (Ajuda, apresentação e
+informações do projeto). A prévia tipográfica acompanha os controles de leitura.
 Alcançada por um ícone de engrenagem no topo e um card no fim da aba
 Você — não é aba própria.
 
-**Lembrete diário local — achado sem documentação (2026-08-24):**
-`app/configuracoes.tsx` tem um toggle "Lembrete diário" funcional de
-verdade (`core/notifications/notificacoes.ts` +
-`core/notifications/preferenciaNotificacao.ts`, via
-`expo-notifications`): agenda uma notificação local todo dia às 7h
-("Sua leitura de hoje já está esperando por você"), pede permissão do
-sistema antes, cancela ao desligar. No web, recusa educadamente com um
-`Alert` explicando que "notificações diárias funcionam no app
-instalado (Android/iOS)" — não falha silenciosamente. **Isso
-contradiz** a decisão registrada em `TODO.md` ("sem notificação real
-por enquanto, nem versão simplificada de lembrete local") — o código
-já existe e nunca tinha sido documentado aqui. Não alterado nem
-removido; ver `TODO.md` pra o usuário confirmar a intenção real.
+**Lembrete diário local:** decisão consolidada em `TODO.md`: manter o
+lembrete local nativo; notificações push/web continuam fora do produto sem
+backend. O app instalado agenda o lembrete diário às 7h mediante permissão.
+Na web, Configurações informa que a função não está disponível, sem expor um
+switch inoperante. O cancelamento procura e remove somente notificações do
+lembrete bíblico, incluindo as agendadas antes da identificação explícita;
+outras notificações agendadas são preservadas.
+
+**Revisão de Configurações (2026-10-05):** a descrição agora explica que
+preferências e dados ficam neste dispositivo. A leitura inclui prévia tipográfica;
+exportação enumera os grupos realmente serializados; exclusão descreve o perfil,
+preferências, coleções e progresso e restaura a interface ao tema/padrões locais
+após concluir; também cancela o lembrete do sistema, com aviso separado se essa
+etapa falhar. A tela não anuncia personalização de grifos/contraste ainda
+indisponível. Essa revisão não adiciona escolha de horário nem importação.
 
 ### 9.8 Grifar em várias cores `✅`
 **Funcionalidade:** `Grifo` (`core/types/leitura.ts`) ganhou um campo

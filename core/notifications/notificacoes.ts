@@ -31,12 +31,20 @@ export async function pedirPermissaoNotificacoes(): Promise<boolean> {
   return finalStatus === "granted";
 }
 
-/**
- * Cancela todas as notificações agendadas.
- */
-export async function cancelarTodosLembretes() {
+const IDENTIFICADOR_LEMBRETE = "lembrete-diario-biblia";
+const TITULO_LEMBRETE_ANTIGO = "Versículo do dia";
+const CORPO_LEMBRETE_ANTIGO = "Sua leitura de hoje já está esperando por você.";
+
+/** Cancela somente o lembrete diário deste app, preservando outras notificações agendadas. */
+export async function cancelarLembreteDiario() {
   if (Platform.OS === "web") return;
-  await Notifications.cancelAllScheduledNotificationsAsync();
+  const agendadas = await Notifications.getAllScheduledNotificationsAsync();
+  const lembretesDoApp = agendadas.filter(({ content }) => {
+    if (content.data?.tipo === IDENTIFICADOR_LEMBRETE) return true;
+    // Compatibilidade com lembretes criados antes de adicionarmos o marcador.
+    return content.title === TITULO_LEMBRETE_ANTIGO && content.body === CORPO_LEMBRETE_ANTIGO;
+  });
+  await Promise.all(lembretesDoApp.map(({ identifier }) => Notifications.cancelScheduledNotificationAsync(identifier)));
 }
 
 /**
@@ -50,14 +58,15 @@ export async function agendarLembreteDiario(hora: number, minuto: number, titulo
   const temPermissao = await pedirPermissaoNotificacoes();
   if (!temPermissao) return false;
 
-  // Cancela anteriores para não duplicar se o usuário alterar o horário
-  await cancelarTodosLembretes();
+  // Cancela somente instâncias anteriores deste lembrete para não duplicar.
+  await cancelarLembreteDiario();
 
   await Notifications.scheduleNotificationAsync({
     content: {
       title: titulo,
       body: corpo,
       sound: true,
+      data: { tipo: IDENTIFICADOR_LEMBRETE },
     },
     trigger: {
       type: Notifications.SchedulableTriggerInputTypes.DAILY,

@@ -5,6 +5,19 @@ O formato é baseado no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.
 
 ## [Unreleased] - 2026-10-04
 
+### Configurações e lembretes (2026-10-05)
+- Clarificado que preferências e dados de leitura ficam neste dispositivo;
+  Configurações mostra prévia da tipografia e escopo efetivo de exportação e
+  exclusão.
+- Na web, o lembrete local aparece como informação indisponível, sem switch que
+  pareça funcional. O horário nativo fixo de 07:00 é descrito como tal.
+- Desativar ou reagendar o lembrete agora cancela apenas notificações do
+  lembrete bíblico, inclusive itens legados identificados pelo título/corpo;
+  notificações agendadas de outras funções são preservadas.
+- Após excluir dados, as preferências visíveis voltam ao padrão junto com o
+  tema claro. Adicionado plano específico com QA visual, assistivo e nativo
+  pendente.
+
 ### Conteúdo e governança (2026-10-05)
 - Reexecutados os gates de revisão editorial (5 propostas com governança), copy
   de interface (116 fontes sem padrões internos sinalizados) e cobertura

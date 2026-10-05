@@ -23,14 +23,8 @@ export function CardConquistas({ conquistas }: { conquistas: Conquista[] }) {
               accessibilityLabel={`${c.titulo}, ${completa ? "conquistada" : `${c.progressoAtual} de ${c.progressoTotal}`}`}
               className="items-center flex-1 active:opacity-70"
             >
-              <View
-                className={`w-20 h-20 rounded-full items-center justify-center mb-3 border-2 ${
-                  completa
-                    ? 'bg-cor-destaque/20 border-cor-destaque dark:border-cor-destaque-dark'
-                    : 'bg-cor-borda dark:bg-cor-borda-dark border-transparent'
-                }`}
-              >
-                <IconeConquista conquistaId={c.id} conquistada={completa} tamanho={64} />
+              <View className="w-16 h-16 items-center justify-center mb-3">
+                <IconeConquista conquistaId={c.id} conquistada={completa} tamanho={48} />
               </View>
               <Text className="text-xs font-semibold text-cor-texto dark:text-cor-texto-dark text-center leading-tight mb-1">
                 {c.titulo}

@@ -48,14 +48,11 @@ function MedalhaCarrossel({ conquista }: { conquista: Conquista }) {
       accessibilityLabel={`${conquista.titulo}, ${conquista.conquistada ? "conquistada" : `${conquista.progressoAtual} de ${conquista.progressoTotal}`}`}
       className="w-28 mr-3 items-center active:opacity-70"
     >
-      <View
-        className="w-16 h-16 rounded-full items-center justify-center mb-2 border-2"
-        style={{ backgroundColor: cores.borda, borderColor: conquista.conquistada ? cores.destaque : "transparent" }}
-      >
+      <View className="w-14 h-14 items-center justify-center mb-2">
         <IconeConquista
           conquistaId={conquista.id}
           conquistada={conquista.conquistada}
-          tamanho={52}
+          tamanho={42}
         />
       </View>
       <Text numberOfLines={1} className="text-xs font-bold text-cor-texto dark:text-cor-texto-dark text-center mb-1.5">

@@ -29,8 +29,8 @@ function LinhaConquista({ conquista, origem }: { conquista: Conquista; origem: "
       accessibilityHint="Abre os detalhes deste marco de leitura"
       className={`flex-row items-center gap-4 rounded-2xl px-4 py-4 mb-3 border active:opacity-80 ${completa ? "bg-cor-destaque/10 border-cor-destaque dark:border-cor-destaque-dark" : "bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark border-cor-borda dark:border-cor-borda-dark"}`}
     >
-      <View className={`w-14 h-14 rounded-full items-center justify-center border ${completa ? "bg-cor-destaque/10 border-cor-destaque/50 dark:border-cor-destaque-dark/50" : "bg-cor-borda/60 dark:bg-cor-borda-dark border-transparent"}`}>
-        <IconeConquista conquistaId={conquista.id} conquistada={completa} tamanho={48} />
+      <View className="w-12 h-12 items-center justify-center">
+        <IconeConquista conquistaId={conquista.id} conquistada={completa} tamanho={36} />
       </View>
 
       <View className="flex-1">
@@ -123,8 +123,8 @@ export default function Medalhas() {
         {conquistaAtiva ? (
           <View>
             <View className={`items-center rounded-3xl px-6 py-8 mb-5 border ${conquistaAtiva.conquistada ? "bg-cor-destaque/10 border-cor-destaque dark:border-cor-destaque-dark" : "bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark border-cor-borda dark:border-cor-borda-dark"}`}>
-              <View className={`w-24 h-24 rounded-full items-center justify-center mb-4 border ${conquistaAtiva.conquistada ? "bg-cor-destaque/10 border-cor-destaque/40 dark:border-cor-destaque-dark/40" : "bg-cor-borda/60 dark:bg-cor-borda-dark border-transparent"}`}>
-                <IconeConquista conquistaId={conquistaAtiva.id} conquistada={conquistaAtiva.conquistada} tamanho={76} />
+              <View className="w-20 h-20 items-center justify-center mb-4">
+                <IconeConquista conquistaId={conquistaAtiva.id} conquistada={conquistaAtiva.conquistada} tamanho={64} />
               </View>
               <Text accessibilityRole="header" className="text-2xl font-bold text-cor-texto dark:text-cor-texto-dark text-center">{conquistaAtiva.titulo}</Text>
               <Text className="text-sm text-cor-texto-suave dark:text-cor-texto-suave-dark text-center mt-2">{conquistaAtiva.descricao}</Text>

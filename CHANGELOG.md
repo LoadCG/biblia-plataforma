@@ -6,6 +6,9 @@ O formato é baseado no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.
 ## [Unreleased] - 2026-10-04
 
 ### Interface
+- Removidas molduras circulares e fitas das conquistas; Início, Você, a lista e
+  o detalhe de medalhas agora exibem somente ícones vetoriais proporcionais,
+  com símbolos próprios por título e cor adaptada ao estado e ao tema.
 - Paletas explícitas de ilustrações de temas e medalhas agora acompanham os
   modos claro e escuro; detalhes secundários dos temas e medalhas bloqueadas
   também preservam contraste em ambos.

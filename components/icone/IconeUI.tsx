@@ -16,6 +16,7 @@ import { ChatCircleTextIcon as ChatCircleText } from "phosphor-react-native/src/
 import { CheckCircleIcon as CheckCircle } from "phosphor-react-native/src/icons/CheckCircle";
 import { CircleIcon as Circle } from "phosphor-react-native/src/icons/Circle";
 import { CopyIcon as Copy } from "phosphor-react-native/src/icons/Copy";
+import { CrossIcon as Cross } from "phosphor-react-native/src/icons/Cross";
 import { DotsThreeIcon as DotsThree } from "phosphor-react-native/src/icons/DotsThree";
 import { DownloadSimpleIcon as DownloadSimple } from "phosphor-react-native/src/icons/DownloadSimple";
 import { EnvelopeSimpleIcon as EnvelopeSimple } from "phosphor-react-native/src/icons/EnvelopeSimple";
@@ -61,6 +62,7 @@ const ICONES = {
   previous: CaretLeft,
   "next-chevron": CaretRight,
   copy: Copy,
+  cross: Cross,
   "moon-stars": MoonStars,
   delete: Trash,
   download: DownloadSimple,

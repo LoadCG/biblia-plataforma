@@ -13,12 +13,24 @@ Notifications.setNotificationHandler({
   }),
 });
 
+const IDENTIFICADOR_LEMBRETE = "lembrete-diario-biblia";
+const CANAL_LEMBRETE_ANDROID = "lembrete-diario";
+const TITULO_LEMBRETE_ANTIGO = "Versículo do dia";
+const CORPO_LEMBRETE_ANTIGO = "Sua leitura de hoje já está esperando por você.";
+
 /**
  * Solicita permissão do sistema operacional para enviar notificações.
  * Deve ser chamado antes de agendar qualquer gatilho.
  */
 export async function pedirPermissaoNotificacoes(): Promise<boolean> {
   if (Platform.OS === "web") return false;
+
+  if (Platform.OS === "android") {
+    await Notifications.setNotificationChannelAsync(CANAL_LEMBRETE_ANDROID, {
+      name: "Lembrete diário",
+      importance: Notifications.AndroidImportance.DEFAULT,
+    });
+  }
 
   const { status: existingStatus } = await Notifications.getPermissionsAsync();
   let finalStatus = existingStatus;
@@ -30,10 +42,6 @@ export async function pedirPermissaoNotificacoes(): Promise<boolean> {
 
   return finalStatus === "granted";
 }
-
-const IDENTIFICADOR_LEMBRETE = "lembrete-diario-biblia";
-const TITULO_LEMBRETE_ANTIGO = "Versículo do dia";
-const CORPO_LEMBRETE_ANTIGO = "Sua leitura de hoje já está esperando por você.";
 
 /** Cancela somente o lembrete diário deste app, preservando outras notificações agendadas. */
 export async function cancelarLembreteDiario() {
@@ -72,6 +80,7 @@ export async function agendarLembreteDiario(hora: number, minuto: number, titulo
       type: Notifications.SchedulableTriggerInputTypes.DAILY,
       hour: hora,
       minute: minuto,
+      ...(Platform.OS === "android" ? { channelId: CANAL_LEMBRETE_ANDROID } : {}),
     },
   });
   return true;

@@ -1,4 +1,5 @@
 import { Link, router } from "expo-router";
+import * as Linking from "expo-linking";
 import { useEffect, useState } from "react";
 import { Modal, Platform, Pressable, ScrollView, Share, Text, View } from "react-native";
 import { BotaoTema } from "../components/BotaoTema";
@@ -96,7 +97,15 @@ export default function Configuracoes() {
           "Sua leitura de hoje já está esperando por você."
         );
         if (!agendado) {
-      mostrarToast("Permita notificações nas configurações do dispositivo para ativar o lembrete", { severidade: "aviso" });
+          mostrarToast("Permita notificações nas configurações do dispositivo para ativar o lembrete.", {
+            severidade: "aviso",
+            acaoLabel: "Abrir configurações",
+            onAcao: () => {
+              Linking.openSettings().catch(() => {
+                mostrarToast("Não foi possível abrir as configurações do dispositivo", { severidade: "erro" });
+              });
+            },
+          });
           return;
         }
       } else {

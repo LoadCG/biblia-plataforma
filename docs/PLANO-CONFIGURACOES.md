@@ -13,7 +13,7 @@ sem uma necessidade validada.
 | 1. Orientação e disponibilidade | Implementada; inspeção visual parcial | Introdução explica armazenamento local; prévia de fonte foi adicionada; tema explica escopo; web apresenta lembrete como informação indisponível em vez de switch inoperante. Inspecionada em claro a 1280×720; o documento não excedeu a largura do viewport e a hierarquia inicial ficou clara. Tema escuro e largura estreita continuam pendentes. |
 | 2. Gestão e preservação de dados | Implementada; verificação runtime pendente | Exportação enumera os dados efetivamente incluídos; exclusão explica o alcance, cancela o lembrete deste app e restaura estados locais e tema padrão na interface. Falha ao cancelar o aviso do sistema recebe resultado específico. |
 | 3. Isolamento do lembrete | Implementada; teste em dispositivo pendente | Cancelamento busca apenas notificações marcadas como lembrete bíblico e reconhece as antigas pelo título/corpo; outras notificações permanecem agendadas. |
-| 4. QA visual/assistivo/responsivo | Parcial | Tema claro e telas superior/inferior inspecionados em 1280×720; árvore acessível conferida. Tema escuro, larguras estreitas, percurso completo por teclado/leitor de tela e app instalado aguardam ambiente de verificação. |
+| 4. QA visual/assistivo/responsivo | Parcial | Tema claro e telas superior/inferior inspecionados em 1280×720; árvore acessível conferida. Android agora cria canal antes de pedir permissão; negativa oferece atalho para Configurações do sistema. Tema escuro, larguras estreitas, percurso completo por teclado/leitor de tela e validação nativa aguardam ambiente de verificação. |
 | 5. Expansões condicionais | Não iniciada | Avaliar escolha de horário, restauração manual de preferências ou ajustes de grifo somente com evidência de necessidade. |
 
 ## Contrato observado
@@ -34,8 +34,9 @@ sem uma necessidade validada.
    e ampla; verificar hierarquia, quebra de texto e rolagem.
 2. Percorrer por teclado e conferir nomes/estados anunciados, foco visível e
    diálogos; conferir a prévia em todos os tamanhos/famílias.
-3. Em aparelho/emulador compatível, confirmar permissão concedida/negada,
-   ativar/desativar lembrete, reiniciar app e confirmar que outras notificações
+3. Em aparelho/emulador compatível, confirmar o canal Android e permissão concedida/negada,
+   abrir Configurações do sistema após a negativa, voltar ao app e ativar o
+   lembrete; desligar, reiniciar app e confirmar que outras notificações
    agendadas não são canceladas.
 4. Exercitar exportação e exclusão com perfil descartável. Conferir conteúdo JSON,
    estado zerado após exclusão e recuperação de falha sem tocar nos dados reais.

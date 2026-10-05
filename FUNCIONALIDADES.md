@@ -1906,10 +1906,14 @@ Você — não é aba própria.
 **Lembrete diário local:** decisão consolidada em `TODO.md`: manter o
 lembrete local nativo; notificações push/web continuam fora do produto sem
 backend. O app instalado agenda o lembrete diário às 7h mediante permissão.
+No Android, cria um canal próprio antes de solicitar a permissão e associa o
+lembrete a esse canal.
 Na web, Configurações informa que a função não está disponível, sem expor um
 switch inoperante. O cancelamento procura e remove somente notificações do
 lembrete bíblico, incluindo as agendadas antes da identificação explícita;
-outras notificações agendadas são preservadas.
+outras notificações agendadas são preservadas. Quando a permissão é negada, o
+aviso oferece ação direta para abrir as configurações do app no sistema; falha
+ao abrir recebe mensagem própria.
 
 **Revisão de Configurações (2026-10-05):** a descrição agora explica que
 preferências e dados ficam neste dispositivo. A leitura inclui prévia tipográfica;

@@ -20,6 +20,12 @@ O formato é baseado no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.
 - QA web local da tela em 1280×720 tema claro conferiu hierarquia, rolagem até
   Meus dados/Sobre e árvore de acessibilidade. O plano registra os limites de
   viewport, tema escuro, teclado/leitor de tela e ambiente nativo ainda abertos.
+- Se a permissão do lembrete diário for negada no app instalado, o aviso agora
+  oferece ação para abrir as configurações do app no sistema; falha ao abrir é
+  comunicada separadamente. A validação desse caminho depende de aparelho ou
+  emulador e permanece pendente.
+- No Android, o lembrete cria e usa um canal dedicado antes de pedir permissão,
+  conforme o requisito de canais para a autorização de notificações.
 
 ### Conteúdo e governança (2026-10-05)
 - Reexecutados os gates de revisão editorial (5 propostas com governança), copy

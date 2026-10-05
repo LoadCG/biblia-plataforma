@@ -1,99 +1,93 @@
-# Plano técnico rigoroso — sistema de busca
+# Plano técnico — busca e descoberta
 
-## 1. Diagnóstico do estado atual
+## Estado atual (5 de outubro de 2026)
 
-### Implementado
+**Status geral: parcialmente executado.** A busca existente funciona offline
+para resumos de livros e já cobre nome, abreviações, texto editorial e alguns
+sinônimos temáticos. A evolução para uma busca unificada por referências,
+planos e temas ainda não começou.
 
-- Busca local em memória sobre os 66 resumos.
-- Normalização Unicode, acentos, caixa e espaços.
-- Aliases de livros e abreviações.
-- Busca por nome e conteúdo editorial.
-- Trecho contextual para resultados encontrados no conteúdo.
-- Sinônimos temáticos controlados.
-- Cobertura por testes unitários e execução offline.
+Este documento diferencia o comportamento confirmado no código de propostas
+que precisam de implementação. Não considera uma etapa concluída só por estar
+descrita em outro plano.
 
-### Riscos atuais
+### Já implementado
 
-- A busca retorna apenas livros; não há resultado por plano, tema ou referência
-  como entidades de primeira classe.
-- A ordem de resultados de conteúdo depende da ordem do catálogo, não de um
-  score explícito por campo, proximidade ou cobertura de tokens.
-- `encontrarTrecho` varre o documento repetidamente para cada termo.
-- Aliases e sinônimos estão no código, sem manifesto versionado e sem relatório
-  de cobertura lexical.
-- Não há contrato formal para consulta inválida, stopwords, pluralização,
-  tolerância a erro de digitação ou múltiplos termos.
-- Não existe telemetria agregada de consultas vazias; decisões de expansão ficam
-  sem evidência de uso.
-- A acessibilidade da lista é coberta estruturalmente, mas não há teste manual
-  com leitor de tela nem anúncio explícito de quantidade e ordenação dos
-  resultados.
+- Busca editorial em memória sobre os 66 resumos carregados pelo catálogo.
+- Normalização de caixa e acentos.
+- Alias de livros e abreviações.
+- Correspondência por nome e por conteúdo editorial.
+- Trecho contextual em resultados encontrados no conteúdo.
+- Expansões temáticas controladas para esperança, oração, justiça, sabedoria e
+  libertação.
+- Pontuação ponderada para título exato, título parcial, termo literal e
+  expansão temática; desempate por número do livro e slug.
+- Testes unitários básicos de alias, sinônimo e repetibilidade.
+- UI de Descubra que combina resultados bíblicos e resumos em áreas distintas.
 
-## 2. Objetivos e não objetivos
+Referências: `core/content/busca.ts`,
+`core/content/__tests__/busca.test.ts`, `app/(tabs)/pesquisa.tsx` e
+`core/biblia/BibliaAPI.ts`.
+
+### Limites confirmados
+
+- `buscarLivros` pesquisa somente resumos; não pesquisa planos nem referências
+  como entidades tipadas.
+- A busca bíblica global já possui implementação independente. Ainda não há
+  contrato unificado entre ela e a busca editorial.
+- A consulta é um termo normalizado, sem contrato de tamanho, estado inválido,
+  múltiplos tokens ou stopwords.
+- Aliases e sinônimos estão codificados em `busca.ts`, sem manifesto próprio,
+  versão ou relatório de cobertura lexical.
+- O trecho é encontrado procurando novamente os termos no resumo; não é
+  selecionado por um ranking explícito de campos.
+- Os testes da busca editorial são pequenos e não constituem conjunto dourado
+  de relevância.
+- Os documentos de auditoria registram verificações parciais de UI responsiva;
+  quantidade, escopo e motivo dos resultados ainda precisam de revisão
+  assistiva manual.
+- Não há benchmark reproduzível de relevância ou latência web/nativa.
+
+## Direção técnica
+
+Manter busca local e determinística. Antes de construir um índice derivado,
+medir a implementação existente e definir o escopo real de busca. O catálogo
+atual de 66 resumos cabe em memória e o próprio `busca.ts` registra essa
+decisão; um índice de build só deve ser adotado se medições ou a inclusão de
+mais tipos de documento demonstrarem benefício claro.
+
+Se necessário, o índice deverá ser derivado de fontes editoriais aprovadas,
+nunca editado manualmente. Itens `rascunho`, `em-revisao` ou `arquivado` não
+podem aparecer em resultados públicos. Nenhuma consulta pessoal deve ser
+enviada a um serviço remoto.
 
 ### Objetivos
 
-1. Entregar resultados relevantes e determinísticos offline.
+1. Tornar os resultados offline, reproduzíveis e explicáveis.
 2. Preservar busca por nome, abreviação, tema e texto editorial.
-3. Explicar por que cada resultado apareceu com campo de origem e trecho.
-4. Manter latência interativa em web e nativo sem backend obrigatório.
-5. Garantir comportamento acessível, testável e reproduzível.
+3. Definir a integração entre busca bíblica, resumos, planos e temas sem
+   misturar indevidamente entidades ou apresentar rascunhos.
+4. Manter resposta interativa em web e nativo, com acessibilidade e testes.
 
-### Não objetivos
+### Fora do escopo
 
-- Busca semântica baseada em modelo remoto.
-- Coleta de texto bruto de consultas ou dados pessoais.
-- Ranking opaco impossível de explicar ao usuário.
-- Indexação de conteúdo não aprovado editorialmente.
+- Busca semântica remota ou envio de texto de consulta para telemetria.
+- Fuzzy matching antes de existir conjunto de avaliação.
+- Expor valores numéricos de score na interface.
+- Indexar conteúdo sem status publicável.
 
-## 3. Arquitetura-alvo
-
-```text
-Fontes aprovadas
-  ├── resumos Markdown
-  ├── planos e manifesto editorial
-  └── vocabulário controlado
-          ↓ build
-Índice de busca versionado
-  ├── documento
-  ├── campos normalizados
-  ├── tokens e aliases
-  ├── peso por campo
-  └── status publicado
-          ↓ runtime offline
-Consulta → normalização → expansão controlada → ranking → trecho → UI
-```
-
-O índice deve ser derivado, nunca editado manualmente. Conteúdo com status
-`rascunho`, `em-revisao` ou `arquivado` não entra no índice público.
-
-## 4. Contratos técnicos
-
-### Consulta
+## Contrato proposto
 
 ```ts
 type ConsultaBusca = {
   texto: string;
-  escopo?: "todos" | "resumos" | "planos" | "referencias";
-  filtro?: { testamento?: string; genero?: string; tema?: string };
+  escopo?: "todos" | "biblia" | "resumos" | "planos" | "temas";
   limite?: number;
 };
-```
 
-Regras:
-
-- Limitar consulta a 120 caracteres.
-- Normalizar Unicode NFD, caixa, espaços e pontuação periférica.
-- Preservar números de capítulo/versículo.
-- Remover stopwords apenas no ranking, nunca do texto exibido.
-- Retornar estado distinto para vazio, inválido e sem resultados.
-
-### Resultado
-
-```ts
 type ResultadoBusca = {
   id: string;
-  tipo: "resumo" | "plano" | "referencia";
+  tipo: "referencia" | "resumo" | "plano" | "tema";
   titulo: string;
   subtitulo?: string;
   trecho?: string;
@@ -102,113 +96,133 @@ type ResultadoBusca = {
 };
 ```
 
-O `score` serve para ordenar internamente e testar regressões; a UI não deve
-exibir um número sem uma explicação útil.
+O contrato acima é uma proposta para discussão técnica; não descreve a API
+atual. Regras a fechar antes de adotá-lo:
 
-## 5. Ranking determinístico
+- Limite de caracteres e limite máximo de resultados.
+- Estados distintos para consulta vazia, inválida e sem resultados.
+- Normalização Unicode, caixa, espaços e pontuação, preservando números de
+  capítulos e versículos.
+- Semântica AND/OR para múltiplos termos e remoção de stopwords somente no
+  cálculo de relevância.
+- Filtros somente quando houver metadados e conteúdo suficientes.
+- Compatibilidade com `buscarGlobal` e comportamento das telas existentes.
 
-Pontuação inicial proposta:
+## Ranking e previsibilidade
 
-| Sinal | Peso |
+A implementação atual já possui pontuação simples e desempate estável na
+busca editorial. Os pesos abaixo são hipóteses para benchmark, não valores
+aprovados:
+
+| Sinal | Peso proposto |
 |---|---:|
-| título exato | 1000 |
-| alias/abreviação exato | 850 |
-| frase inteira no título | 700 |
-| tema controlado | 500 |
-| referência exata | 500 |
-| frase inteira no conteúdo | 300 |
-| token no conteúdo | 100 por token |
-| trecho mais curto/proximal | bônus até 50 |
+| Título exato | 1000 |
+| Alias exato | 850 |
+| Frase no título | 700 |
+| Tema controlado | 500 |
+| Referência exata | 500 |
+| Frase no conteúdo | 300 |
+| Token no conteúdo | 100 por token |
 
-Desempates obrigatórios: score decrescente, tipo na ordem resumo → plano →
-referência, número canônico crescente e ID lexicográfico. O resultado nunca pode
-depender da ordem incidental de iteração de um objeto.
+Antes de alterar pesos, criar consultas avaliadas e comparar resultados.
+Desempates devem usar critérios explícitos e estáveis, sem depender da ordem
+de enumeração de objetos.
 
-## 6. Fases de implementação
+## Fases e situação
 
-### Fase A — contrato e observabilidade local
+### Fase A — contrato e vocabulário
 
-- [ ] Extrair `ConsultaBusca` e `ResultadoBusca` para módulo próprio.
-- [ ] Versionar aliases, sinônimos, stopwords e pesos em manifesto.
-- [x] Criar códigos de motivo: `titulo`, `alias`, `tema`, `conteudo`.
-- [ ] Definir limites de entrada e mensagens de estado.
-- [ ] Criar fixtures determinísticas para consultas críticas.
+- [x] Confirmar busca editorial e busca bíblica existentes como sistemas
+  locais independentes.
+- [x] Adicionar expansões temáticas iniciais no código.
+- [ ] Definir contrato de consulta e resultado unificado ou registrar decisão
+  explícita de manter os sistemas separados.
+- [ ] Definir limites, estados de entrada e semântica de múltiplos termos.
+- [ ] Migrar aliases e sinônimos para vocabulário versionado se isso facilitar
+  revisão e cobertura; validar custo antes de criar estrutura nova.
+- [ ] Criar conjunto dourado de consultas críticas.
 
-### Fase B — índice derivado
+### Fase B — qualidade da busca editorial
 
-- [ ] Criar `scripts/gerar-indice-busca.js`.
-- [ ] Indexar somente itens publicados do manifesto.
-- [ ] Normalizar campos uma vez no build.
-- [ ] Persistir versão do índice e hash das fontes.
-- [ ] Validar IDs, tokens, campos vazios e tamanho do índice.
-- [ ] Integrar geração ao `check:content`/CI sem editar o JSON de conteúdo.
+- [x] Dar pontuações diferentes para correspondência em título e conteúdo.
+- [x] Usar desempates determinísticos na lista editorial.
+- [ ] Evitar buscas repetidas no resumo ao selecionar o trecho vencedor.
+- [ ] Cobrir entradas acentuadas, aliases, expansões e empates com testes.
+- [ ] Tratar vazio, pontuação isolada, consultas extensas e resultados vazios.
+- [ ] Avaliar consulta multi-token sem introduzir fuzzy matching por suposição.
 
-### Fase C — ranking e consulta
+### Fase C — unificação e descoberta
 
-- [x] Implementar ranking inicial ponderado e desempates estáveis para resumos.
-- [ ] Suportar consulta de múltiplos tokens.
-- [ ] Suportar aliases e sinônimos sem duplicar resultados.
-- [ ] Adicionar busca por referência `Livro capítulo:versículo`.
-- [ ] Definir tolerância a erro de digitação somente após benchmark.
-- [ ] Garantir limite de resultados e custo O(tokens × documentos).
+- [ ] Inventariar os contratos de `buscarLivros` e `buscarGlobal` e a UI em
+  `/pesquisa`.
+- [ ] Decidir quais tipos entram em cada escopo: referências, resumos, planos
+  e temas publicados.
+- [ ] Incluir somente conteúdo editorial publicado.
+- [ ] Evitar duplicar resultados equivalentes entre busca bíblica e editorial.
+- [ ] Ajustar trechos, rótulos e navegação para cada tipo de resultado.
 
-### Fase D — trechos e interface
+### Fase D — acessibilidade e comportamento visual
 
-- [ ] Gerar trecho a partir do campo vencedor.
-- [ ] Destacar tokens sem alterar o texto semântico para leitor de tela.
-- [ ] Anunciar quantidade e escopo dos resultados.
-- [ ] Adicionar filtros apenas quando houver dados suficientes.
-- [ ] Implementar debounce somente se medição justificar.
-- [ ] Preservar busca offline e estado de erro recuperável.
+- [ ] Anunciar quantidade e escopo com tecnologia assistiva.
+- [ ] Revisar rótulo, título, motivo e ordem de resultados com leitor de tela.
+- [ ] Confirmar teclado, carregamento, vazio, erro/retry e limpeza de consulta.
+- [x] Há auditorias estruturais e visuais parciais registradas para Descubra.
+- [ ] Concluir revisão manual em web e ao menos um ambiente nativo.
 
-### Fase E — SEO e páginas editoriais
+### Fase E — SEO e conteúdo estático
 
-- [ ] Mapear consultas prioritárias para títulos e descrições SEO.
-- [ ] Garantir que páginas estáticas tenham conteúdo indexável.
-- [ ] Evitar canonical duplicado e páginas sem resultado indexáveis.
-- [ ] Validar sitemap e rotas de resumo/plano após cada mudança.
+- [ ] Mapear páginas editoriais públicas e consultas prioritárias para título e
+  descrição, sem transformar cada consulta arbitrária em rota indexável.
+- [ ] Verificar canonical, sitemap e páginas sem conteúdo público.
+- [ ] Exportar e validar rotas estáticas de resumo e plano.
 
-### Fase F — benchmark e regressão
+### Fase F — benchmark e liberação
 
-- [ ] Criar conjunto dourado de pelo menos 30 consultas.
-- [ ] Definir resultado esperado e justificativa para cada consulta.
-- [ ] Medir precisão@5, recall@10 e taxa de consultas vazias.
-- [ ] Medir latência p50/p95 no web e nativo.
-- [ ] Bloquear regressão de relevância no CI.
+- [ ] Avaliar pelo menos 30 consultas com resultado esperado e justificativa.
+- [ ] Medir precisão@5 e recall@10 no conjunto, documentando a metodologia.
+- [ ] Medir p50/p95 em web e nativo antes de decidir por índice/debounce.
+- [ ] Definir um limite de latência adequado ao catálogo; 100 ms é hipótese
+  inicial, a confirmar por medição.
+- [ ] Executar export estático, verificações SEO e revisão de UX.
+- [ ] Bloquear regressões relevantes no CI quando o conjunto estiver estável.
 
-## 7. Casos de teste obrigatórios
+## Consultas mínimas a avaliar
 
 - `Gênesis`, `gn`, `genezis`.
-- `esperança`, `oracao`, `justiça`, `sabedoria`.
+- `esperança`, `oração`, `justiça`, `sabedoria`, `libertação`.
 - `Salmos 119:1-32`.
-- Consulta com acentos, caixa alta e espaços repetidos.
-- Consulta com vários tokens parcialmente encontrados.
-- Consulta vazia, somente pontuação e acima do limite.
-- Nenhum resultado e recuperação após limpar o campo.
-- Conteúdo com múltiplos resultados e desempate estável.
-- Conteúdo em rascunho não indexado.
+- Caixa alta, acentos e espaços repetidos.
+- Dois ou mais termos com correspondências separadas e parciais.
+- Vazio, pontuação isolada e texto acima do limite definido.
+- Consulta válida sem resultados e limpeza para recuperar a lista.
+- Empates de conteúdo e repetição determinística.
+- Verificação de que rascunhos não aparecem nos tipos elegíveis.
 - Navegação por teclado e leitor de tela.
 
-## 8. Critérios de aceite
+## Critérios de aceite
 
-- [ ] 100% das consultas do conjunto dourado retornam o resultado esperado no
-  top 5.
-- [ ] Nenhum item não publicado aparece em resultado público.
-- [ ] Ranking é determinístico em execuções repetidas.
-- [ ] P95 local permanece abaixo de 100 ms para o catálogo atual.
-- [ ] Consulta inválida não quebra a tela nem gera exceção.
-- [ ] Trecho e motivo são coerentes com o campo encontrado.
-- [ ] Busca funciona sem rede.
-- [ ] Leitor de tela anuncia campo, quantidade, título e estado vazio.
-- [ ] Export estático e SEO permanecem verdes.
+- Consultas do conjunto dourado retornam o alvo esperado no top 5, ou a
+  divergência fica explicitamente justificada e aprovada.
+- Resultado determinístico em execuções repetidas.
+- Nenhum conteúdo não publicado aparece.
+- Entrada inválida não lança exceção e mostra estado compreensível.
+- Trecho, tipo e motivo correspondem ao campo vencedor.
+- Busca disponível sem rede.
+- Quantidade, título, escopo e estado vazio são compreensíveis com leitor de
+  tela.
+- Relevância e latência medidas; decisão de índice baseada nesses dados.
+- Export estático e SEO das páginas públicas permanecem válidos.
 
-## 9. Ordem recomendada de execução
+## Próxima sequência de trabalho
 
-1. Fechar contrato e conjunto dourado.
-2. Extrair manifesto de aliases/sinônimos/pesos.
-3. Gerar índice derivado.
-4. Implementar ranking determinístico.
-5. Adicionar referências e escopos.
-6. Atualizar UI, trechos e acessibilidade.
-7. Rodar benchmark, export e preview.
-8. Publicar somente após revisão de relevância e UX.
+1. Escrever o inventário dos contratos atuais e desenhar casos de integração
+   entre busca bíblica e editorial.
+2. Fechar consulta e resultado: unificar sob uma fachada ou preservar escopos
+   independentes com apresentação coordenada.
+3. Criar o conjunto dourado e testes de regressão antes de mudar ranking.
+4. Corrigir consultas vazias/limites e reduzir trabalho repetido ao montar
+   trechos.
+5. Validar anúncio acessível e navegação por tipo de resultado.
+6. Medir relevância/latência e só então decidir sobre manifesto, índice,
+   debounce ou tolerância a erros.
+7. Validar export e publicar após revisão dos resultados.

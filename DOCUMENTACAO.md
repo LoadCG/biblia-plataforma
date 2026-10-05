@@ -28,7 +28,7 @@ substituir os estados e critérios mais atuais.
 | [`PLANO-HOVER-INTERACOES.md`](./docs/PLANO-HOVER-INTERACOES.md) | Microinterações hover em todas as rotas e componentes acionáveis da web | Foco atual de UI; cobre apenas ponteiro hover-capable e preserva toque, teclado e movimento reduzido. |
 | [`PLANO-CONFIGURACOES.md`](./docs/PLANO-CONFIGURACOES.md) | Melhorias UX/UI, contrato de preferências, dados locais e lembrete diário | Etapas iniciais implementadas; QA visual, assistivo e do lembrete em dispositivo pendentes. |
 | [`docs/revisao-editorial/INDICE.md`](./docs/revisao-editorial/INDICE.md) | Fila de propostas editoriais pendentes | Lista rascunhos, próximas ações e o gate de duas revisões humanas. Fontes dos três planos já publicados estão em `docs/planos-publicados/`. |
-| [`PLANO-TECNICO-BUSCA.md`](./PLANO-TECNICO-BUSCA.md) | Arquitetura e evolução técnica da busca | Backlog especializado; iniciar somente se priorizado no plano mestre. |
+| [`PLANO-TECNICO-BUSCA.md`](./PLANO-TECNICO-BUSCA.md) | Status e evolução técnica da busca e descoberta | Execução parcial; priorizar contrato, benchmark e integração dos escopos antes de adotar índice derivado. |
 
 ## Estado, qualidade e conteúdo
 

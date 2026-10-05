@@ -14,6 +14,7 @@ import type { AssociacaoColecao, Colecao } from "../core/repositories/ColecoesRe
 import { mostrarToast } from "../core/util/toast";
 import { IconeUI } from "../components/icone/IconeUI";
 import { useColorScheme } from "../core/theme";
+import { normalizarBusca } from "../core/biblia/relevanciaBusca";
 
 type Filtro = "todos" | "grifo" | "nota" | "pesquisa" | "salvo";
 
@@ -78,17 +79,18 @@ export default function Salvo() {
   }, [filtroInicial]);
 
   const chavesColecao = new Set(associacoes.filter((item) => !colecaoFiltro || item.colecaoId === colecaoFiltro).map((item) => item.itemChave));
+  const buscaNormalizada = normalizarBusca(termo);
   const filtrados = (filtro === "todos" ? atividade : atividade.filter((item) => item.tipo === filtro))
     .filter((item) => !colecaoFiltro || chavesColecao.has(chaveAtividade(item)))
     .filter((item) => {
-      const busca = termo.trim().toLowerCase(); if (!busca) return true;
+      if (!buscaNormalizada) return true;
       const livro = item.tipo === "pesquisa" ? "" : obterLivro(item.livroSlug)?.nome ?? "";
       const referenciasNota = item.tipo === "nota"
         ? (item.referencias ?? [{ livroSlug: item.livroSlug, capitulo: item.capitulo, versiculo: item.versiculo }])
             .map((ref) => `${ref.capitulo}:${ref.versiculo}`)
             .join(" ")
         : item.tipo === "pesquisa" ? "" : `${item.capitulo}:${item.versiculo}`;
-      return `${livro} ${item.tipo === "nota" ? `${referenciasNota} ${item.texto}` : item.tipo === "pesquisa" ? item.termo : referenciasNota}`.toLowerCase().includes(busca);
+      return normalizarBusca(`${livro} ${item.tipo === "nota" ? `${referenciasNota} ${item.texto}` : item.tipo === "pesquisa" ? item.termo : referenciasNota}`).includes(buscaNormalizada);
     })
     .sort((a, b) => ordem === "recentes" ? new Date(dataMaisRecente(b)).getTime() - new Date(dataMaisRecente(a)).getTime() : ordemBiblica(a) - ordemBiblica(b));
 
@@ -225,6 +227,15 @@ export default function Salvo() {
     ? atividade.length
     : atividade.filter((item) => item.tipo === chave).length;
   const quantidadeItens = atividade.length;
+  const quantidadeAnotacoes = atividade.filter((item) => item.tipo === "nota").length;
+  const quantidadeAnotacoesNaColecao = atividade.filter((item) => item.tipo === "nota" && chavesColecao.has(chaveAtividade(item))).length;
+  const vazioDeAnotacoes = filtro === "nota" && filtrados.length === 0;
+  const vazioPorBusca = vazioDeAnotacoes && Boolean(buscaNormalizada);
+  const vazioPorColecao = vazioDeAnotacoes && Boolean(colecaoFiltro) && quantidadeAnotacoesNaColecao === 0;
+
+  function limparBusca() {
+    setTermo("");
+  }
 
   const atualizar = useCallback(async () => {
     setAtualizando(true);
@@ -368,9 +379,17 @@ export default function Salvo() {
           <EstadoCarregando rotulo="Carregando itens salvos" />
         ) : filtrados.length === 0 ? (
           <EstadoVazio
-            titulo={quantidadeItens === 0 ? "Sua biblioteca está vazia" : "Nenhum item encontrado"}
-            descricao={quantidadeItens === 0 ? "Salve versículos, faça anotações ou grife passagens durante a leitura. Eles ficam reunidos aqui." : "Experimente outro termo ou ajuste os filtros para encontrar o que procura."}
-            acao={quantidadeItens === 0 ? { rotulo: "Abrir a Bíblia", aoPressionar: () => router.push("/biblia") } : possuiFiltrosAtivos ? { rotulo: "Limpar filtros", aoPressionar: limparFiltros } : undefined}
+            titulo={vazioDeAnotacoes
+              ? vazioPorBusca ? "Nenhuma anotação encontrada" : vazioPorColecao ? "Nenhuma anotação nesta coleção" : "Você ainda não tem anotações"
+              : quantidadeItens === 0 ? "Sua biblioteca está vazia" : "Nenhum item encontrado"}
+            descricao={vazioDeAnotacoes
+              ? vazioPorBusca ? "Tente outro termo. A busca considera o texto da nota, o nome do livro e a referência, sem diferenciar acentos." : vazioPorColecao ? "As anotações aparecem aqui quando forem adicionadas a esta coleção." : "Suas anotações feitas durante a leitura ficam reunidas aqui para você retomar quando quiser."
+              : quantidadeItens === 0 ? "Salve versículos, faça anotações ou grife passagens durante a leitura. Eles ficam reunidos aqui." : "Experimente outro termo ou ajuste os filtros para encontrar o que procura."}
+            acao={vazioDeAnotacoes
+              ? vazioPorBusca ? { rotulo: "Limpar busca", aoPressionar: limparBusca }
+                : vazioPorColecao ? { rotulo: "Ver todas as anotações", aoPressionar: () => setColecaoFiltro(null) }
+                  : quantidadeAnotacoes === 0 ? { rotulo: "Abrir a Bíblia", aoPressionar: () => router.push("/biblia") } : undefined
+              : quantidadeItens === 0 ? { rotulo: "Abrir a Bíblia", aoPressionar: () => router.push("/biblia") } : possuiFiltrosAtivos ? { rotulo: "Limpar filtros", aoPressionar: limparFiltros } : undefined}
           />
         ) : (
           filtrados.map((item, indice) => { const chave = chaveAtividade(item); const livroAtual = item.tipo === "pesquisa" ? "Pesquisas" : obterLivro(item.livroSlug)?.nome ?? item.livroSlug; const anterior = filtrados[indice - 1]; const livroAnterior = anterior ? (anterior.tipo === "pesquisa" ? "Pesquisas" : obterLivro(anterior.livroSlug)?.nome ?? anterior.livroSlug) : null; return <View key={chave}>{ordem === "biblica" && livroAtual !== livroAnterior ? <Text className="text-xs font-bold uppercase tracking-wide text-cor-texto-suave dark:text-cor-texto-suave-dark mt-3 mb-2">{livroAtual}</Text> : null}<CardAtividade item={item} modoBiblioteca onMudou={carregar} selecionado={selecionados.has(chave)} onSelecionar={modoSelecao ? () => setSelecionados((atuais) => { const novo = new Set(atuais); if (novo.has(chave)) novo.delete(chave); else novo.add(chave); return novo; }) : undefined} /></View>; })

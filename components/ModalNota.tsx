@@ -120,7 +120,7 @@ export function ModalNota({ visivel, referencias, referenciasAlteradas = false, 
                 </Text>
                 {referencias.length > 1 ? (
                   <Text className="text-xs font-semibold text-cor-destaque dark:text-cor-destaque-dark mt-1">
-                    Vinculada a {referencias.length} versículos
+                    Esta anotação é compartilhada por {referencias.length} versículos
                   </Text>
                 ) : null}
               </View>
@@ -192,7 +192,9 @@ export function ModalNota({ visivel, referencias, referenciasAlteradas = false, 
               <View className="rounded-2xl border border-red-200 dark:border-red-900 bg-red-50 dark:bg-red-950/40 p-3 mb-3">
                 <Text className="text-sm font-semibold text-red-900 dark:text-red-100">Excluir esta anotação?</Text>
                 <Text className="text-xs text-red-800 dark:text-red-200 mt-1 mb-3">
-                  {alterado ? "A anotação salva e as alterações ainda não salvas serão perdidas." : "Essa ação não pode ser desfeita."}
+                  {referencias.length > 1
+                    ? `A anotação será removida de todos os ${referencias.length} versículos${alterado ? "; as alterações não salvas também serão perdidas." : ". Esta ação não pode ser desfeita."}`
+                    : alterado ? "A anotação salva e as alterações ainda não salvas serão perdidas." : "Essa ação não pode ser desfeita."}
                 </Text>
                 <View className="flex-row justify-end gap-2">
                   <Pressable onPress={() => setConfirmacao(null)} accessibilityRole="button" className="rounded-full px-3 py-2 active:opacity-70">

@@ -114,38 +114,65 @@ export function CardAtividade({ item, onMudou, selecionado, onSelecionar, modoBi
           <Text className={selecionado ? "text-white dark:text-cor-texto font-bold" : "text-transparent"}>✓</Text>
         </Pressable>
       ) : null}
-      <Pressable
-        onPress={aoPressionarConteudo}
-        disabled={!aoPressionarConteudo}
-        accessibilityRole={aoPressionarConteudo ? "button" : undefined}
-        accessibilityLabel={onSelecionar ? `Selecionar ${tituloItem}` : modoBiblioteca && item.tipo !== "pesquisa" ? `Ler ${tituloItem}` : undefined}
-        accessibilityHint={onSelecionar ? "Ative para incluir ou remover este item da seleção." : modoBiblioteca && item.tipo !== "pesquisa" ? "Abre este versículo na Bíblia." : undefined}
-        className={`flex-1 mr-2 ${aoPressionarConteudo ? "active:opacity-70" : ""}`}
-      >
-        {modoBiblioteca ? (
-          <>
-            <View className="self-start flex-row items-center gap-1.5 rounded-full bg-cor-destaque-fundo dark:bg-cor-destaque-fundo-dark px-2.5 py-1 mb-2">
-              <IconeUI name={apresentacao.icone} size={14} className="text-cor-destaque dark:text-cor-destaque-dark" />
-              <Text className="text-[10px] font-bold uppercase tracking-wide text-cor-destaque dark:text-cor-destaque-dark">{apresentacao.rotulo}</Text>
-            </View>
-            <Text className="text-base font-bold text-cor-texto dark:text-cor-texto-dark" numberOfLines={2}>{tituloItem}</Text>
-            {item.tipo === "nota" ? <Text numberOfLines={3} className="text-sm leading-5 text-cor-texto-suave dark:text-cor-texto-suave-dark mt-1">{item.texto}</Text> : null}
-          </>
-        ) : (
-          <>
-            <Text className="text-cor-texto dark:text-cor-texto-dark text-sm">
-              {item.tipo === "grifo"
-                ? `Você grifou ${referencia}`
-                : item.tipo === "nota"
-                  ? `Nota em ${referencia}`
-                  : item.tipo === "salvo"
-                    ? `Você salvou ${referencia}`
-                    : `Busca favorita: "${item.termo}"`}
-            </Text>
-            {item.tipo === "nota" ? <Text numberOfLines={2} className="text-xs text-cor-texto-suave dark:text-cor-texto-suave-dark mt-0.5 italic">{item.texto}</Text> : null}
-          </>
-        )}
-      </Pressable>
+      <View className="flex-1 mr-2">
+        <Pressable
+          onPress={aoPressionarConteudo}
+          disabled={!aoPressionarConteudo}
+          accessibilityRole={aoPressionarConteudo ? "button" : undefined}
+          accessibilityLabel={onSelecionar ? `Selecionar ${tituloItem}` : modoBiblioteca && item.tipo !== "pesquisa" ? `Ler ${tituloItem}` : undefined}
+          accessibilityHint={onSelecionar ? "Ative para incluir ou remover este item da seleção." : modoBiblioteca && item.tipo !== "pesquisa" ? "Abre este versículo na Bíblia." : undefined}
+          className={aoPressionarConteudo ? "active:opacity-70" : ""}
+        >
+          {modoBiblioteca ? (
+            <>
+              <View className="self-start flex-row items-center gap-1.5 rounded-full bg-cor-destaque-fundo dark:bg-cor-destaque-fundo-dark px-2.5 py-1 mb-2">
+                <IconeUI name={apresentacao.icone} size={14} className="text-cor-destaque dark:text-cor-destaque-dark" />
+                <Text className="text-[10px] font-bold uppercase tracking-wide text-cor-destaque dark:text-cor-destaque-dark">{apresentacao.rotulo}</Text>
+              </View>
+              <Text className="text-base font-bold text-cor-texto dark:text-cor-texto-dark" numberOfLines={2}>{tituloItem}</Text>
+              {item.tipo === "nota" ? <Text numberOfLines={3} className="text-sm leading-5 text-cor-texto-suave dark:text-cor-texto-suave-dark mt-1">{item.texto}</Text> : null}
+            </>
+          ) : (
+            <>
+              <Text className="text-cor-texto dark:text-cor-texto-dark text-sm">
+                {item.tipo === "grifo"
+                  ? `Você grifou ${referencia}`
+                  : item.tipo === "nota"
+                    ? `Nota em ${referencia}`
+                    : item.tipo === "salvo"
+                      ? `Você salvou ${referencia}`
+                      : `Busca favorita: "${item.termo}"`}
+              </Text>
+              {item.tipo === "nota" ? <Text numberOfLines={2} className="text-xs text-cor-texto-suave dark:text-cor-texto-suave-dark mt-0.5 italic">{item.texto}</Text> : null}
+            </>
+          )}
+        </Pressable>
+        {modoBiblioteca && item.tipo === "nota" ? (
+          <View className="flex-row flex-wrap items-center gap-2 mt-2">
+            <Pressable
+              onPress={() => router.push(`/biblia/${item.livroSlug}/${item.capitulo}?versiculo=${item.versiculo}`)}
+              accessibilityRole="button"
+              accessibilityLabel={`Ler referência ${referencia}`}
+              className="min-h-11 flex-row items-center gap-1.5 rounded-full bg-cor-destaque dark:bg-cor-destaque-dark px-3 active:opacity-80"
+            >
+              <IconeUI name="open-book" size={15} color="#ffffff" />
+              <Text className="text-xs font-bold text-white dark:text-cor-texto">Ler referência</Text>
+            </Pressable>
+            <Pressable
+              onPress={() => setEditando(true)}
+              accessibilityRole="button"
+              accessibilityLabel={`Editar anotação em ${referencia}`}
+              className="min-h-11 flex-row items-center gap-1.5 rounded-full border border-cor-borda dark:border-cor-borda-dark px-3 active:bg-cor-borda dark:active:bg-cor-borda-dark"
+            >
+              <IconeUI name="edit" size={15} className="text-cor-destaque dark:text-cor-destaque-dark" />
+              <Text className="text-xs font-bold text-cor-destaque dark:text-cor-destaque-dark">Editar</Text>
+            </Pressable>
+            {referenciasNota.length > 1 ? (
+              <Text className="text-xs text-cor-texto-suave dark:text-cor-texto-suave-dark">Compartilhada por {referenciasNota.length} versículos</Text>
+            ) : null}
+          </View>
+        ) : null}
+      </View>
       <View className="items-end">
         <Text className="text-[11px] text-cor-texto-suave dark:text-cor-texto-suave-dark mb-1">{tempoRelativo(dataMaisRecente(item))}</Text>
         <Pressable onPress={() => setMenuAberto(true)} accessibilityRole="button" accessibilityLabel={`Mais opções para ${tituloItem}`} className="w-11 h-11 items-center justify-center rounded-full active:bg-cor-borda dark:active:bg-cor-borda-dark">

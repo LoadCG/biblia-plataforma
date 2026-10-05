@@ -99,7 +99,7 @@ const resumo = [
   "## Limites deste inventário",
   "",
   "- A contagem de palavras é indicativa e não avalia profundidade ou equilíbrio entre gêneros.",
-  "- As referências dos planos são verificadas quanto à presença, mas ainda não são confrontadas com o cânon e os limites de capítulo/versículo da Bíblia ACF.",
+  "- `npm run check:planos-editoriais` confere livros, capítulos e limites exatos de versículos contra a Bíblia ACF local; essa validação estrutural não substitui revisão editorial.",
   "- Coerência teológica, fontes, linguagem e adequação pastoral exigem revisão humana independente.",
   "",
 ].join("\n");

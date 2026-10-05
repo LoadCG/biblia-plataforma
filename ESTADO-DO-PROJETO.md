@@ -36,7 +36,7 @@ referências mais citadas em comparativos de 2026.
 | Área | O que o nicho entrega | Bíblia Plataforma hoje |
 |---|---|---|
 | Traduções | YouVersion: centenas de traduções, 1400+ Bíblias, 1200+ idiomas (Plataforma própria lançada em 2026) | Só Almeida ACF — **decisão consciente**, não lacuna técnica (ver `TODO.md`) |
-| Planos de leitura | YouVersion: 100 mil+ planos, de 3 dias a plurianuais, com devocionais e vídeo | 2 planos guiados e curados, com 21 devocionais, pergunta diária e retomada persistente |
+| Planos de leitura | YouVersion: 100 mil+ planos, de 3 dias a plurianuais, com devocionais e vídeo | 5 planos guiados e curados, 72 sessões com reflexão e pergunta diária e retomada persistente; três foram publicados por exceção explícita ao gate de revisão humana |
 | Streak e gamificação | YouVersion reforçou "Community Plans" com streaks sociais em 2026; apps como Bible Streak têm pontuação/badges dedicados | Streak individual + 10 medalhas por marcos do cânon — sólido, mas sem componente social |
 | Comunidade | YouVersion: camada de Amigos, pedidos de oração, comentar/grifar junto com quem você conhece | Nenhuma — **decisão consciente** (sem conta = sem comunidade possível ainda) |
 | Áudio | Bible Gateway destacado por qualidade de áudio pra "ouvir enquanto lê"; Dwell foca 100% em áudio com faixas de sono | TTS do sistema operacional (`Ouvir capítulo em voz alta`) — funcional, mas não é narração profissional |
@@ -44,7 +44,7 @@ referências mais citadas em comparativos de 2026.
 | Estudo aprofundado | Blue Letter Bible/Logos: léxico, interlinear, concordância, comentários | Fora de escopo — público-alvo declarado é "leitura", não estudo acadêmico de idioma original |
 | Design/UX 2026 | Tipografia cuidada, modo escuro, Dynamic Type, tela inicial sem feed de comparação social | Modo escuro completo, fonte ajustável, identidade visual própria (não copiada) — ver auditorias de UI já feitas |
 | Confiabilidade | Bible Streak citado por "pontuação clara e progresso de badge confiável" como diferencial | CI versionado, suíte unitária, contratos de acessibilidade/SEO/Maestro e exports por plataforma; o primeiro run remoto e o E2E em dispositivo ainda são gates externos |
-| SEO/descoberta | Apps estabelecidos têm anos de indexação; sites de conteúdo bíblico competem por tráfego orgânico de busca | 66 resumos e 2 planos possuem HTML/metadados por rota; export estático agora inclui uma página de shell para cada capítulo, para permitir entrada direta e atualização. A URL de produção reportada retornou 404 antes da correção; deploy e recarga pública ainda precisam ser confirmados. |
+| SEO/descoberta | Apps estabelecidos têm anos de indexação; sites de conteúdo bíblico competem por tráfego orgânico de busca | 66 resumos e 5 planos possuem HTML/metadados por rota; export estático inclui uma página de shell para cada capítulo, para permitir entrada direta e atualização. As três novas rotas de plano foram geradas localmente; disponibilidade em produção depende do deploy e da confirmação pública. |
 | Widgets/OS nativo | YouVersion tem widget de tela inicial, notificação diária | Configuração e bundles locais Android/iOS validados; sem widget, build assinado ou publicação em loja |
 
 **Leitura honesta desse quadro:** nas áreas onde o projeto decidiu
@@ -87,9 +87,10 @@ traduções licenciadas, notificações push), a distância é grande e
   forma proeminente (o app é peça de portfólio — vale considerar).
 
 ### Funcionalidades
-- O catálogo continua deliberadamente pequeno (2 planos), embora agora tenha
-  21 devocionais, perguntas diárias e retomada persistente. A lacuna restante
-  é amplitude editorial, não profundidade mecânica.
+- O catálogo tem agora cinco planos, com 72 sessões, perguntas diárias e
+  retomada persistente. Três planos foram publicados em caráter excepcional
+  por decisão do responsável; revisões humanas independentes continuam
+  recomendadas e ainda não estão registradas.
 - Lembrete diário local existe e funciona **só no nativo** (ver
   `FUNCIONALIDADES.md` 9.7/9.10) — sem efeito real hoje porque o app
   nativo não está publicado em nenhuma loja ainda. No web (o único

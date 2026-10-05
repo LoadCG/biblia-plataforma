@@ -3,7 +3,7 @@ import { manifestoEditorial, validarManifestoEditorial } from "../manifesto";
 describe("manifesto editorial", () => {
   it("cobre todos os resumos e planos publicados", () => {
     expect(manifestoEditorial.filter((item) => item.tipo === "resumo")).toHaveLength(66);
-    expect(manifestoEditorial.filter((item) => item.tipo === "plano")).toHaveLength(2);
+    expect(manifestoEditorial.filter((item) => item.tipo === "plano")).toHaveLength(5);
     expect(validarManifestoEditorial(manifestoEditorial)).toEqual([]);
   });
 

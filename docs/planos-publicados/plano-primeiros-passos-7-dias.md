@@ -1,7 +1,10 @@
-# Proposta de plano — Primeiros passos: da criação à esperança
+# Plano publicado — Primeiros passos: da criação à esperança
 
-- **Status:** rascunho para revisão humana independente; fora do catálogo do app
+- **Status:** publicado no catálogo por decisão explícita do responsável do projeto em 2026-10-04; exceção ao gate editorial de duas leituras
 - **Duração:** 7 dias
+- **ID do catálogo:** `primeiros-passos-7`
+- **Versão do catálogo:** 1
+- **Título publicado:** Primeiros passos: da criação à esperança
 - **Público:** pessoas começando a leitura bíblica ou retomando depois de uma pausa
 - **Objetivo:** percorrer cenas selecionadas da narrativa bíblica, do relato da
   criação à ressurreição de Jesus, percebendo temas de dignidade, promessa,
@@ -9,8 +12,8 @@
 - **Carga:** 10 a 27 versículos indicados por dia; trechos seletivos, não leitura
   contínua de livros inteiros.
 - **Redação proposta:** assistência de IA nesta tarefa
-- **Revisores humanos:** pendentes
-- **Data da proposta:** 2026-09-28
+- **Revisores humanos:** nenhuma revisão independente registrada; publicação excepcional autorizada pelo responsável do projeto
+- **Data da proposta:** 2026-09-28; **publicação:** 2026-10-04
 
 ## Orientação de leitura
 
@@ -109,7 +112,8 @@ negá-la?
   existem na ACF local.
 - **Referências e carga:** 7 dias, 15 referências de trecho, 125
   versículos no total; maior carga diária: 27 versículos.
-- **Pendências:** revisão bíblico-teológica independente; leitura de clareza e
-  tom; conferência visual dos links no app; somente então decidir integração ao
-  catálogo e atualizar o conteúdo derivado.
+- **Acompanhamento editorial:** revisão bíblico-teológica independente e
+  leitura de clareza/tom continuam recomendadas após a publicação; corrigir o
+  catálogo e este registro caso sejam identificados problemas. A renderização
+  dos links deve ser conferida no app.
 - **Rubrica:** `docs/criterios-editoriais.md`.

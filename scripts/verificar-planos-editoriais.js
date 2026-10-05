@@ -63,44 +63,75 @@ function validarPlanoPublicado(plano) {
   }
 }
 
-function validarRascunho(nomeArquivo, sessoesEsperadas) {
-  const caminho = path.join(raiz, "docs", "revisao-editorial", nomeArquivo);
+function extrairCampo(texto, rotulo) {
+  const inicio = texto.indexOf(`**${rotulo}:**`);
+  if (inicio < 0) return null;
+  const restante = texto.slice(inicio + rotulo.length + 5);
+  const proximosCampos = restante.search(/\r?\n\r?\n\*\*(?:Leituras|Reflexão|Pergunta):\*\*/);
+  const proximaSecao = restante.search(/\r?\n\r?\n##/);
+  const limites = [proximosCampos, proximaSecao].filter((indice) => indice >= 0);
+  const fim = limites.length > 0 ? Math.min(...limites) : restante.length;
+  return restante.slice(0, fim).trim().replace(/\s+/g, " ");
+}
+
+function validarDocumentoPublicado(definicao, planoPorId) {
+  const caminho = path.join(raiz, "docs", "planos-publicados", definicao.arquivo);
   const texto = fs.readFileSync(caminho, "utf8");
-  const linhas = texto.split(/\r?\n/);
-  const leituras = linhas.filter((linha) => linha.startsWith("**Leituras:**"));
-  const statusPendente = /\*\*Status:\*\*[^\n]*(rascunho|proposta)/i.test(texto)
-    && /\*\*Revisores humanos:\*\*[^\n]*pendentes?/i.test(texto);
+  const plano = planoPorId.get(definicao.id);
+  const chunks = texto.split(/(?=^#{2,3} Dia \d+ — )/m).filter((bloco) => /^#{2,3} Dia \d+ — /m.test(bloco));
+  const statusPublicado = /\*\*Status:\*\*[^\n]*publicado[^\n]*exceção/i.test(texto);
+  const revisaoTransparente = /\*\*Revisores humanos:\*\*[^\n]*nenhuma revisão independente registrada/i.test(texto);
 
-  if (leituras.length !== sessoesEsperadas) {
-    erros.push(`${nomeArquivo}: esperadas ${sessoesEsperadas} sessões com leituras; encontradas ${leituras.length}.`);
+  if (!plano) {
+    erros.push(`${definicao.arquivo}: plano ${definicao.id} não está no catálogo.`);
+    return;
   }
-  if (!statusPendente) erros.push(`${nomeArquivo}: rascunho deve permanecer explicitamente pendente de revisão humana.`);
+  if (!statusPublicado || !revisaoTransparente) {
+    erros.push(`${definicao.arquivo}: exceção editorial e ausência de revisão independente devem estar registradas.`);
+  }
+  if (!texto.includes(`**ID do catálogo:** \`${plano.id}\``)) erros.push(`${definicao.arquivo}: ID do catálogo diverge.`);
+  if (!texto.includes(`**Título publicado:** ${plano.titulo}`)) erros.push(`${definicao.arquivo}: título publicado diverge.`);
+  if (chunks.length !== definicao.sessoes || plano.dias.length !== definicao.sessoes) {
+    erros.push(`${definicao.arquivo}: quantidade de sessões não corresponde a ${definicao.sessoes}.`);
+  }
 
-  leituras.forEach((linha, indice) => {
-    const referencias = linha.replace("**Leituras:**", "").trim().split(";").map((referencia) => referencia.trim());
+  chunks.forEach((bloco, indice) => {
+    const header = bloco.match(/^#{2,3} Dia (\d+) — (.+)$/m);
+    const dia = plano.dias[indice];
+    if (!header || !dia || Number(header[1]) !== dia.dia || header[2].trim() !== dia.titulo) {
+      erros.push(`${definicao.arquivo}: título ou sequência da sessão ${indice + 1} diverge do catálogo.`);
+    }
+    const referenciasTexto = extrairCampo(bloco, "Leituras");
+    const reflexao = extrairCampo(bloco, "Reflexão");
+    const pergunta = extrairCampo(bloco, "Pergunta");
+    if (!dia) return;
+    const referencias = referenciasTexto ? referenciasTexto.split(";").map((referencia) => referencia.trim()) : [];
     if (referencias.some((referencia) => !referencia)) {
-      erros.push(`${nomeArquivo}, sessão ${indice + 1}: referência vazia.`);
+      erros.push(`${definicao.arquivo}, sessão ${indice + 1}: referência vazia.`);
       return;
     }
-    referencias.forEach((referencia) => validarReferencia(referencia, `${nomeArquivo}, sessão ${indice + 1}`));
+    if (JSON.stringify(referencias) !== JSON.stringify(dia.referencias)) erros.push(`${definicao.arquivo}, sessão ${indice + 1}: referências divergem do catálogo.`);
+    if (reflexao !== dia.reflexao) erros.push(`${definicao.arquivo}, sessão ${indice + 1}: reflexão diverge do catálogo.`);
+    if (pergunta !== dia.pergunta) erros.push(`${definicao.arquivo}, sessão ${indice + 1}: pergunta diverge do catálogo.`);
+    referencias.forEach((referencia) => validarReferencia(referencia, `${definicao.arquivo}, sessão ${indice + 1}`));
   });
 
-  return leituras.length;
 }
 
 const planos = carregarJson("core/content/dados/planos.json");
 planos.forEach(validarPlanoPublicado);
 
-const rascunhos = [
-  { arquivo: "plano-primeiros-passos-7-dias.md", sessoes: 7 },
-  { arquivo: "plano-justica-cuidado-esperanca-14-dias.md", sessoes: 14 },
-  { arquivo: "plano-formacao-30-dias.md", sessoes: 30 },
+const planosPorId = new Map(planos.map((plano) => [plano.id, plano]));
+const documentosPublicados = [
+  { arquivo: "plano-primeiros-passos-7-dias.md", id: "primeiros-passos-7", sessoes: 7 },
+  { arquivo: "plano-justica-cuidado-esperanca-14-dias.md", id: "justica-cuidado-esperanca-14", sessoes: 14 },
+  { arquivo: "plano-formacao-30-dias.md", id: "formacao-30", sessoes: 30 },
 ];
-rascunhos.forEach(({ arquivo, sessoes }) => validarRascunho(arquivo, sessoes));
+documentosPublicados.forEach((definicao) => validarDocumentoPublicado(definicao, planosPorId));
 
 if (erros.length > 0) {
   console.error(erros.join("\n"));
   process.exitCode = 1;
 } else {
-  console.log(`Planos verificados: ${planos.length} publicados e ${rascunhos.length} rascunhos; intervalos conferidos contra a ACF.`);
+  console.log(`Planos verificados: ${planos.length} no catálogo; ${documentosPublicados.length} fontes publicadas sincronizadas; intervalos conferidos contra a ACF.`);
 }

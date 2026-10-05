@@ -6,15 +6,12 @@ O formato é baseado no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.
 ## [Unreleased] - 2026-10-04
 
 ### Conteúdo editorial
-- Completo o rascunho do plano Formação bíblica em 30 dias com 30 sessões,
-  pausas livres e estrutura compatível com o modelo atual; continua fora do
-  catálogo e aguarda duas revisões humanas independentes.
-- Conferidas automaticamente 48 referências do novo rascunho contra capítulos
-  e limites de versículos da ACF local; a validação não substitui revisão de
-  contexto, linguagem ou conteúdo bíblico-teológico.
-- O verificador de planos agora confere intervalos exatos de versículos e
-  abrange os rascunhos editoriais de 7, 14 e 30 sessões sem promovê-los ao
-  catálogo publicado.
+- Publicados no catálogo os planos Primeiros passos (7 dias), Justiça, cuidado
+  e esperança (14 dias) e Formação bíblica (30 sessões). A publicação ocorreu
+  por decisão explícita do responsável do projeto como exceção ao gate de duas
+  revisões humanas; nenhuma revisão independente é declarada como concluída.
+- O verificador de planos confere limites exatos de versículos contra a ACF e
+  sincroniza catálogo e fontes editoriais dos três planos publicados.
 
 ### Interface
 - O favicon web padrão do Expo foi substituído por um símbolo próprio de Bíblia

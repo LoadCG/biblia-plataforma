@@ -5,20 +5,151 @@
     "descricao": "Uma jornada pelas boas novas de Jesus através de Mateus, Marcos, Lucas e João.",
     "duracaoDias": 14,
     "dias": [
-      { "dia": 1, "titulo": "A promessa chega", "reflexao": "Mateus apresenta Jesus dentro da história de Israel: o Messias prometido entra numa família real, atravessada por graça e restauração. Leia observando como Deus age por meio de pessoas e acontecimentos concretos.", "pergunta": "Que detalhe da chegada de Jesus renova sua esperança hoje?", "referencias": ["Mateus 1", "Mateus 2"] },
-      { "dia": 2, "titulo": "O Reino por dentro", "reflexao": "No Sermão do Monte, Jesus desloca a fé da aparência para o coração. Suas palavras descrevem uma vida moldada por confiança, reconciliação e amor prático.", "pergunta": "Qual ensinamento pede uma resposta concreta sua?", "referencias": ["Mateus 5", "Mateus 6", "Mateus 7"] },
-      { "dia": 3, "titulo": "A cruz e a vitória", "reflexao": "A paixão e a ressurreição são o centro do evangelho. A aparente derrota da cruz se torna o lugar onde amor, justiça e esperança se encontram.", "pergunta": "Como a ressurreição muda a forma de encarar suas perdas?", "referencias": ["Mateus 26", "Mateus 27", "Mateus 28"] },
-      { "dia": 4, "titulo": "O começo da missão", "reflexao": "Marcos apresenta Jesus em movimento, anunciando o Reino e chamando pessoas comuns para segui-lo. O discipulado começa com atenção e resposta.", "pergunta": "O que você precisa deixar para seguir com mais inteireza?", "referencias": ["Marcos 1", "Marcos 2"] },
-      { "dia": 5, "titulo": "Ver com clareza", "reflexao": "Os discípulos reconhecem quem Jesus é, mas ainda precisam compreender o caminho do serviço e da cruz. Fé madura envolve enxergar tanto a glória quanto o custo do discipulado.", "pergunta": "Em qual área sua visão sobre Jesus precisa amadurecer?", "referencias": ["Marcos 8", "Marcos 9"] },
-      { "dia": 6, "titulo": "O Servo vence", "reflexao": "Marcos encerra mostrando que o Servo entrega a própria vida e vence a morte. O túmulo vazio transforma medo em chamado para testemunhar.", "pergunta": "Que medo pode ser respondido pela esperança do túmulo vazio?", "referencias": ["Marcos 15", "Marcos 16"] },
-      { "dia": 7, "titulo": "Boas-novas aos humildes", "reflexao": "Lucas destaca pessoas simples recebendo a notícia do Salvador. Deus visita seu povo de modo surpreendente e convida à confiança.", "pergunta": "Onde você percebe Deus agindo de forma discreta?", "referencias": ["Lucas 1", "Lucas 2"] },
-      { "dia": 8, "titulo": "Amor que se aproxima", "reflexao": "O bom samaritano e o pai do filho perdido revelam um amor que atravessa fronteiras, procura quem se afastou e restaura dignidade.", "pergunta": "De quem você pode se aproximar com misericórdia?", "referencias": ["Lucas 10", "Lucas 15"] },
-      { "dia": 9, "titulo": "Da mesa ao caminho", "reflexao": "Lucas acompanha Jesus da última ceia à cruz e ao encontro com discípulos desanimados. O Ressuscitado transforma confusão em entendimento e missão.", "pergunta": "Que parte da sua história precisa ser relida à luz da esperança?", "referencias": ["Lucas 22", "Lucas 23", "Lucas 24"] },
-      { "dia": 10, "titulo": "Vida e novo nascimento", "reflexao": "João apresenta o Verbo que se fez carne e oferece vida nova. A fé não é apenas informação religiosa, mas resposta pessoal à luz de Deus.", "pergunta": "O que significa nascer de novo na sua rotina atual?", "referencias": ["João 1", "João 3"] },
-      { "dia": 11, "titulo": "Permanecer", "reflexao": "Na despedida aos discípulos, Jesus promete presença, paz e o Espírito. Fruto duradouro nasce de permanecer nele e amar em comunidade.", "pergunta": "Que prática ajuda você a permanecer em Cristo?", "referencias": ["João 14", "João 15", "João 16", "João 17"] },
-      { "dia": 12, "titulo": "Amor até o fim", "reflexao": "João narra a entrega consciente de Jesus. Mesmo sob violência e rejeição, ele completa sua missão com fidelidade e amor.", "pergunta": "Como a fidelidade de Jesus sustenta você em tempos difíceis?", "referencias": ["João 18", "João 19"] },
-      { "dia": 13, "titulo": "Restauração e envio", "reflexao": "O Ressuscitado encontra pessoas com dúvidas, medo e culpa. Ele oferece paz, restaura Pedro e envia seus seguidores ao mundo.", "pergunta": "Onde você precisa receber restauração antes de seguir adiante?", "referencias": ["João 20", "João 21"] },
-      { "dia": 14, "titulo": "Uma história que continua", "reflexao": "A ascensão não encerra a missão de Jesus: o Espírito capacita a comunidade a testemunhar. O evangelho agora segue por meio de pessoas transformadas.", "pergunta": "Qual é seu próximo passo como testemunha do evangelho?", "referencias": ["Atos 1", "Atos 2"] }
+      {
+        "dia": 1,
+        "titulo": "A promessa chega",
+        "reflexao": "Mateus apresenta Jesus dentro da história de Israel: o Messias prometido entra numa família real, atravessada por graça e restauração. Leia observando como Deus age por meio de pessoas e acontecimentos concretos.",
+        "pergunta": "Que detalhe da chegada de Jesus renova sua esperança hoje?",
+        "referencias": [
+          "Mateus 1",
+          "Mateus 2"
+        ]
+      },
+      {
+        "dia": 2,
+        "titulo": "O Reino por dentro",
+        "reflexao": "No Sermão do Monte, Jesus desloca a fé da aparência para o coração. Suas palavras descrevem uma vida moldada por confiança, reconciliação e amor prático.",
+        "pergunta": "Qual ensinamento pede uma resposta concreta sua?",
+        "referencias": [
+          "Mateus 5",
+          "Mateus 6",
+          "Mateus 7"
+        ]
+      },
+      {
+        "dia": 3,
+        "titulo": "A cruz e a vitória",
+        "reflexao": "A paixão e a ressurreição são o centro do evangelho. A aparente derrota da cruz se torna o lugar onde amor, justiça e esperança se encontram.",
+        "pergunta": "Como a ressurreição muda a forma de encarar suas perdas?",
+        "referencias": [
+          "Mateus 26",
+          "Mateus 27",
+          "Mateus 28"
+        ]
+      },
+      {
+        "dia": 4,
+        "titulo": "O começo da missão",
+        "reflexao": "Marcos apresenta Jesus em movimento, anunciando o Reino e chamando pessoas comuns para segui-lo. O discipulado começa com atenção e resposta.",
+        "pergunta": "O que você precisa deixar para seguir com mais inteireza?",
+        "referencias": [
+          "Marcos 1",
+          "Marcos 2"
+        ]
+      },
+      {
+        "dia": 5,
+        "titulo": "Ver com clareza",
+        "reflexao": "Os discípulos reconhecem quem Jesus é, mas ainda precisam compreender o caminho do serviço e da cruz. Fé madura envolve enxergar tanto a glória quanto o custo do discipulado.",
+        "pergunta": "Em qual área sua visão sobre Jesus precisa amadurecer?",
+        "referencias": [
+          "Marcos 8",
+          "Marcos 9"
+        ]
+      },
+      {
+        "dia": 6,
+        "titulo": "O Servo vence",
+        "reflexao": "Marcos encerra mostrando que o Servo entrega a própria vida e vence a morte. O túmulo vazio transforma medo em chamado para testemunhar.",
+        "pergunta": "Que medo pode ser respondido pela esperança do túmulo vazio?",
+        "referencias": [
+          "Marcos 15",
+          "Marcos 16"
+        ]
+      },
+      {
+        "dia": 7,
+        "titulo": "Boas-novas aos humildes",
+        "reflexao": "Lucas destaca pessoas simples recebendo a notícia do Salvador. Deus visita seu povo de modo surpreendente e convida à confiança.",
+        "pergunta": "Onde você percebe Deus agindo de forma discreta?",
+        "referencias": [
+          "Lucas 1",
+          "Lucas 2"
+        ]
+      },
+      {
+        "dia": 8,
+        "titulo": "Amor que se aproxima",
+        "reflexao": "O bom samaritano e o pai do filho perdido revelam um amor que atravessa fronteiras, procura quem se afastou e restaura dignidade.",
+        "pergunta": "De quem você pode se aproximar com misericórdia?",
+        "referencias": [
+          "Lucas 10",
+          "Lucas 15"
+        ]
+      },
+      {
+        "dia": 9,
+        "titulo": "Da mesa ao caminho",
+        "reflexao": "Lucas acompanha Jesus da última ceia à cruz e ao encontro com discípulos desanimados. O Ressuscitado transforma confusão em entendimento e missão.",
+        "pergunta": "Que parte da sua história precisa ser relida à luz da esperança?",
+        "referencias": [
+          "Lucas 22",
+          "Lucas 23",
+          "Lucas 24"
+        ]
+      },
+      {
+        "dia": 10,
+        "titulo": "Vida e novo nascimento",
+        "reflexao": "João apresenta o Verbo que se fez carne e oferece vida nova. A fé não é apenas informação religiosa, mas resposta pessoal à luz de Deus.",
+        "pergunta": "O que significa nascer de novo na sua rotina atual?",
+        "referencias": [
+          "João 1",
+          "João 3"
+        ]
+      },
+      {
+        "dia": 11,
+        "titulo": "Permanecer",
+        "reflexao": "Na despedida aos discípulos, Jesus promete presença, paz e o Espírito. Fruto duradouro nasce de permanecer nele e amar em comunidade.",
+        "pergunta": "Que prática ajuda você a permanecer em Cristo?",
+        "referencias": [
+          "João 14",
+          "João 15",
+          "João 16",
+          "João 17"
+        ]
+      },
+      {
+        "dia": 12,
+        "titulo": "Amor até o fim",
+        "reflexao": "João narra a entrega consciente de Jesus. Mesmo sob violência e rejeição, ele completa sua missão com fidelidade e amor.",
+        "pergunta": "Como a fidelidade de Jesus sustenta você em tempos difíceis?",
+        "referencias": [
+          "João 18",
+          "João 19"
+        ]
+      },
+      {
+        "dia": 13,
+        "titulo": "Restauração e envio",
+        "reflexao": "O Ressuscitado encontra pessoas com dúvidas, medo e culpa. Ele oferece paz, restaura Pedro e envia seus seguidores ao mundo.",
+        "pergunta": "Onde você precisa receber restauração antes de seguir adiante?",
+        "referencias": [
+          "João 20",
+          "João 21"
+        ]
+      },
+      {
+        "dia": 14,
+        "titulo": "Uma história que continua",
+        "reflexao": "A ascensão não encerra a missão de Jesus: o Espírito capacita a comunidade a testemunhar. O evangelho agora segue por meio de pessoas transformadas.",
+        "pergunta": "Qual é seu próximo passo como testemunha do evangelho?",
+        "referencias": [
+          "Atos 1",
+          "Atos 2"
+        ]
+      }
     ]
   },
   {
@@ -27,13 +158,601 @@
     "descricao": "7 dias imerso nos livros poéticos e sapienciais para fortalecer a mente e o espírito.",
     "duracaoDias": 7,
     "dias": [
-      { "dia": 1, "titulo": "O início da sabedoria", "reflexao": "Provérbios apresenta a sabedoria como um caminho aprendido na reverência a Deus, na escuta e na disciplina. Pequenas decisões repetidas formam uma vida inteira.", "pergunta": "Qual decisão de hoje pode ser orientada pela sabedoria?", "referencias": ["Provérbios 1", "Provérbios 2", "Provérbios 3"] },
-      { "dia": 2, "titulo": "Confiança em cada estação", "reflexao": "Os salmos dão linguagem à confiança: estabilidade, cuidado e refúgio não dependem da ausência de perigo, mas da presença fiel de Deus.", "pergunta": "Que preocupação você pode transformar em oração?", "referencias": ["Salmos 1", "Salmos 23", "Salmos 91"] },
-      { "dia": 3, "titulo": "Tempo e propósito", "reflexao": "Eclesiastes reconhece os ritmos da vida e os limites humanos. Sabedoria também é receber o presente com gratidão e responsabilidade.", "pergunta": "O que esta estação pede que você aceite ou faça?", "referencias": ["Eclesiastes 3", "Eclesiastes 11", "Eclesiastes 12"] },
-      { "dia": 4, "titulo": "Guardar o coração", "reflexao": "A sabedoria bíblica não é passiva: ela chama, orienta caminhos e pede vigilância interior. O coração guardado direciona palavras, escolhas e relacionamentos.", "pergunta": "Que influência merece mais atenção no seu coração?", "referencias": ["Provérbios 4", "Provérbios 8"] },
-      { "dia": 5, "titulo": "Formados pela Palavra", "reflexao": "O salmista deseja aprender, guardar e praticar a Palavra. Conhecimento se torna sabedoria quando molda a direção dos passos.", "pergunta": "Qual verso você quer levar consigo ao longo do dia?", "referencias": ["Salmos 119:1-32"] },
-      { "dia": 6, "titulo": "Humildade diante do mistério", "reflexao": "A resposta de Deus a Jó amplia seu horizonte. Nem toda dor recebe explicação imediata, mas a grandeza divina convida a uma confiança humilde.", "pergunta": "Onde você precisa trocar controle por confiança?", "referencias": ["Jó 38", "Jó 42"] },
-      { "dia": 7, "titulo": "Sabedoria que se torna prática", "reflexao": "Tiago conecta fé, perseverança, palavras e atitudes. A sabedoria do alto aparece no modo como tratamos pessoas e atravessamos provações.", "pergunta": "Qual atitude tornará sua fé visível nesta semana?", "referencias": ["Tiago 1", "Tiago 3"] }
+      {
+        "dia": 1,
+        "titulo": "O início da sabedoria",
+        "reflexao": "Provérbios apresenta a sabedoria como um caminho aprendido na reverência a Deus, na escuta e na disciplina. Pequenas decisões repetidas formam uma vida inteira.",
+        "pergunta": "Qual decisão de hoje pode ser orientada pela sabedoria?",
+        "referencias": [
+          "Provérbios 1",
+          "Provérbios 2",
+          "Provérbios 3"
+        ]
+      },
+      {
+        "dia": 2,
+        "titulo": "Confiança em cada estação",
+        "reflexao": "Os salmos dão linguagem à confiança: estabilidade, cuidado e refúgio não dependem da ausência de perigo, mas da presença fiel de Deus.",
+        "pergunta": "Que preocupação você pode transformar em oração?",
+        "referencias": [
+          "Salmos 1",
+          "Salmos 23",
+          "Salmos 91"
+        ]
+      },
+      {
+        "dia": 3,
+        "titulo": "Tempo e propósito",
+        "reflexao": "Eclesiastes reconhece os ritmos da vida e os limites humanos. Sabedoria também é receber o presente com gratidão e responsabilidade.",
+        "pergunta": "O que esta estação pede que você aceite ou faça?",
+        "referencias": [
+          "Eclesiastes 3",
+          "Eclesiastes 11",
+          "Eclesiastes 12"
+        ]
+      },
+      {
+        "dia": 4,
+        "titulo": "Guardar o coração",
+        "reflexao": "A sabedoria bíblica não é passiva: ela chama, orienta caminhos e pede vigilância interior. O coração guardado direciona palavras, escolhas e relacionamentos.",
+        "pergunta": "Que influência merece mais atenção no seu coração?",
+        "referencias": [
+          "Provérbios 4",
+          "Provérbios 8"
+        ]
+      },
+      {
+        "dia": 5,
+        "titulo": "Formados pela Palavra",
+        "reflexao": "O salmista deseja aprender, guardar e praticar a Palavra. Conhecimento se torna sabedoria quando molda a direção dos passos.",
+        "pergunta": "Qual verso você quer levar consigo ao longo do dia?",
+        "referencias": [
+          "Salmos 119:1-32"
+        ]
+      },
+      {
+        "dia": 6,
+        "titulo": "Humildade diante do mistério",
+        "reflexao": "A resposta de Deus a Jó amplia seu horizonte. Nem toda dor recebe explicação imediata, mas a grandeza divina convida a uma confiança humilde.",
+        "pergunta": "Onde você precisa trocar controle por confiança?",
+        "referencias": [
+          "Jó 38",
+          "Jó 42"
+        ]
+      },
+      {
+        "dia": 7,
+        "titulo": "Sabedoria que se torna prática",
+        "reflexao": "Tiago conecta fé, perseverança, palavras e atitudes. A sabedoria do alto aparece no modo como tratamos pessoas e atravessamos provações.",
+        "pergunta": "Qual atitude tornará sua fé visível nesta semana?",
+        "referencias": [
+          "Tiago 1",
+          "Tiago 3"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "primeiros-passos-7",
+    "titulo": "Primeiros passos: da criação à esperança",
+    "descricao": "Uma semana para percorrer passagens da criação à ressurreição, refletindo sobre dignidade, promessa, libertação, justiça, discipulado e esperança.",
+    "duracaoDias": 7,
+    "dias": [
+      {
+        "dia": 1,
+        "titulo": "Dignidade e cuidado com a criação",
+        "reflexao": "Os primeiros capítulos apresentam o mundo como criação de Deus e descrevem os seres humanos como feitos à imagem divina, com responsabilidade dentro do jardim. Observe o que o texto chama de bom e como cuidado e relação aparecem junto da dignidade humana.",
+        "pergunta": "Que aspecto da criação ou da vida humana você costuma tratar como comum, mas o texto apresenta como digno de cuidado?",
+        "referencias": [
+          "Gênesis 1:1-5",
+          "Gênesis 1:26-31",
+          "Gênesis 2:15-25"
+        ]
+      },
+      {
+        "dia": 2,
+        "titulo": "Uma promessa que alcança outros povos",
+        "reflexao": "O chamado de Abrão começa uma história marcada por deslocamento, promessa e espera. A bênção anunciada não se limita à família de Abrão; a narrativa também não esconde a incerteza sobre como e quando a promessa se cumprirá.",
+        "pergunta": "O que muda quando uma promessa envolve outras pessoas além de quem a recebe?",
+        "referencias": [
+          "Gênesis 12:1-9",
+          "Gênesis 15:1-6"
+        ]
+      },
+      {
+        "dia": 3,
+        "titulo": "Deus ouve, chama e liberta",
+        "reflexao": "Em uma passagem, Deus chama Moisés diante da opressão do povo; na outra, o relato narra a travessia do mar. Leia observando quem age, quem sente medo e como a libertação se torna memória coletiva. A passagem não afirma que uma vida de fé seja livre de perigo ou espera.",
+        "pergunta": "Que diferença há entre receber uma tarefa difícil e ter de enfrentá-la sem companhia ou propósito?",
+        "referencias": [
+          "Êxodo 3:1-12",
+          "Êxodo 14:21-31"
+        ]
+      },
+      {
+        "dia": 4,
+        "titulo": "Orações para o caminho",
+        "reflexao": "Os dois salmos usam imagens de cuidado, orientação e proteção. Em vez de lê-los como garantia de que nada doloroso acontecerá, observe como a poesia dá palavras à confiança durante a caminhada e diante de ameaças.",
+        "pergunta": "Qual imagem destes salmos ajuda você a expressar o que espera ou teme hoje?",
+        "referencias": [
+          "Salmos 23",
+          "Salmos 121"
+        ]
+      },
+      {
+        "dia": 5,
+        "titulo": "O que Deus pede",
+        "reflexao": "Miqueias resume uma vida fiel com justiça, misericórdia e humildade diante de Deus. Em Marcos, Jesus reúne o amor a Deus e ao próximo. Leia as duas passagens e perceba como a fé se liga às relações e às escolhas cotidianas.",
+        "pergunta": "Qual relação ou decisão concreta pode refletir mais justiça, misericórdia ou amor nesta semana?",
+        "referencias": [
+          "Miqueias 6:6-8",
+          "Marcos 12:28-34"
+        ]
+      },
+      {
+        "dia": 6,
+        "titulo": "O chamado de Jesus e o medo",
+        "reflexao": "Jesus anuncia o Reino, chama discípulos e, mais adiante, atravessa uma tempestade com eles. Os discípulos respondem com medo mesmo estando perto de Jesus. A narrativa convida a pensar sobre confiança sem fingir que o medo desaparece automaticamente.",
+        "pergunta": "O que ajuda você a seguir adiante quando ainda sente medo?",
+        "referencias": [
+          "Marcos 1:14-20",
+          "Marcos 4:35-41"
+        ]
+      },
+      {
+        "dia": 7,
+        "titulo": "Morte, ressurreição e testemunho",
+        "reflexao": "Marcos narra a morte de Jesus, o anúncio de que ele ressuscitou e os encontros que se seguem. A esperança cristã nasce diante da morte, sem apagar a dor das personagens. Observe como o anúncio transforma a direção da história e o que significa testemunhá-lo.",
+        "pergunta": "Que diferença há entre ignorar a dor e encontrar esperança sem negá-la?",
+        "referencias": [
+          "Marcos 15:33-39",
+          "Marcos 16:1-20"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "justica-cuidado-esperanca-14",
+    "titulo": "Justiça, cuidado e esperança em 14 dias",
+    "descricao": "Uma jornada temática por passagens sobre dignidade, justiça, lamento, misericórdia, comunidade e esperança, preservando seus contextos.",
+    "duracaoDias": 14,
+    "dias": [
+      {
+        "dia": 1,
+        "titulo": "Dignidade e criação",
+        "reflexao": "Gênesis relaciona a imagem de Deus à humanidade e lhe atribui responsabilidade sobre a criação. O Salmo 8 transforma a contemplação do céu em pergunta sobre o lugar e a responsabilidade humanos. Observe as diferenças entre narrativa e poesia e o modo como ambos relacionam dignidade e cuidado.",
+        "pergunta": "Que ideia de dignidade ou responsabilidade você percebe nesses dois gêneros?",
+        "referencias": [
+          "Gênesis 1:26-31",
+          "Salmos 8:3-9"
+        ]
+      },
+      {
+        "dia": 2,
+        "titulo": "O clamor e a libertação",
+        "reflexao": "Em Êxodo, Deus vê a opressão e chama Moisés para uma tarefa de libertação. Deuteronômio transforma a memória da condição de estrangeiro no Egito em instruções para proteger pessoas vulneráveis na colheita e na justiça. Leia a ligação entre memória e responsabilidade sem tratar a passagem como solução simples para toda forma de opressão.",
+        "pergunta": "Como uma memória coletiva pode influenciar o cuidado com quem tem menos proteção?",
+        "referencias": [
+          "Êxodo 3:7-12",
+          "Deuteronômio 24:17-22"
+        ]
+      },
+      {
+        "dia": 3,
+        "titulo": "Justiça sem favoritismo",
+        "reflexao": "Levítico reúne práticas de cuidado com pobres e estrangeiros e ordena amar o próximo. Tiago critica a preferência dada a pessoas ricas em uma assembleia. Os textos pertencem a contextos e gêneros diferentes, mas ambos desafiam formas de tratar pessoas segundo posição social.",
+        "pergunta": "Que forma de favoritismo costuma passar despercebida em grupos ou instituições?",
+        "referencias": [
+          "Levítico 19:9-18",
+          "Tiago 2:1-9"
+        ]
+      },
+      {
+        "dia": 4,
+        "titulo": "A justiça que os profetas pedem",
+        "reflexao": "Os dois trechos questionam uma religião separada da conduta. Isaías associa arrependimento a interromper o mal e buscar justiça; Miquéias resume o que é pedido em agir com justiça, amar a misericórdia e andar com humildade diante de Deus. Observe o que cada texto acrescenta à linguagem do culto.",
+        "pergunta": "Que prática concreta pode aproximar uma devoção de relações mais justas?",
+        "referencias": [
+          "Isaías 1:16-20",
+          "Miquéias 6:6-8"
+        ]
+      },
+      {
+        "dia": 5,
+        "titulo": "Descanso e dignidade",
+        "reflexao": "Deuteronômio liga o descanso sabático à memória da escravidão e à participação de toda a casa, inclusive trabalhadores e animais. Em Marcos, uma controvérsia sobre o sábado leva Jesus a falar de sua finalidade para as pessoas. Leia os textos em seus contextos próprios antes de traçar a relação.",
+        "pergunta": "Quem costuma ficar de fora quando se fala de descanso e recuperação?",
+        "referencias": [
+          "Deuteronômio 5:12-15",
+          "Marcos 2:23-28"
+        ]
+      },
+      {
+        "dia": 6,
+        "titulo": "Oração em meio à preocupação",
+        "reflexao": "O Salmo 13 expressa demora, angústia e confiança em forma de lamento. Mateus registra o ensino de Jesus sobre preocupação e cuidado. Lidos juntos, eles não exigem que a pessoa esconda o medo: o salmo dá voz à aflição, e o discurso de Jesus convida a considerar o cuidado sem prometer ausência de problemas.",
+        "pergunta": "Que diferença há entre reconhecer uma preocupação e deixar que ela determine todas as suas decisões?",
+        "referencias": [
+          "Salmos 13:1-6",
+          "Mateus 6:25-34"
+        ]
+      },
+      {
+        "dia": 7,
+        "titulo": "Dor que pode ser dita",
+        "reflexao": "Jó amaldiçoa o dia em que nasceu ao falar de uma perda profunda. Em João, Jesus chora diante da morte de Lázaro. As cenas não explicam todo sofrimento nem são idênticas; elas mostram que lamento e lágrimas fazem parte da linguagem bíblica sobre dor.",
+        "pergunta": "Que atitudes ajudam alguém a acompanhar uma pessoa enlutada sem apressar explicações?",
+        "referencias": [
+          "Jó 3:1-10",
+          "João 11:32-36"
+        ]
+      },
+      {
+        "dia": 8,
+        "titulo": "Aliança e promessa",
+        "reflexao": "Jeremias anuncia uma nova aliança em um contexto de ruptura e esperança para Israel e Judá. Hebreus retoma essa passagem para construir um argumento cristão sobre a aliança. Observe tanto a citação quanto o contexto original, sem transformar a leitura cristã em substituição da tradição judaica.",
+        "pergunta": "O que se preserva e o que muda quando um texto é retomado em outro contexto?",
+        "referencias": [
+          "Jeremias 31:31-34",
+          "Hebreus 8:8-13"
+        ]
+      },
+      {
+        "dia": 9,
+        "titulo": "Boa notícia e libertação",
+        "reflexao": "Isaías usa linguagem de anúncio, consolo e restauração. Lucas narra Jesus lendo parte desse texto na sinagoga e aplicando a passagem à sua missão. Leia o trecho profético por si mesmo e depois observe o que Lucas destaca, acrescenta e deixa em aberto.",
+        "pergunta": "Que grupos e necessidades aparecem na linguagem de restauração dessas passagens?",
+        "referencias": [
+          "Isaías 61:1-3",
+          "Lucas 4:16-21"
+        ]
+      },
+      {
+        "dia": 10,
+        "titulo": "Quem é o próximo?",
+        "reflexao": "O mandamento de amar o próximo aparece em uma instrução mais ampla de Levítico. Em Lucas, a parábola do samaritano desloca a pergunta para a ação de quem se aproxima de uma pessoa ferida. Compare o mandamento com a narrativa sem reduzir a parábola a uma fórmula sobre boas maneiras.",
+        "pergunta": "O que significa aproximar-se de alguém em necessidade com respeito e segurança?",
+        "referencias": [
+          "Levítico 19:18",
+          "Lucas 10:25-37"
+        ]
+      },
+      {
+        "dia": 11,
+        "titulo": "Misericórdia e retorno",
+        "reflexao": "O salmo descreve a compaixão de Deus por meio de imagens de perdão e cuidado. As parábolas de Lucas falam de encontrar o que se perdeu e da alegria compartilhada. Há uma afinidade temática, mas cada texto trabalha com suas próprias imagens e destinatários.",
+        "pergunta": "Como a alegria de reencontrar alguém pode se tornar uma prática comunitária de acolhimento?",
+        "referencias": [
+          "Salmos 103:8-13",
+          "Lucas 15:1-10"
+        ]
+      },
+      {
+        "dia": 12,
+        "titulo": "Morte e anúncio de ressurreição",
+        "reflexao": "Marcos narra a morte de Jesus e, depois, o anúncio de que ele ressuscitou. A leitura selecionada termina no versículo 8; há diferentes finais na história manuscrita de Marcos, e muitas Bíblias também incluem uma conclusão mais longa em 16:9-20. Observe como medo, silêncio e anúncio aparecem juntos.",
+        "pergunta": "Como uma narrativa pode apresentar esperança sem apagar o choque e a dor de seus personagens?",
+        "referencias": [
+          "Marcos 15:33-39",
+          "Marcos 16:1-8"
+        ]
+      },
+      {
+        "dia": 13,
+        "titulo": "Comunidade e pertencimento",
+        "reflexao": "Atos descreve práticas de uma comunidade em Jerusalém; Gálatas discute pertencimento e unidade em Cristo em outro contexto. Não são descrições intercambiáveis de todas as comunidades cristãs, mas permitem perguntar como partilha, vínculo e dignidade moldam a vida coletiva.",
+        "pergunta": "Que escolha torna uma comunidade mais acolhedora sem apagar as diferenças entre as pessoas?",
+        "referencias": [
+          "Atos 2:42-47",
+          "Gálatas 3:26-29"
+        ]
+      },
+      {
+        "dia": 14,
+        "titulo": "Esperança de uma criação renovada",
+        "reflexao": "Isaías imagina uma criação renovada com imagens de vida e segurança; Apocalipse descreve novos céus e nova terra e anuncia o fim da morte e do luto. A segunda passagem integra uma recepção cristã de imagens proféticas anteriores. Compare as visões e o que cada uma chama de restauração.",
+        "pergunta": "Que imagens de renovação ajudam você a pensar em esperança compartilhada e responsabilidade no presente?",
+        "referencias": [
+          "Isaías 65:17-25",
+          "Apocalipse 21:1-7"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "formacao-30",
+    "titulo": "Formação bíblica em 30 dias",
+    "descricao": "Trinta sessões para explorar narrativa, sabedoria, vida e ensino de Jesus, comunidade e esperança; avance no seu ritmo.",
+    "duracaoDias": 30,
+    "dias": [
+      {
+        "dia": 1,
+        "titulo": "Dignidade e cuidado com a criação",
+        "reflexao": "Gênesis relaciona a imagem de Deus à humanidade e lhe atribui responsabilidade pela criação. O Salmo 8 transforma a contemplação do céu em pergunta sobre o lugar humano. Observe como narrativa e poesia associam dignidade e cuidado.",
+        "pergunta": "Que ideia de dignidade ou responsabilidade você percebe nesses textos?",
+        "referencias": [
+          "Gênesis 1:26-31",
+          "Salmos 8:3-9"
+        ]
+      },
+      {
+        "dia": 2,
+        "titulo": "Uma promessa que alcança outros povos",
+        "reflexao": "O chamado de Abrão inicia uma história de deslocamento, promessa e espera. A bênção anunciada envolve outros povos, enquanto a narrativa também preserva a incerteza sobre quando e como ela se cumprirá.",
+        "pergunta": "O que muda quando uma promessa envolve pessoas além de quem a recebe?",
+        "referencias": [
+          "Gênesis 12:1-9",
+          "Gênesis 15:1-6"
+        ]
+      },
+      {
+        "dia": 3,
+        "titulo": "Deus ouve e chama para libertar",
+        "reflexao": "O relato apresenta Deus vendo a opressão dos israelitas e chamando Moisés para uma tarefa difícil. Observe quem toma a iniciativa, quais receios aparecem e como a libertação envolve ação coletiva.",
+        "pergunta": "O que o texto mostra sobre perceber o sofrimento de outras pessoas?",
+        "referencias": [
+          "Êxodo 3:7-12"
+        ]
+      },
+      {
+        "dia": 4,
+        "titulo": "Travessia e memória",
+        "reflexao": "Êxodo narra a travessia do mar; Deuteronômio liga a memória da libertação ao ensino das gerações seguintes. Leia os textos em seus contextos e observe como uma comunidade recorda sua história.",
+        "pergunta": "Que papel a memória pode ter na maneira como uma comunidade age no presente?",
+        "referencias": [
+          "Êxodo 14:21-31",
+          "Deuteronômio 6:20-25"
+        ]
+      },
+      {
+        "dia": 5,
+        "titulo": "Justiça e cuidado com quem tem menos proteção",
+        "reflexao": "As instruções associam amor a Deus, memória da condição de estrangeiro e proteção de pessoas vulneráveis. Note como princípios de justiça aparecem ligados a práticas concretas da vida comunitária.",
+        "pergunta": "Que prática cotidiana pode tornar o cuidado mais concreto em sua comunidade?",
+        "referencias": [
+          "Deuteronômio 10:12-19",
+          "Deuteronômio 24:17-22"
+        ]
+      },
+      {
+        "dia": 6,
+        "titulo": "O que Deus pede",
+        "reflexao": "Miqueias resume uma vida fiel com justiça, misericórdia e humildade diante de Deus. Em Marcos, Jesus reúne o amor a Deus e ao próximo. Compare os textos sem reduzir suas diferenças de contexto.",
+        "pergunta": "Qual relação ou decisão pode refletir mais justiça, misericórdia ou amor?",
+        "referencias": [
+          "Miqueias 6:6-8",
+          "Marcos 12:28-34"
+        ]
+      },
+      {
+        "dia": 7,
+        "titulo": "Sabedoria para começar",
+        "reflexao": "Provérbios apresenta a busca de sabedoria como formação do caráter e reverência a Deus. O segundo trecho aconselha confiança e humildade. Leia os ditos como literatura sapiencial, não como fórmula que garante ausência de dificuldades.",
+        "pergunta": "Que hábito ajuda você a buscar conselho antes de decidir?",
+        "referencias": [
+          "Provérbios 1:1-7",
+          "Provérbios 3:5-8"
+        ]
+      },
+      {
+        "dia": 8,
+        "titulo": "Há tempo para diferentes experiências",
+        "reflexao": "O poema enumera tempos contrastantes da vida e reflete sobre os limites do entendimento humano. Observe como a passagem sustenta tensões sem oferecer uma resposta simples para cada experiência.",
+        "pergunta": "Que contraste do poema corresponde a uma tensão que você percebe na vida?",
+        "referencias": [
+          "Eclesiastes 3:1-15"
+        ]
+      },
+      {
+        "dia": 9,
+        "titulo": "Uma oração por orientação",
+        "reflexao": "Os salmos usam imagens de cuidado, orientação e proteção. Em vez de tomá-los como garantia de que nada doloroso acontecerá, observe como a poesia dá palavras à confiança durante a caminhada.",
+        "pergunta": "Qual imagem destes salmos expressa melhor o que você espera ou teme hoje?",
+        "referencias": [
+          "Salmos 23",
+          "Salmos 121"
+        ]
+      },
+      {
+        "dia": 10,
+        "titulo": "Lamento sem esconder a dor",
+        "reflexao": "Os salmos dão voz à demora, à tristeza e à lembrança de momentos difíceis, ao mesmo tempo que expressam confiança. A oração bíblica pode conter perguntas e emoções contraditórias.",
+        "pergunta": "Que palavras de lamento ou esperança você encontra nesses poemas?",
+        "referencias": [
+          "Salmos 13:1-6",
+          "Salmos 42:1-11"
+        ]
+      },
+      {
+        "dia": 11,
+        "titulo": "Sofrimento e perguntas difíceis",
+        "reflexao": "Jó enfrenta perdas profundas, mas o livro não deve ser reduzido a uma explicação simples sobre por que alguém sofre. Observe o que o personagem diz e mantenha em vista que o restante do livro prolonga o debate.",
+        "pergunta": "O que muda quando se escuta alguém em sofrimento antes de tentar explicar sua situação?",
+        "referencias": [
+          "Jó 1:13-22",
+          "Jó 2:7-10"
+        ]
+      },
+      {
+        "dia": 12,
+        "titulo": "Cansaço e cuidado",
+        "reflexao": "Elias, ameaçado e exausto, expressa desejo de morrer; a narrativa então mostra descanso, alimento e cuidado antes de uma nova tarefa. O texto não substitui apoio profissional em crises, mas convida a notar a importância de atender necessidades imediatas.",
+        "pergunta": "Que sinais de cansaço merecem atenção e acolhimento em você ou em alguém próximo?",
+        "referencias": [
+          "1 Reis 19:1-8"
+        ]
+      },
+      {
+        "dia": 13,
+        "titulo": "Esperança em contexto de exílio",
+        "reflexao": "A carta é dirigida a exilados na Babilônia e fala de uma longa permanência naquele contexto. Sua promessa não deve ser convertida em garantia individual de sucesso imediato. Observe as instruções para buscar o bem da cidade e a esperança dirigida à comunidade.",
+        "pergunta": "Como buscar o bem comum em um lugar ou período que não escolhemos?",
+        "referencias": [
+          "Jeremias 29:1-14"
+        ]
+      },
+      {
+        "dia": 14,
+        "titulo": "Rever os próprios caminhos",
+        "reflexao": "O salmista descreve inveja, confusão e uma mudança de perspectiva. A passagem não apaga a pergunta sobre a injustiça; ela mostra um percurso de reflexão dentro da oração.",
+        "pergunta": "Que pergunta difícil você precisa reconhecer antes de tentar respondê-la?",
+        "referencias": [
+          "Salmos 73:1-17",
+          "Salmos 73:21-28"
+        ]
+      },
+      {
+        "dia": 15,
+        "titulo": "O início da missão de Jesus",
+        "reflexao": "Jesus anuncia o Reino de Deus, chama discípulos e segue ensinando em outros lugares. Os trechos apresentam movimento e prioridades no início do ministério, sem sugerir que todo chamado terá a mesma forma.",
+        "pergunta": "O que a narrativa mostra sobre anúncio, companhia e propósito?",
+        "referencias": [
+          "Marcos 1:14-20",
+          "Marcos 1:35-39"
+        ]
+      },
+      {
+        "dia": 16,
+        "titulo": "Boa notícia e restauração",
+        "reflexao": "Isaías usa linguagem de consolo e restauração. Lucas narra Jesus lendo parte do texto na sinagoga e relacionando-o à sua missão. Leia primeiro cada contexto e depois observe o que Lucas destaca.",
+        "pergunta": "Que pessoas e necessidades aparecem na linguagem de restauração?",
+        "referencias": [
+          "Isaías 61:1-3",
+          "Lucas 4:16-21"
+        ]
+      },
+      {
+        "dia": 17,
+        "titulo": "O caráter da vida no Reino",
+        "reflexao": "As bem-aventuranças e as imagens de sal e luz abrem o Sermão do Monte. Observe a quem Jesus dirige essas palavras e como esperança e responsabilidade aparecem juntas.",
+        "pergunta": "Que imagem deste trecho desafia a maneira como você entende uma vida boa?",
+        "referencias": [
+          "Mateus 5:1-16"
+        ]
+      },
+      {
+        "dia": 18,
+        "titulo": "Ouvir e colocar em prática",
+        "reflexao": "Na parábola do semeador, diferentes terrenos representam respostas distintas à palavra. A explicação convida a considerar escuta, obstáculos e perseverança; não é um convite a classificar outras pessoas.",
+        "pergunta": "Que condições ajudam você a escutar com atenção e perseverar?",
+        "referencias": [
+          "Marcos 4:1-20"
+        ]
+      },
+      {
+        "dia": 19,
+        "titulo": "Quem se aproxima do ferido?",
+        "reflexao": "A parábola desloca a discussão sobre o próximo para a ação de quem se aproxima de uma pessoa ferida. Note o contraste entre personagens e a importância de cuidado concreto, sem transformar a narrativa em regra simplista para situações de risco.",
+        "pergunta": "Como oferecer ajuda com respeito e segurança em uma situação real?",
+        "referencias": [
+          "Lucas 10:25-37"
+        ]
+      },
+      {
+        "dia": 20,
+        "titulo": "Misericórdia e retorno",
+        "reflexao": "A parábola acompanha dois irmãos e um pai; a alegria do reencontro convive com ressentimento e dificuldade de acolher. Observe as reações de cada personagem, sem apagar os conflitos da história.",
+        "pergunta": "Qual personagem ou reação provoca em você a pergunta mais difícil?",
+        "referencias": [
+          "Lucas 15:11-32"
+        ]
+      },
+      {
+        "dia": 21,
+        "titulo": "Morte e anúncio de ressurreição",
+        "reflexao": "Marcos narra a morte de Jesus e o anúncio de que ele ressuscitou. A leitura termina no versículo 8; muitas Bíblias também incluem uma conclusão mais longa em 16:9-20, ligada à história textual do evangelho. Observe como medo e anúncio aparecem juntos.",
+        "pergunta": "Como a narrativa apresenta esperança sem apagar a dor e o choque?",
+        "referencias": [
+          "Marcos 15:33-39",
+          "Marcos 16:1-8"
+        ]
+      },
+      {
+        "dia": 22,
+        "titulo": "Servir e amar",
+        "reflexao": "O gesto de lavar os pés acompanha uma instrução sobre serviço e um mandamento de amor. Observe como o exemplo de Jesus desafia posições de prestígio e molda a relação entre discípulos.",
+        "pergunta": "Que forma de serviço respeitosa pode fortalecer uma relação ou comunidade?",
+        "referencias": [
+          "João 13:1-17",
+          "João 13:34-35"
+        ]
+      },
+      {
+        "dia": 23,
+        "titulo": "Práticas de uma comunidade",
+        "reflexao": "Atos descreve práticas de uma comunidade cristã em Jerusalém: ensino, partilha, refeições e oração. Leia como retrato narrativo situado; não presuma que uma descrição breve resolva todos os desafios de uma comunidade atual.",
+        "pergunta": "Que prática comunitária ajuda a transformar solidariedade em cuidado concreto?",
+        "referencias": [
+          "Atos 2:42-47",
+          "Atos 4:32-35"
+        ]
+      },
+      {
+        "dia": 24,
+        "titulo": "Amor em relações concretas",
+        "reflexao": "Paulo reúne orientações sobre afeto, hospitalidade, humildade e resposta ao mal. Observe que o trecho se dirige a uma comunidade e que buscar paz não significa aceitar violência ou abrir mão de proteção.",
+        "pergunta": "Como buscar a paz mantendo limites e segurança?",
+        "referencias": [
+          "Romanos 12:9-21"
+        ]
+      },
+      {
+        "dia": 25,
+        "titulo": "Diferentes dons, um corpo",
+        "reflexao": "Paulo usa a imagem do corpo para falar de interdependência e honra entre membros diferentes. A metáfora questiona a ideia de que algumas pessoas sejam dispensáveis ou que todos precisem desempenhar o mesmo papel.",
+        "pergunta": "Como reconhecer contribuições que costumam passar despercebidas?",
+        "referencias": [
+          "1 Coríntios 12:12-27"
+        ]
+      },
+      {
+        "dia": 26,
+        "titulo": "Liberdade que serve",
+        "reflexao": "Paulo relaciona liberdade ao serviço mútuo e contrasta práticas destrutivas com o fruto do Espírito. Leia a lista em seu contexto comunitário, como reflexão sobre relações e conduta, não como instrumento para rotular pessoas.",
+        "pergunta": "Que atitude pode tornar uma relação mais generosa e menos dominadora?",
+        "referencias": [
+          "Gálatas 5:13-26"
+        ]
+      },
+      {
+        "dia": 27,
+        "titulo": "Fé demonstrada no cuidado",
+        "reflexao": "Tiago critica favoritismo e pergunta que valor tem uma declaração de fé sem cuidado prático. Observe como o argumento conecta tratamento justo e atenção às necessidades materiais.",
+        "pergunta": "Que necessidade concreta pode ser atendida por uma ação possível e responsável?",
+        "referencias": [
+          "Tiago 2:1-17"
+        ]
+      },
+      {
+        "dia": 28,
+        "titulo": "Esperança que não nega o sofrimento",
+        "reflexao": "Paulo usa imagens de criação que geme e espera. A esperança do trecho não trata o sofrimento como imaginário nem oferece cronograma para seu fim; ela situa a espera em uma visão mais ampla de renovação.",
+        "pergunta": "Que diferença há entre esperança e negar uma dificuldade presente?",
+        "referencias": [
+          "Romanos 8:18-25"
+        ]
+      },
+      {
+        "dia": 29,
+        "titulo": "Perseverança e confiança",
+        "reflexao": "Hebreus apresenta exemplos de fé e depois usa a imagem de uma corrida para falar de perseverança com os olhos em Jesus. Leia o capítulo 11 como uma seleção de histórias, não como promessa de que todas terminam sem perda.",
+        "pergunta": "Que exemplo de perseverança neste texto merece ser lido com mais atenção?",
+        "referencias": [
+          "Hebreus 11:1-6",
+          "Hebreus 12:1-3"
+        ]
+      },
+      {
+        "dia": 30,
+        "titulo": "Uma esperança compartilhada",
+        "reflexao": "Isaías imagina renovação com imagens de vida e segurança; Apocalipse descreve a remoção do luto e uma cidade-jardim de vida. Compare as imagens e perceba como a esperança bíblica é apresentada como realidade compartilhada.",
+        "pergunta": "Que compromisso de cuidado pode expressar, no presente, a esperança que você encontrou?",
+        "referencias": [
+          "Isaías 65:17-25",
+          "Apocalipse 21:1-7",
+          "Apocalipse 22:1-5"
+        ]
+      }
     ]
   }
 ]

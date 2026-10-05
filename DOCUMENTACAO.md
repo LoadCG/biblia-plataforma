@@ -40,7 +40,9 @@ substituir os estados e critérios mais atuais.
   [`docs/cobertura-editorial.md`](./docs/cobertura-editorial.md): modelo,
   critérios e cobertura automatizada; nenhum deles aprova revisão humana.
 - [`docs/revisao-editorial/INDICE.md`](./docs/revisao-editorial/INDICE.md):
-  propostas e fila de conteúdo ainda não aprovado.
+  propostas e fila de conteúdo ainda não aprovado. Fontes de planos publicados
+  ficam em [`docs/planos-publicados/`](./docs/planos-publicados/) e registram
+  explicitamente qualquer exceção ao gate editorial.
 - `.github/workflows/ci.yml`: configuração do CI. A configuração não comprova
   que o GitHub executou ou aprovou um workflow.
 

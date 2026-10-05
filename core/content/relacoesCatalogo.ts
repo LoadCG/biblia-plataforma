@@ -1,14 +1,26 @@
+import { resumosCompletos } from "./livros";
 import { manifestoEditorial } from "./manifesto";
+import { planosLeitura } from "./planos";
 import { validarRelacoesEditorial, type RelacaoEditorial } from "./relacoes";
 
-export const relacoesCatalogo: RelacaoEditorial[] = [
-  { origem: "plano:sabedoria-7", destino: "resumo:19-salmos", tipo: "plano-livro", motivo: "leituras centrais do plano de sabedoria" },
-  { origem: "plano:sabedoria-7", destino: "resumo:20-proverbios", tipo: "plano-livro", motivo: "leituras centrais do plano de sabedoria" },
-  { origem: "plano:evangelhos-14", destino: "resumo:40-mateus", tipo: "plano-livro", motivo: "primeiro bloco narrativo do plano dos Evangelhos" },
-  { origem: "plano:evangelhos-14", destino: "resumo:41-marcos", tipo: "plano-livro", motivo: "segundo bloco narrativo do plano dos Evangelhos" },
-  { origem: "plano:evangelhos-14", destino: "resumo:42-lucas", tipo: "plano-livro", motivo: "terceiro bloco narrativo do plano dos Evangelhos" },
-  { origem: "plano:evangelhos-14", destino: "resumo:43-joao", tipo: "plano-livro", motivo: "quarto bloco narrativo do plano dos Evangelhos" },
-];
+const normalizar = (texto: string) => texto.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+const resumoPorNome = new Map(resumosCompletos.map((livro) => [normalizar(livro.nome), livro.slug]));
+
+const relacoesPlanos: RelacaoEditorial[] = planosLeitura.flatMap((plano) => {
+  const livrosReferenciados = new Set(
+    plano.dias.flatMap((dia) => dia.referencias.map((referencia) => referencia.match(/^(.+?)\s+\d+/)?.[1]))
+      .filter((nome): nome is string => Boolean(nome)),
+  );
+
+  return [...livrosReferenciados].map((nomeLivro) => ({
+    origem: plano.editorial!.id,
+    destino: `resumo:${resumoPorNome.get(normalizar(nomeLivro)) ?? normalizar(nomeLivro)}`,
+    tipo: "plano-livro",
+    motivo: "livro incluído nas leituras deste plano",
+  }));
+});
+
+export const relacoesCatalogo: RelacaoEditorial[] = relacoesPlanos;
 
 export const errosRelacoesCatalogo = validarRelacoesEditorial(
   relacoesCatalogo,

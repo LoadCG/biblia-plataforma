@@ -1,13 +1,16 @@
-# Proposta de plano — Justiça, cuidado e esperança em 14 dias
+# Plano publicado — Justiça, cuidado e esperança em 14 dias
 
-- **Status:** rascunho para revisão humana independente; fora do catálogo
+- **Status:** publicado no catálogo por decisão explícita do responsável do projeto em 2026-10-04; exceção ao gate editorial de duas leituras
 - **Duração:** 14 dias
+- **ID do catálogo:** `justica-cuidado-esperanca-14`
+- **Versão do catálogo:** 1
+- **Título publicado:** Justiça, cuidado e esperança em 14 dias
 - **Público:** leitores que querem percorrer temas bíblicos por passagens cruzadas
 - **Objetivo:** observar como textos de diferentes livros tratam dignidade, libertação, justiça, lamento, misericórdia, comunidade e esperança; comparar contextos sem presumir que todos os textos dizem a mesma coisa.
 - **Carga:** 8 a 19 versículos indicados por dia; trechos seletivos, não leitura contínua dos livros citados.
 - **Redação proposta:** assistência de IA nesta tarefa
-- **Revisores humanos:** pendentes
-- **Data da proposta:** 2026-09-28
+- **Revisores humanos:** nenhuma revisão independente registrada; publicação excepcional autorizada pelo responsável do projeto
+- **Data da proposta:** 2026-09-28; **publicação:** 2026-10-04
 
 ## Orientação de leitura
 
@@ -204,7 +207,8 @@ compartilhada e responsabilidade no presente?
 - **Escopo:** proposta temática cristã com atenção à história interpretativa
   judaica dos textos do Antigo Testamento; não substitui estudo contextual ou
   orientação pastoral individual.
-- **Pendências:** revisão bíblico-teológica independente; revisão de linguagem
-  e equilíbrio da carga; conferência visual dos links; decisão editorial antes
-  de qualquer inclusão no catálogo.
+- **Acompanhamento editorial:** revisão bíblico-teológica independente,
+  revisão de linguagem e equilíbrio da carga continuam recomendadas após a
+  publicação; corrigir o catálogo e este registro caso sejam identificados
+  problemas. A renderização dos links deve ser conferida no app.
 - **Rubrica:** `docs/criterios-editoriais.md`.

@@ -1,13 +1,16 @@
-# Proposta de plano — Formação bíblica em 30 dias
+# Plano publicado — Formação bíblica em 30 dias
 
-- **Status:** rascunho completo para revisão humana independente; fora do catálogo
-- **Versão:** proposta 2
+- **Status:** publicado no catálogo por decisão explícita do responsável do projeto em 2026-10-04; exceção ao gate editorial de duas leituras
+- **Versão editorial:** proposta 2
+- **Versão do catálogo:** 1
 - **Duração:** 30 sessões de leitura; pausas entre sessões são livres e não contam como progresso
+- **ID do catálogo:** `formacao-30`
+- **Título publicado:** Formação bíblica em 30 dias
 - **Público:** leitor regular que já concluiu uma experiência curta
 - **Objetivo:** percorrer uma seleção progressiva de narrativa, sabedoria, evangelhos, comunidade e esperança, sem transformar a jornada em competição.
 - **Carga proposta:** trechos curtos ou médios por sessão; a duração real deve ser aferida editorialmente antes da publicação.
 - **Redação proposta:** assistência de IA
-- **Revisores humanos:** pendentes; requer duas leituras independentes
+- **Revisores humanos:** nenhuma revisão independente registrada; publicação excepcional autorizada pelo responsável do projeto
 - **Data da proposta:** 2026-10-04
 
 ## Orientação de leitura
@@ -264,5 +267,5 @@ O plano percorre cinco movimentos: criação e promessa (1–7), sabedoria, ora�
 - **Checagem estrutural:** referências e limites exatos de capítulo/versículo devem ser validados contra o arquivo local; revisão automatizada não substitui conferência editorial.
 - **Revisão de conteúdo:** duas leituras humanas independentes, incluindo contexto bíblico-teológico, linguagem, acessibilidade da carga e tratamento cuidadoso de sofrimento e segurança.
 - **Integração:** somente após aprovação explícita, conversão para o schema suportado (`dia`, `titulo`, `referencias`, `reflexao`, `pergunta`), entrada no catálogo e teste de retomada/progresso sem reutilizar IDs publicados.
-- **Pendências:** duas revisões humanas independentes; validar todas as faixas contra ACF; revisar carga e sobreposição com outros planos; testar links, retomada, exportação e renderização responsiva depois da aprovação.
+- **Acompanhamento editorial:** revisão bíblico-teológica independente, validação de carga e sobreposição com outros planos continuam recomendadas após a publicação; corrigir catálogo e registro caso sejam identificados problemas. Referências já conferidas contra os limites locais da ACF; links, retomada, exportação e renderização responsiva ainda precisam de conferência no app.
 - **Rubrica:** `docs/criterios-editoriais.md`.

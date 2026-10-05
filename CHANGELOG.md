@@ -17,6 +17,9 @@ O formato é baseado no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.
 - Após excluir dados, as preferências visíveis voltam ao padrão junto com o
   tema claro. Adicionado plano específico com QA visual, assistivo e nativo
   pendente.
+- QA web local da tela em 1280×720 tema claro conferiu hierarquia, rolagem até
+  Meus dados/Sobre e árvore de acessibilidade. O plano registra os limites de
+  viewport, tema escuro, teclado/leitor de tela e ambiente nativo ainda abertos.
 
 ### Conteúdo e governança (2026-10-05)
 - Reexecutados os gates de revisão editorial (5 propostas com governança), copy

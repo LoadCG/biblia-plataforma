@@ -6,6 +6,10 @@ O formato é baseado no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.
 ## [Unreleased] - 2026-10-04
 
 ### Interface
+- As dez medalhas ganharam artes vetoriais próprias dentro de molduras
+  consistentes, com símbolos distintos por conquista e paleta legível nos
+  estados bloqueado e conquistado, em tema claro ou escuro. O tamanho das artes
+  foi ampliado nos cards, no perfil e na tela de detalhes.
 - Redesenhadas as oito ilustrações SVG de Descubra com motivos próprios para
   cada tema, traços mais legíveis em miniatura e cores consistentes entre os
   contextos claro e escuro.

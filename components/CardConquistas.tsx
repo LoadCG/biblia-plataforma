@@ -30,12 +30,7 @@ export function CardConquistas({ conquistas }: { conquistas: Conquista[] }) {
                     : 'bg-cor-borda dark:bg-cor-borda-dark border-transparent'
                 }`}
               >
-                <IconeConquista conquistaId={c.id} conquistada={completa} />
-                {!completa && (
-                  <View className="absolute bottom-1 bg-cor-fundo/80 dark:bg-cor-fundo-dark/80 px-2 rounded-full">
-                    <Text className="text-[10px] text-cor-texto dark:text-cor-texto-dark font-bold">{c.progressoAtual}</Text>
-                  </View>
-                )}
+                <IconeConquista conquistaId={c.id} conquistada={completa} tamanho={64} />
               </View>
               <Text className="text-xs font-semibold text-cor-texto dark:text-cor-texto-dark text-center leading-tight mb-1">
                 {c.titulo}

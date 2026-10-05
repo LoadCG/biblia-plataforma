@@ -49,14 +49,13 @@ function MedalhaCarrossel({ conquista }: { conquista: Conquista }) {
       className="w-28 mr-3 items-center active:opacity-70"
     >
       <View
-        className="w-16 h-16 rounded-full items-center justify-center mb-2"
-        style={{ backgroundColor: conquista.conquistada ? cores.destaque : cores.borda }}
+        className="w-16 h-16 rounded-full items-center justify-center mb-2 border-2"
+        style={{ backgroundColor: cores.borda, borderColor: conquista.conquistada ? cores.destaque : "transparent" }}
       >
         <IconeConquista
           conquistaId={conquista.id}
           conquistada={conquista.conquistada}
-          tamanho={26}
-          className={conquista.conquistada ? "text-white dark:text-cor-texto" : "text-cor-destaque dark:text-cor-destaque-dark"}
+          tamanho={52}
         />
       </View>
       <Text numberOfLines={1} className="text-xs font-bold text-cor-texto dark:text-cor-texto-dark text-center mb-1.5">

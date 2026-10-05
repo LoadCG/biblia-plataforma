@@ -1,6 +1,6 @@
 import { Link, router, useFocusEffect, useLocalSearchParams } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
-import { Alert, Platform, Pressable, RefreshControl, ScrollView, Text, TextInput, View } from "react-native";
+import { Alert, Platform, Pressable, RefreshControl, ScrollView, Text, TextInput, useWindowDimensions, View } from "react-native";
 import { BotaoTema } from "../components/BotaoTema";
 import { CardAtividade } from "../components/CardAtividade";
 import { EstadoVazio } from "../components/EstadoVazio";
@@ -26,6 +26,7 @@ const FILTROS: { chave: Filtro; rotulo: string }[] = [
   { chave: "pesquisa", rotulo: "Pesquisas" },
 ];
 
+const FILTROS_PRINCIPAIS = FILTROS.filter((filtro) => filtro.chave !== "pesquisa");
 const CHAVES_FILTRO = FILTROS.map((f) => f.chave);
 
 function filtroValido(valor: string | undefined): Filtro {
@@ -35,6 +36,8 @@ function filtroValido(valor: string | undefined): Filtro {
 export default function Salvo() {
   const { colorScheme } = useColorScheme();
   const escuro = colorScheme === "dark";
+  const largura = useWindowDimensions().width;
+  const desktop = Platform.OS === "web" && largura >= 1024;
   const { filtro: filtroInicial } = useLocalSearchParams<{ filtro?: string }>();
   const ownerId = useOwnerId();
   const [atividade, setAtividade] = useState<ItemAtividade[]>([]);
@@ -48,6 +51,7 @@ export default function Salvo() {
   const [colecoes, setColecoes] = useState<Colecao[]>([]);
   const [associacoes, setAssociacoes] = useState<AssociacaoColecao[]>([]);
   const [colecaoFiltro, setColecaoFiltro] = useState<string | null>(null);
+  const [opcoesAbertas, setOpcoesAbertas] = useState(() => filtroInicial === "pesquisa");
   const [gerenciandoColecoes, setGerenciandoColecoes] = useState(false);
   const [modoSelecao, setModoSelecao] = useState(false);
   const [selecionados, setSelecionados] = useState<Set<string>>(new Set());
@@ -244,7 +248,7 @@ export default function Salvo() {
 
   return (
     <ScrollView className="flex-1 bg-cor-fundo dark:bg-cor-fundo-dark" refreshControl={<RefreshControl refreshing={atualizando} onRefresh={atualizar} tintColor={escuro ? "#e0a75e" : "#8a5a2b"} />}>
-      <View className="px-5 pt-6 pb-10 max-w-2xl w-full mx-auto">
+      <View className={`px-5 pt-6 pb-10 ${desktop ? "max-w-6xl" : "max-w-2xl"} w-full mx-auto`}>
         <View className="flex-row items-center justify-between mb-2">
           <Link href="/voce" className="text-cor-destaque dark:text-cor-destaque-dark text-sm">
             ← Você
@@ -256,7 +260,8 @@ export default function Salvo() {
           {quantidadeItens === 1 ? "1 item guardado para sua leitura." : `${quantidadeItens} itens guardados para sua leitura.`}
         </Text>
 
-        <View className="relative mb-3">
+        <View className={desktop ? "flex-row items-center gap-4 mb-4" : ""}>
+        <View className={`relative ${desktop ? "flex-1" : "mb-3"}`}>
           <View pointerEvents="none" className="absolute left-4 top-0 bottom-0 justify-center z-10"><IconeUI name="search" size={18} color={escuro ? "#b3a894" : "#6b6153"} /></View>
           <TextInput testID="busca-salvo" accessibilityLabel="Buscar nos itens salvos" value={termo} onChangeText={setTermo} placeholder="Buscar por livro, referência ou nota" placeholderTextColor="#8c8273" returnKeyType="search" className="min-h-12 pl-11 pr-12 py-3 rounded-2xl border border-cor-borda dark:border-cor-borda-dark bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark text-cor-texto dark:text-cor-texto-dark" />
           {termo ? (
@@ -265,13 +270,27 @@ export default function Salvo() {
             </Pressable>
           ) : null}
         </View>
+        <Pressable onPress={() => setOpcoesAbertas((abertas) => !abertas)} accessibilityRole="button" accessibilityState={{ expanded: opcoesAbertas }} accessibilityLabel={opcoesAbertas ? "Ocultar organização e coleções" : "Organizar itens e ver coleções"} className={`self-start min-h-10 flex-row items-center gap-2 rounded-full border border-cor-borda dark:border-cor-borda-dark px-3 active:opacity-70 ${desktop ? "" : "mb-4"}`}>
+          <IconeUI name="clear-filter" size={15} color={escuro ? "#e0a75e" : "#8a5a2b"} />
+          <Text className="text-xs font-semibold text-cor-texto dark:text-cor-texto-dark">{opcoesAbertas ? "Ocultar opções" : "Organizar e coleções"}</Text>
+          <IconeUI name={opcoesAbertas ? "close" : "next-chevron"} size={14} color={escuro ? "#b3a894" : "#6b6153"} />
+        </Pressable>
+        </View>
+        {opcoesAbertas ? <>
         <View className="flex-row flex-wrap items-center gap-2 mb-4">
+          <Text className="text-xs font-semibold text-cor-texto-suave dark:text-cor-texto-suave-dark mr-1">Outros itens:</Text>
+          <Pressable onPress={() => setFiltro("pesquisa")} accessibilityRole="tab" accessibilityLabel="Pesquisas favoritas" accessibilityState={{ selected: filtro === "pesquisa" }} className={`min-h-10 flex-row items-center gap-1.5 px-3.5 rounded-full border active:opacity-70 ${filtro === "pesquisa" ? "bg-cor-destaque dark:bg-cor-destaque-dark border-cor-destaque dark:border-cor-destaque-dark" : "border-cor-borda dark:border-cor-borda-dark"}`}>
+            <Text className={`text-xs font-semibold ${filtro === "pesquisa" ? "text-white dark:text-cor-texto" : "text-cor-texto dark:text-cor-texto-dark"}`}>Pesquisas</Text>
+            <Text className={`text-[11px] font-bold ${filtro === "pesquisa" ? "text-white/80 dark:text-cor-texto/80" : "text-cor-texto-suave dark:text-cor-texto-suave-dark"}`}>{quantidadePorFiltro("pesquisa")}</Text>
+          </Pressable>
+        </View>
+        <View className={`flex-row flex-wrap items-center gap-2 mb-4 ${desktop ? "max-w-3xl" : ""}`}>
           <Text className="text-xs font-semibold text-cor-texto-suave dark:text-cor-texto-suave-dark mr-1">Ordenar:</Text>
           <Pressable onPress={() => setOrdem("recentes")} accessibilityRole="radio" accessibilityLabel="Ordenar por mais recentes" accessibilityState={{ checked: ordem === "recentes" }} className={`min-h-10 px-3.5 justify-center rounded-full border ${ordem === "recentes" ? "bg-cor-destaque-fundo dark:bg-cor-destaque-fundo-dark border-cor-destaque dark:border-cor-destaque-dark" : "border-cor-borda dark:border-cor-borda-dark"}`}><Text className="text-xs font-semibold text-cor-texto dark:text-cor-texto-dark">Mais recentes</Text></Pressable>
           <Pressable onPress={() => setOrdem("biblica")} accessibilityRole="radio" accessibilityLabel="Ordenar pela ordem bíblica" accessibilityState={{ checked: ordem === "biblica" }} className={`min-h-10 px-3.5 justify-center rounded-full border ${ordem === "biblica" ? "bg-cor-destaque-fundo dark:bg-cor-destaque-fundo-dark border-cor-destaque dark:border-cor-destaque-dark" : "border-cor-borda dark:border-cor-borda-dark"}`}><Text className="text-xs font-semibold text-cor-texto dark:text-cor-texto-dark">Ordem bíblica</Text></Pressable>
         </View>
 
-        <View className="mb-4 rounded-2xl border border-cor-borda dark:border-cor-borda-dark bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark px-4 py-4">
+        <View className={`${desktop ? "flex-row flex-wrap items-center justify-between" : ""} mb-4 rounded-2xl border border-cor-borda dark:border-cor-borda-dark bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark px-4 py-4`}>
           <View className="flex-row items-center justify-between gap-3 mb-3">
             <View className="flex-1">
               <Text accessibilityRole="header" className="text-sm font-extrabold text-cor-texto dark:text-cor-texto-dark">Coleções</Text>
@@ -282,7 +301,8 @@ export default function Salvo() {
               <Text className="text-xs font-bold text-cor-destaque dark:text-cor-destaque-dark">{gerenciandoColecoes ? "Concluir" : "Gerenciar"}</Text>
             </Pressable>
           </View>
-          <View className="flex-row flex-wrap gap-2">
+          {desktop ? <Text className="flex-1 text-xs text-cor-texto-suave dark:text-cor-texto-suave-dark mx-6">Use coleções para agrupar passagens por tema.</Text> : null}
+          <View className={`flex-row flex-wrap gap-2 ${desktop ? "w-full mt-3" : ""}`}>
             <Pressable onPress={() => setColecaoFiltro(null)} accessibilityRole="radio" accessibilityState={{ checked: !colecaoFiltro }} className={`min-h-10 flex-row items-center rounded-full border px-3 ${!colecaoFiltro ? "bg-cor-destaque-fundo dark:bg-cor-destaque-fundo-dark border-cor-destaque dark:border-cor-destaque-dark" : "border-cor-borda dark:border-cor-borda-dark"}`}>
               <Text className="text-xs font-semibold text-cor-texto dark:text-cor-texto-dark">Todas</Text>
               <Text className="text-[11px] font-bold text-cor-texto-suave dark:text-cor-texto-suave-dark ml-1.5">{quantidadeItens}</Text>
@@ -318,6 +338,7 @@ export default function Salvo() {
             </View>
           ) : null}
         </View>
+        </> : null}
 
         {selecionados.size > 0 ? (
           <View className="rounded-2xl border border-cor-destaque dark:border-cor-destaque-dark bg-cor-destaque-fundo dark:bg-cor-destaque-fundo-dark p-4 mb-4">
@@ -333,7 +354,7 @@ export default function Salvo() {
         ) : null}
 
         <ScrollView horizontal showsHorizontalScrollIndicator={false} className="mb-4" contentContainerStyle={{ gap: 8, paddingRight: 8 }}>
-          {FILTROS.map(({ chave, rotulo }) => (
+          {FILTROS_PRINCIPAIS.map(({ chave, rotulo }) => (
             <Pressable
               key={chave}
               onPress={() => setFiltro(chave)}
@@ -369,7 +390,7 @@ export default function Salvo() {
           </Pressable>
         ) : null}
 
-        <View className="flex-row items-center justify-between mb-2">
+        <View className={`${desktop ? "max-w-4xl" : ""} flex-row items-center justify-between mb-2`}>
           <Text accessibilityLiveRegion="polite" className="text-xs font-semibold text-cor-texto-suave dark:text-cor-texto-suave-dark">{possuiFiltrosAtivos && !selecionados.size ? `Mostrando ${filtrados.length} de ${quantidadeItens}` : `${filtrados.length} ${filtrados.length === 1 ? "item" : "itens"}`}</Text>
           {modoSelecao || filtrados.length > 0 ? <Pressable onPress={() => { setModoSelecao((ativo) => !ativo); setSelecionados(new Set()); }} accessibilityRole="button" accessibilityLabel={modoSelecao ? "Sair do modo de seleção" : "Selecionar itens"} className="min-h-10 flex-row items-center gap-1.5 px-2 active:opacity-70"><IconeUI name={modoSelecao ? "close" : "select-many"} size={16} color={escuro ? "#e0a75e" : "#8a5a2b"} /><Text className="text-xs font-bold text-cor-destaque dark:text-cor-destaque-dark">{modoSelecao ? "Cancelar seleção" : "Selecionar"}</Text></Pressable> : null}
         </View>
@@ -392,7 +413,9 @@ export default function Salvo() {
               : quantidadeItens === 0 ? { rotulo: "Abrir a Bíblia", aoPressionar: () => router.push("/biblia") } : possuiFiltrosAtivos ? { rotulo: "Limpar filtros", aoPressionar: limparFiltros } : undefined}
           />
         ) : (
-          filtrados.map((item, indice) => { const chave = chaveAtividade(item); const livroAtual = item.tipo === "pesquisa" ? "Pesquisas" : obterLivro(item.livroSlug)?.nome ?? item.livroSlug; const anterior = filtrados[indice - 1]; const livroAnterior = anterior ? (anterior.tipo === "pesquisa" ? "Pesquisas" : obterLivro(anterior.livroSlug)?.nome ?? anterior.livroSlug) : null; return <View key={chave}>{ordem === "biblica" && livroAtual !== livroAnterior ? <Text className="text-xs font-bold uppercase tracking-wide text-cor-texto-suave dark:text-cor-texto-suave-dark mt-3 mb-2">{livroAtual}</Text> : null}<CardAtividade item={item} modoBiblioteca onMudou={carregar} selecionado={selecionados.has(chave)} onSelecionar={modoSelecao ? () => setSelecionados((atuais) => { const novo = new Set(atuais); if (novo.has(chave)) novo.delete(chave); else novo.add(chave); return novo; }) : undefined} /></View>; })
+          <View className={desktop ? "flex-row flex-wrap justify-between" : ""}>
+            {filtrados.map((item, indice) => { const chave = chaveAtividade(item); const livroAtual = item.tipo === "pesquisa" ? "Pesquisas" : obterLivro(item.livroSlug)?.nome ?? item.livroSlug; const anterior = filtrados[indice - 1]; const livroAnterior = anterior ? (anterior.tipo === "pesquisa" ? "Pesquisas" : obterLivro(anterior.livroSlug)?.nome ?? anterior.livroSlug) : null; return <View key={chave} className={desktop ? "w-[48%]" : ""}>{ordem === "biblica" && livroAtual !== livroAnterior ? <Text className="text-xs font-bold uppercase tracking-wide text-cor-texto-suave dark:text-cor-texto-suave-dark mt-3 mb-2">{livroAtual}</Text> : null}<CardAtividade item={item} modoBiblioteca onMudou={carregar} selecionado={selecionados.has(chave)} onSelecionar={modoSelecao ? () => setSelecionados((atuais) => { const novo = new Set(atuais); if (novo.has(chave)) novo.delete(chave); else novo.add(chave); return novo; }) : undefined} /></View>; })}
+          </View>
         )}
       </View>
     </ScrollView>

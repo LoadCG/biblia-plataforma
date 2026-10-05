@@ -5,6 +5,14 @@ O formato é baseado no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.
 
 ## [Unreleased] - 2026-10-04
 
+### Conteúdo editorial
+- Completo o rascunho do plano Formação bíblica em 30 dias com 30 sessões,
+  pausas livres e estrutura compatível com o modelo atual; continua fora do
+  catálogo e aguarda duas revisões humanas independentes.
+- Conferidas automaticamente 48 referências do novo rascunho contra capítulos
+  e limites de versículos da ACF local; a validação não substitui revisão de
+  contexto, linguagem ou conteúdo bíblico-teológico.
+
 ### Interface
 - O favicon web padrão do Expo foi substituído por um símbolo próprio de Bíblia
   aberta com sol nascente. O desenho tem fonte SVG editável e PNG compatível com

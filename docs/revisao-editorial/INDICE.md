@@ -14,7 +14,7 @@ qualquer integração em `core/content/dados`.
 | 4 | [`plano-primeiros-passos-7-dias.md`](./plano-primeiros-passos-7-dias.md) | Plano introdutório | rascunho | Validar progressão e referências |
 | 5 | [`plano-justica-cuidado-esperanca-14-dias.md`](./plano-justica-cuidado-esperanca-14-dias.md) | Plano temático | rascunho | Validar equilíbrio temático |
 | 6 | [`metadados-busca-proposta.md`](./metadados-busca-proposta.md) | Taxonomia e busca | proposta | Revisar vocabulário e schema |
-| 7 | [`plano-formacao-30-dias.md`](./plano-formacao-30-dias.md) | Especificação de plano de 30 dias | rascunho | Definir referências e revisar carga |
+| 7 | [`plano-formacao-30-dias.md`](./plano-formacao-30-dias.md) | Plano de formação em 30 sessões | rascunho completo | Duas revisões humanas independentes; validar contexto e carga |
 | 8 | [`temas-descubra-ampliacao.md`](./temas-descubra-ampliacao.md) | Lote proposto para os oito temas de Descubra | rascunho | Revisar referências, contexto, tom e aplicações sensíveis com a rubrica editorial |
 
 ## Critério de saída

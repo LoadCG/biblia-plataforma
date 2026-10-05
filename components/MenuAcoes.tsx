@@ -12,6 +12,7 @@ export type AcaoMenu = {
 type Props = {
   acoes: AcaoMenu[];
   aberto: boolean;
+  contexto?: string;
   onFechar: () => void;
 };
 
@@ -20,7 +21,7 @@ type Props = {
 // (ver CardAtividade). Não substitui o menu de contexto da página
 // inteira, só o do card específico (Revisão estratégica item 5 do
 // PLANO-NAVEGACAO.md).
-export function MenuAcoes({ acoes, aberto, onFechar }: Props) {
+export function MenuAcoes({ acoes, aberto, contexto, onFechar }: Props) {
   const { colorScheme } = useColorScheme();
   const escuro = colorScheme === "dark";
   if (!aberto) return null;
@@ -33,6 +34,7 @@ export function MenuAcoes({ acoes, aberto, onFechar }: Props) {
           className="bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark rounded-t-2xl pb-6 pt-2 max-w-2xl w-full mx-auto"
         >
           <View className="w-10 h-1 rounded-full bg-cor-borda dark:bg-cor-borda-dark self-center my-2" />
+          {contexto ? <View className="px-5 py-3 border-b border-cor-borda dark:border-cor-borda-dark"><Text accessibilityRole="header" className="text-xs font-bold uppercase tracking-wide text-cor-texto-suave dark:text-cor-texto-suave-dark">Ações do item</Text><Text numberOfLines={2} className="text-sm font-semibold text-cor-texto dark:text-cor-texto-dark mt-1">{contexto}</Text></View> : null}
           {acoes.map((acao, indice) => (
             <Pressable
               key={indice}

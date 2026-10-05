@@ -12,6 +12,9 @@ O formato é baseado no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.
 - Conferidas automaticamente 48 referências do novo rascunho contra capítulos
   e limites de versículos da ACF local; a validação não substitui revisão de
   contexto, linguagem ou conteúdo bíblico-teológico.
+- O verificador de planos agora confere intervalos exatos de versículos e
+  abrange os rascunhos editoriais de 7, 14 e 30 sessões sem promovê-los ao
+  catálogo publicado.
 
 ### Interface
 - O favicon web padrão do Expo foi substituído por um símbolo próprio de Bíblia

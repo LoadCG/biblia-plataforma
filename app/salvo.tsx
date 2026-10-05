@@ -1,6 +1,6 @@
-import { Link, useLocalSearchParams } from "expo-router";
+import { Link, router, useFocusEffect, useLocalSearchParams } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
-import { Alert, Platform, Pressable, ScrollView, Text, TextInput, View } from "react-native";
+import { Alert, Platform, Pressable, RefreshControl, ScrollView, Text, TextInput, View } from "react-native";
 import { BotaoTema } from "../components/BotaoTema";
 import { CardAtividade } from "../components/CardAtividade";
 import { EstadoVazio } from "../components/EstadoVazio";
@@ -38,6 +38,7 @@ export default function Salvo() {
   const ownerId = useOwnerId();
   const [atividade, setAtividade] = useState<ItemAtividade[]>([]);
   const [carregando, setCarregando] = useState(true);
+  const [atualizando, setAtualizando] = useState(false);
   const [erroAoCarregar, setErroAoCarregar] = useState(false);
   const [tentativa, setTentativa] = useState(0);
   const [filtro, setFiltro] = useState<Filtro>(() => filtroValido(filtroInicial));
@@ -46,6 +47,8 @@ export default function Salvo() {
   const [colecoes, setColecoes] = useState<Colecao[]>([]);
   const [associacoes, setAssociacoes] = useState<AssociacaoColecao[]>([]);
   const [colecaoFiltro, setColecaoFiltro] = useState<string | null>(null);
+  const [gerenciandoColecoes, setGerenciandoColecoes] = useState(false);
+  const [modoSelecao, setModoSelecao] = useState(false);
   const [selecionados, setSelecionados] = useState<Set<string>>(new Set());
   const [novaColecao, setNovaColecao] = useState("");
   const [editandoColecao, setEditandoColecao] = useState<Colecao | null>(null);
@@ -68,9 +71,11 @@ export default function Salvo() {
     }
   }, [ownerId]);
 
+  useFocusEffect(useCallback(() => { void carregar(); }, [carregar, tentativa]));
+
   useEffect(() => {
-    carregar();
-  }, [carregar, tentativa]);
+    if (filtroInicial) setFiltro(filtroValido(filtroInicial));
+  }, [filtroInicial]);
 
   const chavesColecao = new Set(associacoes.filter((item) => !colecaoFiltro || item.colecaoId === colecaoFiltro).map((item) => item.itemChave));
   const filtrados = (filtro === "todos" ? atividade : atividade.filter((item) => item.tipo === filtro))
@@ -139,6 +144,7 @@ export default function Salvo() {
     try {
       await colecoesRepository.associar(ownerId, colecaoId, [...selecionados]);
       setSelecionados(new Set());
+      setModoSelecao(false);
       await carregar();
       mostrarToast("Itens adicionados à coleção", { severidade: "sucesso" });
     } catch {
@@ -175,6 +181,7 @@ export default function Salvo() {
       await Promise.all(removidos.map(excluirItem));
       await Promise.all(colecoes.map((colecao) => colecoesRepository.desassociar(ownerId, colecao.id, [...selecionados])));
       setSelecionados(new Set());
+      setModoSelecao(false);
       await carregar();
       mostrarToast(`${removidos.length} itens excluídos`, {
         severidade: "sucesso",
@@ -196,6 +203,7 @@ export default function Salvo() {
       });
     } catch {
       setSelecionados(new Set());
+      setModoSelecao(false);
       await carregar();
       mostrarToast("A exclusão foi interrompida. Atualizei a lista; confira os itens antes de tentar novamente.", { severidade: "aviso" });
     }
@@ -207,14 +215,24 @@ export default function Salvo() {
     setOrdem("recentes");
     setColecaoFiltro(null);
     setSelecionados(new Set());
+    setModoSelecao(false);
   }
 
   const possuiFiltrosAtivos = Boolean(
     termo.trim() || filtro !== "todos" || ordem !== "recentes" || colecaoFiltro || selecionados.size,
   );
+  const quantidadePorFiltro = (chave: Filtro) => chave === "todos"
+    ? atividade.length
+    : atividade.filter((item) => item.tipo === chave).length;
+  const quantidadeItens = atividade.length;
+
+  const atualizar = useCallback(async () => {
+    setAtualizando(true);
+    try { await carregar(); } finally { setAtualizando(false); }
+  }, [carregar]);
 
   return (
-    <ScrollView className="flex-1 bg-cor-fundo dark:bg-cor-fundo-dark">
+    <ScrollView className="flex-1 bg-cor-fundo dark:bg-cor-fundo-dark" refreshControl={<RefreshControl refreshing={atualizando} onRefresh={atualizar} tintColor={escuro ? "#e0a75e" : "#8a5a2b"} />}>
       <View className="px-5 pt-6 pb-10 max-w-2xl w-full mx-auto">
         <View className="flex-row items-center justify-between mb-2">
           <Link href="/voce" className="text-cor-destaque dark:text-cor-destaque-dark text-sm">
@@ -222,37 +240,88 @@ export default function Salvo() {
           </Link>
           <BotaoTema />
         </View>
-        <Text accessibilityRole="header" className="text-2xl font-bold text-cor-texto dark:text-cor-texto-dark mb-1">Salvo</Text>
+        <Text accessibilityRole="header" className="text-3xl font-extrabold text-cor-texto dark:text-cor-texto-dark mb-1">Minha biblioteca</Text>
         <Text className="text-sm text-cor-texto-suave dark:text-cor-texto-suave-dark mb-5">
-          Suas anotações, grifos e pesquisas favoritas, num só lugar.
+          {quantidadeItens === 1 ? "1 item guardado para sua leitura." : `${quantidadeItens} itens guardados para sua leitura.`}
         </Text>
 
         <View className="relative mb-3">
-          <TextInput testID="busca-salvo" accessibilityLabel="Buscar nos itens salvos" value={termo} onChangeText={setTermo} placeholder="Buscar em notas, livros e pesquisas..." placeholderTextColor="#9ca3af" className="px-4 pr-12 py-3 rounded-full border border-cor-borda dark:border-cor-borda-dark bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark text-cor-texto dark:text-cor-texto-dark" />
+          <View pointerEvents="none" className="absolute left-4 top-0 bottom-0 justify-center z-10"><IconeUI name="search" size={18} color={escuro ? "#b3a894" : "#6b6153"} /></View>
+          <TextInput testID="busca-salvo" accessibilityLabel="Buscar nos itens salvos" value={termo} onChangeText={setTermo} placeholder="Buscar por livro, referência ou nota" placeholderTextColor="#8c8273" returnKeyType="search" className="min-h-12 pl-11 pr-12 py-3 rounded-2xl border border-cor-borda dark:border-cor-borda-dark bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark text-cor-texto dark:text-cor-texto-dark" />
           {termo ? (
             <Pressable testID="limpar-busca-salvo" onPress={() => setTermo("")} accessibilityRole="button" accessibilityLabel="Limpar busca dos itens salvos" hitSlop={10} className="absolute right-3 top-2 h-9 w-9 items-center justify-center rounded-full active:opacity-60">
               <IconeUI name="close" size={20} color={escuro ? "#b3a894" : "#6b6257"} />
             </Pressable>
           ) : null}
         </View>
-        <View className="flex-row flex-wrap gap-2 mb-3">
-          <Pressable onPress={() => setOrdem("recentes")} accessibilityRole="radio" accessibilityState={{ checked: ordem === "recentes" }} className={`px-3 py-1.5 rounded-full border ${ordem === "recentes" ? "bg-cor-destaque-fundo dark:bg-cor-destaque-fundo-dark border-cor-destaque dark:border-cor-destaque-dark" : "border-cor-borda dark:border-cor-borda-dark"}`}><Text className="text-xs text-cor-texto dark:text-cor-texto-dark">Mais recentes</Text></Pressable>
-          <Pressable onPress={() => setOrdem("biblica")} accessibilityRole="radio" accessibilityState={{ checked: ordem === "biblica" }} className={`px-3 py-1.5 rounded-full border ${ordem === "biblica" ? "bg-cor-destaque-fundo dark:bg-cor-destaque-fundo-dark border-cor-destaque dark:border-cor-destaque-dark" : "border-cor-borda dark:border-cor-borda-dark"}`}><Text className="text-xs text-cor-texto dark:text-cor-texto-dark">Ordem bíblica</Text></Pressable>
+        <View className="flex-row flex-wrap items-center gap-2 mb-4">
+          <Text className="text-xs font-semibold text-cor-texto-suave dark:text-cor-texto-suave-dark mr-1">Ordenar:</Text>
+          <Pressable onPress={() => setOrdem("recentes")} accessibilityRole="radio" accessibilityLabel="Ordenar por mais recentes" accessibilityState={{ checked: ordem === "recentes" }} className={`min-h-10 px-3.5 justify-center rounded-full border ${ordem === "recentes" ? "bg-cor-destaque-fundo dark:bg-cor-destaque-fundo-dark border-cor-destaque dark:border-cor-destaque-dark" : "border-cor-borda dark:border-cor-borda-dark"}`}><Text className="text-xs font-semibold text-cor-texto dark:text-cor-texto-dark">Mais recentes</Text></Pressable>
+          <Pressable onPress={() => setOrdem("biblica")} accessibilityRole="radio" accessibilityLabel="Ordenar pela ordem bíblica" accessibilityState={{ checked: ordem === "biblica" }} className={`min-h-10 px-3.5 justify-center rounded-full border ${ordem === "biblica" ? "bg-cor-destaque-fundo dark:bg-cor-destaque-fundo-dark border-cor-destaque dark:border-cor-destaque-dark" : "border-cor-borda dark:border-cor-borda-dark"}`}><Text className="text-xs font-semibold text-cor-texto dark:text-cor-texto-dark">Ordem bíblica</Text></Pressable>
         </View>
 
-        <View className="mb-4 rounded-2xl bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark px-3 py-3">
-          <Text className="text-xs font-bold text-cor-texto dark:text-cor-texto-dark mb-2">Coleções</Text>
-          <View className="flex-row flex-wrap gap-2 mb-3">
-            <Pressable onPress={() => setColecaoFiltro(null)} accessibilityRole="radio" accessibilityState={{ checked: !colecaoFiltro }} className={`px-3 py-1.5 rounded-full border ${!colecaoFiltro ? "border-cor-destaque dark:border-cor-destaque-dark" : "border-cor-borda dark:border-cor-borda-dark"}`}><Text className="text-xs text-cor-texto dark:text-cor-texto-dark">Todas</Text></Pressable>
-            {colecoes.map((colecao) => <View key={colecao.id} className={`flex-row items-center rounded-full border ${colecaoFiltro === colecao.id ? "border-cor-destaque dark:border-cor-destaque-dark" : "border-cor-borda dark:border-cor-borda-dark"}`}><Pressable onPress={() => setColecaoFiltro(colecao.id)} accessibilityRole="radio" accessibilityState={{ checked: colecaoFiltro === colecao.id }} className="pl-3 pr-2 py-1.5"><Text className="text-xs text-cor-texto dark:text-cor-texto-dark">{colecao.nome} ({associacoes.filter((a) => a.colecaoId === colecao.id).length})</Text></Pressable><Pressable onPress={() => { setEditandoColecao(colecao); setNomeColecao(colecao.nome); }} accessibilityRole="button" accessibilityLabel={`Editar coleção ${colecao.nome}`} className="pr-3 py-1.5"><Text className="text-xs text-cor-destaque dark:text-cor-destaque-dark">✎</Text></Pressable></View>)}
+        <View className="mb-4 rounded-2xl border border-cor-borda dark:border-cor-borda-dark bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark px-4 py-4">
+          <View className="flex-row items-center justify-between gap-3 mb-3">
+            <View className="flex-1">
+              <Text accessibilityRole="header" className="text-sm font-extrabold text-cor-texto dark:text-cor-texto-dark">Coleções</Text>
+              <Text className="text-xs text-cor-texto-suave dark:text-cor-texto-suave-dark mt-0.5">Agrupe itens por tema ou estudo.</Text>
+            </View>
+            <Pressable onPress={() => { setGerenciandoColecoes((aberto) => !aberto); setEditandoColecao(null); }} accessibilityRole="button" accessibilityLabel={gerenciandoColecoes ? "Concluir gerenciamento de coleções" : "Gerenciar coleções"} className="min-h-10 flex-row items-center gap-1.5 rounded-full px-3 bg-cor-destaque-fundo dark:bg-cor-destaque-fundo-dark active:opacity-70">
+              <IconeUI name={gerenciandoColecoes ? "close" : "edit"} size={15} color={escuro ? "#e0a75e" : "#8a5a2b"} />
+              <Text className="text-xs font-bold text-cor-destaque dark:text-cor-destaque-dark">{gerenciandoColecoes ? "Concluir" : "Gerenciar"}</Text>
+            </Pressable>
           </View>
-          {editandoColecao ? <View className="mb-3"><View className="flex-row gap-2"><TextInput accessibilityLabel="Nome da coleção" value={nomeColecao} onChangeText={setNomeColecao} className="flex-1 px-3 py-2 rounded-xl border border-cor-destaque dark:border-cor-destaque-dark text-cor-texto dark:text-cor-texto-dark" /><Pressable onPress={salvarNomeColecao} accessibilityRole="button" accessibilityLabel="Salvar nome da coleção" className="px-4 rounded-xl bg-cor-destaque dark:bg-cor-destaque-dark justify-center"><Text className="text-white dark:text-cor-texto font-bold">Salvar</Text></Pressable></View><Pressable onPress={() => confirmarRemocaoColecao(editandoColecao)} accessibilityRole="button" accessibilityLabel={`Excluir coleção ${editandoColecao.nome}`} className="self-start mt-2 py-2"><Text className="text-xs font-semibold text-red-600">Excluir coleção</Text></Pressable></View> : null}
-          <View className="flex-row gap-2"><TextInput accessibilityLabel="Nome da nova coleção" value={novaColecao} onChangeText={setNovaColecao} placeholder="Nova coleção" placeholderTextColor="#9ca3af" className="flex-1 px-3 py-2 rounded-xl border border-cor-borda dark:border-cor-borda-dark text-cor-texto dark:text-cor-texto-dark" /><Pressable onPress={criarColecao} disabled={!novaColecao.trim()} accessibilityRole="button" accessibilityLabel="Criar coleção" className="px-4 rounded-xl bg-cor-destaque dark:bg-cor-destaque-dark justify-center disabled:opacity-40"><Text className="text-white dark:text-cor-texto font-bold">Criar</Text></Pressable></View>
+          <View className="flex-row flex-wrap gap-2">
+            <Pressable onPress={() => setColecaoFiltro(null)} accessibilityRole="radio" accessibilityState={{ checked: !colecaoFiltro }} className={`min-h-10 flex-row items-center rounded-full border px-3 ${!colecaoFiltro ? "bg-cor-destaque-fundo dark:bg-cor-destaque-fundo-dark border-cor-destaque dark:border-cor-destaque-dark" : "border-cor-borda dark:border-cor-borda-dark"}`}>
+              <Text className="text-xs font-semibold text-cor-texto dark:text-cor-texto-dark">Todas</Text>
+              <Text className="text-[11px] font-bold text-cor-texto-suave dark:text-cor-texto-suave-dark ml-1.5">{quantidadeItens}</Text>
+            </Pressable>
+            {colecoes.map((colecao) => {
+              const quantidade = associacoes.filter((associacao) => associacao.colecaoId === colecao.id).length;
+              const ativa = colecaoFiltro === colecao.id;
+              return (
+                <View key={colecao.id} className={`flex-row items-center rounded-full border ${ativa ? "bg-cor-destaque-fundo dark:bg-cor-destaque-fundo-dark border-cor-destaque dark:border-cor-destaque-dark" : "border-cor-borda dark:border-cor-borda-dark"}`}>
+                  <Pressable onPress={() => setColecaoFiltro(colecao.id)} accessibilityRole="radio" accessibilityState={{ checked: ativa }} accessibilityLabel={`${colecao.nome}, ${quantidade} itens`} className="min-h-10 flex-row items-center pl-3 pr-2">
+                    <Text className="text-xs font-semibold text-cor-texto dark:text-cor-texto-dark">{colecao.nome}</Text>
+                    <Text className="text-[11px] font-bold text-cor-texto-suave dark:text-cor-texto-suave-dark ml-1.5">{quantidade}</Text>
+                  </Pressable>
+                  {gerenciandoColecoes ? <Pressable onPress={() => { setEditandoColecao(colecao); setNomeColecao(colecao.nome); }} accessibilityRole="button" accessibilityLabel={`Editar coleção ${colecao.nome}`} className="min-w-10 min-h-10 items-center justify-center pr-1"><IconeUI name="edit" size={15} color={escuro ? "#e0a75e" : "#8a5a2b"} /></Pressable> : null}
+                </View>
+              );
+            })}
+          </View>
+          {gerenciandoColecoes && editandoColecao ? (
+            <View className="mt-3 pt-3 border-t border-cor-borda dark:border-cor-borda-dark">
+              <Text className="text-xs font-bold text-cor-texto dark:text-cor-texto-dark mb-2">Editar {editandoColecao.nome}</Text>
+              <View className="flex-row gap-2">
+                <TextInput accessibilityLabel="Nome da coleção" value={nomeColecao} onChangeText={setNomeColecao} returnKeyType="done" className="flex-1 min-h-11 px-3 py-2 rounded-xl border border-cor-borda dark:border-cor-borda-dark text-cor-texto dark:text-cor-texto-dark" />
+                <Pressable onPress={salvarNomeColecao} disabled={!nomeColecao.trim()} accessibilityRole="button" accessibilityLabel="Salvar nome da coleção" className="min-h-11 px-4 rounded-xl bg-cor-destaque dark:bg-cor-destaque-dark justify-center disabled:opacity-40"><Text className="text-white dark:text-cor-texto font-bold">Salvar</Text></Pressable>
+              </View>
+              <Pressable onPress={() => confirmarRemocaoColecao(editandoColecao)} accessibilityRole="button" accessibilityLabel={`Excluir coleção ${editandoColecao.nome}`} className="self-start min-h-11 justify-center px-2 mt-1"><Text className="text-sm font-semibold text-red-600 dark:text-red-400">Excluir coleção</Text></Pressable>
+            </View>
+          ) : null}
+          {gerenciandoColecoes ? (
+            <View className="flex-row gap-2 mt-3 pt-3 border-t border-cor-borda dark:border-cor-borda-dark">
+              <TextInput accessibilityLabel="Nome da nova coleção" value={novaColecao} onChangeText={setNovaColecao} placeholder="Nome da nova coleção" placeholderTextColor="#8c8273" returnKeyType="done" onSubmitEditing={() => { void criarColecao(); }} className="flex-1 min-h-11 px-3 py-2 rounded-xl border border-cor-borda dark:border-cor-borda-dark text-cor-texto dark:text-cor-texto-dark" />
+              <Pressable onPress={criarColecao} disabled={!novaColecao.trim()} accessibilityRole="button" accessibilityLabel="Criar coleção" className="min-h-11 px-4 rounded-xl bg-cor-destaque dark:bg-cor-destaque-dark justify-center disabled:opacity-40"><Text className="text-white dark:text-cor-texto font-bold">Criar</Text></Pressable>
+            </View>
+          ) : null}
         </View>
 
-        {selecionados.size > 0 ? <View className="rounded-2xl border border-cor-destaque dark:border-cor-destaque-dark p-3 mb-4"><Text className="text-sm font-bold text-cor-texto dark:text-cor-texto-dark mb-2">{selecionados.size} selecionado(s)</Text><View className="flex-row flex-wrap gap-2">{colecoes.map((colecao) => <Pressable key={colecao.id} onPress={() => associarSelecionados(colecao.id)} accessibilityRole="button" className="px-3 py-2 rounded-full bg-cor-destaque-fundo dark:bg-cor-destaque-fundo-dark"><Text className="text-xs font-semibold text-cor-texto dark:text-cor-texto-dark">Adicionar a {colecao.nome}</Text></Pressable>)}<Pressable onPress={excluirSelecionados} accessibilityRole="button" className="px-3 py-2 rounded-full bg-red-600"><Text className="text-xs font-semibold text-white">Excluir</Text></Pressable></View></View> : null}
+        {selecionados.size > 0 ? (
+          <View className="rounded-2xl border border-cor-destaque dark:border-cor-destaque-dark bg-cor-destaque-fundo dark:bg-cor-destaque-fundo-dark p-4 mb-4">
+            <View className="flex-row items-center justify-between gap-2 mb-3">
+              <Text accessibilityRole="header" className="text-sm font-extrabold text-cor-texto dark:text-cor-texto-dark">{selecionados.size} {selecionados.size === 1 ? "item selecionado" : "itens selecionados"}</Text>
+              <Pressable onPress={() => { setSelecionados(new Set()); setModoSelecao(false); }} accessibilityRole="button" accessibilityLabel="Cancelar seleção" className="min-h-10 justify-center px-2 active:opacity-70"><Text className="text-xs font-bold text-cor-destaque dark:text-cor-destaque-dark">Cancelar</Text></Pressable>
+            </View>
+            <View className="flex-row flex-wrap gap-2">
+              {colecoes.map((colecao) => <Pressable key={colecao.id} onPress={() => associarSelecionados(colecao.id)} accessibilityRole="button" accessibilityLabel={`Adicionar itens selecionados a ${colecao.nome}`} className="min-h-10 justify-center px-3 rounded-full border border-cor-destaque/30 dark:border-cor-destaque-dark/30 bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark"><Text className="text-xs font-semibold text-cor-texto dark:text-cor-texto-dark">{colecao.nome}</Text></Pressable>)}
+              <Pressable onPress={excluirSelecionados} accessibilityRole="button" accessibilityLabel={`Excluir ${selecionados.size} itens selecionados`} className="min-h-10 flex-row items-center gap-1.5 px-3 rounded-full bg-red-600 active:opacity-80"><IconeUI name="delete" size={15} color="#ffffff" /><Text className="text-xs font-bold text-white">Excluir</Text></Pressable>
+            </View>
+          </View>
+        ) : null}
 
-        <View className="flex-row flex-wrap gap-2 mb-4">
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} className="mb-4" contentContainerStyle={{ gap: 8, paddingRight: 8 }}>
           {FILTROS.map(({ chave, rotulo }) => (
             <Pressable
               key={chave}
@@ -262,7 +331,7 @@ export default function Salvo() {
               accessibilityState={{ selected: filtro === chave }}
               // @ts-expect-error accessibilitySelected é uma extensão do react-native-web, não existe nos tipos do React Native
               accessibilitySelected={filtro === chave}
-              className={`px-3.5 py-1.5 rounded-full border active:opacity-70 ${
+              className={`min-h-10 flex-row items-center gap-1.5 px-3.5 rounded-full border active:opacity-70 ${
                 filtro === chave
                   ? "bg-cor-destaque dark:bg-cor-destaque-dark border-cor-destaque dark:border-cor-destaque-dark"
                   : "border-cor-borda dark:border-cor-borda-dark"
@@ -275,9 +344,12 @@ export default function Salvo() {
               >
                 {rotulo}
               </Text>
+              <Text className={`text-[11px] font-bold ${filtro === chave ? "text-white/80 dark:text-cor-texto/80" : "text-cor-texto-suave dark:text-cor-texto-suave-dark"}`}>
+                {quantidadePorFiltro(chave)}
+              </Text>
             </Pressable>
           ))}
-        </View>
+        </ScrollView>
 
         {possuiFiltrosAtivos ? (
           <Pressable testID="limpar-filtros-salvo" onPress={limparFiltros} accessibilityRole="button" accessibilityLabel="Limpar filtros e seleção" className="self-start flex-row items-center gap-1.5 mb-4 rounded-full border border-cor-borda dark:border-cor-borda-dark px-3 py-1.5 active:opacity-70">
@@ -286,18 +358,22 @@ export default function Salvo() {
           </Pressable>
         ) : null}
 
-        <Text accessibilityLiveRegion="polite" className="sr-only">{filtrados.length} itens salvos exibidos</Text>
+        <View className="flex-row items-center justify-between mb-2">
+          <Text accessibilityLiveRegion="polite" className="text-xs font-semibold text-cor-texto-suave dark:text-cor-texto-suave-dark">{possuiFiltrosAtivos && !selecionados.size ? `Mostrando ${filtrados.length} de ${quantidadeItens}` : `${filtrados.length} ${filtrados.length === 1 ? "item" : "itens"}`}</Text>
+          {modoSelecao || filtrados.length > 0 ? <Pressable onPress={() => { setModoSelecao((ativo) => !ativo); setSelecionados(new Set()); }} accessibilityRole="button" accessibilityLabel={modoSelecao ? "Sair do modo de seleção" : "Selecionar itens"} className="min-h-10 flex-row items-center gap-1.5 px-2 active:opacity-70"><IconeUI name={modoSelecao ? "close" : "select-many"} size={16} color={escuro ? "#e0a75e" : "#8a5a2b"} /><Text className="text-xs font-bold text-cor-destaque dark:text-cor-destaque-dark">{modoSelecao ? "Cancelar seleção" : "Selecionar"}</Text></Pressable> : null}
+        </View>
         {erroAoCarregar ? (
           <EstadoErro titulo="Não foi possível carregar seus itens salvos" descricao="Tente novamente. Suas anotações e coleções continuam guardadas neste dispositivo." aoTentarNovamente={() => setTentativa((valor) => valor + 1)} />
         ) : carregando ? (
           <EstadoCarregando rotulo="Carregando itens salvos" />
         ) : filtrados.length === 0 ? (
           <EstadoVazio
-            titulo="Nada aqui ainda"
-            descricao="Grife, anote ou favorite uma busca durante a leitura pra ver aqui."
+            titulo={quantidadeItens === 0 ? "Sua biblioteca está vazia" : "Nenhum item encontrado"}
+            descricao={quantidadeItens === 0 ? "Salve versículos, faça anotações ou grife passagens durante a leitura. Eles ficam reunidos aqui." : "Experimente outro termo ou ajuste os filtros para encontrar o que procura."}
+            acao={quantidadeItens === 0 ? { rotulo: "Abrir a Bíblia", aoPressionar: () => router.push("/biblia") } : possuiFiltrosAtivos ? { rotulo: "Limpar filtros", aoPressionar: limparFiltros } : undefined}
           />
         ) : (
-          filtrados.map((item, indice) => { const chave = chaveAtividade(item); const livroAtual = item.tipo === "pesquisa" ? "Pesquisas" : obterLivro(item.livroSlug)?.nome ?? item.livroSlug; const anterior = filtrados[indice - 1]; const livroAnterior = anterior ? (anterior.tipo === "pesquisa" ? "Pesquisas" : obterLivro(anterior.livroSlug)?.nome ?? anterior.livroSlug) : null; return <View key={chave}>{ordem === "biblica" && livroAtual !== livroAnterior ? <Text className="text-xs font-bold uppercase tracking-wide text-cor-texto-suave dark:text-cor-texto-suave-dark mt-3 mb-2">{livroAtual}</Text> : null}<CardAtividade item={item} onMudou={carregar} selecionado={selecionados.has(chave)} onSelecionar={() => setSelecionados((atuais) => { const novo = new Set(atuais); if (novo.has(chave)) novo.delete(chave); else novo.add(chave); return novo; })} /></View>; })
+          filtrados.map((item, indice) => { const chave = chaveAtividade(item); const livroAtual = item.tipo === "pesquisa" ? "Pesquisas" : obterLivro(item.livroSlug)?.nome ?? item.livroSlug; const anterior = filtrados[indice - 1]; const livroAnterior = anterior ? (anterior.tipo === "pesquisa" ? "Pesquisas" : obterLivro(anterior.livroSlug)?.nome ?? anterior.livroSlug) : null; return <View key={chave}>{ordem === "biblica" && livroAtual !== livroAnterior ? <Text className="text-xs font-bold uppercase tracking-wide text-cor-texto-suave dark:text-cor-texto-suave-dark mt-3 mb-2">{livroAtual}</Text> : null}<CardAtividade item={item} onMudou={carregar} selecionado={selecionados.has(chave)} onSelecionar={modoSelecao ? () => setSelecionados((atuais) => { const novo = new Set(atuais); if (novo.has(chave)) novo.delete(chave); else novo.add(chave); return novo; }) : undefined} /></View>; })
         )}
       </View>
     </ScrollView>

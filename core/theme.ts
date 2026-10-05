@@ -25,6 +25,9 @@ export function alternarTema(): void {
 /** Restaura o tema padrão após a exclusão explícita das preferências locais. */
 export function restaurarTemaPadrao(): void {
   colorScheme.set("light");
+  AsyncStorage.setItem(CHAVE_TEMA, "light").catch(() => {
+    mostrarToast("Os dados foram apagados, mas não foi possível salvar o tema padrão", { severidade: "aviso" });
+  });
 }
 
 export { useColorScheme };

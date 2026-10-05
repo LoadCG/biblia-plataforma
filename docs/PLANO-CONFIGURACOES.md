@@ -10,7 +10,7 @@ sem uma necessidade validada.
 | Etapa | Estado | Entrega |
 |---|---|---|
 | 0. Inventário e contrato | Concluída | Confirmados escopo local das preferências, lembrete nativo às 7h, indisponibilidade web, conteúdo real do arquivo de exportação e dados removidos. `TODO.md` é a decisão vigente: manter lembrete local; push/web requer backend e permanece fora de escopo. |
-| 1. Orientação e disponibilidade | Implementada; inspeção visual pendente | Introdução explica armazenamento local; prévia de fonte foi adicionada; tema explica escopo; web apresenta lembrete como informação indisponível em vez de switch inoperante. |
+| 1. Orientação e disponibilidade | Implementada; inspeção visual parcial | Introdução explica armazenamento local; prévia de fonte foi adicionada; tema explica escopo; web apresenta lembrete como informação indisponível em vez de switch inoperante. Inspecionada em claro a 1280×720; o documento não excedeu a largura do viewport e a hierarquia inicial ficou clara. Tema escuro e largura estreita continuam pendentes. |
 | 2. Gestão e preservação de dados | Implementada; verificação runtime pendente | Exportação enumera os dados efetivamente incluídos; exclusão explica o alcance, cancela o lembrete deste app e restaura estados locais e tema padrão na interface. Falha ao cancelar o aviso do sistema recebe resultado específico. |
 | 3. Isolamento do lembrete | Implementada; teste em dispositivo pendente | Cancelamento busca apenas notificações marcadas como lembrete bíblico e reconhece as antigas pelo título/corpo; outras notificações permanecem agendadas. |
 | 4. QA visual/assistivo/responsivo | Pendente | Conferir estados, foco, contraste, leitores de tela e larguras; em app instalado, validar permissão e agenda local em aparelho/emulador. |
@@ -40,6 +40,14 @@ sem uma necessidade validada.
 4. Exercitar exportação e exclusão com perfil descartável. Conferir conteúdo JSON,
    estado zerado após exclusão e recuperação de falha sem tocar nos dados reais.
 5. Atualizar os estados deste plano apenas com evidência correspondente.
+
+**QA web parcial (2026-10-05):** no navegador local, a árvore acessível expôs
+os cabeçalhos, nomes dos switches, ações de exportar/apagar e a explicação da
+indisponibilidade do lembrete web. A tela foi inspecionada em 1280×720 no tema
+claro; uma falha visual de alinhamento das descrições dentro dos cards foi
+corrigida. Não foram acionadas operações de exportação/exclusão nem controles
+que persistem preferências. Viewports estreitos, tema escuro, percurso completo
+por teclado/leitor de tela e execução nativa continuam sem evidência.
 
 ## Riscos e limites
 

@@ -21,12 +21,13 @@ import { reiniciarOnboarding } from "../core/leitura/onboarding";
 
 const SOMBRA = { shadowColor: "#000", shadowOpacity: 0.06, shadowRadius: 4, shadowOffset: { width: 0, height: 1 } };
 
-function Secao({ titulo, children }: { titulo: string; children: React.ReactNode }) {
+function Secao({ titulo, descricao, children }: { titulo: string; descricao?: string; children: React.ReactNode }) {
   return (
     <View className="mb-6">
       <Text accessibilityRole="header" className="text-xs font-bold uppercase tracking-wide text-cor-texto-suave dark:text-cor-texto-suave-dark mb-2 px-1">
         {titulo}
       </Text>
+      {descricao ? <Descricao>{descricao}</Descricao> : null}
       <View className="rounded-2xl bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark shadow-sm overflow-hidden" style={SOMBRA}>
         {children}
       </View>
@@ -209,8 +210,7 @@ export default function Configuracoes() {
         <Text accessibilityRole="header" className="text-2xl font-bold text-cor-texto dark:text-cor-texto-dark mb-5">Configurações</Text>
         <Descricao>Personalize sua leitura e gerencie os dados guardados neste dispositivo.</Descricao>
 
-        <Secao titulo="Leitura">
-          <Descricao>Esses ajustes são compartilhados pela leitura da Bíblia e pelos resumos.</Descricao>
+        <Secao titulo="Leitura" descricao="Esses ajustes são compartilhados pela leitura da Bíblia e pelos resumos.">
           <Linha>
             <Text className="text-cor-texto dark:text-cor-texto-dark font-semibold mb-2.5">Tamanho da fonte</Text>
             <View className="flex-row items-center gap-2">
@@ -285,8 +285,7 @@ export default function Configuracoes() {
           </Linha>
         </Secao>
 
-        <Secao titulo="Aparência">
-          <Descricao>O tema escolhido é aplicado em todas as telas deste dispositivo.</Descricao>
+        <Secao titulo="Aparência" descricao="O tema escolhido é aplicado em todas as telas deste dispositivo.">
           <Linha ultima>
             <Pressable
               onPress={alternarTema}
@@ -341,8 +340,7 @@ export default function Configuracoes() {
           </Linha>}
         </Secao>
 
-        <Secao titulo="Meus dados">
-          <Descricao>Seu perfil e sua atividade ficam neste dispositivo e não são sincronizados entre aparelhos.</Descricao>
+        <Secao titulo="Meus dados" descricao="Seu perfil e sua atividade ficam neste dispositivo e não são sincronizados entre aparelhos.">
           <Linha>
             <Link href="/privacidade" asChild>
               <Pressable accessibilityRole="link" className="flex-row items-center justify-between active:opacity-70">

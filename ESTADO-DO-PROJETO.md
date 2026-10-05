@@ -205,8 +205,11 @@ revisão humana, execução remota e distribuição.
    passou para `b737c2c`; deploy de produção `Ready`. Rotas dos três planos,
    68 links de leitura e a rota de 1 Coríntios 13 responderam 200; capítulo
    inválido respondeu 404. Falta acompanhar indexação e migração do runner.
-7. **Conteúdo:** evoluir contrato/taxonomia e selecionar um pequeno lote apenas
-   quando houver responsáveis por revisão humana independente.
+7. **Conteúdo — aguardando gate humano:** `check:revisao-editorial` confirmou
+   cinco propostas com governança explícita; `check:copy-ui` verificou 116
+   fontes e `check:editorial` confirmou 66 resumos, 5 planos e 72 dias. Esses
+   checks validam estrutura/cobertura, não juízo editorial. Próximo passo é
+   obter leituras humanas independentes dos rascunhos antes de integrar lote.
 8. **Mobile dedicado, validação nativa e lojas:** permanecem deferidos; não são
    pré-requisitos para avançar o escopo web autorizado.
 

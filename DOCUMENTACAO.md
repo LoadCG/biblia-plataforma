@@ -46,6 +46,14 @@ substituir os estados e critérios mais atuais.
 - `.github/workflows/ci.yml`: configuração do CI; o estado de cada execução deve
   ser consultado no link de run correspondente registrado no plano mestre.
 
+## Gates locais de conteúdo e governança
+
+Em 2026-10-05 passaram `npm run check:revisao-editorial` (5 rascunhos com
+governança explícita), `npm run check:copy-ui` (116 fontes, sem padrões internos
+sinalizados) e `npm run check:editorial` (66 resumos, 5 planos e 72 dias). Esses
+gates verificam consistência automatizável e não aprovam o mérito editorial dos
+rascunhos nem dispensam revisores humanos independentes.
+
 ## Histórico e referências
 
 Os documentos abaixo preservam o contexto de ciclos anteriores. Não devem ser

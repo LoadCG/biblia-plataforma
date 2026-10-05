@@ -5,6 +5,14 @@ O formato é baseado no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.
 
 ## [Unreleased] - 2026-10-04
 
+### Conteúdo e governança (2026-10-05)
+- Reexecutados os gates de revisão editorial (5 propostas com governança), copy
+  de interface (116 fontes sem padrões internos sinalizados) e cobertura
+  editorial (66 resumos, 5 planos, 72 dias). Os rascunhos permanecem fora do
+  catálogo aguardando revisores humanos independentes.
+- Atualizados plano mestre, estado do projeto e índice documental para remover
+  status obsoletos de Home/CI e apontar o gate editorial correto.
+
 ### Conteúdo editorial
 - Publicados no catálogo os planos Primeiros passos (7 dias), Justiça, cuidado
   e esperança (14 dias) e Formação bíblica (30 sessões). A publicação ocorreu

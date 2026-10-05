@@ -39,7 +39,7 @@ inválido retornou 404. As três novas rotas de planos também retornaram 200.
 
 | Frente | Estado | Evidência / lacuna |
 |---|---|---|
-| Home desktop | Parcialmente refinada | Jornada reorganizada; paisagem horária e ilustração da jornada implementadas. Nova inspeção no viewport desktop disponível, claro/escuro e perfil local sem histórico; composição e lateral legíveis. A captura em 1280×900 e 1440×900 continua pendente: a API do navegador não expõe dimensão CSS nem permite fixar o viewport nesta sessão. |
+| Home desktop | Parcialmente refinada | Jornada reorganizada; paisagem horária e ilustração da jornada implementadas. Home conferida em claro/escuro com perfil vazio, e estados de carga/sucesso observados. A composição integral em 1280×900 e 1440×900, outros estados de perfil e erro induzido continuam pendentes: a captura CUA não fornece viewport CSS nem enquadra a janela inteira. |
 | Descubra | Parcialmente implementada | No viewport desktop disponível, grade de oito temas, detalhe “Esperança”, links, entrada direta, recarga e busca (50 resultados/estado vazio) foram conferidos. Retorno que selecionava Início foi corrigido; tema inválido agora normaliza para `/pesquisa`. Ordem inicial de foco, indicador visível e abrir/voltar tema com Enter foram verificados; auditoria completa e viewports planejados seguem pendentes. |
 | Planos | Implementado com QA parcial | Lista e detalhe em claro/escuro; estados 0/7, 1/7 e 7/7 foram conferidos em origem local isolada e o progresso voltou a 0/7. A abertura de sessão e retomada do primeiro capítulo também foram vistas. O botão Voltar do leitor tinha levado a Início; agora retorna ao detalhe do plano quando há contexto de sessão. Erro e viewports planejados permanecem incompletos. |
 | Sistema de estados | Migração principal feita | Inventário/API/migrações existem. Varredura AST encontrou 73 chamadas a `mostrarToast`, todas classificadas; o contrato TypeScript agora exige severidade. Inspeção visual/assistiva dos consumidores continua pendente. |
@@ -266,9 +266,11 @@ projeto; automação de baselines permanece pendente.
 **Aceite:** revisão independente registrada, validações estruturais/editoriais
 verdes, rotas/busca/offline revisadas e nenhum conteúdo pendente exposto.
 
-**Gate pendente:** os rascunhos dos oito temas já estão preparados e validados
-estruturalmente. O plano exige dois revisores humanos independentes e decisão
-editorial registrada; nenhuma entrada foi promovida pelo agente.
+**Gate pendente:** cinco propostas editoriais permanecem em revisão humana:
+piloto de Gênesis, lotes de resumos C1/C2, metadados de busca e ampliação dos
+temas. Os arquivos seguem fora do catálogo; o contrato requer leituras humanas
+independentes e decisão editorial registrada. `check:revisao-editorial` passou
+em 2026-10-05, confirmando governança documental, não aprovação de conteúdo.
 
 ### Ciclo 6 — CI, SEO e release web (P1, dependência externa)
 
@@ -301,6 +303,14 @@ rollback conhecidos. Sem esses sinais, registrar como bloqueio externo.
 aprovado em 1m36s para `77163887d9fc9744c45e27ffaa2ce379a195b914`; os gates de
 conteúdo, copy, validação, export e metadados passaram. O preview Vercel continua
 sem evidência nesta rodada.
+
+**Atualização editorial/documental em 2026-10-05:** `check:revisao-editorial`
+confirmou cinco rascunhos com governança explícita; `check:copy-ui` verificou
+116 fontes sem padrões internos sinalizados; `check:editorial` confirmou 66
+resumos, 5 planos e 72 dias. A rota pública do plano Formação bíblica segue
+confirmada após hidratação na inspeção de 2026-10-04. Não houve nova alteração
+de conteúdo nem decisão de publicação nesta etapa. A fila continua parada no
+gate de leitores humanos independentes.
 
 ### Ciclo 7 — retomada mobile/nativa (deferido, fora da fila atual)
 

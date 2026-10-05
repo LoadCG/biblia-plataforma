@@ -2,7 +2,8 @@
 
 > **Status: ondas históricas substituídas em 2026-10-02.** Use
 > [`docs/PLANO-MESTRE-Q4-2026.md`](./docs/PLANO-MESTRE-Q4-2026.md) para a ordem
-> atual e `PLANO-CONTEUDO-ETAPAS-24-A-28.md` para os critérios editoriais.
+> atual e [`docs/revisao-editorial/INDICE.md`](./docs/revisao-editorial/INDICE.md)
+> para a fila e os critérios editoriais vigentes.
 
 Plano operacional posterior às etapas 24–28. O objetivo é converter os
 rascunhos editoriais em incrementos aprováveis, melhorar a descoberta do

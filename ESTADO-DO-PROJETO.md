@@ -43,8 +43,8 @@ referências mais citadas em comparativos de 2026.
 | Offline | Citado como parte central de retenção em 2026 ("reduz fricção, ajuda a manter o streak") | Forte: Bíblia inteira embutida, leitura e busca funcionam 100% offline (web e nativo) — ver `FUNCIONALIDADES.md` 7.3 |
 | Estudo aprofundado | Blue Letter Bible/Logos: léxico, interlinear, concordância, comentários | Fora de escopo — público-alvo declarado é "leitura", não estudo acadêmico de idioma original |
 | Design/UX 2026 | Tipografia cuidada, modo escuro, Dynamic Type, tela inicial sem feed de comparação social | Modo escuro completo, fonte ajustável, identidade visual própria (não copiada) — ver auditorias de UI já feitas |
-| Confiabilidade | Bible Streak citado por "pontuação clara e progresso de badge confiável" como diferencial | CI versionado, suíte unitária, contratos de acessibilidade/SEO/Maestro e exports por plataforma; o primeiro run remoto e o E2E em dispositivo ainda são gates externos |
-| SEO/descoberta | Apps estabelecidos têm anos de indexação; sites de conteúdo bíblico competem por tráfego orgânico de busca | 66 resumos e 5 planos possuem HTML/metadados por rota; export estático inclui uma página de shell para cada capítulo, para permitir entrada direta e atualização. As três novas rotas de plano foram geradas localmente; disponibilidade em produção depende do deploy e da confirmação pública. |
+| Confiabilidade | Bible Streak citado por "pontuação clara e progresso de badge confiável" como diferencial | CI versionado com run verde em `master`; suíte unitária, contratos de acessibilidade/SEO/Maestro e exports por plataforma. E2E em dispositivo ainda é gate externo. |
+| SEO/descoberta | Apps estabelecidos têm anos de indexação; sites de conteúdo bíblico competem por tráfego orgânico de busca | 66 resumos e 5 planos possuem HTML/metadados por rota; export estático inclui uma página de shell por capítulo. As três novas rotas de plano foram publicadas e responderam 200 em produção; 68 links de leitura também responderam 200. Isso confirma disponibilidade técnica, não indexação por buscadores nem revisão editorial independente. |
 | Widgets/OS nativo | YouVersion tem widget de tela inicial, notificação diária | Configuração e bundles locais Android/iOS validados; sem widget, build assinado ou publicação em loja |
 
 **Leitura honesta desse quadro:** nas áreas onde o projeto decidiu
@@ -103,18 +103,20 @@ traduções licenciadas, notificações push), a distância é grande e
   oferecem.
 
 ### Confiabilidade
-- O pipeline de CI e seus gates estão versionados; falta observar o primeiro
-  run verde no GitHub após envio das alterações.
+- O pipeline de CI e seus gates estão versionados; o run remoto
+  [`37254924178`](https://github.com/LoadCG/biblia-plataforma/actions/runs/37254924178)
+  passou para `b737c2c` em `master`. A implantação de produção correspondente
+  ficou `Ready`; monitorar o aviso de migração futura do runner Ubuntu 26.
 - Quatro jornadas Maestro estão definidas e validadas estruturalmente, mas
   ainda precisam rodar contra um binário instalado em dispositivo/emulador.
 - A inspeção web de acessibilidade foi concluída; NVDA/VoiceOver/TalkBack em
   dispositivo físico continuam como gate humano.
 
 ### Descoberta/crescimento
-- A estratégia híbrida de SEO está implementada localmente: páginas
-  editoriais são pré-renderizadas e `/biblia/*` preserva a experiência
-  interativa. Falta validar o comportamento no Preview Deployment antes da
-  promoção para produção e acompanhar indexação após o deploy.
+- A estratégia híbrida de SEO está publicada: páginas editoriais são
+  pré-renderizadas e `/biblia/*` preserva a experiência interativa. As três
+  rotas de plano e as rotas bíblicas verificadas estão acessíveis em produção;
+  indexação por buscadores continua sem medição neste ciclo.
 - Sem presença em loja de app — **não é mais "não por enquanto" sem
   prazo**: confirmado em 2026-08-27 que a intenção é publicar um dia,
   só que o app nativo ainda não está pronto pra isso e falta entender
@@ -184,7 +186,7 @@ revisão humana, execução remota e distribuição.
    e a sessão continuou disponível. A retomada abriu o primeiro capítulo.
    Conteúdo adicional continua condicionado às duas revisões humanas. Completar
    erro, checkpoint após avançar e viewports do plano mestre e seguir
-   [`PLANO-TEMAS-DESCOBERTA.md`](./PLANO-TEMAS-DESCOBERTA.md) antes de publicar
+   [`docs/PLANO-TEMAS-DESCOBERTA.md`](./docs/PLANO-TEMAS-DESCOBERTA.md) antes de publicar
    conteúdo novo.
 4. **Estados web — em andamento:** Home tem carga/erro/retry explícitos; Toast
    agora cancela a animação anterior, evita que um temporizador antigo feche uma
@@ -199,10 +201,10 @@ revisão humana, execução remota e distribuição.
    [`docs/PLANO-HOVER-INTERACOES.md`](./docs/PLANO-HOVER-INTERACOES.md).
 6. **CI e SEO:** workflow atualizado para `actions/checkout@v7` e
    `actions/setup-node@v7`, preservando Node 22 do projeto. O run
-   [`37225958581`](https://github.com/LoadCG/biblia-plataforma/actions/runs/37225958581)
-   passou para `42333ac` em 1m25s; checkout, setup-node, validação, export e
-   metadados ficaram verdes. O runner mantém o aviso da migração agendada do
-   Ubuntu 26; validar preview Vercel quando disponível.
+   [`37254924178`](https://github.com/LoadCG/biblia-plataforma/actions/runs/37254924178)
+   passou para `b737c2c`; deploy de produção `Ready`. Rotas dos três planos,
+   68 links de leitura e a rota de 1 Coríntios 13 responderam 200; capítulo
+   inválido respondeu 404. Falta acompanhar indexação e migração do runner.
 7. **Conteúdo:** evoluir contrato/taxonomia e selecionar um pequeno lote apenas
    quando houver responsáveis por revisão humana independente.
 8. **Mobile dedicado, validação nativa e lojas:** permanecem deferidos; não são

@@ -33,7 +33,9 @@ segmentos `[livro]/[capitulo]`, enquanto `vercel.json` reescrevia genericamente
 `/biblia/*` para `/index.html`. A correção remove a reescrita e cria páginas
 estáticas de shell para os 1.189 capítulos a partir do HTML exportado; o
 servidor local retornou 200 para capítulos válidos e 404 para capítulo
-inexistente. A validação da URL pública fica pendente até o deploy do commit.
+inexistente. Em 2026-10-04, após o deploy de produção `dpl_47PR6yjenkkyvQtyDbGbGf9VPWDX`
+(commit `b737c2c`), a rota pública do capítulo retornou 200 e um capítulo
+inválido retornou 404. As três novas rotas de planos também retornaram 200.
 
 | Frente | Estado | Evidência / lacuna |
 |---|---|---|
@@ -42,22 +44,29 @@ inexistente. A validação da URL pública fica pendente até o deploy do commit
 | Planos | Implementado com QA parcial | Lista e detalhe em claro/escuro; estados 0/7, 1/7 e 7/7 foram conferidos em origem local isolada e o progresso voltou a 0/7. A abertura de sessão e retomada do primeiro capítulo também foram vistas. O botão Voltar do leitor tinha levado a Início; agora retorna ao detalhe do plano quando há contexto de sessão. Erro e viewports planejados permanecem incompletos. |
 | Sistema de estados | Migração principal feita | Inventário/API/migrações existem. Varredura AST encontrou 73 chamadas a `mostrarToast`, todas classificadas; o contrato TypeScript agora exige severidade. Inspeção visual/assistiva dos consumidores continua pendente. |
 | Anotações compartilhadas | Implementadas; QA web funcional concluído, aceite integral parcial | Commit `5a1e745` adiciona grupos multi-versículo em AsyncStorage e SQLite. Em `localhost:8082`, perfil descartável: criação contínua/descontínua, reabertura por membro, extensão, promoção de nota individual, conflito sem sobrescrita, recarga, Salvos/busca/edição/exclusão, atividade e cartão do Versículo do Dia conferidos; dados de QA removidos. Cinco testes do repositório, typecheck, checks a11y/UI/copy e export passaram. Falta runtime SQLite em dispositivo/emulador, estados de erro/foco e medição visual com viewport conhecido. |
-| Copy da interface | Gate estático passou | 114 fontes de app/componentes/conteúdo verificadas localmente e no CI, sem padrões sinalizados; a heurística não substitui revisão semântica. |
-| CI remoto | Passou no workflow atualizado | Run [`37225958581`](https://github.com/LoadCG/biblia-plataforma/actions/runs/37225958581) para `42333ac`; checkout, setup-node, instalação reproduzível, validação, export e metadados passaram. O runner avisou da migração agendada de `ubuntu-latest` para Ubuntu 26; preview não foi comprovado. |
-| Conteúdo editorial | Catálogo com 66 resumos e 5 planos | Três planos (7, 14 e 30 dias) foram publicados por decisão explícita do responsável do projeto como exceção ao gate de duas revisões; nenhuma revisão humana independente é declarada como concluída. Fontes e catálogo estão sincronizados, referências passam a validação ACF e as rotas estáticas foram exportadas. Revisão editorial posterior e QA visual permanecem pendentes. |
+| Copy da interface | Gate estático passou | 116 fontes de app/componentes/conteúdo verificadas localmente e no CI, sem padrões sinalizados; a heurística não substitui revisão semântica. |
+| CI remoto | Passou no workflow atualizado | Run [`37254924178`](https://github.com/LoadCG/biblia-plataforma/actions/runs/37254924178) para `b737c2c`, sucesso; validação e export passaram. Aviso do runner Ubuntu 26 continua monitorável. |
+| Conteúdo editorial | Catálogo com 66 resumos e 5 planos | Três planos (7, 14 e 30 dias) foram publicados por decisão explícita do responsável do projeto como exceção ao gate de duas revisões; nenhuma revisão humana independente é declarada como concluída. Rotas públicas retornaram 200; os 68 links únicos de leitura responderam 200. O detalhe Formação bíblica foi inspecionado no navegador desktop após hidratação; revisão editorial e outros viewports permanecem pendentes. |
 | Mobile/nativo | Deferido | Não fazer redesenho nem declarar aceite sem retomada explícita; validar regressões responsivas web em componentes compartilhados. |
 
 Em 2026-10-04, o detalhe de Esperança carregou quatro leituras e temas
 relacionados; listagem e detalhe de Planos foram vistos no recorte 1280×720,
-sem alterar sessões. Esse recorte não substitui os viewports/estados pendentes.
+sem alterar sessões. A rota pública do plano Formação bíblica mostrou título,
+introdução, progresso 0/30, CTA, reflexão, pergunta e referências após
+hidratação. Os 30 dias também estavam presentes na árvore acessível. Esse
+recorte não substitui os viewports/estados pendentes.
 
 **Atualização do workflow (2026-10-04):** `actions/checkout` e
 `actions/setup-node` foram atualizadas para as majors atuais compatíveis com
 Node 24 no runtime das actions; a versão de Node do projeto permanece 22. O
-run [`37225958581`](https://github.com/LoadCG/biblia-plataforma/actions/runs/37225958581)
-passou em `master` (1m25s), incluindo validação e export estático. O único aviso
-foi a migração futura do runner `ubuntu-latest` para Ubuntu 26; preview Vercel
-continua pendente.
+run [`37254924178`](https://github.com/LoadCG/biblia-plataforma/actions/runs/37254924178)
+passou em `master` para `b737c2c`; a implantação de produção Vercel ficou
+`Ready`. As três rotas de planos e 68 referências de leitura responderam 200,
+assim como 1 Coríntios 13; capítulo inválido respondeu 404. A publicação em
+produção foi autorizada pelo responsável do projeto. Isso comprova resposta e
+renderização do conteúdo da rota inspecionada, não revisão editorial humana nem
+aceite visual em todos os breakpoints. O aviso sobre a migração do runner para
+Ubuntu 26 permanece para monitoramento.
 
 ## Ordem de execução
 
@@ -139,7 +148,7 @@ induzido e medição responsiva.
 
 ### Ciclo 2 — comparação desktop de Descubra e Planos (P1)
 
-O detalhe temático será expandido conforme [`PLANO-TEMAS-DESCOBERTA.md`](../PLANO-TEMAS-DESCOBERTA.md): conteúdo adicional permanece em revisão editorial e só aparece após publicação aprovada.
+O detalhe temático será expandido conforme [`PLANO-TEMAS-DESCOBERTA.md`](./PLANO-TEMAS-DESCOBERTA.md): conteúdo adicional permanece em revisão editorial e só aparece após publicação aprovada.
 
 1. Descubra: revisar cabeçalho, busca, categoria, cenas, temas e lista de
    resultados em viewport amplo e intermediário.
@@ -265,8 +274,9 @@ editorial registrada; nenhuma entrada foi promovida pelo agente.
 
 1. Após o workflow atualizado chegar ao GitHub, confirmar um run verde em
    `master`; registrar run ID, commit e eventuais falhas reais. **Concluído:**
-   [`37225958581`](https://github.com/LoadCG/biblia-plataforma/actions/runs/37225958581)
-   passou para `42333ac` em 1m25s.
+   [`37254924178`](https://github.com/LoadCG/biblia-plataforma/actions/runs/37254924178)
+   passou para `b737c2c`; deploy de produção está `Ready` e as rotas foram
+   verificadas publicamente.
 2. Revisar avisos de runtime do GitHub Actions: o primeiro run executou actions
    que declaravam Node 20 após a remoção desse runtime dos runners GitHub-hosted.
    `checkout` e `setup-node` agora usam majors atuais com suporte ao runtime

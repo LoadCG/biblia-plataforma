@@ -49,8 +49,8 @@ O formato é baseado no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.
 - Corrigido o acesso direto e a atualização de capítulos bíblicos no deploy
   estático: o export agora materializa as 1.189 rotas e a regra ampla de rewrite
   da Vercel foi removida. O servidor local valida 200 para capítulos existentes
-  e 404 para capítulos inválidos; o comportamento público será confirmado após
-  o próximo deploy.
+  e 404 para capítulos inválidos. Após o deploy de produção `b737c2c`, a rota de
+  1 Coríntios 13 respondeu 200 e um capítulo inválido respondeu 404.
 - Compartilhamento de texto agora usa a API nativa do navegador quando
   suportada, com cópia alternativa em falha/indisponibilidade; cancelamento não
   gera cópia nem incrementa o contador. Ações “Copiar” usam Clipboard também no
@@ -129,6 +129,11 @@ O formato é baseado no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.
   leitura, reflexão e prática, com expansão progressiva e gate de revisão humana.
 
 ### Documentação e qualidade
+- Após o deploy `b737c2c`, foram confirmados status Ready, três rotas públicas
+  de planos e 68 links únicos de leitura (HTTP 200), além da inspeção desktop
+  hidratada do plano Formação bíblica. A documentação agora aponta para a fila
+  editorial existente e registra o estado real de CI/produção; nenhum desses
+  resultados equivale à revisão editorial humana independente.
 - Documentos foram reclassificados em fontes atuais, planos operacionais e
   registros históricos; criado plano mestre Q4 com etapas, dependências e
   critérios de aceite para UI, estados, conteúdo e release.

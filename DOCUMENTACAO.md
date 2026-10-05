@@ -24,9 +24,9 @@ substituir os estados e critérios mais atuais.
 |---|---|---|
 | [`PLANO-MESTRE-UX-ETAPAS-19-A-23.md`](./PLANO-MESTRE-UX-ETAPAS-19-A-23.md) | Auditoria web, estados, QA visual, nativo e release | Detalha ciclos 1–4 e 6; suas caixas só fecham com evidência correspondente. |
 | [`PLANO-MELHORIAS-UI-DESIGN.md`](./PLANO-MELHORIAS-UI-DESIGN.md) | Direção visual, componentes, histórico das inspeções e plano focal atual de seleção de versículo | Referência visual/casos já trabalhados; não mantém uma fila independente do plano mestre. |
-| [`PLANO-TEMAS-DESCOBERTA.md`](./PLANO-TEMAS-DESCOBERTA.md) | Expansão de conteúdo, UX e arquitetura dos detalhes de tema | Detalha a ampliação temática; conteúdo precisa de revisão humana antes de ser publicado. |
-| [`PLANO-HOVER-INTERACOES.md`](./PLANO-HOVER-INTERACOES.md) | Microinterações hover em todas as rotas e componentes acionáveis da web | Foco atual de UI; cobre apenas ponteiro hover-capable e preserva toque, teclado e movimento reduzido. |
-| [`PLANO-CONTEUDO-ETAPAS-24-A-28.md`](./PLANO-CONTEUDO-ETAPAS-24-A-28.md) | Contrato, planos, resumos, curadoria e QA editorial | Detalha o ciclo 5; revisão humana é obrigatória antes de publicar. |
+| [`PLANO-TEMAS-DESCOBERTA.md`](./docs/PLANO-TEMAS-DESCOBERTA.md) | Expansão de conteúdo, UX e arquitetura dos detalhes de tema | Detalha a ampliação temática; conteúdo precisa de revisão humana antes de ser publicado. |
+| [`PLANO-HOVER-INTERACOES.md`](./docs/PLANO-HOVER-INTERACOES.md) | Microinterações hover em todas as rotas e componentes acionáveis da web | Foco atual de UI; cobre apenas ponteiro hover-capable e preserva toque, teclado e movimento reduzido. |
+| [`docs/revisao-editorial/INDICE.md`](./docs/revisao-editorial/INDICE.md) | Fila de propostas editoriais pendentes | Lista rascunhos, próximas ações e o gate de duas revisões humanas. Fontes dos três planos já publicados estão em `docs/planos-publicados/`. |
 | [`PLANO-TECNICO-BUSCA.md`](./PLANO-TECNICO-BUSCA.md) | Arquitetura e evolução técnica da busca | Backlog especializado; iniciar somente se priorizado no plano mestre. |
 
 ## Estado, qualidade e conteúdo
@@ -43,8 +43,8 @@ substituir os estados e critérios mais atuais.
   propostas e fila de conteúdo ainda não aprovado. Fontes de planos publicados
   ficam em [`docs/planos-publicados/`](./docs/planos-publicados/) e registram
   explicitamente qualquer exceção ao gate editorial.
-- `.github/workflows/ci.yml`: configuração do CI. A configuração não comprova
-  que o GitHub executou ou aprovou um workflow.
+- `.github/workflows/ci.yml`: configuração do CI; o estado de cada execução deve
+  ser consultado no link de run correspondente registrado no plano mestre.
 
 ## Histórico e referências
 
@@ -58,8 +58,8 @@ com o plano mestre atual:
 | [`PLANO-EXECUCAO-ETAPAS-6-A-10.md`](./PLANO-EXECUCAO-ETAPAS-6-A-10.md) | CI, SEO, Maestro, acessibilidade e builds; gates externos ainda podem estar abertos. |
 | [`PLANO-UX-INTERFACE-ETAPAS-11-A-15.md`](./PLANO-UX-INTERFACE-ETAPAS-11-A-15.md) | Ciclo de busca, Salvo, Planos e feedback. |
 | [`PLANO-UX-INTERFACE-ETAPAS-16-A-20.md`](./PLANO-UX-INTERFACE-ETAPAS-16-A-20.md) | Estados vazios, navegação e gates de responsividade/snapshots. |
-| [`PLANO-EXECUCAO-COMPLETO-CONTEUDO-UX-RELEASE.md`](./PLANO-EXECUCAO-COMPLETO-CONTEUDO-UX-RELEASE.md) | Especificação anterior de conteúdo e release, substituída pelo plano mestre atual e plano 24–28. |
-| [`PLANO-PROXIMOS-PASSOS-CONTEUDO-UX.md`](./PLANO-PROXIMOS-PASSOS-CONTEUDO-UX.md) | Ondas anteriores de conteúdo, absorvidas pelo plano mestre e plano 24–28. |
+| [`PLANO-EXECUCAO-COMPLETO-CONTEUDO-UX-RELEASE.md`](./PLANO-EXECUCAO-COMPLETO-CONTEUDO-UX-RELEASE.md) | Especificação anterior de conteúdo e release, substituída pelo plano mestre atual e pela fila em `docs/revisao-editorial/INDICE.md`. |
+| [`PLANO-PROXIMOS-PASSOS-CONTEUDO-UX.md`](./PLANO-PROXIMOS-PASSOS-CONTEUDO-UX.md) | Ondas históricas absorvidas pelo plano mestre e pela fila em `docs/revisao-editorial/INDICE.md`. |
 | [`PLANO-PLATAFORMA.md`](./PLANO-PLATAFORMA.md) | Decisões de arquitetura e produto. |
 | [`PLANO-NAVEGACAO.md`](./PLANO-NAVEGACAO.md), [`PLANO-UI-COMPONENTES.md`](./PLANO-UI-COMPONENTES.md) | Rascunhos de navegação e auditoria inicial de componentes. |
 | [`ESTUDO-UX-LEITURA.md`](./ESTUDO-UX-LEITURA.md) | Fundamentos da experiência de leitura. |

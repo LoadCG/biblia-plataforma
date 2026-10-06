@@ -26,6 +26,10 @@ O formato é baseado no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.
   emulador e permanece pendente.
 - No Android, o lembrete cria e usa um canal dedicado antes de pedir permissão,
   conforme o requisito de canais para a autorização de notificações.
+- Ao voltar das configurações do sistema, a tela revalida permissão e lembrete
+  agendado, corrige o switch e remove agendamentos órfãos. Permissão provisória
+  de notificações no iOS também é reconhecida; após alterar a autorização, a
+  pessoa recebe orientação para ativar o lembrete.
 
 ### Conteúdo e governança (2026-10-05)
 - Reexecutados os gates de revisão editorial (5 propostas com governança), copy

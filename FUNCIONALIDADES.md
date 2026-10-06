@@ -1913,7 +1913,10 @@ switch inoperante. O cancelamento procura e remove somente notificações do
 lembrete bíblico, incluindo as agendadas antes da identificação explícita;
 outras notificações agendadas são preservadas. Quando a permissão é negada, o
 aviso oferece ação direta para abrir as configurações do app no sistema; falha
-ao abrir recebe mensagem própria.
+ao abrir recebe mensagem própria. Ao retornar ao app, Configurações consulta a
+permissão e o agendamento reais para sincronizar o switch, corrigir preferências
+desatualizadas e remover agendamentos órfãos. Permissões provisórias do iOS são
+consideradas válidas.
 
 **Revisão de Configurações (2026-10-05):** a descrição agora explica que
 preferências e dados ficam neste dispositivo. A leitura inclui prévia tipográfica;

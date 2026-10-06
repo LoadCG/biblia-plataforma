@@ -1,7 +1,7 @@
 import { Link, router } from "expo-router";
 import * as Linking from "expo-linking";
-import { useEffect, useState } from "react";
-import { Modal, Platform, Pressable, ScrollView, Share, Text, View } from "react-native";
+import { useEffect, useRef, useState } from "react";
+import { AppState, Modal, Platform, Pressable, ScrollView, Share, Text, View } from "react-native";
 import { BotaoTema } from "../components/BotaoTema";
 import {
   carregarFonteSerifada,
@@ -12,7 +12,12 @@ import {
   salvarIndiceFonte,
   TAMANHOS_FONTE,
 } from "../core/leitura/preferenciaFonte";
-import { agendarLembreteDiario, cancelarLembreteDiario } from "../core/notifications/notificacoes";
+import {
+  agendarLembreteDiario,
+  cancelarLembreteDiario,
+  lembreteDiarioAgendado,
+  notificacoesPermitidas,
+} from "../core/notifications/notificacoes";
 import { HORARIO_LEMBRETE_PADRAO, lembreteDiarioAtivo, salvarLembreteDiarioAtivo } from "../core/notifications/preferenciaNotificacao";
 import { alternarTema, restaurarTemaPadrao, useColorScheme } from "../core/theme";
 import { apagarDadosPessoais, coletarDadosPessoais } from "../core/util/dadosPessoais";
@@ -59,29 +64,78 @@ export default function Configuracoes() {
   const [indiceFonte, setIndiceFonte] = useState(INDICE_PADRAO);
   const [fonteSerifada, setFonteSerifada] = useState(false);
   const [lembreteAtivo, setLembreteAtivo] = useState(false);
+  const [inicializandoLembrete, setInicializandoLembrete] = useState(Platform.OS !== "web");
   const [exportando, setExportando] = useState(false);
   const [confirmarApagar, setConfirmarApagar] = useState(false);
   const [apagando, setApagando] = useState(false);
   const [salvandoPreferencias, setSalvandoPreferencias] = useState(false);
   const [alterandoLembrete, setAlterandoLembrete] = useState(false);
+  const sincronizandoLembrete = useRef(false);
+  const aguardaRetornoPermissao = useRef(false);
+
+  async function sincronizarLembrete() {
+    if (Platform.OS === "web" || sincronizandoLembrete.current) return;
+    sincronizandoLembrete.current = true;
+    try {
+      const [preferenciaSalva, permitido, agendado] = await Promise.all([
+        lembreteDiarioAtivo(),
+        notificacoesPermitidas(),
+        lembreteDiarioAgendado(),
+      ]);
+      const ativoNoDispositivo = preferenciaSalva && permitido && agendado;
+
+      // Mantém o toggle alinhado com o estado efetivo do sistema, removendo
+      // lembretes órfãos se a permissão foi revogada ou a preferência desligada.
+      if (preferenciaSalva !== ativoNoDispositivo) {
+        await salvarLembreteDiarioAtivo(ativoNoDispositivo);
+      }
+      if (!ativoNoDispositivo && agendado) await cancelarLembreteDiario();
+      setLembreteAtivo(ativoNoDispositivo);
+
+      if (aguardaRetornoPermissao.current) {
+        aguardaRetornoPermissao.current = false;
+        mostrarToast(
+          permitido
+            ? "Permissão atualizada. Toque no lembrete diário para ativá-lo."
+            : "A permissão continua desativada. Você pode alterá-la nas configurações do dispositivo.",
+          { severidade: permitido ? "informacao" : "aviso" }
+        );
+      }
+    } catch {
+      if (aguardaRetornoPermissao.current) {
+        aguardaRetornoPermissao.current = false;
+        mostrarToast("Não foi possível verificar a permissão do lembrete", { severidade: "erro" });
+      }
+    } finally {
+      sincronizandoLembrete.current = false;
+      setInicializandoLembrete(false);
+    }
+  }
 
   useEffect(() => {
     let ativo = true;
-    Promise.all([carregarIndiceFonte(), carregarFonteSerifada(), lembreteDiarioAtivo()])
-      .then(([indice, serifada, lembrete]) => {
+    Promise.all([carregarIndiceFonte(), carregarFonteSerifada()])
+      .then(([indice, serifada]) => {
         if (!ativo) return;
         setIndiceFonte(indice);
         setFonteSerifada(serifada);
-        setLembreteAtivo(lembrete);
       })
       .catch(() => {
         if (ativo) mostrarToast("Não foi possível carregar todas as configurações", { severidade: "erro" });
       });
-    return () => { ativo = false; };
+    void sincronizarLembrete();
+
+    const subscription = AppState.addEventListener("change", (estado) => {
+      if (estado === "active") void sincronizarLembrete();
+    });
+    return () => {
+      ativo = false;
+      subscription.remove();
+    };
   }, []);
 
   async function alternarLembreteDiario() {
-    if (alterandoLembrete) return;
+    if (alterandoLembrete || sincronizandoLembrete.current) return;
     if (Platform.OS === "web") {
       mostrarToast("Notificações diárias funcionam no app instalado (Android/iOS)", { severidade: "informacao" });
       return;
@@ -101,7 +155,9 @@ export default function Configuracoes() {
             severidade: "aviso",
             acaoLabel: "Abrir configurações",
             onAcao: () => {
+              aguardaRetornoPermissao.current = true;
               Linking.openSettings().catch(() => {
+                aguardaRetornoPermissao.current = false;
                 mostrarToast("Não foi possível abrir as configurações do dispositivo", { severidade: "erro" });
               });
             },
@@ -324,7 +380,7 @@ export default function Configuracoes() {
           ) : <Linha ultima>
             <Pressable
               onPress={alternarLembreteDiario}
-              disabled={alterandoLembrete}
+              disabled={alterandoLembrete || inicializandoLembrete}
               accessibilityRole="switch"
               accessibilityLabel="Lembrete diário"
               accessibilityState={{ checked: lembreteAtivo }}

@@ -13,6 +13,7 @@ const contratos = [
   ["app/planos/index.tsx", ["accessibilityRole=\"progressbar\"", "accessibilityValue"]],
   ["app/planos/[id].tsx", ["Carregando progresso do plano", "Não foi possível carregar seu progresso", "disabled={acaoEmAndamento !== null}"]],
   ["components/CardVersiculoTema.tsx", ["border-cor-borda dark:border-cor-borda-dark", "hrefReferenciaBiblica(referencia)", "open-book"]],
+  ["components/BotaoMais.tsx", ["min-w-11 min-h-11", "web:hover:bg-cor-borda/60", "focus-visible:ring-2"]],
   ["app/planos/index.tsx", ["accessibilityLabel={`${plano.duracaoDias} dias, público ${plano.editorial?.publico ?? \"geral\"}`}"]],
 ];
 

@@ -12,6 +12,7 @@ import { useOwnerId } from "../core/useOwnerId";
 import { mostrarToast } from "../core/util/toast";
 import { IconeUI, type IconeUINome } from "./icone/IconeUI";
 import { MenuAcoes, type AcaoMenu } from "./MenuAcoes";
+import { BotaoMais } from "./BotaoMais";
 import { ModalNota } from "./ModalNota";
 
 type Props = {
@@ -175,9 +176,12 @@ export function CardAtividade({ item, onMudou, selecionado, onSelecionar, modoBi
       </View>
       <View className="items-end">
         <Text className="text-[11px] text-cor-texto-suave dark:text-cor-texto-suave-dark mb-1">{tempoRelativo(dataMaisRecente(item))}</Text>
-        <Pressable onPress={() => setMenuAberto(true)} accessibilityRole="button" accessibilityLabel={`Mais opções para ${tituloItem}`} className="w-11 h-11 items-center justify-center rounded-full active:bg-cor-borda dark:active:bg-cor-borda-dark">
-          <IconeUI name="more" size={20} className="text-cor-texto-suave dark:text-cor-texto-suave-dark" />
-        </Pressable>
+        <BotaoMais
+          acessibilidade={`Mais opções para ${tituloItem}`}
+          aoPressionar={() => setMenuAberto(true)}
+          aberto={menuAberto}
+          className="w-11 h-11"
+        />
       </View>
 
       <MenuAcoes acoes={acoes} aberto={menuAberto} contexto={tituloItem} onFechar={() => setMenuAberto(false)} />

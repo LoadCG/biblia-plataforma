@@ -17,6 +17,7 @@ import { linkVersiculo } from "../core/util/linkVersiculo";
 import { useOwnerId } from "../core/useOwnerId";
 import { mostrarToast } from "../core/util/toast";
 import { MenuAcoes, type AcaoMenu } from "./MenuAcoes";
+import { BotaoMais } from "./BotaoMais";
 import { ModalNota } from "./ModalNota";
 import { EstadoCarregando } from "./EstadoCarregando";
 import { IlustracaoPeriodoDia } from "./IlustracaoPeriodoDia";
@@ -293,15 +294,18 @@ export function CardVersiculoDia({ periodoDoDia }: Props) {
                 <IconeUI name="share" size={23} color={corIconePadrao} />
                 <Text className="text-cor-texto-suave dark:text-white/80 text-[11px] mt-0.5">Enviar</Text>
               </BotaoAcaoVersiculo>
-              <BotaoAcaoVersiculo
-                acessibilidade="Mais ações para este versículo"
-                disabled={!dados || carregando}
-                movimentoReduzido={movimentoReduzido}
-                onPress={() => setMenuAberto(true)}
-              >
-                <IconeUI name="more" size={23} color={corIconePadrao} />
-                <Text className="text-cor-texto-suave dark:text-white/80 text-[11px] mt-0.5">Mais</Text>
-              </BotaoAcaoVersiculo>
+              <BotaoMais
+                acessibilidade={`Mais ações para ${dados?.referencia ?? "o versículo do dia"}`}
+                dica="Abre opções para copiar o versículo ou continuar a leitura."
+                aoPressionar={() => setMenuAberto(true)}
+                aberto={menuAberto}
+                desabilitado={!dados || carregando}
+                testID="botao-mais-versiculo-dia"
+                rotulo="Mais"
+                corIcone={corIconePadrao}
+                classeTexto="text-cor-texto-suave dark:text-white/80"
+                className="flex-1 py-1"
+              />
             </View>
 
             {/* Mesmo raciocínio do sino da Início: sem servidor não dá
@@ -325,7 +329,7 @@ export function CardVersiculoDia({ periodoDoDia }: Props) {
         </View>
       </LinearGradient>
 
-      <MenuAcoes acoes={acoesMais} aberto={menuAberto} onFechar={() => setMenuAberto(false)} />
+      <MenuAcoes acoes={acoesMais} aberto={menuAberto} contexto={dados?.referencia ? `Versículo do Dia · ${dados.referencia}` : "Versículo do Dia"} onFechar={() => setMenuAberto(false)} />
 
       {ref ? (
         <ModalNota

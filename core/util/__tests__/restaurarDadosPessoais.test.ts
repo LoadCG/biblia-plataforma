@@ -1,5 +1,9 @@
-import { identificarDivergenciaRestauracao } from "../restaurarDadosPessoais";
+import { ErroRestauracaoBackup, identificarDivergenciaRestauracao, restaurarDadosPessoais } from "../restaurarDadosPessoais";
 import type { DadosPessoais } from "../dadosPessoais";
+import { substituirDadosPessoais } from "../../repositories/substituirDadosPessoais";
+import { aplicarPreferenciasRestauraveis } from "../../storage/estadoUsuario";
+import { coletarDadosPessoais } from "../dadosPessoais";
+import { limparSnapshotDeRecuperacao, salvarSnapshotDeRecuperacao } from "../restauracaoPendente";
 
 jest.mock("../../repositories/substituirDadosPessoais", () => ({ substituirDadosPessoais: jest.fn() }));
 jest.mock("../../storage/estadoUsuario", () => ({ aplicarPreferenciasRestauraveis: jest.fn() }));
@@ -31,6 +35,8 @@ function dadosBase(): DadosPessoais {
 }
 
 describe("identificarDivergenciaRestauracao", () => {
+  beforeEach(() => jest.clearAllMocks());
+
   it("aceita dados equivalentes mesmo quando os IDs de coleção são regenerados", () => {
     const esperado = dadosBase();
     esperado.colecoes = [{ id: "backup-id", ownerId: "", nome: "Estudo", cor: "amber", criadoEm: "2026-01-01T00:00:00.000Z", atualizadoEm: "2026-01-02T00:00:00.000Z" }];
@@ -84,5 +90,27 @@ describe("identificarDivergenciaRestauracao", () => {
 
     encontrado.preferenciasLocais["tema-preferido"] = "dark";
     expect(identificarDivergenciaRestauracao(esperado, encontrado)).toBe("preferências");
+  });
+
+  it("reverte para o snapshot anterior quando a conferência semântica falha", async () => {
+    const snapshot = dadosBase();
+    snapshot.perfil.nome = "Perfil anterior";
+    const dadosImportados = dadosBase();
+    const dadosGravadosComErro = { ...dadosImportados, perfil: { nome: "Conteúdo incorreto", avatarUri: null } };
+    jest.mocked(coletarDadosPessoais)
+      .mockResolvedValueOnce(snapshot)
+      .mockResolvedValueOnce(dadosGravadosComErro);
+
+    await expect(restaurarDadosPessoais("owner-atual", dadosImportados))
+      .rejects.toMatchObject<Partial<ErroRestauracaoBackup>>({
+        name: "ErroRestauracaoBackup",
+        recuperacaoPendente: false,
+      });
+
+    expect(salvarSnapshotDeRecuperacao).toHaveBeenCalledWith({ ownerId: "owner-atual", snapshot });
+    expect(substituirDadosPessoais).toHaveBeenNthCalledWith(1, "owner-atual", dadosImportados);
+    expect(substituirDadosPessoais).toHaveBeenNthCalledWith(2, "owner-atual", snapshot);
+    expect(aplicarPreferenciasRestauraveis).toHaveBeenNthCalledWith(2, snapshot.preferenciasLocais);
+    expect(limparSnapshotDeRecuperacao).toHaveBeenCalledTimes(1);
   });
 });

@@ -199,16 +199,16 @@ restauração deve usar uma lista permitida, não gravar todas as chaves recebid
    snapshot e novo conjunto simultaneamente; nesse caso, cancelar antes de
    remover os dados existentes.
 
-## Progresso da implementação — 2026-10-06
+## Progresso da implementação — 2026-10-07
 
 | Etapa | Estado | Evidência / pendência |
 |---|---|---|
 | 0. Contrato versionado | Implementada | Exportação identifica formato 1; validador aceita o legado sem versão como formato 0 e recusa versões futuras. Datas de conclusão de dias de plano agora são exportadas. |
 | 1. Validação | Implementada; revisão de runtime pendente | Parser valida estrutura, limites, referências bíblicas, catálogos de planos, duplicatas, agrupamento de notas, associações e preferências permitidas antes da escrita. Limite atual: 10 MiB e 100 mil registros. |
-| 2. Persistência e recuperação | Implementada; cenários de falha pendentes | Nativo usa transação exclusiva SQLite; web mantém registros de outros owners e faz gravação por lote. Snapshot local versionado é validado antes de recuperação no próximo acesso; divergência por categoria aciona rollback. A API transacional e tipos passam em análise estática; interrupção/falha e SQLite real ainda não foram exercitados. |
+| 2. Persistência e recuperação | Implementada; cenários de falha pendentes | Nativo usa transação exclusiva SQLite; web mantém registros de outros owners e faz gravação por lote. Snapshot local versionado é validado antes de recuperação no próximo acesso; divergência semântica por categoria aciona rollback. Interrupção/falha e SQLite real ainda não foram exercitados. |
 | 3. Interface | Implementada; inspeção visual/assistiva pendente | Configurações oferece seleção, prévia de contagens, confirmação explícita, estados de erro/sucesso e escopo local. Cancelamento do seletor não grava. |
-| 4. Verificação | Parcial | `npm run typecheck` passou em 2026-10-06. `git diff --check` deve ser repetido após as últimas edições. Sem teste de restauração em runtime, navegador, emulador ou aparelho; equivalência dos valores e datas precisa de QA ponta a ponta. |
+| 4. Verificação | Parcial | `npm run typecheck` e os testes unitários do verificador semântico passaram em 2026-10-07. A comparação agora confere valores, datas, preferências portáteis, grupos multi-versículo e associações após regenerar IDs de coleções; alterações com contagens iguais são rejeitadas e acionam o rollback existente. Sem teste de restauração em runtime, navegador, emulador ou aparelho; persistência SQLite e falhas induzidas ainda precisam de QA ponta a ponta. |
 
 **Decisões aplicadas:** restauração substitui integralmente os dados do perfil local; não há envio para servidor. Preferências portáteis têm allowlist, avatar do arquivo é ignorado e as preferências de notificação/onboarding permanecem no dispositivo atual. IDs técnicos e owner de origem não são reutilizados; IDs de coleção são remapeados e suas associações preservadas.
 
-**Limites conhecidos a validar no QA:** `livrosLidos` não carrega data no formato exportado, portanto a gravação recebe `exportadoEm`; o significado permanece “livro marcado como lido”, mas o timestamp original não pode ser preservado. Reexportação comparativa por valores, falhas induzidas na gravação/rollback, cópia real do DocumentPicker no SDK 57 e apresentação em claro/escuro continuam pendentes. Não declarar aceite integral até essas verificações.
+**Limites conhecidos a validar no QA:** `livrosLidos` não carrega data no formato exportado, portanto a gravação recebe `exportadoEm`; o significado permanece “livro marcado como lido”, mas o timestamp original não pode ser preservado. Reexportação ponta a ponta, falhas induzidas na gravação/rollback, cópia real do DocumentPicker no SDK 57 e apresentação em claro/escuro continuam pendentes. Não declarar aceite integral até essas verificações.

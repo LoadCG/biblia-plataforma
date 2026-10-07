@@ -55,6 +55,51 @@ concluir esse gate sem alegar QA runtime que não ocorreu.
    ferramenta de QA como efeito colateral.
 5. Com busca concluída, iniciar a revisão do áudio pelo plano P2.
 
+### P2 — plano detalhado de consistência do áudio
+
+**Inventário estático 2026-10-06:** `core/leitura/audio.ts` mantém uma sessão
+global, consumida pela leitura de capítulo e pelo Versículo do Dia. Isso impede
+duas falas simultâneas e é uma boa regra base, mas os controles/estados visuais
+vivem nos dois componentes e recebem mudanças via observador da sessão. Estado
+“reproduzindo” é emitido antes da confirmação da engine; `Speech.pause/resume/stop`
+são chamadas assíncronas sem captura de rejeição. No Android, pausar encerra a
+fala e retomar inicia o versículo atual desde o começo; a chamada de `stop` não é
+aguardada antes da possível retomada, portanto precisa de serialização para
+evitar corrida. Leitor encerra no cleanup; o card do Versículo do Dia encerra ao
+perder foco. Não modificar esses arquivos agora: há alterações locais do usuário
+nesses três arquivos (`core/leitura/audio.ts`, `CardVersiculoDia.tsx` e a rota do
+leitor) ainda não integradas neste commit.
+
+**Etapas antes da implementação:**
+
+1. Integrar/revisar primeiro as alterações locais já presentes no player e nos
+   consumidores, sem sobrescrevê-las. Manter a decisão funcional de uma única
+   fala global simultânea.
+2. Definir contrato e tabela de transições: ocioso → iniciando → reproduzindo →
+   pausado/interrompido/erro → ocioso. Incluir dono/fonte ativa e versículo;
+   não anunciar reprodução enquanto a plataforma ainda está iniciando.
+3. Encapsular operações da plataforma em uma fila/geração de sessão: stop,
+   pause, resume e troca de capítulo devem serializar; callbacks de sessões
+   antigas não podem mudar o estado da sessão atual; rejeições precisam produzir
+   estado recuperável sem promise rejeitada solta.
+4. Expor um único estado observável com inscrição e limpeza explícitas. Os dois
+   consumidores mostram controles para a fonte ativa e não exibem ao mesmo
+   tempo indicadores contraditórios; sair/ocultar o consumidor aplica a política
+   de encerramento já documentada.
+5. Alinhar linguagem e semântica de cada plataforma: pausa real quando suportada;
+   no Android, ação chamada “interromper” e retomada do início do versículo atual.
+   Erro deve oferecer repetição a partir desse mesmo versículo.
+6. Rodar typecheck e checks estruturais. QA manual em web/iOS/Android pode ficar
+   pendente para o usuário, mas o plano deve anotar exatamente os estados e a
+   política de retomada a confirmar; não declarar verificação real sem dispositivo.
+
+**Aceite funcional:** nunca há duas falas concorrentes; comandos rápidos e troca
+de rota não iniciam sessão órfã; o estado e número do versículo acompanham a
+engine ativa; pause/resume/interrupção comunicam o comportamento real da
+plataforma; erros podem ser repetidos e callbacks antigos não alteram nova
+sessão. **Estado:** planejamento detalhado; implementação bloqueada até integrar
+as alterações locais existentes sem conflito.
+
 ## Estado comprovado na revisão
 
 **Incidente de rota direta (2026-10-02):** a URL pública de 1 Coríntios 13

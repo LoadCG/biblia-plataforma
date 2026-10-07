@@ -21,6 +21,7 @@ import type { SessaoPlano } from "../repositories/PlanosRepository";
 import { apagarEstadoUsuario, coletarEstadoUsuario } from "../storage/estadoUsuario";
 
 export type DadosPessoais = {
+  versaoFormato: number;
   exportadoEm: string;
   perfil: Perfil;
   grifos: Grifo[];
@@ -29,7 +30,7 @@ export type DadosPessoais = {
   livrosLidos: string[];
   pesquisasFavoritas: PesquisaFavorita[];
   versiculosSalvos: VersiculoSalvo[];
-  planos: { planoId: string; diasConcluidos: number[] }[];
+  planos: { planoId: string; diasConcluidos: number[]; datasConclusao?: Record<string, string> }[];
   preferenciasLocais: Record<string, string | null>;
   colecoes: Colecao[];
   associacoesColecoes: AssociacaoColecao[];
@@ -47,19 +48,20 @@ export async function coletarDadosPessoais(ownerId: string): Promise<DadosPessoa
     versiculosSalvosRepository.listarTodos(ownerId),
   ]);
 
-  const planos = (
-    await Promise.all(
-      planosLeitura.map(async (plano) => ({
-        planoId: plano.id,
-        diasConcluidos: await planosRepository.listarDiasConcluidos(ownerId, plano.id),
-      }))
-    )
-  ).filter((p) => p.diasConcluidos.length > 0);
+  const planos = (await Promise.all(planosLeitura.map(async (plano) => {
+    const conclusoes = await planosRepository.listarConclusoes(ownerId, plano.id);
+    return {
+      planoId: plano.id,
+      diasConcluidos: conclusoes.map(({ dia }) => dia),
+      datasConclusao: Object.fromEntries(conclusoes.map(({ dia, concluidoEm }) => [String(dia), concluidoEm])),
+    };
+  }))).filter((plano) => plano.diasConcluidos.length > 0);
 
   const preferenciasLocais = await coletarEstadoUsuario();
   const [colecoes, associacoesColecoes] = await Promise.all([colecoesRepository.listar(ownerId), colecoesRepository.listarAssociacoes(ownerId)]);
   const sessoesPlanos = (await Promise.all(planosLeitura.flatMap((plano) => plano.dias.map((dia) => planosRepository.obterSessao(ownerId, plano.id, dia.dia))))).filter((sessao): sessao is SessaoPlano => sessao !== null);
   return {
+    versaoFormato: 1,
     exportadoEm: new Date().toISOString(),
     perfil,
     grifos,

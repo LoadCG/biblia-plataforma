@@ -5,6 +5,8 @@ export type DiaPlanoConcluido = {
   concluidoEm: string;
 };
 
+export type ConclusaoPlanoExportada = { dia: number; concluidoEm: string };
+
 export type SessaoPlano = {
   ownerId: string;
   planoId: string;
@@ -27,6 +29,7 @@ export interface PlanosRepository {
    * Retorna a lista de dias concluídos de um plano para o usuário.
    */
   listarDiasConcluidos(ownerId: string, planoId: string): Promise<number[]>;
+  listarConclusoes(ownerId: string, planoId: string): Promise<ConclusaoPlanoExportada[]>;
 
   /**
    * Data (ISO) da conclusão mais recente de qualquer dia do plano, ou

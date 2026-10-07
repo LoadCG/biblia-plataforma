@@ -3,6 +3,7 @@ import * as Linking from "expo-linking";
 import { useEffect, useRef, useState } from "react";
 import { AppState, Modal, Platform, Pressable, ScrollView, Share, Text, View } from "react-native";
 import { BotaoTema } from "../components/BotaoTema";
+import { RestaurarDadosModal } from "../components/RestaurarDadosModal";
 import {
   carregarFonteSerifada,
   carregarIndiceFonte,
@@ -19,7 +20,7 @@ import {
   notificacoesPermitidas,
 } from "../core/notifications/notificacoes";
 import { HORARIO_LEMBRETE_PADRAO, lembreteDiarioAtivo, salvarLembreteDiarioAtivo } from "../core/notifications/preferenciaNotificacao";
-import { alternarTema, restaurarTemaPadrao, useColorScheme } from "../core/theme";
+import { alternarTema, restaurarTema, restaurarTemaPadrao, useColorScheme } from "../core/theme";
 import { apagarDadosPessoais, coletarDadosPessoais } from "../core/util/dadosPessoais";
 import { mostrarToast } from "../core/util/toast";
 import { useOwnerId } from "../core/useOwnerId";
@@ -67,6 +68,7 @@ export default function Configuracoes() {
   const [inicializandoLembrete, setInicializandoLembrete] = useState(Platform.OS !== "web");
   const [exportando, setExportando] = useState(false);
   const [confirmarApagar, setConfirmarApagar] = useState(false);
+  const [restaurarBackupVisivel, setRestaurarBackupVisivel] = useState(false);
   const [apagando, setApagando] = useState(false);
   const [salvandoPreferencias, setSalvandoPreferencias] = useState(false);
   const [alterandoLembrete, setAlterandoLembrete] = useState(false);
@@ -431,6 +433,23 @@ export default function Configuracoes() {
               <Text className="text-cor-texto-suave dark:text-cor-texto-suave-dark">→</Text>
             </Pressable>
           </Linha>
+          <Linha>
+            <Pressable
+              onPress={() => setRestaurarBackupVisivel(true)}
+              disabled={!ownerId}
+              accessibilityRole="button"
+              accessibilityLabel="Restaurar dados de um backup"
+              className="flex-row items-center justify-between active:opacity-70"
+            >
+              <View className="flex-1 pr-3">
+                <Text className="text-cor-texto dark:text-cor-texto-dark font-semibold">Restaurar backup</Text>
+                <Text className="text-xs text-cor-texto-suave dark:text-cor-texto-suave-dark mt-0.5">
+                  Substitui os dados deste perfil por um arquivo JSON validado.
+                </Text>
+              </View>
+              <Text className="text-cor-texto-suave dark:text-cor-texto-suave-dark">→</Text>
+            </Pressable>
+          </Linha>
           <Linha ultima>
             <Pressable onPress={() => setConfirmarApagar(true)} accessibilityRole="button" accessibilityLabel="Apagar todos os meus dados" className="flex-row items-center justify-between active:opacity-70">
               <View className="flex-1 pr-3">
@@ -506,6 +525,21 @@ export default function Configuracoes() {
           </Pressable>
         </Pressable>
       </Modal>
+      <RestaurarDadosModal
+        visivel={restaurarBackupVisivel}
+        ownerId={ownerId}
+        escuro={escuro}
+        onFechar={() => setRestaurarBackupVisivel(false)}
+        onConcluido={() => {
+          setRestaurarBackupVisivel(false);
+          Promise.all([carregarIndiceFonte(), carregarFonteSerifada(), restaurarTema()])
+            .then(([indice, serifada]) => {
+              setIndiceFonte(indice);
+              setFonteSerifada(serifada);
+            })
+            .catch(() => mostrarToast("Os dados foram restaurados, mas algumas preferências não atualizaram a tela.", { severidade: "aviso" }));
+        }}
+      />
     </ScrollView>
   );
 }

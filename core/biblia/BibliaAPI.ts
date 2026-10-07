@@ -226,31 +226,47 @@ export async function buscarGlobal(query: string, opcoes: OpcoesBuscaGlobal = {}
 
   await garantirBaseBiblia();
 
+  const consultaNormalizada = query.trim();
+  if (!consultaNormalizada) return [];
+
   // Usa snippet para destacar, ou apenas retorna o texto. Retornaremos o texto normal para não quebrar UI existente.
   // FTS5 MATCH sintaxe: 
-  const consultaLimpa = query.trim();
+  const consultaLimpa = consultaNormalizada;
   const fraseExata = consultaLimpa.startsWith('"') && consultaLimpa.endsWith('"');
   const semAspas = consultaLimpa.replace(/^"|"$/g, "").replace(/"/g, '""');
   const termo = fraseExata
     ? `"${semAspas}"`
     : semAspas.split(/\s+/).filter(Boolean).map((token) => `"${token}"*`).join(" AND ");
   
+  let candidatos: ResultadoBuscaGlobal[];
   try {
-    const candidatos = await db.getAllAsync<ResultadoBuscaGlobal>(
-      `SELECT livroSlug, nomeLivro, capitulo, versiculo, texto FROM biblia_fts WHERE texto MATCH ? ORDER BY rank LIMIT 300`,
+    candidatos = await db.getAllAsync<ResultadoBuscaGlobal>(
+      `SELECT livroSlug, nomeLivro, capitulo, versiculo, texto FROM biblia_fts WHERE texto MATCH ?`,
       [termo]
     );
-    return candidatos
-      .filter((item) => !opcoes.livroSlug || item.livroSlug === opcoes.livroSlug || livros.find((l) => l.slug === opcoes.livroSlug)?.abreviacao === item.livroSlug)
-      .filter((item) => !opcoes.testamento || livros.find((l) => l.abreviacao === item.livroSlug)?.testamento === opcoes.testamento)
-      .map((item) => ({ ...item, relevancia: pontuarResultado(item.texto, query) }))
-      .sort((a, b) => (b.relevancia ?? 0) - (a.relevancia ?? 0) || a.capitulo - b.capitulo || a.versiculo - b.versiculo)
-      .slice(opcoes.offset ?? 0, (opcoes.offset ?? 0) + (opcoes.limite ?? 50));
-  } catch (e) {
-    // Caso de falha no FTS (query mal formada), fallback para LIKE
-    return await db.getAllAsync<ResultadoBuscaGlobal>(
-      `SELECT livroSlug, nomeLivro, capitulo, versiculo, texto FROM biblia_text WHERE texto LIKE ? LIMIT ? OFFSET ?`,
-      [`%${query}%`, opcoes.limite ?? 50, opcoes.offset ?? 0]
+  } catch {
+    // Se a consulta não puder ser representada em FTS, usa todos os termos
+    // como substrings literais; escapes evitam que %, _ e \ virem curingas.
+    const tokens = semAspas.split(/\s+/).filter(Boolean);
+    if (!tokens.length) return [];
+    const condicoes = tokens.map(() => `texto LIKE ? ESCAPE '\\'`).join(" AND ");
+    const escaparLike = (token: string) => token.replace(/[\\%_]/g, "\\$&");
+    candidatos = await db.getAllAsync<ResultadoBuscaGlobal>(
+      `SELECT livroSlug, nomeLivro, capitulo, versiculo, texto FROM biblia_text WHERE ${condicoes}`,
+      tokens.map((token) => `%${escaparLike(token)}%`)
     );
   }
+
+  const livroFiltro = livros.find((livro) => livro.slug === opcoes.livroSlug);
+  const numeroLivro = new Map(livros.filter((livro) => livro.abreviacao).map((livro) => [livro.abreviacao!, livro.numero]));
+  const offset = Math.max(0, opcoes.offset ?? 0);
+  const limite = Math.max(0, opcoes.limite ?? 50);
+  return candidatos
+    .filter((item) => !opcoes.livroSlug || item.livroSlug === opcoes.livroSlug || livroFiltro?.abreviacao === item.livroSlug)
+    .filter((item) => !opcoes.testamento || livros.find((livro) => livro.abreviacao === item.livroSlug)?.testamento === opcoes.testamento)
+    .map((item) => ({ ...item, relevancia: pontuarResultado(item.texto, query) }))
+    .sort((a, b) => (b.relevancia ?? 0) - (a.relevancia ?? 0)
+      || (numeroLivro.get(a.livroSlug) ?? 0) - (numeroLivro.get(b.livroSlug) ?? 0)
+      || a.capitulo - b.capitulo || a.versiculo - b.versiculo)
+    .slice(offset, offset + limite);
 }

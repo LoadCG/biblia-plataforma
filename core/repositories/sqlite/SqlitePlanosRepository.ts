@@ -1,4 +1,4 @@
-import type { PlanosRepository, DiaPlanoConcluido, SessaoPlano } from "../PlanosRepository";
+import type { PlanosRepository, DiaPlanoConcluido, SessaoPlano, ConclusaoPlanoExportada } from "../PlanosRepository";
 import { db } from "../../db/database";
 
 export const sqlitePlanosRepository: PlanosRepository = {
@@ -41,6 +41,14 @@ export const sqlitePlanosRepository: PlanosRepository = {
       [ownerId, planoId]
     );
     return resultados.map((r) => r.diaConcluido);
+  },
+
+  async listarConclusoes(ownerId, planoId): Promise<ConclusaoPlanoExportada[]> {
+    const registros = await db.getAllAsync<{ diaConcluido: number; concluidoEm: string }>(
+      `SELECT diaConcluido, concluidoEm FROM progresso_planos WHERE ownerId = ? AND planoId = ? ORDER BY diaConcluido ASC`,
+      [ownerId, planoId]
+    );
+    return registros.map(({ diaConcluido, concluidoEm }) => ({ dia: diaConcluido, concluidoEm }));
   },
 
   async obterUltimaConclusao(ownerId, planoId) {

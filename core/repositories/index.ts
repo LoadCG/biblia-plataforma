@@ -19,5 +19,6 @@ export const versiculosSalvosRepository = sqliteVersiculosSalvosRepository;
 export const planosRepository = sqlitePlanosRepository;
 export const perfilRepository = sqlitePerfilRepository;
 export const colecoesRepository = sqliteColecoesRepository;
+export { substituirDadosPessoais } from "./substituirDadosPessoais";
 
 export { obterOwnerId } from "../owner";

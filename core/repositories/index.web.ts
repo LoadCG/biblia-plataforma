@@ -20,5 +20,6 @@ export const versiculosSalvosRepository = localVersiculosSalvosRepository;
 export const planosRepository = localPlanosRepository;
 export const perfilRepository = localPerfilRepository;
 export const colecoesRepository = localColecoesRepository;
+export { substituirDadosPessoais } from "./substituirDadosPessoais.web";
 
 export { obterOwnerId } from "../owner";

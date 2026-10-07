@@ -1,4 +1,4 @@
-import type { PlanosRepository, DiaPlanoConcluido, SessaoPlano } from "../PlanosRepository";
+import type { PlanosRepository, DiaPlanoConcluido, SessaoPlano, ConclusaoPlanoExportada } from "../PlanosRepository";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { comFila } from "./fila";
 
@@ -73,6 +73,13 @@ export const localPlanosRepository: PlanosRepository = {
       .filter((i) => i.ownerId === ownerId && i.planoId === planoId)
       .map((i) => i.diaConcluido)
       .sort((a, b) => a - b);
+  },
+
+  async listarConclusoes(ownerId, planoId): Promise<ConclusaoPlanoExportada[]> {
+    return (await lerParaOwner(ownerId))
+      .filter((item) => item.ownerId === ownerId && item.planoId === planoId)
+      .map((item) => ({ dia: item.diaConcluido, concluidoEm: item.concluidoEm }))
+      .sort((a, b) => a.dia - b.dia);
   },
 
   async obterUltimaConclusao(ownerId, planoId) {

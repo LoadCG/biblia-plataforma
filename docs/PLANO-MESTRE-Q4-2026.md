@@ -25,6 +25,36 @@ movimento reduzido. Os gates nativos e de viewport da seleção continuam
 registrados, mas não bloqueiam trabalho web independente. O plano de hover
 segue implementado com QA parcial.
 
+## Prioridade funcional seguinte — consistência da busca
+
+O usuário pediu execução em ordem estratégica das lacunas, mantendo responsividade
+web e deixando o app mobile dedicado deferido. A restauração de backup foi
+implementada e está em validação estática; antes de iniciar uma nova alteração,
+concluir esse gate sem alegar QA runtime que não ocorreu.
+
+| Prioridade | Lacuna | Plano de melhoria | Aceite |
+|---|---|---|---|
+| P1 | Busca apresenta resultados inconsistentes entre entrada, temas, conteúdo bíblico e resumos; a descoberta não explica sempre o motivo/relevância nem os filtros ativos. | Mapear todas as rotas/componentes e provedores de busca; documentar fonte, normalização, ordem e limite por superfície; unificar normalização acento/caixa/pontuação sem forçar semânticas distintas; padronizar loading, vazio, erro, limpar busca e preservar consulta ao voltar; indicar categoria e trecho correspondente nos resultados; cobrir teclado/foco, deep links, tema claro/escuro e responsividade desktop. Não mudar algoritmo editorial/relevância sem baseline e revisão de conteúdo. | A mesma consulta tem comportamento previsível em cada origem; resultados identificam fonte/categoria e trecho quando aplicável; nenhuma rota perde a consulta em navegação/volta; estados de vazio/erro são acionáveis; verificação estática passa e jornada web é inspecionada. |
+| P2 | Controles de áudio podem divergir de estado do player, navegação e ciclo de vida. | Inventariar APIs e consumidores; explicitar máquina de estados idle/loading/playing/paused/error; evitar duas reproduções concorrentes; sincronizar troca de capítulo, pausa, falha e saída de tela; manter teclado e leitor de tela; limitar mudanças ao player até confirmar contrato atual. | Estado anunciado acompanha playback; ação interrompe/retoma como descrito; troca de capítulo não sobrepõe áudio; erro permite recuperação e navegação permanece utilizável. |
+| P3 | Metadados e gestão de sessão/perfil ainda não têm conta ou sincronização. | Não iniciar autenticação/cloud sem decisão de produto, privacidade e backend. Melhorias locais devem permanecer exportáveis e segregadas por owner. | Nenhum dado pessoal enviado sem nova decisão explícita e desenho de segurança. |
+
+**Progresso 2026-10-06:** o inventário confirmou que Descubra combina busca bíblica (FTS5 nativo e varredura local web) e busca editorial separada; Salvos tem filtro local por texto/referência e não deve compartilhar o algoritmo de relevância bíblica. A busca nativa limitava o conjunto antes dos filtros, tinha fallback sem filtros/relevância e uma consulta vazia podia cair num `LIKE %%`. Corrigido: filtros e pontuação são aplicados antes do limite, o fallback usa todos os termos escapados e passa pelo mesmo pós-processamento, consultas vazias retornam lista vazia e empate fica na ordem canônica dos livros. Web reduziu lookup repetido do livro e calcula tokens uma vez por consulta. Busca editorial e bíblica agora compartilham normalização de caixa/acentos/espaços na consulta, mantendo seu escopo/relevância distintos. `typecheck`, `check:a11y`, `check:ui`, `check:copy-ui` e `git diff --check` passaram. Não foram executados testes, navegador ou runtime SQLite; consultas/paginação, equivalência real web/nativo e estados da tela continuam pendentes de QA funcional. Portanto P1 está parcialmente implementado, sem aceite integral.
+
+### Execução funcional — ordem e gates
+
+1. Fechar restauração de backup: typecheck, diff review e contratos relevantes;
+   runtime do seletor, recuperação/falha e inspeção visual ficam listados como QA
+   pendente se o ambiente não os permite.
+2. Inventariar implementação das buscas em `core/content`, `core/biblia` e
+   superfícies `Descubra`, leitura e resumos; registrar diferenças antes de
+   editar. Preservar buscas distintas que têm objetivos diferentes.
+3. Implementar só lacunas com impacto demonstrado no inventário: normalização
+   compartilhada segura, resultados com origem/trecho e estados consistentes.
+4. Verificar tipos e contratos estruturais já disponíveis; fazer inspeção
+   navegável somente se a interface/browser estiver disponível, sem instalar
+   ferramenta de QA como efeito colateral.
+5. Com busca concluída, iniciar a revisão do áudio pelo plano P2.
+
 ## Estado comprovado na revisão
 
 **Incidente de rota direta (2026-10-02):** a URL pública de 1 Coríntios 13

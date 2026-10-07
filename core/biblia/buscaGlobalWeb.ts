@@ -22,6 +22,7 @@ type ItemIndice = {
   textoNormalizado: string;
 };
 
+const livroPorAbreviacao = new Map(livros.filter((livro) => livro.abreviacao).map((livro) => [livro.abreviacao!, livro]));
 
 let indicePromise: Promise<ItemIndice[]> | null = null;
 
@@ -59,9 +60,9 @@ export async function buscarGlobalWeb(termoBruto: string, opcoes: OpcoesBuscaGlo
 
   const indice = await obterIndice();
   const resultados: ResultadoBuscaGlobal[] = [];
+  const tokens = termo.split(" ").filter(Boolean);
   for (const item of indice) {
-    const livro = livros.find((l) => l.abreviacao === item.abbrev);
-    const tokens = termo.split(" ").filter(Boolean);
+    const livro = livroPorAbreviacao.get(item.abbrev);
     const corresponde = fraseExata ? item.textoNormalizado.includes(termo) : tokens.every((token) => item.textoNormalizado.includes(token));
     if ((!opcoes.livroSlug || livro?.slug === opcoes.livroSlug) && (!opcoes.testamento || livro?.testamento === opcoes.testamento) && corresponde) {
       resultados.push({
@@ -74,7 +75,9 @@ export async function buscarGlobalWeb(termoBruto: string, opcoes: OpcoesBuscaGlo
       });
     }
   }
-  resultados.sort((a, b) => (b.relevancia ?? 0) - (a.relevancia ?? 0) || a.capitulo - b.capitulo || a.versiculo - b.versiculo);
+  resultados.sort((a, b) => (b.relevancia ?? 0) - (a.relevancia ?? 0)
+    || (livroPorAbreviacao.get(a.livroSlug)?.numero ?? 0) - (livroPorAbreviacao.get(b.livroSlug)?.numero ?? 0)
+    || a.capitulo - b.capitulo || a.versiculo - b.versiculo);
   const inicio = opcoes.offset ?? 0;
   return resultados.slice(inicio, inicio + (opcoes.limite ?? 50));
 }

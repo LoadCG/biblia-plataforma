@@ -5,6 +5,7 @@
 // core/types/leitura.ts e o plano em PLANO-PLATAFORMA.md, Decisão 2).
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { randomUUID } from "expo-crypto";
+import { acessoLocalPrecisaDeRecuperacao, recuperarRestauracaoPendente } from "./util/restauracaoPendente";
 
 const CHAVE_OWNER_ID = "owner-id-anonimo";
 
@@ -12,7 +13,11 @@ let cache: string | null = null;
 let emAndamento: Promise<string> | null = null;
 
 export function obterOwnerId(): Promise<string> {
-  if (cache) return Promise.resolve(cache);
+  if (cache && !acessoLocalPrecisaDeRecuperacao()) return Promise.resolve(cache);
+  if (acessoLocalPrecisaDeRecuperacao()) {
+    cache = null;
+    emAndamento = null;
+  }
   // Deduplica chamadas concorrentes (ex.: duas telas montando ao mesmo
   // tempo no primeiro load) — sem isso, ambas gerariam UUIDs diferentes
   // e a segunda escrita apagaria o ID que a primeira já tinha em uso.
@@ -21,6 +26,7 @@ export function obterOwnerId(): Promise<string> {
 }
 
 async function resolverOwnerId(): Promise<string> {
+  await recuperarRestauracaoPendente();
   const existente = await AsyncStorage.getItem(CHAVE_OWNER_ID);
   const id = existente ?? randomUUID();
   if (!existente) await AsyncStorage.setItem(CHAVE_OWNER_ID, id);

@@ -9,6 +9,7 @@
 // varredura direta em ~66 objetos é instantânea.
 import { resumosCompletos } from "./livros";
 import type { Livro } from "./tipos";
+import { normalizarBusca } from "../biblia/relevanciaBusca";
 
 export type ResultadoBusca = {
   livro: Livro;
@@ -20,10 +21,11 @@ export type ResultadoBusca = {
   camposCoincidentes: Array<"titulo" | "alias" | "tema" | "conteudo">;
 };
 
-const REGEX_DIACRITICOS = new RegExp("[̀-ͯ]", "g");
-
-function normalizar(texto: string): string {
-  return texto.normalize("NFD").replace(REGEX_DIACRITICOS, "").toLowerCase();
+// Preserva os espaços do texto-fonte porque encontrarTrecho usa a posição
+// normalizada para recortar o texto original. A consulta usa o normalizador
+// compartilhado, que também compacta espaços digitados em sequência.
+function normalizarConteudo(texto: string): string {
+  return texto.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
 }
 
 function recortarTrecho(texto: string, indice: number, tamanhoTermo: number): string {
@@ -36,13 +38,13 @@ function recortarTrecho(texto: string, indice: number, tamanhoTermo: number): st
 
 function encontrarTrecho(resumo: (typeof resumosCompletos)[number], termoNormalizado: string): string | null {
   for (const item of resumo.fichaRapida) {
-    const indice = normalizar(item.valor).indexOf(termoNormalizado);
+    const indice = normalizarConteudo(item.valor).indexOf(termoNormalizado);
     if (indice !== -1) return recortarTrecho(item.valor, indice, termoNormalizado.length);
   }
   for (const secao of resumo.secoes) {
     const textos = secao.lista ? secao.itens : secao.paragrafos;
     for (const texto of textos) {
-      const indice = normalizar(texto).indexOf(termoNormalizado);
+      const indice = normalizarConteudo(texto).indexOf(termoNormalizado);
       if (indice !== -1) return recortarTrecho(texto, indice, termoNormalizado.length);
     }
   }
@@ -130,7 +132,7 @@ const SINONIMOS_TEMATICOS: Record<string, string[]> = {
 };
 
 export function buscarLivros(termoBruto: string): ResultadoBusca[] {
-  let termo = normalizar(termoBruto.trim());
+  let termo = normalizarBusca(termoBruto);
   
   if (ALIAS_MAP[termo]) {
     termo = ALIAS_MAP[termo];
@@ -143,8 +145,8 @@ export function buscarLivros(termoBruto: string): ResultadoBusca[] {
   const resultados: ResultadoBusca[] = [];
 
   for (const resumo of resumosCompletos) {
-    if (normalizar(resumo.nome).includes(termo)) {
-      resultados.push({ livro: resumo, trecho: null, score: normalizar(resumo.nome) === termo ? 1000 : 700, camposCoincidentes: ["titulo"] });
+    if (normalizarBusca(resumo.nome).includes(termo)) {
+      resultados.push({ livro: resumo, trecho: null, score: normalizarBusca(resumo.nome) === termo ? 1000 : 700, camposCoincidentes: ["titulo"] });
       continue;
     }
     const termoEncontrado = termosBusca.find((candidato) => encontrarTrecho(resumo, candidato));

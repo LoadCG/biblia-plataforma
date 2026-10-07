@@ -14,7 +14,7 @@ sem uma necessidade validada.
 | 2. Gestão e preservação de dados | Implementada; verificação runtime pendente | Exportação enumera os dados efetivamente incluídos; exclusão explica o alcance, cancela o lembrete deste app e restaura estados locais e tema padrão na interface. Falha ao cancelar o aviso do sistema recebe resultado específico. |
 | 3. Isolamento do lembrete | Implementada; teste em dispositivo pendente | Cancelamento busca apenas notificações marcadas como lembrete bíblico e reconhece as antigas pelo título/corpo; outras notificações permanecem agendadas. A tela revalida permissão e agendamento ao voltar ao app e corrige preferências desatualizadas. |
 | 4. QA visual/assistivo/responsivo | Parcial | Tema claro e telas superior/inferior inspecionados em 1280×720; árvore acessível conferida. Android agora cria canal antes de pedir permissão; negativa oferece atalho para Configurações do sistema. Permissão provisória do iOS é aceita e o estado é revalidado ao retornar ao app. Tema escuro, larguras estreitas, percurso completo por teclado/leitor de tela e validação nativa aguardam ambiente de verificação. |
-| 5. Expansões condicionais | Não iniciada | Avaliar escolha de horário, restauração manual de preferências ou ajustes de grifo somente com evidência de necessidade. |
+| 5. Expansões condicionais | Restauração implementada; QA em andamento | Importação de backup JSON web/nativo está disponível e detalhada em [`PLANO-RESTAURACAO-DADOS.md`](./PLANO-RESTAURACAO-DADOS.md). Falhas induzidas, comparação semântica de reexportação e inspeção visual/assistiva permanecem pendentes. Escolha de horário e ajustes de grifo seguem condicionados a evidência de necessidade. |
 
 ## Contrato observado
 
@@ -61,6 +61,9 @@ dependência foi adicionada apenas para QA.
   mecanismo de recuperação/sincronização após apagar.
 - A escolha de horário não faz parte desta entrega; 07:00 deve ser descrito como
   fixo, sem sugerir uma configuração que não existe.
+- Restauração de backup foi implementada; seguir as pendências de falha,
+  equivalência e inspeção em `PLANO-RESTAURACAO-DADOS.md` antes de declarar o
+  aceite completo.
 - A revisão do app nativo dedicado continua fora da prioridade atual; QA nativo
   aqui limita-se a validar a função de notificação já existente quando o
   ambiente estiver disponível.

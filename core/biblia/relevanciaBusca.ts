@@ -2,6 +2,19 @@ export function normalizarBusca(texto: string): string {
   return texto.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim().replace(/\s+/g, " ");
 }
 
+export function tokenizarBusca(texto: string): string[] {
+  return normalizarBusca(texto).split(/[^a-z0-9]+/).filter(Boolean);
+}
+
+/** Replica o contrato FTS: prefixos por palavra ou sequência contígua para frase entre aspas. */
+export function correspondeConsultaBiblica(texto: string, consultaNormalizada: string, fraseExata: boolean): boolean {
+  const palavrasTexto = tokenizarBusca(texto);
+  const tokensConsulta = tokenizarBusca(consultaNormalizada);
+  if (tokensConsulta.length === 0) return false;
+  if (!fraseExata) return tokensConsulta.every((token) => palavrasTexto.some((palavra) => palavra.startsWith(token)));
+  return palavrasTexto.some((_, inicio) => tokensConsulta.every((token, indice) => palavrasTexto[inicio + indice] === token));
+}
+
 export function pontuarResultado(textoOriginal: string, consultaOriginal: string): number {
   const texto = normalizarBusca(textoOriginal);
   const consulta = normalizarBusca(consultaOriginal).replace(/^"|"$/g, "");

@@ -11,7 +11,7 @@
 import { carregarBibliaJson } from "./bibliaLocalWeb";
 import type { OpcoesBuscaGlobal, ResultadoBuscaGlobal } from "./BibliaAPI";
 import { livros } from "../content/livros";
-import { normalizarBusca, pontuarResultado } from "./relevanciaBusca";
+import { correspondeConsultaBiblica, normalizarBusca, pontuarResultado } from "./relevanciaBusca";
 
 type ItemIndice = {
   abbrev: string;
@@ -60,10 +60,9 @@ export async function buscarGlobalWeb(termoBruto: string, opcoes: OpcoesBuscaGlo
 
   const indice = await obterIndice();
   const resultados: ResultadoBuscaGlobal[] = [];
-  const tokens = termo.split(" ").filter(Boolean);
   for (const item of indice) {
     const livro = livroPorAbreviacao.get(item.abbrev);
-    const corresponde = fraseExata ? item.textoNormalizado.includes(termo) : tokens.every((token) => item.textoNormalizado.includes(token));
+    const corresponde = correspondeConsultaBiblica(item.textoNormalizado, termo, fraseExata);
     if ((!opcoes.livroSlug || livro?.slug === opcoes.livroSlug) && (!opcoes.testamento || livro?.testamento === opcoes.testamento) && corresponde) {
       resultados.push({
         livroSlug: item.abbrev,

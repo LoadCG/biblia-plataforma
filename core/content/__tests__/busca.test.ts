@@ -45,13 +45,60 @@ describe("busca editorial", () => {
 
   it("mantém busca por nome e abreviação", () => {
     expect(buscarLivros("gn")[0].livro.slug).toBe("01-genesis");
+    expect(buscarLivros("jo")[0].livro.slug).toBe("43-joao");
     expect(buscarLivros("João")[0].livro.slug).toBe("43-joao");
+  });
+
+  it("combina termos e respeita frases entre aspas nos resumos", () => {
+    const termos = buscarLivros("criação descanso").find(({ livro }) => livro.slug === "01-genesis");
+    const frase = buscarLivros('"criação e o descanso"').find(({ livro }) => livro.slug === "01-genesis");
+    const fraseInvertida = buscarLivros('"descanso e criação"');
+
+    expect(termos?.trecho?.toLowerCase()).toContain("criação");
+    expect(termos?.trecho?.toLowerCase()).toContain("descanso");
+    expect(frase?.trecho?.toLowerCase()).toContain("criação e o descanso");
+    expect(fraseInvertida).toEqual([]);
   });
 
   it("expande temas por vocabulário controlado", () => {
     const resultados = buscarLivros("esperança");
     expect(resultados.length).toBeGreaterThan(0);
     expect(resultados.some(({ trecho }) => trecho !== null)).toBe(true);
+    expect(resultados.filter(({ camposCoincidentes }) => camposCoincidentes.includes("tema"))
+      .every(({ trecho }) => trecho !== null)).toBe(true);
+  });
+
+  it("encontra resumos por misericórdia e reconciliação ao buscar perdão", () => {
+    const resultados = buscarLivros("perdão");
+
+    expect(resultados.length).toBeGreaterThan(0);
+    expect(resultados.some(({ livro, trecho }) => livro.slug === "01-genesis" && trecho?.toLowerCase().includes("reconciliação"))).toBe(true);
+    expect(resultados.every(({ camposCoincidentes, trecho }) => camposCoincidentes.includes("tema") && trecho !== null)).toBe(true);
+  });
+
+  it("mantém o trecho alinhado com o campo que justificou o resultado", () => {
+    const consulta = "sabedoria";
+    const normalizar = (texto: string) => texto.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+    const resultados = buscarLivros(consulta).filter(({ camposCoincidentes }) => camposCoincidentes.includes("conteudo"));
+
+    expect(resultados.length).toBeGreaterThan(0);
+    expect(resultados.every(({ trecho }) => trecho !== null && normalizar(trecho).includes(consulta))).toBe(true);
+  });
+
+  it("recorta o texto-fonte corretamente depois de palavras acentuadas", () => {
+    const resultado = buscarLivros("sabedoria").find(({ livro }) => livro.slug === "11-1-reis");
+
+    expect(resultado?.trecho).toContain("sabedoria");
+  });
+
+  it("não confunde correspondência parcial dentro de palavra com título ou conteúdo", () => {
+    const resultadoEfesios = buscarLivros("fé").find(({ livro }) => livro.slug === "49-efesios");
+
+    expect(resultadoEfesios?.camposCoincidentes).toContain("conteudo");
+    expect(resultadoEfesios?.camposCoincidentes).not.toContain("titulo");
+    expect(resultadoEfesios?.trecho).toContain("fé");
+    expect(buscarLivros("fé").some(({ livro, trecho }) => livro.slug === "01-genesis" && trecho?.includes("feitas"))).toBe(false);
+    expect(buscarLivros("!!!")).toEqual([]);
   });
 
   it("ordena resultados de forma determinística e explica o campo", () => {

@@ -4,7 +4,8 @@ import { db, garantirBaseBiblia } from "../db/database";
 import type { CapituloTexto, VersiculoTexto } from "./tipos";
 import { comFila } from "../repositories/local/fila";
 import { livros } from "../content/livros";
-import { pontuarResultado } from "./relevanciaBusca";
+import { correspondeConsultaBiblica, pontuarResultado, tokenizarBusca } from "./relevanciaBusca";
+import { parseReferenciaBiblica } from "./parseReferencia";
 
 const isWeb = Platform.OS === "web";
 const BASE_URL = "https://bible-api.com/";
@@ -219,6 +220,35 @@ export type OpcoesBuscaGlobal = {
 // nativo; no web, busca em memória sobre o JSON embutido (ver
 // buscaGlobalWeb.ts — SQLite/WASM no navegador foi evitado de propósito).
 export async function buscarGlobal(query: string, opcoes: OpcoesBuscaGlobal = {}): Promise<ResultadoBuscaGlobal[]> {
+  const referencia = parseReferenciaBiblica(query);
+  if (referencia) {
+    const livro = livros.find((item) => item.slug === referencia.livroSlug);
+    if (!livro?.abreviacao
+      || (opcoes.livroSlug && opcoes.livroSlug !== livro.slug && opcoes.livroSlug !== livro.abreviacao)
+      || (opcoes.testamento && opcoes.testamento !== livro.testamento)) return [];
+
+    const sufixoVersiculos = referencia.versiculoInicial
+      ? `:${referencia.versiculoInicial}${referencia.versiculoFinal && referencia.versiculoFinal !== referencia.versiculoInicial ? `-${referencia.versiculoFinal}` : ""}`
+      : "";
+    // Reconstroi com o nome canônico do catálogo: o parser aceita variantes
+    // sem acento (por exemplo, "Joao"), mas o leitor nativo usa o catálogo
+    // como chave para consultar SQLite.
+    const passagem = await buscarReferencia(`${livro.nome} ${referencia.capitulo}${sufixoVersiculos}`);
+    const versiculos = passagem.versiculos ?? (referencia.versiculoInicial
+      ? [{ numero: referencia.versiculoInicial, texto: passagem.texto }]
+      : []);
+    const offset = Math.max(0, Math.floor(opcoes.offset ?? 0));
+    const limite = Math.max(0, Math.floor(opcoes.limite ?? 50));
+    return versiculos.map((versiculo) => ({
+      livroSlug: livro.abreviacao!,
+      nomeLivro: livro.nome,
+      capitulo: referencia.capitulo,
+      versiculo: versiculo.numero,
+      texto: versiculo.texto,
+      relevancia: 1000,
+    })).slice(offset, offset + limite);
+  }
+
   if (isWeb) {
     const { buscarGlobalWeb } = await import("./buscaGlobalWeb");
     return buscarGlobalWeb(query, opcoes);
@@ -231,12 +261,13 @@ export async function buscarGlobal(query: string, opcoes: OpcoesBuscaGlobal = {}
 
   // Usa snippet para destacar, ou apenas retorna o texto. Retornaremos o texto normal para não quebrar UI existente.
   // FTS5 MATCH sintaxe: 
-  const consultaLimpa = consultaNormalizada;
-  const fraseExata = consultaLimpa.startsWith('"') && consultaLimpa.endsWith('"');
-  const semAspas = consultaLimpa.replace(/^"|"$/g, "").replace(/"/g, '""');
+  const fraseExata = consultaNormalizada.startsWith('"') && consultaNormalizada.endsWith('"');
+  const semAspas = consultaNormalizada.replace(/^"|"$/g, "");
+  const tokens = tokenizarBusca(semAspas);
+  if (tokens.length === 0) return [];
   const termo = fraseExata
-    ? `"${semAspas}"`
-    : semAspas.split(/\s+/).filter(Boolean).map((token) => `"${token}"*`).join(" AND ");
+    ? `"${tokens.join(" ")}"`
+    : tokens.map((token) => `"${token}"*`).join(" AND ");
   
   let candidatos: ResultadoBuscaGlobal[];
   try {
@@ -245,22 +276,19 @@ export async function buscarGlobal(query: string, opcoes: OpcoesBuscaGlobal = {}
       [termo]
     );
   } catch {
-    // Se a consulta não puder ser representada em FTS, usa todos os termos
-    // como substrings literais; escapes evitam que %, _ e \ virem curingas.
-    const tokens = semAspas.split(/\s+/).filter(Boolean);
-    if (!tokens.length) return [];
-    const condicoes = tokens.map(() => `texto LIKE ? ESCAPE '\\'`).join(" AND ");
-    const escaparLike = (token: string) => token.replace(/[\\%_]/g, "\\$&");
-    candidatos = await db.getAllAsync<ResultadoBuscaGlobal>(
-      `SELECT livroSlug, nomeLivro, capitulo, versiculo, texto FROM biblia_text WHERE ${condicoes}`,
-      tokens.map((token) => `%${escaparLike(token)}%`)
+    // Mantém a semântica comum com FTS e web (prefixos por palavra, acentos
+    // normalizados e frases contíguas). Este caminho raro lê a tabela local
+    // completa porque LIKE não oferece essas mesmas regras com segurança.
+    const linhas = await db.getAllAsync<ResultadoBuscaGlobal>(
+      `SELECT livroSlug, nomeLivro, capitulo, versiculo, texto FROM biblia_text`
     );
+    candidatos = linhas.filter((item) => correspondeConsultaBiblica(item.texto, semAspas, fraseExata));
   }
 
   const livroFiltro = livros.find((livro) => livro.slug === opcoes.livroSlug);
   const numeroLivro = new Map(livros.filter((livro) => livro.abreviacao).map((livro) => [livro.abreviacao!, livro.numero]));
-  const offset = Math.max(0, opcoes.offset ?? 0);
-  const limite = Math.max(0, opcoes.limite ?? 50);
+  const offset = Math.max(0, Math.floor(opcoes.offset ?? 0));
+  const limite = Math.max(0, Math.floor(opcoes.limite ?? 50));
   return candidatos
     .filter((item) => !opcoes.livroSlug || item.livroSlug === opcoes.livroSlug || livroFiltro?.abreviacao === item.livroSlug)
     .filter((item) => !opcoes.testamento || livros.find((livro) => livro.abreviacao === item.livroSlug)?.testamento === opcoes.testamento)

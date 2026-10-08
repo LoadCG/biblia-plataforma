@@ -40,6 +40,8 @@ const ATALHOS_DESCUBRA: { id: string; rotulo: string; icone: IconeUINome; destin
   { id: "ajuda", rotulo: "Ajuda", icone: "info", destino: "ajuda" },
 ];
 
+const TAMANHO_PAGINA_BUSCA = 50;
+
 export default function Pesquisa() {
   const parametros = useLocalSearchParams<{ tema?: string }>();
   const [termo, setTermo] = useState("");
@@ -49,7 +51,10 @@ export default function Pesquisa() {
   const [erroBusca, setErroBusca] = useState<string | null>(null);
   const [abaExibicao, setAbaExibicao] = useState<'biblia' | 'resumos'>('biblia');
   const [testamento, setTestamento] = useState<"todos" | "Antigo Testamento" | "Novo Testamento">("todos");
-  const [limite, setLimite] = useState(50);
+  const [offsetBusca, setOffsetBusca] = useState(0);
+  const [temMaisResultados, setTemMaisResultados] = useState(false);
+  const [carregandoMais, setCarregandoMais] = useState(false);
+  const [erroCarregarMais, setErroCarregarMais] = useState(false);
   const [favoritas, setFavoritas] = useState<PesquisaFavorita[]>([]);
   const [livroFiltro, setLivroFiltro] = useState<string | undefined>();
   const [tentativaBusca, setTentativaBusca] = useState(0);
@@ -59,6 +64,7 @@ export default function Pesquisa() {
   const desktop = useWindowDimensions().width >= 1024;
   const ownerId = useOwnerId();
   const buscaAtiva = useRef(0);
+  const favoritaAtiva = useRef(0);
   const refFiltroLivro = useArrastarParaRolar();
   const idTemaParametro = Array.isArray(parametros.tema) ? parametros.tema[0] : parametros.tema;
   const temaSelecionado = idTemaParametro ? TEMAS_BUSCA.find((tema) => tema.id === idTemaParametro) ?? null : null;
@@ -69,7 +75,7 @@ export default function Pesquisa() {
       router.replace("/pesquisa");
       return;
     }
-    if (temaSelecionado && termo) setTermo("");
+    if (temaSelecionado && termo) alterarTermo("");
   }, [idTemaParametro, temaSelecionado, termo]);
 
   function abrirTema(tema: Tema) {
@@ -81,49 +87,123 @@ export default function Pesquisa() {
   }
 
   useEffect(() => {
-    if (!ownerId) return;
+    if (!ownerId) {
+      setFavoritas([]);
+      return;
+    }
     let ativo = true;
     pesquisasFavoritasRepository.listarTodas(ownerId)
       .then((itens) => { if (ativo) setFavoritas(itens); })
       .catch(() => { if (ativo) mostrarToast("Não foi possível carregar suas buscas favoritas", { severidade: "erro" }); });
     return () => { ativo = false; };
   }, [ownerId, favoritada]);
-  useEffect(() => setLimite(50), [termo, testamento, livroFiltro]);
+
+  useEffect(() => {
+    const idFavorita = ++favoritaAtiva.current;
+    if (!ownerId || !termo.trim()) {
+      setFavoritada(false);
+      return;
+    }
+    pesquisasFavoritasRepository.estaFavoritada(ownerId, termo).then((valor) => {
+      if (favoritaAtiva.current === idFavorita) setFavoritada(valor);
+    }).catch(() => {
+      if (favoritaAtiva.current === idFavorita) mostrarToast("Não foi possível verificar se a busca está salva", { severidade: "erro" });
+    });
+    return () => { favoritaAtiva.current += 1; };
+  }, [ownerId, termo]);
+
+  function reiniciarBusca(consulta = termo) {
+    // Invalida imediatamente callbacks já resolvidos em paralelo com o evento
+    // de digitação/filtro, antes que o efeito da próxima consulta seja criado.
+    buscaAtiva.current += 1;
+    setOffsetBusca(0);
+    setTemMaisResultados(false);
+    setCarregandoMais(false);
+    setErroCarregarMais(false);
+    setResultadosBiblia([]);
+    setErroBusca(null);
+    setBuscando(Boolean(consulta.trim()));
+  }
+
+  function alterarTermo(proximo: string) {
+    if (proximo === termo) return;
+    reiniciarBusca(proximo);
+    setTermo(proximo);
+  }
+
+  function alterarTestamento(proximo: typeof testamento) {
+    if (proximo === testamento) return;
+    reiniciarBusca();
+    setTestamento(proximo);
+  }
+
+  function alterarLivroFiltro(proximo?: string) {
+    if (proximo === livroFiltro) return;
+    reiniciarBusca();
+    setLivroFiltro(proximo);
+  }
 
   const resultadosResumo = useMemo(() => (termo.trim() ? buscarLivros(termo) : []), [termo]);
 
   useEffect(() => {
     const idBusca = ++buscaAtiva.current;
-    if (!ownerId || !termo.trim()) {
-      setFavoritada(false);
+    if (!termo.trim()) {
       setResultadosBiblia([]);
+      setBuscando(false);
+      setErroBusca(null);
       return;
     }
-    
-    pesquisasFavoritasRepository.estaFavoritada(ownerId, termo).then((valor) => {
-      if (buscaAtiva.current === idBusca) setFavoritada(valor);
-    }).catch(() => {
-      if (buscaAtiva.current === idBusca) mostrarToast("Não foi possível verificar se a busca está salva", { severidade: "erro" });
-    });
-    
+
     // Busca assíncrona na Bíblia
     const timeout = setTimeout(() => {
-      setBuscando(true);
+      if (offsetBusca === 0) setBuscando(true);
       setErroBusca(null);
-      buscarGlobal(termo, { testamento: testamento === "todos" ? undefined : testamento, livroSlug: livroFiltro, limite })
+      buscarGlobal(termo, {
+        testamento: testamento === "todos" ? undefined : testamento,
+        livroSlug: livroFiltro,
+        limite: TAMANHO_PAGINA_BUSCA + 1,
+        offset: offsetBusca,
+      })
         .then((resultados) => {
-          if (buscaAtiva.current === idBusca) setResultadosBiblia(resultados);
+          if (buscaAtiva.current !== idBusca) return;
+          const paginaTemMais = resultados.length > TAMANHO_PAGINA_BUSCA;
+          const pagina = resultados.slice(0, TAMANHO_PAGINA_BUSCA);
+          setResultadosBiblia((atuais) => offsetBusca === 0 ? pagina : [...atuais, ...pagina]);
+          setTemMaisResultados(paginaTemMais);
+          setErroCarregarMais(false);
         })
         .catch((e) => {
-          if (buscaAtiva.current === idBusca) setErroBusca(mensagemErroAmigavel(e));
+          if (buscaAtiva.current === idBusca) {
+            if (offsetBusca > 0) {
+              setTemMaisResultados(true);
+              setErroCarregarMais(true);
+              mostrarToast(mensagemErroAmigavel(e), { severidade: "erro" });
+            } else {
+              setErroBusca(mensagemErroAmigavel(e));
+            }
+          }
         })
         .finally(() => {
-          if (buscaAtiva.current === idBusca) setBuscando(false);
+          if (buscaAtiva.current === idBusca) {
+            setBuscando(false);
+            setCarregandoMais(false);
+          }
         });
-    }, 500); // debounce de 500ms
+    }, offsetBusca === 0 ? 500 : 0);
     
     return () => clearTimeout(timeout);
-  }, [ownerId, termo, testamento, livroFiltro, limite, tentativaBusca]);
+  }, [termo, testamento, livroFiltro, offsetBusca, tentativaBusca]);
+
+  function carregarMaisResultados() {
+    if (!temMaisResultados || buscando || carregandoMais) return;
+    setCarregandoMais(true);
+    if (erroCarregarMais) {
+      setErroCarregarMais(false);
+      setTentativaBusca((valor) => valor + 1);
+    } else {
+      setOffsetBusca((atual) => atual + TAMANHO_PAGINA_BUSCA);
+    }
+  }
 
   async function alternarFavorita() {
     if (!ownerId || !termo.trim()) return;
@@ -191,7 +271,7 @@ export default function Pesquisa() {
             accessibilityHint="Digite uma palavra, vários termos ou uma frase entre aspas"
             value={termo}
             onChangeText={(t) => {
-              setTermo(t);
+              alterarTermo(t);
               if (t.trim() && idTemaParametro) router.setParams({ tema: undefined, origem: undefined });
             }}
             placeholder="Buscar na Bíblia e nos resumos"
@@ -201,7 +281,7 @@ export default function Pesquisa() {
           {termo ? (
             <Pressable
               testID="limpar-busca-descubra"
-              onPress={() => setTermo("")}
+              onPress={() => alterarTermo("")}
               accessibilityRole="button"
               accessibilityLabel="Limpar busca"
               hitSlop={10}
@@ -224,7 +304,7 @@ export default function Pesquisa() {
               className={`mr-4 pb-2 border-b-2 active:opacity-60 ${abaExibicao === 'biblia' ? 'border-cor-destaque dark:border-cor-destaque-dark' : 'border-transparent'}`}
             >
               <Text className={`font-semibold ${abaExibicao === 'biblia' ? 'text-cor-texto dark:text-cor-texto-dark' : 'text-cor-texto-suave dark:text-cor-texto-suave-dark'}`}>
-                Na Bíblia {resultadosBiblia.length > 0 && `(${resultadosBiblia.length})`}
+                Na Bíblia {resultadosBiblia.length > 0 && `(${resultadosBiblia.length}${temMaisResultados ? "+" : ""})`}
               </Text>
             </Pressable>
             <Pressable
@@ -246,7 +326,7 @@ export default function Pesquisa() {
           <View className="mb-2">
           <View className="flex-row flex-wrap gap-2 mb-2">
             {(["todos", "Antigo Testamento", "Novo Testamento"] as const).map((valor) => (
-              <Pressable key={valor} onPress={() => setTestamento(valor)} accessibilityRole="radio" accessibilityState={{ checked: testamento === valor }}
+              <Pressable key={valor} onPress={() => alterarTestamento(valor)} accessibilityRole="radio" accessibilityState={{ checked: testamento === valor }}
                 // @ts-expect-error accessibilityChecked é uma extensão do react-native-web
                 accessibilityChecked={testamento === valor} className={`px-3 py-1.5 rounded-full border ${testamento === valor ? "bg-cor-destaque-fundo dark:bg-cor-destaque-fundo-dark border-cor-destaque dark:border-cor-destaque-dark" : "border-cor-borda dark:border-cor-borda-dark"}`}>
                 <Text className="text-xs font-semibold text-cor-texto dark:text-cor-texto-dark">{valor === "todos" ? "Toda a Bíblia" : valor === "Antigo Testamento" ? "Antigo Testamento" : "Novo Testamento"}</Text>
@@ -254,10 +334,10 @@ export default function Pesquisa() {
             ))}
           </View>
           <ScrollView ref={refFiltroLivro} horizontal showsHorizontalScrollIndicator={false} accessibilityLabel="Filtrar por livro">
-            <Pressable onPress={() => setLivroFiltro(undefined)} accessibilityRole="radio" accessibilityState={{ checked: !livroFiltro }}
+            <Pressable onPress={() => alterarLivroFiltro(undefined)} accessibilityRole="radio" accessibilityState={{ checked: !livroFiltro }}
               // @ts-expect-error accessibilityChecked é uma extensão do react-native-web
               accessibilityChecked={!livroFiltro} className={`mr-2 px-3 py-1.5 rounded-full border ${!livroFiltro ? "border-cor-destaque dark:border-cor-destaque-dark" : "border-cor-borda dark:border-cor-borda-dark"}`}><Text className="text-xs text-cor-texto dark:text-cor-texto-dark">Todos os livros</Text></Pressable>
-            {livros.map((livro) => <Pressable key={livro.slug} onPress={() => setLivroFiltro(livro.slug)} accessibilityRole="radio" accessibilityState={{ checked: livroFiltro === livro.slug }}
+            {livros.map((livro) => <Pressable key={livro.slug} onPress={() => alterarLivroFiltro(livro.slug)} accessibilityRole="radio" accessibilityState={{ checked: livroFiltro === livro.slug }}
               // @ts-expect-error accessibilityChecked é uma extensão do react-native-web
               accessibilityChecked={livroFiltro === livro.slug} className={`mr-2 px-3 py-1.5 rounded-full border ${livroFiltro === livro.slug ? "border-cor-destaque dark:border-cor-destaque-dark" : "border-cor-borda dark:border-cor-borda-dark"}`}><Text className="text-xs text-cor-texto dark:text-cor-texto-dark">{livro.nome}</Text></Pressable>)}
           </ScrollView>
@@ -267,11 +347,13 @@ export default function Pesquisa() {
 
       <ScrollView className="flex-1">
         <View className={`px-4 pt-2 pb-10 ${desktop ? "max-w-6xl" : "max-w-2xl"} w-full mx-auto`}>
-          {termo.trim() && !buscando ? (
+          {termo.trim() && !buscando && !carregandoMais ? (
             <Text accessibilityLiveRegion="polite" className="sr-only">
               {erroBusca
                 ? `Busca indisponível: ${erroBusca}`
-                : `${abaExibicao === "biblia" ? resultadosBiblia.length : resultadosResumo.length} resultados encontrados`}
+                : abaExibicao === "biblia" && temMaisResultados
+                  ? `${resultadosBiblia.length} resultados carregados, há mais resultados disponíveis`
+                  : `${abaExibicao === "biblia" ? resultadosBiblia.length : resultadosResumo.length} resultados encontrados`}
             </Text>
           ) : null}
           {termo.trim() ? (
@@ -324,8 +406,8 @@ export default function Pesquisa() {
                 ) : resultadosBiblia.length === 0 ? (
                   <EstadoVazio
                     titulo="Nenhum versículo encontrado"
-                    descricao="Tente outra palavra."
-                    acao={{ rotulo: "Limpar busca", aoPressionar: () => setTermo("") }}
+                    descricao="Tente outra palavra ou remova algum filtro para ampliar a busca."
+                    acao={{ rotulo: "Limpar busca", aoPressionar: () => alterarTermo("") }}
                   />
                 ) : (
                   <>
@@ -348,8 +430,10 @@ export default function Pesquisa() {
                     </Link>
                     );
                   })}
-                  {resultadosBiblia.length >= limite ? (
-                    <Pressable onPress={() => setLimite((valor) => valor + 50)} accessibilityRole="button" className="rounded-full border border-cor-borda dark:border-cor-borda-dark px-4 py-3 items-center mt-2 active:opacity-70"><Text className="font-bold text-cor-texto dark:text-cor-texto-dark">Carregar mais resultados</Text></Pressable>
+                  {temMaisResultados ? (
+                    <Pressable onPress={carregarMaisResultados} disabled={carregandoMais} accessibilityRole="button" accessibilityState={{ busy: carregandoMais, disabled: carregandoMais }} className="rounded-full border border-cor-borda dark:border-cor-borda-dark px-4 py-3 items-center mt-2 active:opacity-70">
+                      <Text className="font-bold text-cor-texto dark:text-cor-texto-dark">{carregandoMais ? "Carregando…" : erroCarregarMais ? "Tentar novamente" : "Carregar mais resultados"}</Text>
+                    </Pressable>
                   ) : null}
                   </>
                 )
@@ -455,7 +539,7 @@ export default function Pesquisa() {
               {favoritas.length > 0 ? (
                 <View className="mb-5">
                   <Text className="text-sm font-semibold text-cor-texto-suave dark:text-cor-texto-suave-dark mb-2">Pesquisas favoritas</Text>
-                  <View className="flex-row flex-wrap gap-2">{favoritas.slice(0, 8).map((item) => <Pressable key={item.termo} onPress={() => setTermo(item.termo)} accessibilityRole="button" className="px-3 py-2 rounded-full bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark border border-cor-borda dark:border-cor-borda-dark active:opacity-70"><Text className="text-xs font-semibold text-cor-texto dark:text-cor-texto-dark">★ {item.termo}</Text></Pressable>)}</View>
+              <View className="flex-row flex-wrap gap-2">{favoritas.slice(0, 8).map((item) => <Pressable key={item.termo} onPress={() => alterarTermo(item.termo)} accessibilityRole="button" className="px-3 py-2 rounded-full bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark border border-cor-borda dark:border-cor-borda-dark active:opacity-70"><Text className="text-xs font-semibold text-cor-texto dark:text-cor-texto-dark">★ {item.termo}</Text></Pressable>)}</View>
                 </View>
               ) : null}
               <View className={`flex-row items-end justify-between ${desktop ? "mt-2 mb-4" : "mb-3"}`}>

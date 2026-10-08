@@ -77,6 +77,7 @@ export async function buscarGlobalWeb(termoBruto: string, opcoes: OpcoesBuscaGlo
   resultados.sort((a, b) => (b.relevancia ?? 0) - (a.relevancia ?? 0)
     || (livroPorAbreviacao.get(a.livroSlug)?.numero ?? 0) - (livroPorAbreviacao.get(b.livroSlug)?.numero ?? 0)
     || a.capitulo - b.capitulo || a.versiculo - b.versiculo);
-  const inicio = opcoes.offset ?? 0;
-  return resultados.slice(inicio, inicio + (opcoes.limite ?? 50));
+  const inicio = Math.max(0, Math.floor(opcoes.offset ?? 0));
+  const limite = Math.max(0, Math.floor(opcoes.limite ?? 50));
+  return resultados.slice(inicio, inicio + limite);
 }

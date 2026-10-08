@@ -5,11 +5,12 @@
 // O site antigo fazia isso com um índice de texto gerado em build,
 // porque cada página era um HTML estático separado. Aqui os 66 resumos
 // completos já vivem inteiros em memória (core/content/dados/livros.json,
-// carregado de uma vez) — não há por que gerar um índice à parte, a
-// varredura direta em ~66 objetos é instantânea.
+// carregado de uma vez). Títulos e trechos são normalizados e indexados
+// sob demanda uma única vez, mantendo offsets para exibir o texto original.
 import { resumosCompletos } from "./livros";
 import type { Livro } from "./tipos";
-import { normalizarBusca } from "../biblia/relevanciaBusca";
+import { normalizarBusca, tokenizarBusca } from "../biblia/relevanciaBusca";
+import { parseReferenciaBiblica } from "../biblia/parseReferencia";
 
 export type ResultadoBusca = {
   livro: Livro;
@@ -21,11 +22,52 @@ export type ResultadoBusca = {
   camposCoincidentes: Array<"titulo" | "alias" | "tema" | "conteudo">;
 };
 
-// Preserva os espaços do texto-fonte porque encontrarTrecho usa a posição
-// normalizada para recortar o texto original. A consulta usa o normalizador
-// compartilhado, que também compacta espaços digitados em sequência.
-function normalizarConteudo(texto: string): string {
-  return texto.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+type ConteudoNormalizado = {
+  texto: string;
+  iniciosOriginais: number[];
+  finsOriginais: number[];
+};
+
+// Mantém o mapa de offsets porque remover marcas diacríticas altera a
+// quantidade de unidades UTF-16 antes do trecho a ser exibido.
+function normalizarConteudo(texto: string): ConteudoNormalizado {
+  let normalizado = "";
+  const iniciosOriginais: number[] = [];
+  const finsOriginais: number[] = [];
+  let indiceOriginal = 0;
+
+  for (const caractere of texto) {
+    const fimOriginal = indiceOriginal + caractere.length;
+    const trechoNormalizado = caractere.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+    normalizado += trechoNormalizado;
+    for (let indice = 0; indice < trechoNormalizado.length; indice += 1) {
+      iniciosOriginais.push(indiceOriginal);
+      finsOriginais.push(fimOriginal);
+    }
+    indiceOriginal = fimOriginal;
+  }
+
+  return { texto: normalizado, iniciosOriginais, finsOriginais };
+}
+
+function correspondeToken(texto: string, consulta: string): boolean {
+  // Termos muito curtos são exatos para evitar que “fé” encontre “feitas”.
+  return consulta.length <= 2 ? texto === consulta : texto.startsWith(consulta);
+}
+
+function correspondeTitulo(palavrasTitulo: string[], consulta: string[], fraseExata: boolean): boolean {
+  if (consulta.length === 0) return false;
+  if (fraseExata) {
+    return palavrasTitulo.some((_, inicio) => consulta.every((palavra, indice) => palavrasTitulo[inicio + indice] === palavra));
+  }
+
+  const usadas = new Set<number>();
+  return consulta.every((palavra) => {
+    const indice = palavrasTitulo.findIndex((tituloToken, indiceToken) => !usadas.has(indiceToken) && correspondeToken(tituloToken, palavra));
+    if (indice === -1) return false;
+    usadas.add(indice);
+    return true;
+  });
 }
 
 function recortarTrecho(texto: string, indice: number, tamanhoTermo: number): string {
@@ -36,17 +78,103 @@ function recortarTrecho(texto: string, indice: number, tamanhoTermo: number): st
   return prefixo + texto.slice(inicio, fim).trim() + sufixo;
 }
 
-function encontrarTrecho(resumo: (typeof resumosCompletos)[number], termoNormalizado: string): string | null {
-  for (const item of resumo.fichaRapida) {
-    const indice = normalizarConteudo(item.valor).indexOf(termoNormalizado);
-    if (indice !== -1) return recortarTrecho(item.valor, indice, termoNormalizado.length);
+type CorrespondenciaTrecho = { trecho: string; termo: string };
+
+type PalavraIndexada = { valor: string; inicio: number; fim: number };
+type TextoIndexado = { original: string; palavras: PalavraIndexada[] };
+type ResumoIndexado = {
+  resumo: (typeof resumosCompletos)[number];
+  tituloNormalizado: string;
+  palavrasTitulo: string[];
+  textos: TextoIndexado[];
+};
+
+let indiceEditorial: ResumoIndexado[] | null = null;
+
+function indexarTexto(original: string): TextoIndexado {
+  const conteudo = normalizarConteudo(original);
+  const palavras: PalavraIndexada[] = [];
+  const expressaoPalavra = /[a-z0-9]+/g;
+  let correspondencia: RegExpExecArray | null;
+  while ((correspondencia = expressaoPalavra.exec(conteudo.texto)) !== null) {
+    const inicioNormalizado = correspondencia.index;
+    const fimNormalizado = inicioNormalizado + correspondencia[0].length - 1;
+    palavras.push({
+      valor: correspondencia[0],
+      inicio: conteudo.iniciosOriginais[inicioNormalizado],
+      fim: conteudo.finsOriginais[fimNormalizado],
+    });
   }
-  for (const secao of resumo.secoes) {
-    const textos = secao.lista ? secao.itens : secao.paragrafos;
-    for (const texto of textos) {
-      const indice = normalizarConteudo(texto).indexOf(termoNormalizado);
-      if (indice !== -1) return recortarTrecho(texto, indice, termoNormalizado.length);
+  return { original, palavras };
+}
+
+function obterIndiceEditorial(): ResumoIndexado[] {
+  if (indiceEditorial) return indiceEditorial;
+
+  indiceEditorial = resumosCompletos.map((resumo) => {
+    const textos = resumo.fichaRapida.map(({ valor }) => indexarTexto(valor));
+    for (const secao of resumo.secoes) {
+      const conteudos = secao.lista ? secao.itens : secao.paragrafos;
+      textos.push(...conteudos.map(indexarTexto));
     }
+
+    const tituloNormalizado = normalizarBusca(resumo.nome);
+    return {
+      resumo,
+      tituloNormalizado,
+      palavrasTitulo: tokenizarBusca(tituloNormalizado),
+      textos,
+    };
+  });
+
+  return indiceEditorial;
+}
+
+function encontrarTrechoEmTexto(texto: TextoIndexado, consulta: string[], fraseExata: boolean): string | null {
+  const palavrasTexto = texto.palavras;
+
+  let palavrasEncontradas: typeof palavrasTexto;
+  if (fraseExata) {
+    const inicioFrase = palavrasTexto.findIndex((_, inicio) =>
+      consulta.every((palavra, indice) => palavrasTexto[inicio + indice]?.valor === palavra)
+    );
+    if (inicioFrase === -1) return null;
+    palavrasEncontradas = palavrasTexto.slice(inicioFrase, inicioFrase + consulta.length);
+  } else {
+    palavrasEncontradas = [];
+    for (const palavraConsulta of consulta) {
+      const encontrada = palavrasTexto.find(({ valor }) => correspondeToken(valor, palavraConsulta));
+      if (!encontrada) return null;
+      palavrasEncontradas.push(encontrada);
+    }
+  }
+
+  const inicio = Math.min(...palavrasEncontradas.map(({ inicio: inicioPalavra }) => inicioPalavra));
+  const fim = Math.max(...palavrasEncontradas.map(({ fim: fimPalavra }) => fimPalavra));
+  return recortarTrecho(texto.original, inicio, fim - inicio);
+}
+
+function encontrarTrecho(
+  resumo: ResumoIndexado,
+  consulta: string[],
+  fraseExata: boolean,
+  termoEvidencia: string
+): CorrespondenciaTrecho | null {
+  for (const texto of resumo.textos) {
+    const trecho = encontrarTrechoEmTexto(texto, consulta, fraseExata);
+    if (trecho) return { trecho, termo: termoEvidencia };
+  }
+  return null;
+}
+
+function encontrarCorrespondencia(
+  resumo: ResumoIndexado,
+  termos: string[],
+  fraseExata = false
+): CorrespondenciaTrecho | null {
+  for (const termo of termos) {
+    const correspondencia = encontrarTrecho(resumo, tokenizarBusca(termo), fraseExata, termo);
+    if (correspondencia) return correspondencia;
   }
   return null;
 }
@@ -70,7 +198,7 @@ const ALIAS_MAP: Record<string, string> = {
   "ed": "esdras",
   "ne": "neemias",
   "et": "ester",
-  "jo": "jo",
+  "jo": "joao",
   "sl": "salmos",
   "pv": "proverbios",
   "ec": "eclesiastes",
@@ -129,31 +257,46 @@ const SINONIMOS_TEMATICOS: Record<string, string[]> = {
   "justica": ["justica", "pobre", "oprim", "misericord"],
   "sabedoria": ["sabedoria", "prudencia", "entendimento", "ensino"],
   "libertacao": ["libertacao", "libertar", "resgate", "livramento"],
+  "perdao": ["perdao", "misericord", "reconcili"],
 };
 
 export function buscarLivros(termoBruto: string): ResultadoBusca[] {
-  let termo = normalizarBusca(termoBruto);
-  
-  if (ALIAS_MAP[termo]) {
+  const entrada = termoBruto.trim();
+  if (!entrada) return resumosCompletos.map((livro) => ({ livro, trecho: null, score: 0, camposCoincidentes: [] }));
+  if (parseReferenciaBiblica(entrada)) return [];
+
+  const fraseExata = entrada.startsWith('"') && entrada.endsWith('"');
+  let termo = normalizarBusca(entrada.replace(/^"|"$/g, ""));
+  let tokensConsulta = tokenizarBusca(termo);
+  if (tokensConsulta.length === 0) return [];
+
+  if (!fraseExata && tokensConsulta.length === 1 && ALIAS_MAP[termo]) {
     termo = ALIAS_MAP[termo];
+    tokensConsulta = tokenizarBusca(termo);
   }
 
-  if (!termo) return resumosCompletos.map((livro) => ({ livro, trecho: null, score: 0, camposCoincidentes: [] }));
-
-  const termosBusca = SINONIMOS_TEMATICOS[termo] ?? [termo];
+  const consulta = tokensConsulta.join(" ");
+  // A expansão temática só se aplica à consulta de um termo; frases e
+  // consultas AND preservam literalmente o que a pessoa digitou.
+  const termosBusca = fraseExata
+    ? [consulta]
+    : tokensConsulta.length === 1
+      ? SINONIMOS_TEMATICOS[termo] ?? [termo]
+      : [consulta];
 
   const resultados: ResultadoBusca[] = [];
 
-  for (const resumo of resumosCompletos) {
-    if (normalizarBusca(resumo.nome).includes(termo)) {
-      resultados.push({ livro: resumo, trecho: null, score: normalizarBusca(resumo.nome) === termo ? 1000 : 700, camposCoincidentes: ["titulo"] });
+  for (const item of obterIndiceEditorial()) {
+    const resumo = item.resumo;
+    if (correspondeTitulo(item.palavrasTitulo, tokensConsulta, fraseExata)) {
+      resultados.push({ livro: resumo, trecho: null, score: item.tituloNormalizado === termo ? 1000 : 700, camposCoincidentes: ["titulo"] });
       continue;
     }
-    const termoEncontrado = termosBusca.find((candidato) => encontrarTrecho(resumo, candidato));
-    const trecho = termoEncontrado ? encontrarTrecho(resumo, termoEncontrado) : null;
-    if (trecho) {
-      const score = termoEncontrado === termo ? 300 : 220;
-      resultados.push({ livro: resumo, trecho, score, camposCoincidentes: [termoEncontrado === termo ? "conteudo" : "tema"] });
+    const correspondencia = encontrarCorrespondencia(item, termosBusca, fraseExata);
+    if (correspondencia) {
+      const direto = correspondencia.termo === termo || correspondencia.termo === consulta;
+      const score = direto ? 300 : 220;
+      resultados.push({ livro: resumo, trecho: correspondencia.trecho, score, camposCoincidentes: [direto ? "conteudo" : "tema"] });
     }
   }
 

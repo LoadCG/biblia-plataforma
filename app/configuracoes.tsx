@@ -3,10 +3,10 @@ import * as Linking from "expo-linking";
 import { useEffect, useRef, useState } from "react";
 import { AppState, Modal, Platform, Pressable, ScrollView, Share, Text, View } from "react-native";
 import { BotaoTema } from "../components/BotaoTema";
+import { ConfiguracaoAudio } from "../components/ConfiguracaoAudio";
 import { RestaurarDadosModal } from "../components/RestaurarDadosModal";
 import {
-  carregarFonteSerifada,
-  carregarIndiceFonte,
+  carregarPreferenciasLeitura,
   FAMILIA_SERIFADA,
   INDICE_PADRAO,
   salvarFonteSerifada,
@@ -20,11 +20,13 @@ import {
   notificacoesPermitidas,
 } from "../core/notifications/notificacoes";
 import { HORARIO_LEMBRETE_PADRAO, lembreteDiarioAtivo, salvarLembreteDiarioAtivo } from "../core/notifications/preferenciaNotificacao";
-import { alternarTema, restaurarTema, restaurarTemaPadrao, useColorScheme } from "../core/theme";
+import { alternarTema, restaurarTema, restaurarTemaPadrao, useColorScheme, useTemaInicializado } from "../core/theme";
 import { apagarDadosPessoais, coletarDadosPessoais } from "../core/util/dadosPessoais";
 import { mostrarToast } from "../core/util/toast";
 import { useOwnerId } from "../core/useOwnerId";
 import { reiniciarOnboarding } from "../core/leitura/onboarding";
+import { ativarComEspaco } from "../core/util/ativarComEspaco";
+import { PressableComTecladoWeb } from "../core/util/propsPressableWeb";
 
 const SOMBRA = { shadowColor: "#000", shadowOpacity: 0.06, shadowRadius: 4, shadowOffset: { width: 0, height: 1 } };
 
@@ -60,10 +62,12 @@ function Linha({ children, ultima }: { children: React.ReactNode; ultima?: boole
 
 export default function Configuracoes() {
   const { colorScheme } = useColorScheme();
+  const temaInicializado = useTemaInicializado();
   const escuro = colorScheme === "dark";
   const ownerId = useOwnerId();
   const [indiceFonte, setIndiceFonte] = useState(INDICE_PADRAO);
   const [fonteSerifada, setFonteSerifada] = useState(false);
+  const [carregandoPreferenciasLeitura, setCarregandoPreferenciasLeitura] = useState(true);
   const [lembreteAtivo, setLembreteAtivo] = useState(false);
   const [inicializandoLembrete, setInicializandoLembrete] = useState(Platform.OS !== "web");
   const [exportando, setExportando] = useState(false);
@@ -71,6 +75,7 @@ export default function Configuracoes() {
   const [restaurarBackupVisivel, setRestaurarBackupVisivel] = useState(false);
   const [apagando, setApagando] = useState(false);
   const [salvandoPreferencias, setSalvandoPreferencias] = useState(false);
+  const [versaoAudio, setVersaoAudio] = useState(0);
   const [alterandoLembrete, setAlterandoLembrete] = useState(false);
   const sincronizandoLembrete = useRef(false);
   const aguardaRetornoPermissao = useRef(false);
@@ -116,15 +121,22 @@ export default function Configuracoes() {
 
   useEffect(() => {
     let ativo = true;
-    Promise.all([carregarIndiceFonte(), carregarFonteSerifada()])
-      .then(([indice, serifada]) => {
-        if (!ativo) return;
-        setIndiceFonte(indice);
-        setFonteSerifada(serifada);
-      })
-      .catch(() => {
-        if (ativo) mostrarToast("Não foi possível carregar todas as configurações", { severidade: "erro" });
-      });
+    async function carregarEstadoLeitura() {
+      const preferencias = await carregarPreferenciasLeitura();
+      if (!ativo) return;
+      if (preferencias.indiceFonte !== undefined) setIndiceFonte(preferencias.indiceFonte);
+      if (preferencias.fonteSerifada !== undefined) setFonteSerifada(preferencias.fonteSerifada);
+      if (preferencias.falhas > 0) {
+        mostrarToast(
+          preferencias.falhas === 2
+            ? "Não foi possível carregar as preferências de leitura"
+            : "Uma preferência de leitura não pôde ser carregada",
+          { severidade: "erro" }
+        );
+      }
+      setCarregandoPreferenciasLeitura(false);
+    }
+    void carregarEstadoLeitura();
     void sincronizarLembrete();
 
     const subscription = AppState.addEventListener("change", (estado) => {
@@ -179,7 +191,7 @@ export default function Configuracoes() {
   }
 
   async function ajustarFonte(delta: number) {
-    if (salvandoPreferencias) return;
+    if (salvandoPreferencias || carregandoPreferenciasLeitura) return;
     const novo = Math.min(TAMANHOS_FONTE.length - 1, Math.max(0, indiceFonte + delta));
     if (novo === indiceFonte) return;
     setSalvandoPreferencias(true);
@@ -194,7 +206,7 @@ export default function Configuracoes() {
   }
 
   async function alternarFonteSerifada() {
-    if (salvandoPreferencias) return;
+    if (salvandoPreferencias || carregandoPreferenciasLeitura) return;
     const novo = !fonteSerifada;
     setSalvandoPreferencias(true);
     try {
@@ -248,6 +260,7 @@ export default function Configuracoes() {
       }
       setIndiceFonte(INDICE_PADRAO);
       setFonteSerifada(false);
+      setVersaoAudio((versao) => versao + 1);
       setLembreteAtivo(false);
       restaurarTemaPadrao();
       apagado = true;
@@ -283,9 +296,10 @@ export default function Configuracoes() {
             <View className="flex-row items-center gap-2">
               <Pressable
                 onPress={() => ajustarFonte(-1)}
-                disabled={indiceFonte === 0 || salvandoPreferencias}
+                disabled={carregandoPreferenciasLeitura || indiceFonte === 0 || salvandoPreferencias}
                 accessibilityRole="button"
                 accessibilityLabel="Diminuir tamanho da fonte"
+                accessibilityState={{ disabled: carregandoPreferenciasLeitura || indiceFonte === 0 || salvandoPreferencias, busy: carregandoPreferenciasLeitura || salvandoPreferencias }}
                 className="w-10 h-10 items-center justify-center rounded-full border border-cor-borda dark:border-cor-borda-dark active:opacity-60"
               >
                 <Text
@@ -296,9 +310,10 @@ export default function Configuracoes() {
               </Pressable>
               <Pressable
                 onPress={() => ajustarFonte(1)}
-                disabled={indiceFonte === TAMANHOS_FONTE.length - 1 || salvandoPreferencias}
+                disabled={carregandoPreferenciasLeitura || indiceFonte === TAMANHOS_FONTE.length - 1 || salvandoPreferencias}
                 accessibilityRole="button"
                 accessibilityLabel="Aumentar tamanho da fonte"
+                accessibilityState={{ disabled: carregandoPreferenciasLeitura || indiceFonte === TAMANHOS_FONTE.length - 1 || salvandoPreferencias, busy: carregandoPreferenciasLeitura || salvandoPreferencias }}
                 className="w-10 h-10 items-center justify-center rounded-full border border-cor-borda dark:border-cor-borda-dark active:opacity-60"
               >
                 <Text
@@ -312,7 +327,7 @@ export default function Configuracoes() {
                 </Text>
               </Pressable>
               <Text className="text-xs text-cor-texto-suave dark:text-cor-texto-suave-dark ml-1">
-                {TAMANHOS_FONTE[indiceFonte]}px
+                {carregandoPreferenciasLeitura ? "Carregando…" : `${TAMANHOS_FONTE[indiceFonte]}px`}
               </Text>
             </View>
             <Text
@@ -325,13 +340,14 @@ export default function Configuracoes() {
             </Text>
           </Linha>
           <Linha ultima>
-            <Pressable
+            <PressableComTecladoWeb
               onPress={alternarFonteSerifada}
-              disabled={salvandoPreferencias}
+              onKeyDown={(event) => ativarComEspaco(event, alternarFonteSerifada)}
+              disabled={carregandoPreferenciasLeitura || salvandoPreferencias}
               accessibilityRole="switch"
               accessibilityLabel="Fonte serifada"
               accessibilityState={{ checked: fonteSerifada }}
-              // @ts-expect-error accessibilityChecked é uma extensão do react-native-web, não existe nos tipos do React Native
+              accessibilityValue={{ text: carregandoPreferenciasLeitura ? "Carregando preferência" : fonteSerifada ? "Ativada" : "Desativada" }}
               accessibilityChecked={fonteSerifada}
               className="flex-row items-center justify-between active:opacity-70"
             >
@@ -348,18 +364,23 @@ export default function Configuracoes() {
               >
                 <View className="w-5 h-5 rounded-full bg-white" />
               </View>
-            </Pressable>
+            </PressableComTecladoWeb>
           </Linha>
+        </Secao>
+
+        <Secao titulo="Leitura em voz alta" descricao="Escolha uma voz e ouça uma prévia antes de ler um capítulo.">
+          <ConfiguracaoAudio key={versaoAudio} />
         </Secao>
 
         <Secao titulo="Aparência" descricao="O tema escolhido é aplicado em todas as telas deste dispositivo.">
           <Linha ultima>
-            <Pressable
+            <PressableComTecladoWeb
               onPress={alternarTema}
+              onKeyDown={(event) => ativarComEspaco(event, alternarTema)}
+              disabled={!temaInicializado}
               accessibilityRole="switch"
               accessibilityLabel="Tema"
-              accessibilityState={{ checked: escuro }}
-              // @ts-expect-error accessibilityChecked é uma extensão do react-native-web, não existe nos tipos do React Native
+              accessibilityState={{ checked: escuro, disabled: !temaInicializado, busy: !temaInicializado }}
               accessibilityChecked={escuro}
               className="flex-row items-center justify-between active:opacity-70"
             >
@@ -367,7 +388,7 @@ export default function Configuracoes() {
               <Text className="text-sm text-cor-texto-suave dark:text-cor-texto-suave-dark">
                 {escuro ? "☾ Escuro" : "☀ Claro"} · toque pra trocar
               </Text>
-            </Pressable>
+            </PressableComTecladoWeb>
           </Linha>
         </Secao>
 
@@ -380,13 +401,13 @@ export default function Configuracoes() {
               </Text>
             </Linha>
           ) : <Linha ultima>
-            <Pressable
+            <PressableComTecladoWeb
               onPress={alternarLembreteDiario}
+              onKeyDown={(event) => ativarComEspaco(event, alternarLembreteDiario)}
               disabled={alterandoLembrete || inicializandoLembrete}
               accessibilityRole="switch"
               accessibilityLabel="Lembrete diário"
               accessibilityState={{ checked: lembreteAtivo }}
-              // @ts-expect-error accessibilityChecked é uma extensão do react-native-web, não existe nos tipos do React Native
               accessibilityChecked={lembreteAtivo}
               className="flex-row items-center justify-between active:opacity-70"
             >
@@ -403,7 +424,7 @@ export default function Configuracoes() {
               >
                 <View className="w-5 h-5 rounded-full bg-white" />
               </View>
-            </Pressable>
+            </PressableComTecladoWeb>
           </Linha>}
         </Secao>
 
@@ -417,7 +438,7 @@ export default function Configuracoes() {
             </Link>
           </Linha>
           <Linha>
-            <Pressable
+            <PressableComTecladoWeb
               onPress={exportarMeusDados}
               disabled={exportando}
               accessibilityRole="button"
@@ -431,10 +452,10 @@ export default function Configuracoes() {
                 </Text>
               </View>
               <Text className="text-cor-texto-suave dark:text-cor-texto-suave-dark">→</Text>
-            </Pressable>
+            </PressableComTecladoWeb>
           </Linha>
           <Linha>
-            <Pressable
+            <PressableComTecladoWeb
               onPress={() => setRestaurarBackupVisivel(true)}
               disabled={!ownerId}
               accessibilityRole="button"
@@ -448,7 +469,7 @@ export default function Configuracoes() {
                 </Text>
               </View>
               <Text className="text-cor-texto-suave dark:text-cor-texto-suave-dark">→</Text>
-            </Pressable>
+            </PressableComTecladoWeb>
           </Linha>
           <Linha ultima>
             <Pressable onPress={() => setConfirmarApagar(true)} accessibilityRole="button" accessibilityLabel="Apagar todos os meus dados" className="flex-row items-center justify-between active:opacity-70">
@@ -532,12 +553,15 @@ export default function Configuracoes() {
         onFechar={() => setRestaurarBackupVisivel(false)}
         onConcluido={() => {
           setRestaurarBackupVisivel(false);
-          Promise.all([carregarIndiceFonte(), carregarFonteSerifada(), restaurarTema()])
-            .then(([indice, serifada]) => {
-              setIndiceFonte(indice);
-              setFonteSerifada(serifada);
-            })
-            .catch(() => mostrarToast("Os dados foram restaurados, mas algumas preferências não atualizaram a tela.", { severidade: "aviso" }));
+          Promise.allSettled([carregarPreferenciasLeitura(), restaurarTema()]).then(([leitura, tema]) => {
+            if (leitura.status === "fulfilled") {
+              if (leitura.value.indiceFonte !== undefined) setIndiceFonte(leitura.value.indiceFonte);
+              if (leitura.value.fonteSerifada !== undefined) setFonteSerifada(leitura.value.fonteSerifada);
+            }
+            if (leitura.status === "rejected" || leitura.value?.falhas || tema.status === "rejected") {
+              mostrarToast("Os dados foram restaurados, mas algumas preferências não atualizaram a tela.", { severidade: "aviso" });
+            }
+          });
         }}
       />
     </ScrollView>

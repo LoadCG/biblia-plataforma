@@ -830,6 +830,12 @@ jurídica do `PLANO-PLATAFORMA.md` antes de expandir isso).
 escolha por dispositivo.
 
 ### 2.10 Áudio da leitura `✅`
+**Atualização UX (2026-10-07):** controles do leitor e do Versículo do Dia
+informam reprodução, pausa, retomada, interrupção e falha. Preferências de
+velocidade são locais e entram no backup; a escolha de voz fica no dispositivo.
+Testes com vozes reais, capítulos longos e leitor de tela ainda precisam ser
+feitos em Chrome/Edge/Safari e Android/iOS; ver `docs/PLANO-AUDIO-VOZES.md`.
+
 **Funcionalidade:** `core/leitura/audio.ts` — Web Speech API
 (`SpeechSynthesisUtterance`) no web, `expo-speech` (novo, embrulha
 `AVSpeechSynthesizer`/`TextToSpeech` nativos) no app nativo. Fala um
@@ -1991,6 +1997,12 @@ Primeiro uso versionado com três passos, opção de pular/reabrir e dicas
 descartáveis nas superfícies principais.
 
 ### 10.4 Busca de segunda geração `✅`
+**Atualização técnica (2026-10-07):** busca local e nativa agora compartilham
+semântica de termos, frases, prefixos e referências; o conjunto é filtrado e
+ordenado antes do limite. Testes automatizados e exportação web passaram. A
+validação editorial de consultas e o runtime nativo seguem pendentes; ver
+`PLANO-TECNICO-BUSCA.md`.
+
 Ranking de relevância, termos múltiplos, frase exata, filtros por livro e
 testamento, paginação, highlight e acesso a pesquisas favoritas.
 

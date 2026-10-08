@@ -38,7 +38,7 @@ concluir esse gate sem alegar QA runtime que não ocorreu.
 | P2 | Controles de áudio podem divergir de estado do player, navegação e ciclo de vida. | Inventariar APIs e consumidores; explicitar máquina de estados idle/loading/playing/paused/error; evitar duas reproduções concorrentes; sincronizar troca de capítulo, pausa, falha e saída de tela; manter teclado e leitor de tela; limitar mudanças ao player até confirmar contrato atual. | Estado anunciado acompanha playback; ação interrompe/retoma como descrito; troca de capítulo não sobrepõe áudio; erro permite recuperação e navegação permanece utilizável. |
 | P3 | Metadados e gestão de sessão/perfil ainda não têm conta ou sincronização. | Não iniciar autenticação/cloud sem decisão de produto, privacidade e backend. Melhorias locais devem permanecer exportáveis e segregadas por owner. | Nenhum dado pessoal enviado sem nova decisão explícita e desenho de segurança. |
 
-**Progresso 2026-10-06:** o inventário confirmou que Descubra combina busca bíblica (FTS5 nativo e varredura local web) e busca editorial separada; Salvos tem filtro local por texto/referência e não deve compartilhar o algoritmo de relevância bíblica. A busca nativa limitava o conjunto antes dos filtros, tinha fallback sem filtros/relevância e uma consulta vazia podia cair num `LIKE %%`. Corrigido: filtros e pontuação são aplicados antes do limite, o fallback usa todos os termos escapados e passa pelo mesmo pós-processamento, consultas vazias retornam lista vazia e empate fica na ordem canônica dos livros. Web reduziu lookup repetido do livro e calcula tokens uma vez por consulta. Busca editorial e bíblica agora compartilham normalização de caixa/acentos/espaços na consulta, mantendo seu escopo/relevância distintos. `typecheck`, `check:a11y`, `check:ui`, `check:copy-ui` e `git diff --check` passaram. Não foram executados testes, navegador ou runtime SQLite; consultas/paginação, equivalência real web/nativo e estados da tela continuam pendentes de QA funcional. Portanto P1 está parcialmente implementado, sem aceite integral.
+**Progresso 2026-10-06:** o inventário confirmou que Descubra combina busca bíblica (FTS5 nativo e varredura local web) e busca editorial separada; Salvos tem filtro local por texto/referência e não deve compartilhar o algoritmo de relevância bíblica. A busca nativa limitava o conjunto antes dos filtros, tinha fallback sem filtros/relevância e uma consulta vazia podia cair num `LIKE %%`. Corrigido: filtros e pontuação são aplicados antes do limite, o fallback usa todos os termos escapados e passa pelo mesmo pós-processamento, consultas vazias retornam lista vazia e empate fica na ordem canônica dos livros. Web reduziu lookup repetido do livro. A correspondência web agora segue FTS para prefixos de palavras e frases exatas; buscas editorial e bíblica compartilham normalização de consulta, mantendo seu escopo/relevância distintos. `typecheck`, `check:a11y`, `check:ui`, `check:copy-ui` e `git diff --check` passaram. Não foram executados testes, navegador ou runtime SQLite; consultas/paginação, equivalência real web/nativo e estados da tela continuam pendentes de QA funcional. Portanto P1 está parcialmente implementado, sem aceite integral.
 
 ### Execução funcional — ordem e gates
 
@@ -57,48 +57,57 @@ concluir esse gate sem alegar QA runtime que não ocorreu.
 
 ### P2 — plano detalhado de consistência do áudio
 
-**Inventário estático 2026-10-06:** `core/leitura/audio.ts` mantém uma sessão
-global, consumida pela leitura de capítulo e pelo Versículo do Dia. Isso impede
-duas falas simultâneas e é uma boa regra base, mas os controles/estados visuais
-vivem nos dois componentes e recebem mudanças via observador da sessão. Estado
-“reproduzindo” é emitido antes da confirmação da engine; `Speech.pause/resume/stop`
-são chamadas assíncronas sem captura de rejeição. No Android, pausar encerra a
-fala e retomar inicia o versículo atual desde o começo; a chamada de `stop` não é
-aguardada antes da possível retomada, portanto precisa de serialização para
-evitar corrida. Leitor encerra no cleanup; o card do Versículo do Dia encerra ao
-perder foco. Não modificar esses arquivos agora: há alterações locais do usuário
-nesses três arquivos (`core/leitura/audio.ts`, `CardVersiculoDia.tsx` e a rota do
-leitor) ainda não integradas neste commit.
+A melhoria de naturalidade e escolha de vozes segue o plano específico em
+[`PLANO-AUDIO-VOZES.md`](./PLANO-AUDIO-VOZES.md). A primeira etapa está
+implementada localmente: descoberta pt-BR, preferência por dispositivo,
+velocidade moderada e prévia usando o player único. O player tenta a voz padrão
+uma vez se a voz escolhida falhar. QA auditivo permanece pendente.
 
-**Etapas antes da implementação:**
+**Inventário e implementação parcial 2026-10-07:** `core/leitura/audio.ts` mantém
+uma sessão global, consumida pela leitura de capítulo e pelo Versículo do Dia.
+O contrato local agora distingue `iniciando`, `reproduzindo`, `pausando`,
+`pausado`, `interrompendo`, `interrompido` e `erro`. O estado de reprodução só
+é anunciado no callback de início da engine; comandos nativos são serializados,
+rejeições de pausa/retomada/interrupção viram erro recuperável e controles
+antigos voltam ao neutro quando outra origem substitui a sessão. Gerações de fala
+e parada ignoram callbacks tardios e evitam que uma parada antiga limpe uma
+falha mais recente; falhas síncronas de pausa/retomada no navegador são tratadas.
+O player valida conteúdo/índice antes de iniciar, e leitor e card encerram a
+sessão ao perder foco. Cada consumidor identifica sua sessão para que a limpeza
+de uma tela não encerre a fala iniciada por outra. As alterações foram feitas
+sobre mudanças locais preexistentes do usuário nos arquivos
+`core/leitura/audio.ts`, `CardVersiculoDia.tsx` e na rota do leitor; foram
+preservadas e revistas junto com esta implementação.
 
-1. Integrar/revisar primeiro as alterações locais já presentes no player e nos
-   consumidores, sem sobrescrevê-las. Manter a decisão funcional de uma única
-   fala global simultânea.
-2. Definir contrato e tabela de transições: ocioso → iniciando → reproduzindo →
-   pausado/interrompido/erro → ocioso. Incluir dono/fonte ativa e versículo;
-   não anunciar reprodução enquanto a plataforma ainda está iniciando.
-3. Encapsular operações da plataforma em uma fila/geração de sessão: stop,
-   pause, resume e troca de capítulo devem serializar; callbacks de sessões
-   antigas não podem mudar o estado da sessão atual; rejeições precisam produzir
-   estado recuperável sem promise rejeitada solta.
-4. Expor um único estado observável com inscrição e limpeza explícitas. Os dois
-   consumidores mostram controles para a fonte ativa e não exibem ao mesmo
-   tempo indicadores contraditórios; sair/ocultar o consumidor aplica a política
-   de encerramento já documentada.
-5. Alinhar linguagem e semântica de cada plataforma: pausa real quando suportada;
-   no Android, ação chamada “interromper” e retomada do início do versículo atual.
-   Erro deve oferecer repetição a partir desse mesmo versículo.
-6. Rodar typecheck e checks estruturais. QA manual em web/iOS/Android pode ficar
-   pendente para o usuário, mas o plano deve anotar exatamente os estados e a
+**Etapas e estado:**
+
+1. **Concluída localmente:** revisar as alterações existentes sem descartá-las e
+   manter a regra de uma única fala global simultânea.
+2. **Implementada localmente:** modelar início e comandos em andamento;
+   anunciar reprodução só no callback da engine. Android continua retomando do
+   início do versículo interrompido.
+3. **Implementada parcialmente:** serializar comandos de Speech nativos,
+   proteger callbacks por ID de sessão e tratar rejeições. Falta verificar em
+   aparelho que `stop` rejeitado não deixa a engine antiga falando junto de uma
+   nova sessão.
+4. **Parcial:** o observador atual limpa os controles da origem anterior e a
+   navegação encerra no blur somente a sessão da própria tela/capítulo; ainda
+   não há store de sessão global com assinatura explícita. Reavaliar se os
+   consumidores demonstram estado contraditório após QA manual antes de
+   adicionar essa abstração.
+5. **Implementada localmente:** linguagem do Android indica interrupção e
+   retomada do versículo; erro oferece repetição. A tela do capítulo também
+   desabilita comandos duplicados durante transições.
+6. Typecheck e checks estruturais passaram em 2026-10-07. QA manual em
+   web/iOS/Android pode ficar pendente para o usuário, mas o plano deve anotar exatamente os estados e a
    política de retomada a confirmar; não declarar verificação real sem dispositivo.
 
 **Aceite funcional:** nunca há duas falas concorrentes; comandos rápidos e troca
 de rota não iniciam sessão órfã; o estado e número do versículo acompanham a
 engine ativa; pause/resume/interrupção comunicam o comportamento real da
 plataforma; erros podem ser repetidos e callbacks antigos não alteram nova
-sessão. **Estado:** planejamento detalhado; implementação bloqueada até integrar
-as alterações locais existentes sem conflito.
+sessão. **Estado:** implementação parcial, QA de plataforma pendente. Os
+testes de código não substituem validação com engines de fala em dispositivos.
 
 ## Estado comprovado na revisão
 

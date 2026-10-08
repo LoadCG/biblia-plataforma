@@ -5,6 +5,19 @@ O formato é baseado no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.
 
 ## [Unreleased] - 2026-10-04
 
+### Busca, áudio e preferências locais (2026-10-07)
+- A busca bíblica aplica filtros e relevância de forma consistente entre web e
+  armazenamento nativo, com correspondência por termos, frases e prefixos;
+  testes cobrem casos de acento, referência e limites de paginação.
+- A leitura em voz alta ganhou estados de reprodução, pausa, retomada,
+  interrupção e erro, controles acessíveis e preferências locais de áudio.
+- A inicialização restaura o tema antes de liberar os controles; tamanho e
+  família de fonte sincronizam entre Bíblia, resumos e Configurações. Backup
+  preserva a velocidade de áudio, enquanto a voz continua vinculada ao aparelho.
+- Validação local: typecheck, 173 testes, Expo Doctor 21/21 e exportação web
+  com 99 rotas passaram. Testes de voz em dispositivos e leitores de tela
+  permanecem pendentes.
+
 ### Configurações e lembretes (2026-10-05)
 - Clarificado que preferências e dados de leitura ficam neste dispositivo;
   Configurações mostra prévia da tipografia e escopo efetivo de exportação e

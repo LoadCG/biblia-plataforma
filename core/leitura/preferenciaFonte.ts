@@ -13,13 +13,33 @@ const CHAVE_SERIFADA = "fonte-serifada-leitura";
 export const TAMANHOS_FONTE = [15, 17, 19] as const;
 export const INDICE_PADRAO = 1;
 
+export type PreferenciasLeituraCarregadas = {
+  indiceFonte?: number;
+  fonteSerifada?: boolean;
+  falhas: number;
+};
+
+/** Lê cada ajuste isoladamente para uma falha não esconder os demais valores. */
+export async function carregarPreferenciasLeitura(): Promise<PreferenciasLeituraCarregadas> {
+  const [indice, serifada] = await Promise.allSettled([carregarIndiceFonte(), carregarFonteSerifada()]);
+  return {
+    ...(indice.status === "fulfilled" ? { indiceFonte: indice.value } : {}),
+    ...(serifada.status === "fulfilled" ? { fonteSerifada: serifada.value } : {}),
+    falhas: Number(indice.status === "rejected") + Number(serifada.status === "rejected"),
+  };
+}
+
 export async function carregarIndiceFonte(): Promise<number> {
   const salvo = await AsyncStorage.getItem(CHAVE_TAMANHO);
-  const indice = salvo ? parseInt(salvo, 10) : NaN;
+  // Não aceite prefixos numéricos (por exemplo, "1xyz") como preferência válida.
+  const indice = salvo !== null && /^\d+$/.test(salvo) ? Number(salvo) : NaN;
   return indice >= 0 && indice < TAMANHOS_FONTE.length ? indice : INDICE_PADRAO;
 }
 
 export function salvarIndiceFonte(indice: number): Promise<void> {
+  if (!Number.isInteger(indice) || indice < 0 || indice >= TAMANHOS_FONTE.length) {
+    return Promise.reject(new RangeError("Índice de tamanho de fonte inválido"));
+  }
   return AsyncStorage.setItem(CHAVE_TAMANHO, String(indice));
 }
 

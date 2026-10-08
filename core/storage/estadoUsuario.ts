@@ -6,6 +6,8 @@ export const CHAVES_ESTADO_USUARIO = [
   "ultima-leitura",
   "tamanho-fonte-leitura",
   "fonte-serifada-leitura",
+  "voz-leitura-dispositivo",
+  "velocidade-leitura-dispositivo",
   "tema-preferido",
   "lembrete-diario-ativo",
   "compartilhamentos",
@@ -17,6 +19,7 @@ const CHAVES_RESTAURAVEIS = [
   "ultima-leitura",
   "tamanho-fonte-leitura",
   "fonte-serifada-leitura",
+  "velocidade-leitura-dispositivo",
   "tema-preferido",
 ] as const;
 

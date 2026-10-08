@@ -2,6 +2,7 @@ import type { AssociacaoColecao, Colecao } from "../repositories/ColecoesReposit
 import type { SessaoPlano } from "../repositories/PlanosRepository";
 import type { DadosPessoais } from "./dadosPessoais";
 import type { CapituloLido, Grifo, Nota, PesquisaFavorita, ReferenciaVersiculo, VersiculoSalvo } from "../types/leitura";
+import { normalizarVelocidadeAudio } from "../leitura/constantesAudio";
 
 export const TAMANHO_MAXIMO_BACKUP_BYTES = 10 * 1024 * 1024;
 export const VERSAO_BACKUP_ATUAL = 1;
@@ -131,6 +132,14 @@ function preferenciaRestauravel(preferencias: unknown, catalogo: CatalogoBiblico
   if (tema !== undefined && tema !== null) {
     if (tema !== "light" && tema !== "dark") throw new ErroBackup("O tema salvo no backup é inválido.");
     resultado["tema-preferido"] = tema;
+  }
+  const velocidade = origem["velocidade-leitura-dispositivo"];
+  if (velocidade !== undefined && velocidade !== null) {
+    const normalizada = typeof velocidade === "string" ? normalizarVelocidadeAudio(velocidade) : null;
+    if (normalizada === null) {
+      throw new ErroBackup("A velocidade de leitura salva no backup é inválida.");
+    }
+    resultado["velocidade-leitura-dispositivo"] = normalizada;
   }
   const ultimaLeitura = origem["ultima-leitura"];
   if (ultimaLeitura !== undefined && ultimaLeitura !== null) {

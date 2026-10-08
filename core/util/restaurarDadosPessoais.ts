@@ -36,7 +36,7 @@ function normalizarNotas(notas: Nota[]) {
 }
 
 function normalizarPreferencias(preferencias: Record<string, string | null>) {
-  const chavesPortateis = ["ultima-leitura", "tamanho-fonte-leitura", "fonte-serifada-leitura", "tema-preferido"];
+  const chavesPortateis = ["ultima-leitura", "tamanho-fonte-leitura", "fonte-serifada-leitura", "tema-preferido", "velocidade-leitura-dispositivo"];
   return JSON.stringify(Object.fromEntries(chavesPortateis
     .map((chave) => [chave, preferencias[chave] ?? null])
     .sort(([a], [b]) => String(a).localeCompare(String(b)))));

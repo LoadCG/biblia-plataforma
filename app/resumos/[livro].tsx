@@ -5,8 +5,7 @@ import { NativeScrollEvent, NativeSyntheticEvent, Pressable, ScrollView, Text, V
 import { coresDoGenero, descricaoDoGenero } from "../../core/content/genero";
 import { livros, obterResumo } from "../../core/content/livros";
 import {
-  carregarFonteSerifada,
-  carregarIndiceFonte,
+  carregarPreferenciasLeitura,
   FAMILIA_SERIFADA,
   INDICE_PADRAO,
   salvarFonteSerifada,
@@ -19,6 +18,8 @@ import { BotaoTema } from "../../components/BotaoTema";
 import { TextoComReferencias } from "../../components/TextoComReferencias";
 import { Tooltip } from "../../components/Tooltip";
 import { mostrarToast } from "../../core/util/toast";
+import { ativarComEspaco } from "../../core/util/ativarComEspaco";
+import { PressableComTecladoWeb } from "../../core/util/propsPressableWeb";
 
 export function generateStaticParams() {
   return livros.map((livro) => ({ livro: livro.slug }));
@@ -32,6 +33,8 @@ export default function ResumoLivro() {
   const [progresso, setProgresso] = useState(0);
   const [indiceFonte, setIndiceFonte] = useState(INDICE_PADRAO);
   const [fonteSerifada, setFonteSerifada] = useState(false);
+  const [carregandoPreferenciasFonte, setCarregandoPreferenciasFonte] = useState(true);
+  const [salvandoPreferenciasFonte, setSalvandoPreferenciasFonte] = useState(false);
 
   function aoRolar(e: NativeSyntheticEvent<NativeScrollEvent>) {
     const { contentOffset, contentSize, layoutMeasurement } = e.nativeEvent;
@@ -39,12 +42,19 @@ export default function ResumoLivro() {
     setProgresso(alturaRolavel > 0 ? Math.min(1, Math.max(0, contentOffset.y / alturaRolavel)) : 0);
   }
 
-  function ajustarFonte(delta: number) {
-    setIndiceFonte((atual) => {
-      const novo = Math.min(TAMANHOS_FONTE.length - 1, Math.max(0, atual + delta));
-      salvarIndiceFonte(novo).catch(() => mostrarToast("Não foi possível salvar o tamanho da fonte", { severidade: "erro" }));
-      return novo;
-    });
+  async function ajustarFonte(delta: number) {
+    if (carregandoPreferenciasFonte || salvandoPreferenciasFonte) return;
+    const novo = Math.min(TAMANHOS_FONTE.length - 1, Math.max(0, indiceFonte + delta));
+    if (novo === indiceFonte) return;
+    setSalvandoPreferenciasFonte(true);
+    try {
+      await salvarIndiceFonte(novo);
+      setIndiceFonte(novo);
+    } catch {
+      mostrarToast("Não foi possível salvar o tamanho da fonte", { severidade: "erro" });
+    } finally {
+      setSalvandoPreferenciasFonte(false);
+    }
   }
 
   useEffect(() => {
@@ -56,24 +66,31 @@ export default function ResumoLivro() {
 
   useEffect(() => {
     let ativo = true;
-    Promise.all([carregarIndiceFonte(), carregarFonteSerifada()])
-      .then(([indice, serifada]) => {
-        if (!ativo) return;
-        setIndiceFonte(indice);
-        setFonteSerifada(serifada);
-      })
-      .catch(() => {
-        if (ativo) mostrarToast("Não foi possível carregar as preferências de leitura", { severidade: "erro" });
-      });
+    void carregarPreferenciasLeitura().then((preferencias) => {
+      if (!ativo) return;
+      if (preferencias.indiceFonte !== undefined) setIndiceFonte(preferencias.indiceFonte);
+      if (preferencias.fonteSerifada !== undefined) setFonteSerifada(preferencias.fonteSerifada);
+      if (preferencias.falhas) {
+        mostrarToast("Uma preferência de leitura não pôde ser carregada", { severidade: "erro" });
+      }
+    }).finally(() => {
+      if (ativo) setCarregandoPreferenciasFonte(false);
+    });
     return () => { ativo = false; };
   }, []);
 
-  function alternarFonteSerifada() {
-    setFonteSerifada((atual) => {
-      const novo = !atual;
-      salvarFonteSerifada(novo).catch(() => mostrarToast("Não foi possível salvar a preferência de fonte", { severidade: "erro" }));
-      return novo;
-    });
+  async function alternarFonteSerifada() {
+    if (carregandoPreferenciasFonte || salvandoPreferenciasFonte) return;
+    const novo = !fonteSerifada;
+    setSalvandoPreferenciasFonte(true);
+    try {
+      await salvarFonteSerifada(novo);
+      setFonteSerifada(novo);
+    } catch {
+      mostrarToast("Não foi possível salvar a preferência de fonte", { severidade: "erro" });
+    } finally {
+      setSalvandoPreferenciasFonte(false);
+    }
   }
 
   if (!resumo) {
@@ -122,22 +139,24 @@ export default function ResumoLivro() {
           </Link>
           <View className="flex-row items-center gap-3">
             <View className="flex-row items-center gap-1">
-              <Pressable
+              <PressableComTecladoWeb
                 onPress={() => ajustarFonte(-1)}
-                disabled={indiceFonte === 0}
+                disabled={carregandoPreferenciasFonte || salvandoPreferenciasFonte || indiceFonte === 0}
                 accessibilityRole="button"
                 accessibilityLabel="Diminuir tamanho da fonte"
+                accessibilityState={{ disabled: carregandoPreferenciasFonte || salvandoPreferenciasFonte || indiceFonte === 0, busy: carregandoPreferenciasFonte || salvandoPreferenciasFonte }}
                 className="w-10 h-10 items-center justify-center rounded-full border border-cor-borda dark:border-cor-borda-dark active:opacity-60"
               >
                 <Text className={`text-xs font-bold ${indiceFonte === 0 ? "text-cor-texto-suave dark:text-cor-texto-suave-dark opacity-40" : "text-cor-texto dark:text-cor-texto-dark"}`}>
                   A-
                 </Text>
-              </Pressable>
-              <Pressable
+              </PressableComTecladoWeb>
+              <PressableComTecladoWeb
                 onPress={() => ajustarFonte(1)}
-                disabled={indiceFonte === TAMANHOS_FONTE.length - 1}
+                disabled={carregandoPreferenciasFonte || salvandoPreferenciasFonte || indiceFonte === TAMANHOS_FONTE.length - 1}
                 accessibilityRole="button"
                 accessibilityLabel="Aumentar tamanho da fonte"
+                accessibilityState={{ disabled: carregandoPreferenciasFonte || salvandoPreferenciasFonte || indiceFonte === TAMANHOS_FONTE.length - 1, busy: carregandoPreferenciasFonte || salvandoPreferenciasFonte }}
                 className="w-10 h-10 items-center justify-center rounded-full border border-cor-borda dark:border-cor-borda-dark active:opacity-60"
               >
                 <Text
@@ -149,13 +168,14 @@ export default function ResumoLivro() {
                 >
                   A+
                 </Text>
-              </Pressable>
-              <Pressable
+              </PressableComTecladoWeb>
+              <PressableComTecladoWeb
                 onPress={alternarFonteSerifada}
+                onKeyDown={(event) => ativarComEspaco(event, alternarFonteSerifada)}
+                disabled={carregandoPreferenciasFonte || salvandoPreferenciasFonte}
                 accessibilityRole="switch"
                 accessibilityLabel="Fonte serifada"
-                accessibilityState={{ checked: fonteSerifada }}
-                // @ts-expect-error accessibilityChecked é uma extensão do react-native-web, não existe nos tipos do React Native
+                accessibilityState={{ checked: fonteSerifada, disabled: carregandoPreferenciasFonte || salvandoPreferenciasFonte, busy: carregandoPreferenciasFonte || salvandoPreferenciasFonte }}
                 accessibilityChecked={fonteSerifada}
                 className={`w-10 h-10 items-center justify-center rounded-full border active:opacity-60 ${
                   fonteSerifada
@@ -166,7 +186,7 @@ export default function ResumoLivro() {
                 <Text style={{ fontFamily: FAMILIA_SERIFADA }} className="text-xs font-bold text-cor-texto dark:text-cor-texto-dark">
                   Aa
                 </Text>
-              </Pressable>
+              </PressableComTecladoWeb>
             </View>
             <BotaoTema />
           </View>
@@ -186,12 +206,11 @@ export default function ResumoLivro() {
           {resumo.tempoLeituraMin} min de leitura
         </Text>
 
-        <Pressable
+        <PressableComTecladoWeb
           onPress={alternarLido}
           accessibilityRole="checkbox"
           accessibilityLabel="Marcar livro como lido"
           accessibilityState={{ checked: lido }}
-          // @ts-expect-error accessibilityChecked é uma extensão do react-native-web, não existe nos tipos do React Native
           accessibilityChecked={lido}
           className={`self-start px-4 py-2.5 rounded-full mb-6 active:opacity-70 ${
             lido ? "bg-green-600" : "border border-cor-borda dark:border-cor-borda-dark bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark"
@@ -200,7 +219,7 @@ export default function ResumoLivro() {
           <Text className={`text-sm font-semibold ${lido ? "text-white" : "text-cor-texto dark:text-cor-texto-dark"}`}>
             {lido ? "✓ Livro lido" : "Marcar como lido"}
           </Text>
-        </Pressable>
+        </PressableComTecladoWeb>
         <Text className="text-xs text-cor-texto-suave dark:text-cor-texto-suave-dark -mt-4 mb-6">
           Isso atualiza seu progresso nos resumos. A leitura dos capítulos é acompanhada separadamente na Bíblia.
         </Text>

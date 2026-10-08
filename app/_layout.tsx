@@ -1,13 +1,14 @@
 import "../global.css";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { router, Stack, usePathname, useSegments } from "expo-router";
 import Head from "expo-router/head";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { Platform, View } from "react-native";
+import * as SplashScreen from "expo-splash-screen";
 import { Toast } from "../components/Toast";
 import { corrigirAlturaViewportMobile } from "../core/corrigirAlturaViewportMobile";
 import { registrarServiceWorker } from "../core/registrarServiceWorker";
-import { restaurarTema } from "../core/theme";
+import { marcarTemaInicializado, restaurarTema } from "../core/theme";
 import { onboardingConcluido } from "../core/leitura/onboarding";
 import { mostrarToast } from "../core/util/toast";
 
@@ -18,19 +19,53 @@ const CAMINHO_INICIAL_WEB = Platform.OS === "web" && typeof window !== "undefine
   ? window.location.pathname
   : null;
 
+// A splash nativa cobre a leitura assíncrona do tema; a web continua renderizando
+// no primeiro frame para preservar a saída estática e sua hidratação.
+if (Platform.OS !== "web") void SplashScreen.preventAutoHideAsync().catch(() => {});
+
 export default function RootLayout() {
   const segments = useSegments();
   const pathname = usePathname();
   const containerRef = useRef<View>(null);
   const caminhoAnterior = useRef(pathname);
   const rotaEstrutural = segments.join("/");
+  const [temaInicializado, setTemaInicializado] = useState(Platform.OS === "web");
+  const [falhaRestaurarTema, setFalhaRestaurarTema] = useState(false);
   useEffect(() => {
-    restaurarTema().catch(() => mostrarToast("Não foi possível restaurar o tema salvo", { severidade: "erro" }));
+    let ativo = true;
+    const liberarTela = () => {
+      marcarTemaInicializado();
+      setTemaInicializado(true);
+    };
+    const limite = setTimeout(() => {
+      if (ativo) liberarTela();
+    }, 1800);
+    restaurarTema({ ignorarSeAlteradoDuranteLeitura: true }).catch(() => {
+      if (ativo) setFalhaRestaurarTema(true);
+    }).finally(() => {
+      clearTimeout(limite);
+      if (ativo) liberarTela();
+    });
     registrarServiceWorker();
     corrigirAlturaViewportMobile();
+    return () => {
+      ativo = false;
+      clearTimeout(limite);
+    };
   }, []);
 
   useEffect(() => {
+    if (temaInicializado && Platform.OS !== "web") void SplashScreen.hideAsync().catch(() => {});
+  }, [temaInicializado]);
+
+  useEffect(() => {
+    if (temaInicializado && falhaRestaurarTema) {
+      mostrarToast("Não foi possível restaurar o tema salvo", { severidade: "erro" });
+    }
+  }, [temaInicializado, falhaRestaurarTema]);
+
+  useEffect(() => {
+    if (!temaInicializado) return;
     const estaNaRaiz = Platform.OS === "web"
       ? CAMINHO_INICIAL_WEB === "/"
       : rotaEstrutural === "(tabs)";
@@ -38,7 +73,7 @@ export default function RootLayout() {
     onboardingConcluido()
       .then((concluido) => { if (!concluido) router.replace("/onboarding"); })
       .catch(() => mostrarToast("Não foi possível verificar a apresentação inicial", { severidade: "erro" }));
-  }, [rotaEstrutural]);
+  }, [rotaEstrutural, temaInicializado]);
 
   useEffect(() => {
     if (Platform.OS !== "web") return;
@@ -59,6 +94,8 @@ export default function RootLayout() {
       { duration: 190, easing: "cubic-bezier(0.2, 0.7, 0.2, 1)" },
     );
   }, [pathname]);
+
+  if (!temaInicializado) return null;
 
   return (
     <SafeAreaProvider>

@@ -1,4 +1,4 @@
-import { Link, router, useLocalSearchParams } from "expo-router";
+import { Link, router, useFocusEffect, useLocalSearchParams } from "expo-router";
 import { useCallback, useEffect, useRef, useState, useMemo } from "react";
 import { ActivityIndicator, Animated, Image, NativeSyntheticEvent, NativeScrollEvent, Pressable, ScrollView, Text, useWindowDimensions, View, LayoutAnimation, Platform, UIManager } from "react-native";
 import * as Sharing from "expo-sharing";
@@ -24,8 +24,7 @@ import { CartaoVersiculoImagem } from "../../../../components/CartaoVersiculoIma
 import { DicaContextual } from "../../../../components/DicaContextual";
 import { coresDoGenero, descricaoDoGenero } from "../../../../core/content/genero";
 import {
-  carregarFonteSerifada,
-  carregarIndiceFonte,
+  carregarPreferenciasLeitura,
   FAMILIA_SERIFADA,
   INDICE_PADRAO,
   salvarFonteSerifada,
@@ -35,7 +34,7 @@ import {
 import { salvarUltimaLeitura } from "../../../../core/leitura/ultimaLeitura";
 import { grifosRepository, notasRepository, planosRepository, progressoRepository, versiculosSalvosRepository } from "../../../../core/repositories";
 import { copiar, compartilhar } from "../../../../core/estatisticas/compartilhador";
-import { falarCapitulo, pararAudio, suportaAudio } from "../../../../core/leitura/audio";
+import { continuarAudio, iniciarAudio, pararAudio, pausarAudio, suportaAudio, suportaPausaAudio, type EstadoAudio } from "../../../../core/leitura/audio";
 import { alternarTema, useColorScheme } from "../../../../core/theme";
 import { gerarImagemVersiculo } from "../../../../core/util/gerarImagemVersiculo";
 import { mensagemErroAmigavel } from "../../../../core/util/erroAmigavel";
@@ -44,6 +43,8 @@ import { mostrarToast } from "../../../../core/util/toast";
 import { scrollSuave } from "../../../../core/util/scrollSuave";
 import { useArrastarParaRolar } from "../../../../core/util/useArrastarParaRolar";
 import { useOwnerId } from "../../../../core/useOwnerId";
+import { ativarComEspaco } from "../../../../core/util/ativarComEspaco";
+import { PressableComTecladoWeb } from "../../../../core/util/propsPressableWeb";
 
 const ALTURA_AREA_NAVEGACAO_CAPITULO = 80;
 const ALTURA_RESERVA_SELECAO_DESKTOP = 148;
@@ -162,13 +163,16 @@ export default function Leitura() {
   const [coresRecentes, setCoresRecentes] = useState<string[]>([CORES_DISPONIVEIS[0], CORES_DISPONIVEIS[1], CORES_DISPONIVEIS[2]]);
   const [indiceFonte, setIndiceFonte] = useState(INDICE_PADRAO);
   const [fonteSerifada, setFonteSerifada] = useState(false);
+  const [carregandoPreferenciasFonte, setCarregandoPreferenciasFonte] = useState(true);
+  const [salvandoPreferenciasFonte, setSalvandoPreferenciasFonte] = useState(false);
   const [progresso, setProgresso] = useState(0);
   const [versiculoRealcado, setVersiculoRealcado] = useState<number | null>(null);
-  const [audioTocando, setAudioTocando] = useState(false);
+  const [audioEstado, setAudioEstado] = useState<EstadoAudio>("ocioso");
   const [versiculoFalando, setVersiculoFalando] = useState<number | null>(null);
   const [imagemVersiculo, setImagemVersiculo] = useState<string | null>(null);
   const [cartaoNativoParaCapturar, setCartaoNativoParaCapturar] = useState<{ texto: string; referencia: string } | null>(null);
   const refCartaoNativo = useRef<View>(null);
+  const origemAudio = useMemo(() => ({}), [params.livro, params.capitulo]);
   const refBarraSelecao = useArrastarParaRolar();
   const refScrollAcoesSelecao = useRef<ScrollView>(null);
   const estadoRolagemAcoes = useRef({ larguraConteudo: 0, larguraVisivel: 0, deslocamento: 0 });
@@ -240,32 +244,46 @@ export default function Leitura() {
 
   useEffect(() => {
     let ativo = true;
-    Promise.all([carregarIndiceFonte(), carregarFonteSerifada()])
-      .then(([indice, serifada]) => {
-        if (!ativo) return;
-        setIndiceFonte(indice);
-        setFonteSerifada(serifada);
-      })
-      .catch(() => {
-        if (ativo) mostrarToast("Não foi possível carregar as preferências de leitura", { severidade: "erro" });
+    void carregarPreferenciasLeitura().then((preferencias) => {
+      if (!ativo) return;
+      if (preferencias.indiceFonte !== undefined) setIndiceFonte(preferencias.indiceFonte);
+      if (preferencias.fonteSerifada !== undefined) setFonteSerifada(preferencias.fonteSerifada);
+      if (preferencias.falhas) {
+        mostrarToast("Uma preferência de leitura não pôde ser carregada", { severidade: "erro" });
+      }
+    }).finally(() => {
+      if (ativo) setCarregandoPreferenciasFonte(false);
       });
     return () => { ativo = false; };
   }, []);
 
-  function ajustarFonte(delta: number) {
-    setIndiceFonte((atual) => {
-      const novo = Math.min(TAMANHOS_FONTE.length - 1, Math.max(0, atual + delta));
-      salvarIndiceFonte(novo).catch(() => mostrarToast("Não foi possível salvar o tamanho da fonte", { severidade: "erro" }));
-      return novo;
-    });
+  async function ajustarFonte(delta: number) {
+    if (carregandoPreferenciasFonte || salvandoPreferenciasFonte) return;
+    const novo = Math.min(TAMANHOS_FONTE.length - 1, Math.max(0, indiceFonte + delta));
+    if (novo === indiceFonte) return;
+    setSalvandoPreferenciasFonte(true);
+    try {
+      await salvarIndiceFonte(novo);
+      setIndiceFonte(novo);
+    } catch {
+      mostrarToast("Não foi possível salvar o tamanho da fonte", { severidade: "erro" });
+    } finally {
+      setSalvandoPreferenciasFonte(false);
+    }
   }
 
-  function alternarFonteSerifada() {
-    setFonteSerifada((atual) => {
-      const novo = !atual;
-      salvarFonteSerifada(novo).catch(() => mostrarToast("Não foi possível salvar a preferência de fonte", { severidade: "erro" }));
-      return novo;
-    });
+  async function alternarFonteSerifada() {
+    if (carregandoPreferenciasFonte || salvandoPreferenciasFonte) return;
+    const novaPreferencia = !fonteSerifada;
+    setSalvandoPreferenciasFonte(true);
+    try {
+      await salvarFonteSerifada(novaPreferencia);
+      setFonteSerifada(novaPreferencia);
+    } catch {
+      mostrarToast("Não foi possível salvar a preferência de fonte", { severidade: "erro" });
+    } finally {
+      setSalvandoPreferenciasFonte(false);
+    }
   }
 
   function carregarCapitulo() {
@@ -704,31 +722,36 @@ export default function Leitura() {
     return { texto, url, textoCopiado, quantidade: numerosValidos.length };
   }
 
-  function alternarAudio() {
-    if (audioTocando) {
-      pararAudio();
-      setAudioTocando(false);
-      setVersiculoFalando(null);
-      return;
-    }
+  const observadorAudio = {
+    aoMudarEstado: setAudioEstado,
+    aoIniciarVersiculo: setVersiculoFalando,
+    aoErro: (mensagem: string) => mostrarToast(mensagem, { severidade: "erro" }),
+  };
+
+  function iniciarLeituraAudio(indice = 0) {
     if (!dados?.versiculos?.length) return;
-    setAudioTocando(true);
-    falarCapitulo(
-      dados.versiculos,
-      (numero) => setVersiculoFalando(numero),
-      () => {
-        setAudioTocando(false);
-        setVersiculoFalando(null);
-      }
-    );
+    iniciarAudio(dados.versiculos, observadorAudio, indice, origemAudio);
+  }
+
+  function alternarAudio() {
+    if (audioEstado === "iniciando" || audioEstado === "pausando" || audioEstado === "interrompendo") return;
+    if (audioEstado === "reproduzindo") {
+      pausarAudio();
+    } else if (audioEstado === "pausado" || audioEstado === "interrompido" || audioEstado === "erro") {
+      continuarAudio();
+    } else {
+      iniciarLeituraAudio();
+    }
+  }
+
+  function interromperLeituraAudio() {
+    pararAudio(true, origemAudio);
   }
 
   // Para o áudio ao sair da tela ou trocar de capítulo — sem isso a
   // fala continuaria em segundo plano falando um capítulo que a
   // pessoa já não está mais vendo.
-  useEffect(() => {
-    return () => pararAudio();
-  }, [params.livro, params.capitulo]);
+  useFocusEffect(useCallback(() => () => pararAudio(false, origemAudio), [origemAudio, params.livro, params.capitulo]));
 
   // Acompanha o versículo sendo lido em voz alta, rolando a tela até
   // ele — as posições já foram medidas via onLayout na primeira
@@ -992,18 +1015,43 @@ export default function Leitura() {
               </Pressable>
             ) : null}
             {suportaAudio() && abaAtual === "texto" ? (
-              <Pressable
-                onPress={alternarAudio}
-                accessibilityRole="button"
-                accessibilityLabel={audioTocando ? "Pausar leitura em voz alta" : "Ouvir capítulo em voz alta"}
-                className="w-10 h-10 items-center justify-center active:opacity-60"
-              >
-                <IconeUI
-                  name={audioTocando ? "pause" : "audio"}
-                  size={22}
-                  className="text-cor-texto dark:text-cor-texto-dark"
-                />
-              </Pressable>
+              <>
+                <Pressable
+                  onPress={alternarAudio}
+                  accessibilityRole="button"
+                  accessibilityLabel={audioEstado === "reproduzindo"
+                    ? suportaPausaAudio() ? "Pausar leitura em voz alta" : `Interromper leitura no versículo ${versiculoFalando ?? "atual"}`
+                    : audioEstado === "pausado"
+                      ? "Continuar leitura em voz alta"
+                      : audioEstado === "interrompido"
+                        ? `Continuar do início do versículo ${versiculoFalando ?? "atual"}`
+                        : audioEstado === "erro"
+                          ? `Tentar novamente a partir do versículo ${versiculoFalando ?? "atual"}`
+                          : audioEstado === "iniciando" ? "Iniciando leitura em voz alta"
+                            : audioEstado === "pausando" ? "Pausando leitura em voz alta"
+                              : audioEstado === "interrompendo" ? "Interrompendo leitura em voz alta" : "Ouvir capítulo em voz alta"}
+                  accessibilityHint={audioEstado === "interrompido" ? "A leitura recomeça no início deste versículo." : undefined}
+                  accessibilityState={{ disabled: !dados?.versiculos?.length || audioEstado === "iniciando" || audioEstado === "pausando" || audioEstado === "interrompendo", busy: audioEstado === "iniciando" || audioEstado === "pausando" || audioEstado === "interrompendo" }}
+                  disabled={!dados?.versiculos?.length || audioEstado === "iniciando" || audioEstado === "pausando" || audioEstado === "interrompendo"}
+                  className="w-10 h-10 items-center justify-center rounded-full active:bg-cor-borda dark:active:bg-cor-borda-dark"
+                >
+                  <IconeUI
+                    name={audioEstado === "reproduzindo" && suportaPausaAudio() ? "pause" : "audio"}
+                    size={22}
+                    className="text-cor-texto dark:text-cor-texto-dark"
+                  />
+                </Pressable>
+                {audioEstado !== "ocioso" ? (
+                  <PressableComTecladoWeb
+                    onPress={interromperLeituraAudio}
+                    accessibilityRole="button"
+                    accessibilityLabel="Encerrar leitura em voz alta"
+                    className="w-10 h-10 items-center justify-center rounded-full active:bg-cor-borda dark:active:bg-cor-borda-dark"
+                  >
+                    <IconeUI name="close" size={19} className="text-cor-texto dark:text-cor-texto-dark" />
+                  </PressableComTecladoWeb>
+                ) : null}
+              </>
             ) : null}
             <BotaoTema compacto />
             <Pressable onPress={() => setModalAjustesAberto(true)} accessibilityRole="button" accessibilityLabel="Ajustes de leitura" className="w-10 h-10 items-center justify-center active:opacity-60">
@@ -1066,7 +1114,7 @@ export default function Leitura() {
               const selecionado = versiculosSelecionados.has(v.numero);
               return (
                 <View key={v.numero} onLayout={(e) => aoMedirVersiculo(v.numero, e.nativeEvent.layout.y)} className={`mb-0.5 -mx-2 ${destaqueAlvo && v.numero !== versiculoAlvo ? "opacity-30" : ""}`}>
-                  <Pressable
+                  <PressableComTecladoWeb
                     testID={`versiculo-${v.numero}`}
                     onPress={() => selecionarVersiculo(v.numero)}
                     disabled={acoesSelecaoOcupadas}
@@ -1074,7 +1122,6 @@ export default function Leitura() {
                     accessibilityLabel={`Versículo ${v.numero}${grifado ? ", grifado" : ""}${temNota ? ", com anotação" : ""}`}
                     accessibilityHint={selecionado ? "Ative para remover este versículo da seleção." : "Ative para selecionar este versículo e mostrar as ações disponíveis."}
                     accessibilityState={{ checked: selecionado }}
-                    // @ts-expect-error accessibilityChecked é uma extensão do react-native-web, não existe nos tipos do React Native
                     accessibilityChecked={selecionado}
                     className={`rounded-lg px-2 py-1.5 active:opacity-70 ${
                       grifado
@@ -1113,7 +1160,7 @@ export default function Leitura() {
                         📝 {notaEhReferenciaPrincipal ? nota?.texto : `Anotação compartilhada com v. ${primeiroVersiculoDaNota}`}
                       </Text>
                     ) : null}
-                  </Pressable>
+                  </PressableComTecladoWeb>
                 </View>
               );
             })
@@ -1139,12 +1186,11 @@ export default function Leitura() {
                 </Pressable>
               </View>
             ) : null}
-            <Pressable
+            <PressableComTecladoWeb
               onPress={alternarCapituloLido}
               accessibilityRole="checkbox"
               accessibilityLabel="Capítulo lido"
               accessibilityState={{ checked: capituloLido }}
-              // @ts-expect-error accessibilityChecked é uma extensão do react-native-web, não existe nos tipos do React Native
               accessibilityChecked={capituloLido}
               className={`self-start px-4 py-2.5 rounded-full mt-6 active:opacity-70 ${
                 capituloLido
@@ -1155,7 +1201,7 @@ export default function Leitura() {
               <Text className={`text-sm font-semibold ${capituloLido ? "text-white" : "text-cor-texto dark:text-cor-texto-dark"}`}>
                 {capituloLido ? "✓ Capítulo lido" : "Marcar capítulo como lido"}
               </Text>
-            </Pressable>
+            </PressableComTecladoWeb>
             </>
           ) : null}
         </View>
@@ -1457,27 +1503,28 @@ export default function Leitura() {
             <Text className="text-lg font-bold text-cor-texto dark:text-cor-texto-dark mb-6 text-center">Configurações de Leitura</Text>
             
             <View className="flex-row items-center justify-between bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark rounded-xl p-2 mb-4 border border-cor-borda dark:border-cor-borda-dark">
-              <Pressable onPress={() => ajustarFonte(-1)} accessibilityRole="button" accessibilityLabel="Diminuir tamanho da fonte" className="flex-1 py-3 items-center active:opacity-60" disabled={indiceFonte === 0}>
+              <Pressable onPress={() => ajustarFonte(-1)} accessibilityRole="button" accessibilityLabel="Diminuir tamanho da fonte" accessibilityState={{ disabled: carregandoPreferenciasFonte || salvandoPreferenciasFonte || indiceFonte === 0, busy: carregandoPreferenciasFonte || salvandoPreferenciasFonte }} className="flex-1 py-3 items-center active:opacity-60" disabled={carregandoPreferenciasFonte || salvandoPreferenciasFonte || indiceFonte === 0}>
                 <Text className={`font-bold text-sm ${indiceFonte === 0 ? "text-cor-texto-suave dark:text-cor-texto-suave-dark opacity-40" : "text-cor-texto dark:text-cor-texto-dark"}`}>A-</Text>
               </Pressable>
               <View className="w-px h-8 bg-cor-borda dark:bg-cor-borda-dark" />
-              <Pressable onPress={() => ajustarFonte(1)} accessibilityRole="button" accessibilityLabel="Aumentar tamanho da fonte" className="flex-1 py-3 items-center active:opacity-60" disabled={indiceFonte === TAMANHOS_FONTE.length - 1}>
+              <Pressable onPress={() => ajustarFonte(1)} accessibilityRole="button" accessibilityLabel="Aumentar tamanho da fonte" accessibilityState={{ disabled: carregandoPreferenciasFonte || salvandoPreferenciasFonte || indiceFonte === TAMANHOS_FONTE.length - 1, busy: carregandoPreferenciasFonte || salvandoPreferenciasFonte }} className="flex-1 py-3 items-center active:opacity-60" disabled={carregandoPreferenciasFonte || salvandoPreferenciasFonte || indiceFonte === TAMANHOS_FONTE.length - 1}>
                 <Text className={`font-bold text-lg ${indiceFonte === TAMANHOS_FONTE.length - 1 ? "text-cor-texto-suave dark:text-cor-texto-suave-dark opacity-40" : "text-cor-texto dark:text-cor-texto-dark"}`}>A+</Text>
               </Pressable>
             </View>
 
             <View className="flex-row gap-4 mb-2">
-              <Pressable
+              <PressableComTecladoWeb
                 onPress={alternarFonteSerifada}
+                onKeyDown={(event) => ativarComEspaco(event, alternarFonteSerifada)}
+                disabled={carregandoPreferenciasFonte || salvandoPreferenciasFonte}
                 accessibilityRole="switch"
                 accessibilityLabel="Fonte serifada"
-                accessibilityState={{ checked: fonteSerifada }}
-                // @ts-expect-error accessibilityChecked é uma extensão do react-native-web, não existe nos tipos do React Native
+                accessibilityState={{ checked: fonteSerifada, disabled: carregandoPreferenciasFonte || salvandoPreferenciasFonte, busy: carregandoPreferenciasFonte || salvandoPreferenciasFonte }}
                 accessibilityChecked={fonteSerifada}
                 className={`flex-1 p-3 rounded-xl border active:opacity-70 ${fonteSerifada ? "bg-cor-destaque-fundo dark:bg-cor-destaque-fundo-dark border-cor-destaque dark:border-cor-destaque-dark" : "border-cor-borda dark:border-cor-borda-dark"} items-center justify-center`}
               >
                 <Text style={{ fontFamily: FAMILIA_SERIFADA }} className="text-cor-texto dark:text-cor-texto-dark font-bold">Fonte Serifada</Text>
-              </Pressable>
+              </PressableComTecladoWeb>
               
               <View className="flex-1 p-1 items-center justify-center border border-cor-borda dark:border-cor-borda-dark rounded-xl">
                 <BotaoTema />

@@ -1,5 +1,5 @@
-import { router } from "expo-router";
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { router, useFocusEffect } from "expo-router";
+import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import { Animated, Easing, Platform, Pressable, Text, useWindowDimensions, View } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { IconeUI } from "./icone/IconeUI";
@@ -18,6 +18,7 @@ import { useOwnerId } from "../core/useOwnerId";
 import { mostrarToast } from "../core/util/toast";
 import { MenuAcoes, type AcaoMenu } from "./MenuAcoes";
 import { BotaoMais } from "./BotaoMais";
+import { continuarAudio, iniciarAudio, pausarAudio, pararAudio, suportaAudio, suportaPausaAudio, type EstadoAudio } from "../core/leitura/audio";
 import { ModalNota } from "./ModalNota";
 import { EstadoCarregando } from "./EstadoCarregando";
 import { IlustracaoPeriodoDia } from "./IlustracaoPeriodoDia";
@@ -100,6 +101,9 @@ export function CardVersiculoDia({ periodoDoDia }: Props) {
   const [nota, setNota] = useState<Nota | null>(null);
   const notaTexto = nota?.texto ?? "";
   const [menuAberto, setMenuAberto] = useState(false);
+  const [audioEstado, setAudioEstado] = useState<EstadoAudio>("ocioso");
+  const [audioVersiculo, setAudioVersiculo] = useState<number | null>(null);
+  const origemAudio = useRef({}).current;
   const [salvandoVersiculo, setSalvandoVersiculo] = useState(false);
   const salvamentoEmAndamento = useRef(false);
   const escalaAmem = useRef(new Animated.Value(1)).current;
@@ -108,6 +112,8 @@ export function CardVersiculoDia({ periodoDoDia }: Props) {
   const escuro = colorScheme === "dark";
   const corDestaque = escuro ? COR_DESTAQUE.escuro : COR_DESTAQUE.claro;
   const corIconePadrao = escuro ? COR_ICONE_PADRAO.escuro : COR_ICONE_PADRAO.claro;
+
+  useFocusEffect(useCallback(() => () => pararAudio(false, origemAudio), [origemAudio]));
 
   function carregarVersiculo() {
     setCarregando(true);
@@ -164,7 +170,51 @@ export function CardVersiculoDia({ periodoDoDia }: Props) {
     return `"${dados?.texto ?? ""}"\n\n${dados?.referencia ?? referencia}${link ? `\n${link}` : ""}`;
   }
 
+  const observadorAudio = {
+    aoMudarEstado: setAudioEstado,
+    aoIniciarVersiculo: setAudioVersiculo,
+    aoErro: (mensagem: string) => mostrarToast(mensagem, { severidade: "erro" }),
+  };
+
+  function ouvirVersiculoDoDia() {
+    if (!dados?.texto) return;
+    if (audioEstado === "reproduzindo") {
+      pausarAudio();
+    } else if (audioEstado === "pausado" || audioEstado === "interrompido" || audioEstado === "erro") {
+      continuarAudio();
+    } else {
+      iniciarAudio([{ numero: ref?.versiculo ?? 1, texto: dados.texto }], observadorAudio, 0, origemAudio);
+    }
+  }
+
+  const acaoAudio: AcaoMenu = audioEstado === "reproduzindo"
+    ? { label: suportaPausaAudio() ? "Pausar leitura" : "Interromper leitura", icone: suportaPausaAudio() ? "pause" : "close", onPress: pausarAudio }
+    : audioEstado === "pausado"
+      ? { label: "Continuar leitura", icone: "audio", onPress: continuarAudio }
+      : audioEstado === "interrompido"
+        ? { label: `Continuar do início do versículo ${audioVersiculo ?? "atual"}`, icone: "audio", onPress: continuarAudio }
+    : audioEstado === "erro"
+      ? { label: "Tentar ouvir novamente", icone: "audio", onPress: continuarAudio }
+      : { label: "Ouvir este versículo", icone: "audio", onPress: ouvirVersiculoDoDia };
+
+  const rotuloEstadoAudio = audioEstado === "iniciando"
+    ? "Preparando leitura em voz alta…"
+    : audioEstado === "pausando"
+      ? "Pausando leitura…"
+      : audioEstado === "interrompendo"
+        ? "Interrompendo leitura…"
+    : audioEstado === "reproduzindo"
+    ? `Ouvindo ${dados?.referencia ?? "versículo do dia"}`
+    : audioEstado === "pausado"
+      ? "Leitura pausada"
+      : audioEstado === "interrompido"
+        ? `Leitura interrompida · continua do início do versículo ${audioVersiculo ?? "atual"}`
+        : audioEstado === "erro"
+          ? "Não foi possível concluir a leitura"
+          : "";
+
   const acoesMais: AcaoMenu[] = [
+    ...(suportaAudio() && !["iniciando", "pausando", "interrompendo"].includes(audioEstado) ? [acaoAudio] : []),
     { label: "Copiar", icone: "copy", onPress: () => copiar(textoParaCompartilhar()) },
     ...(ref ? [{ label: "Ver capítulo inteiro", icone: "open-book" as const, onPress: () => router.push(`/biblia/${ref.livroSlug}/${ref.capitulo}?versiculo=${ref.versiculo}`) }] : []),
     ...(ref ? [{ label: "Resumo do livro", icone: "book-collection" as const, onPress: () => router.push(`/resumos/${ref.livroSlug}`) }] : []),
@@ -257,6 +307,40 @@ export function CardVersiculoDia({ periodoDoDia }: Props) {
 
           {/* Actions & Footer */}
           <View>
+            {audioEstado !== "ocioso" ? (
+              <View className="flex-row items-center gap-2 rounded-2xl bg-black/5 dark:bg-white/10 px-3 py-2.5 mb-3">
+                <IconeUI name="audio" size={18} color={corIconePadrao} />
+                <Text accessibilityLiveRegion="polite" className="flex-1 text-xs font-semibold text-cor-texto dark:text-white">
+                  {rotuloEstadoAudio}
+                </Text>
+                <Pressable
+                  onPress={audioEstado === "reproduzindo" ? pausarAudio : continuarAudio}
+                  disabled={audioEstado === "iniciando" || audioEstado === "pausando" || audioEstado === "interrompendo"}
+                  accessibilityRole="button"
+                  accessibilityLabel={audioEstado === "iniciando"
+                    ? "Iniciando leitura do versículo"
+                    : audioEstado === "pausando" ? "Pausando leitura do versículo"
+                      : audioEstado === "interrompendo" ? "Interrompendo leitura do versículo"
+                    : audioEstado === "reproduzindo"
+                    ? suportaPausaAudio() ? "Pausar leitura do versículo" : "Interromper leitura do versículo"
+                    : audioEstado === "interrompido"
+                      ? `Continuar do início do versículo ${audioVersiculo ?? "atual"}`
+                      : audioEstado === "erro" ? "Tentar ouvir o versículo novamente" : "Continuar leitura do versículo"}
+                  accessibilityHint={audioEstado === "interrompido" ? "O versículo atual será repetido desde o começo." : undefined}
+                  className="min-w-11 min-h-11 items-center justify-center rounded-full active:bg-black/10 dark:active:bg-white/10"
+                >
+                  <IconeUI name={audioEstado === "reproduzindo" && suportaPausaAudio() ? "pause" : audioEstado === "reproduzindo" ? "close" : "audio"} size={19} color={corIconePadrao} />
+                </Pressable>
+                <Pressable
+                  onPress={() => pararAudio(true, origemAudio)}
+                  accessibilityRole="button"
+                  accessibilityLabel="Encerrar leitura em voz alta"
+                  className="min-w-11 min-h-11 items-center justify-center rounded-full active:bg-black/10 dark:active:bg-white/10"
+                >
+                  <IconeUI name="close" size={18} color={corIconePadrao} />
+                </Pressable>
+              </View>
+            ) : null}
             <View className="flex-row items-center justify-between mb-5 px-2">
               <BotaoAcaoVersiculo
                 acessibilidade={salvo ? "Remover versículo dos salvos" : "Salvar versículo"}

@@ -14,6 +14,7 @@ substituir os estados e critérios mais atuais.
 | Seguir branch, commit, CI e recuperação | [`docs/FLUXO-GIT.md`](./docs/FLUXO-GIT.md) | Descreve apenas políticas observadas/autorizadas e evidências reais. |
 | Consultar dúvidas e lacunas de UX para visitantes novos | [`docs/auditoria-ux-novato.md`](./docs/auditoria-ux-novato.md) | Achados confirmados no fluxo e status das correções. |
 | Entender armazenamento e controles dos dados no produto | [`app/privacidade.tsx`](./app/privacidade.tsx) | Resumo funcional; não substitui política jurídica. |
+| Consultar proveniência e direitos da base bíblica | [`docs/LICENCA-TEXTO-ACF.md`](./docs/LICENCA-TEXTO-ACF.md) | Permissão para redistribuir a base ACF integral ainda precisa de confirmação. |
 | Conferir implementação funcional | [`FUNCIONALIDADES.md`](./FUNCIONALIDADES.md) | Checklist legado amplo; confirmar código/evidência antes de marcar item. |
 | Consultar decisões fechadas | [`TODO.md`](./TODO.md) | Não reabrir decisões do usuário sem pedido. |
 | Consultar histórico | [`CHANGELOG.md`](./CHANGELOG.md) | Registro cronológico; não é roadmap. |
@@ -29,6 +30,7 @@ substituir os estados e critérios mais atuais.
 | [`PLANO-CONFIGURACOES.md`](./docs/PLANO-CONFIGURACOES.md) | Melhorias UX/UI, contrato de preferências, dados locais e lembrete diário | Etapas iniciais implementadas; QA visual, assistivo e do lembrete em dispositivo pendentes. |
 | [`docs/revisao-editorial/INDICE.md`](./docs/revisao-editorial/INDICE.md) | Fila de propostas editoriais pendentes | Lista rascunhos, próximas ações e o gate de duas revisões humanas. Fontes dos três planos já publicados estão em `docs/planos-publicados/`. |
 | [`PLANO-TECNICO-BUSCA.md`](./PLANO-TECNICO-BUSCA.md) | Status e evolução técnica da busca e descoberta | Execução parcial; priorizar contrato, benchmark e integração dos escopos antes de adotar índice derivado. |
+| [`docs/PLANO-TITULOS-LEITURA-BIBLICA.md`](./docs/PLANO-TITULOS-LEITURA-BIBLICA.md) | Metadados editoriais para títulos e divisões apresentados no leitor bíblico | Plano do piloto do Salmo 119; fonte/licença e revisão editorial são bloqueadores antes de publicar títulos. |
 
 ## Estado, qualidade e conteúdo
 

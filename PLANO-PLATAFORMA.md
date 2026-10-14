@@ -133,15 +133,14 @@ antes de lançar publicamente com contas de usuário reais.
 
 ### Direitos autorais do texto bíblico
 
-A tradução Almeida usada hoje via bible-api.com retorna `"Public Domain"`
-na resposta da API, mas existem várias revisões da Almeida com direitos
-autorais diferentes (a tradução original de João Ferreira de Almeida,
-1681/1753, é de domínio público; revisões modernas como ARA, ARC ou a
-Nova Almeida Atualizada pertencem a instituições como a Sociedade Bíblica
-do Brasil ou editoras). **Antes de armazenar o texto bíblico em banco de
-dados próprio** (Decisão 4, fase futura), é preciso confirmar exatamente
-qual edição é essa e se ela é mesmo de domínio público — copiar/redistribuir
-uma revisão com direitos reservados, mesmo gratuitamente, é risco real.
+O projeto hoje armazena a ACF integral em `assets/biblia.json`. A origem
+registrada no script de download é uma cópia de terceiros e não estabelece
+permissão de redistribuição. A página de direitos publicada pela Sociedade
+Bíblica Trinitariana do Brasil identifica a ACF como protegida e estabelece
+condições para citações. A autorização aplicável ao app/site ainda não está
+documentada; ver [`docs/LICENCA-TEXTO-ACF.md`](./docs/LICENCA-TEXTO-ACF.md).
+Não tratar o campo `"Public Domain"` retornado por uma API ou a antiguidade da
+tradução Almeida como prova de que esta revisão específica pode ser distribuída.
 
 ### Termos de uso da bible-api.com
 

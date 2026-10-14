@@ -68,4 +68,9 @@ html.dark body {
   [data-selecao-arrasto="true"] [data-capitulo]:active {
     cursor: grabbing;
   }
+
+  [data-selecao-arrasto="true"] {
+    user-select: none;
+    -webkit-user-select: none;
+  }
 }

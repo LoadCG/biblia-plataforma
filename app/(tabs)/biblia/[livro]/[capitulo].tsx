@@ -1,5 +1,5 @@
 import { Link, router, useFocusEffect, useLocalSearchParams } from "expo-router";
-import { useCallback, useEffect, useRef, useState, useMemo } from "react";
+import { Fragment, useCallback, useEffect, useRef, useState, useMemo } from "react";
 import { ActivityIndicator, Animated, Image, NativeSyntheticEvent, NativeScrollEvent, Pressable, ScrollView, Text, useWindowDimensions, View, LayoutAnimation, Platform, UIManager } from "react-native";
 import * as Sharing from "expo-sharing";
 import { captureRef } from "react-native-view-shot";
@@ -14,6 +14,7 @@ import { Tooltip } from "../../../../components/Tooltip";
 import { Modal } from "react-native";
 import { buscarReferencia } from "../../../../core/biblia/BibliaAPI";
 import type { CapituloTexto } from "../../../../core/biblia/tipos";
+import { indexarTitulosSecao, obterTitulosSecao } from "../../../../core/biblia/titulosSecao";
 import { formatarReferenciaVersiculos } from "../../../../core/biblia/formatarReferenciaVersiculos";
 import type { Nota, ReferenciaVersiculo } from "../../../../core/types/leitura";
 import { livros, obterLivro, obterResumo } from "../../../../core/content/livros";
@@ -129,6 +130,10 @@ export default function Leitura() {
         : null;
 
   const [dados, setDados] = useState<CapituloTexto | null>(null);
+  const titulosPorVersiculo = useMemo(
+    () => indexarTitulosSecao(obterTitulosSecao(livro?.slug ?? "", capitulo)),
+    [livro?.slug, capitulo]
+  );
   const [erro, setErro] = useState<string | null>(null);
   const [grifos, setGrifos] = useState<Map<number, string | undefined>>(new Map());
   const [salvos, setSalvos] = useState<Set<number>>(new Set());
@@ -1104,6 +1109,7 @@ export default function Leitura() {
             </View>
           ) : dados.versiculos ? (
             dados.versiculos.map((v) => {
+              const tituloSecao = titulosPorVersiculo.get(v.numero);
               const corGrifo = grifos.get(v.numero);
               const grifado = grifos.has(v.numero);
               const salvo = salvos.has(v.numero);
@@ -1113,7 +1119,17 @@ export default function Leitura() {
               const notaEhReferenciaPrincipal = !nota?.grupoId || primeiroVersiculoDaNota === v.numero;
               const selecionado = versiculosSelecionados.has(v.numero);
               return (
-                <View key={v.numero} onLayout={(e) => aoMedirVersiculo(v.numero, e.nativeEvent.layout.y)} className={`mb-0.5 -mx-2 ${destaqueAlvo && v.numero !== versiculoAlvo ? "opacity-30" : ""}`}>
+                <Fragment key={v.numero}>
+                  {tituloSecao ? (
+                    <Text
+                      accessibilityRole="header"
+                      accessibilityLabel={`${tituloSecao.titulo}, letra hebraica ${tituloSecao.letraHebraica}`}
+                      className="mt-7 mb-2 px-2 text-lg font-bold text-cor-destaque dark:text-cor-destaque-dark"
+                    >
+                      {tituloSecao.titulo} · {tituloSecao.letraHebraica}
+                    </Text>
+                  ) : null}
+                <View onLayout={(e) => aoMedirVersiculo(v.numero, e.nativeEvent.layout.y)} className={`mb-0.5 -mx-2 ${destaqueAlvo && v.numero !== versiculoAlvo ? "opacity-30" : ""}`}>
                   <PressableComTecladoWeb
                     testID={`versiculo-${v.numero}`}
                     onPress={() => selecionarVersiculo(v.numero)}
@@ -1162,6 +1178,7 @@ export default function Leitura() {
                     ) : null}
                   </PressableComTecladoWeb>
                 </View>
+                </Fragment>
               );
             })
           ) : (

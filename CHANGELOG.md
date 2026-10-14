@@ -5,6 +5,48 @@ O formato é baseado no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.
 
 ## [Unreleased] - 2026-10-04
 
+### Seleção de capítulos — arraste em lote (2026-10-14)
+- Robustecido o gesto web: clique esquerdo e ponteiro principal apenas, limiar
+  de 5 px para distinguir clique de arraste, captura do ponteiro, proteção
+  contra seleção de texto e cancelamento seguro em blur/desmontagem.
+- Intervalo recalculado desde a âncora ao mover o ponteiro para trás, sem deixar
+  capítulos residuais. Clique simples segue alternando um capítulo e arraste
+  real não ativa acidentalmente a abertura da leitura ao soltar.
+- Sete testes DOM cobrem clique, expansão/redução, desmarcação, botão secundário,
+  ponteiro concorrente, cancelamento e limpeza. QA tátil e nativo permanece
+  pendente.
+- QA manual no browser confirmou a seleção 3–9 e a redução ao arrastar de 5
+  para 7 (permaneceram 3, 4, 8 e 9); a seleção foi cancelada sem gravar progresso.
+
+### Seletor de capítulos — melhorias para toque (2026-10-14)
+- Adicionado modo acessível “Selecionar intervalo”: dois toques definem início
+  e fim e selecionam o trecho entre eles; a direção do toque não altera o
+  resultado e o estado do capítulo inicial determina seleção ou remoção.
+- A quantidade de colunas agora preserva células maiores em larguras móveis
+  estreitas; ações da barra têm alvo mínimo de 44 px e o início do intervalo
+  recebe destaque visual e anúncio acessível.
+- Novos testes cobrem intervalo, sentido inverso, remoção e breakpoints móveis;
+  suíte (27 conjuntos/191 testes), typecheck, acessibilidade e UI passaram.
+- Revisão visual em aparelho/emulador continua pendente.
+
+### Proveniência do texto bíblico (2026-10-14)
+- A página Sobre, README e documentação deixaram de afirmar que a ACF é de
+  domínio público. A permissão para redistribuir a cópia integral incorporada
+  permanece sem confirmação registrada; a situação e as ações pendentes estão
+  em `docs/LICENCA-TEXTO-ACF.md`.
+- A página Sobre agora informa esse estado e oferece o link para os termos de
+  direitos publicados pela SBTB.
+
+### Leitura bíblica — divisões do Salmo 119 (2026-10-08)
+- Adicionado catálogo offline de metadados editoriais para as 22 estrofes do
+  acróstico hebraico, com os nomes transliterados e glifos das letras.
+- O leitor principal apresenta cada cabeçalho antes do primeiro versículo da
+  estrofe; o texto ACF e as ações associadas aos versículos permanecem separados.
+- Adicionado `npm run check:titulos-secao` à validação estrutural. Revisão humana
+  da variante de transliteração e QA visual/assistiva ainda estão pendentes.
+- A fonte não é apresentada como título da edição ACF; fontes e limites de
+  proveniência estão registrados no catálogo e no plano específico.
+
 ### Busca, áudio e preferências locais (2026-10-07)
 - A busca bíblica aplica filtros e relevância de forma consistente entre web e
   armazenamento nativo, com correspondência por termos, frases e prefixos;

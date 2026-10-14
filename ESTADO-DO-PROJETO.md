@@ -147,6 +147,34 @@ revisão humana, execução remota e distribuição.
   de raciocínio interno em fontes de interface e conteúdo integrado. O gate
   passou ao inspecionar 116 fontes sem sinalizações. É uma checagem literal; a
   revisão semântica humana continua útil para conteúdo e estados complexos.
+- **Títulos da leitura bíblica (2026-10-08):** o leitor passou a mostrar as 22
+  letras do acróstico do Salmo 119 antes de cada estrofe. O catálogo é metadado
+  editorial separado da ACF e permanece offline nas duas plataformas. O
+  verificador estrutural passou para 22 seções/176 versículos; typecheck e QA
+  visual/assistivo ainda não foram executados neste ambiente, e a revisão humana
+  da variante de transliteração permanece pendente. Plano detalhado em
+  [`docs/PLANO-TITULOS-LEITURA-BIBLICA.md`](./docs/PLANO-TITULOS-LEITURA-BIBLICA.md).
+- **Seleção de capítulos para marcar leitura (2026-10-14):** o gesto de arrastar
+  no web agora ignora cliques não intencionais, acompanha o ponteiro principal,
+  permite ampliar/reduzir o intervalo e limpa captura/estilos em cancelamento ou
+  perda de foco. O clique simples continua selecionando um capítulo. Sete testes
+  focados, typecheck e contratos da UI passaram. No navegador desktop, arrastei
+  Salmos 3–9 e depois reduzi por 5–7; a grade mostrou 7 e depois 4 selecionados
+  (3, 4, 8 e 9), sem navegar ao soltar. O progresso não foi gravado. QA tátil e
+  nativo ainda deve ser feito.
+- **Seletor móvel de capítulos (2026-10-14):** incluído modo de seleção de
+  intervalo por dois toques (início e fim), disponível também na web touch e
+  acessível por leitor de tela. A grade passa a usar 5 colunas abaixo de 360 px,
+  6 até 479 px e breakpoints maiores depois; isso mantém a célula próxima ou
+  acima de 44 px em larguras móveis comuns. Barra de ações usa alvos de 44 px.
+  Testes de intervalo/breakpoints, typecheck, 191 testes, checks de acessibilidade
+  e UI passaram. QA em aparelho/emulador continua pendente.
+- **Direitos do texto ACF (2026-10-14):** README, decisão registrada e página
+  Sobre agora deixam de afirmar domínio público. O app continua usando a base
+  integral localmente, mas a autorização de redistribuição não está registrada;
+  confirmar proveniência/termos com a SBTB antes de tratar esse ponto como
+  resolvido. Evidências e próximos passos em
+  [`docs/LICENCA-TEXTO-ACF.md`](./docs/LICENCA-TEXTO-ACF.md).
 - Ajuda permanente e explicações de armazenamento local agora estão disponíveis
   nas rotas `/ajuda` e `/privacidade`, também acessíveis por Descubra e
   Configurações. Os links substituíram atalhos sem destino no Descubra. A tela

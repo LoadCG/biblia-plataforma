@@ -9,10 +9,15 @@ atual contém 66 resumos e 2 planos; inventário e validações estruturais exis
 mas schema editorial completo, taxonomia e revisões humanas independentes dos
 rascunhos continuam abertos. A fila de execução do trimestre está consolidada
 no ciclo 5 de [`docs/PLANO-MESTRE-Q4-2026.md`](./docs/PLANO-MESTRE-Q4-2026.md).
+Atualização de 2026-10-14: a base ACF integral continua sendo a tradução
+selecionada pelo produto, mas sua permissão de redistribuição está pendente de
+confirmação documentada; consultar [`docs/LICENCA-TEXTO-ACF.md`](./docs/LICENCA-TEXTO-ACF.md).
 
 ## Princípios editoriais
 
-- Preservar Almeida ACF como texto bíblico principal e domínio público.
+- Preservar a decisão de produto de usar Almeida ACF como texto principal;
+  não assumir domínio público nem redistribuição autorizada sem evidência
+  registrada (ver `docs/LICENCA-TEXTO-ACF.md`).
 - Separar claramente texto bíblico, resumo editorial, devocional e metadados.
 - Não publicar conteúdo gerado sem revisão humana e rastreabilidade de fonte.
 - Preferir lotes pequenos revisáveis a uma grande expansão sem controle.

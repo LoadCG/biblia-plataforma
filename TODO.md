@@ -18,8 +18,10 @@ busca global, reformulação visual de Descubra e de Você) estão todos
 
 ## Decisões do usuário (não reabrir sem pedir de novo)
 
-- **Trocar tradução do texto bíblico** (2.9) — não por enquanto. Só
-  Almeida ACF (domínio público), sem pagar licença de outra tradução.
+- **Tradução do texto bíblico** (2.9) — a decisão de produto é manter apenas
+  ACF e não adicionar outra tradução. A licença da cópia integral atualmente
+  embutida ainda precisa de confirmação; não afirmar domínio público até haver
+  evidência. Ver [`docs/LICENCA-TEXTO-ACF.md`](./docs/LICENCA-TEXTO-ACF.md).
 - **Criar conta / login** (6.1-6.3) — não por enquanto. Perfil local
   (nome + foto) editável, guardado por `ownerId` anônimo — ver
   `core/repositories/PerfilRepository.ts`. Pronto pra virar perfil de

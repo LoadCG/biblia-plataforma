@@ -1,0 +1,53 @@
+{
+  "versao": 1,
+  "fontes": [
+    {
+      "id": "estrutura-acrostica-salmo-119",
+      "descricao": "Organização do Salmo 119 em 22 estrofes de oito versículos, em sequência alfabética hebraica.",
+      "url": "https://enterthebible.org/courses/psalms/lessons/introductory-issues/",
+      "tipo": "referencia-estrutural",
+      "uso": "Referência factual; nenhum subtítulo ou trecho da publicação foi transcrito."
+    },
+    {
+      "id": "nomes-letras-hebraicas-eric",
+      "descricao": "Grafia acadêmica de referência para os nomes das letras hebraicas.",
+      "url": "https://files.eric.ed.gov/fulltext/ED437293.pdf",
+      "tipo": "referencia-ortografica",
+      "uso": "Referência ortográfica; os nomes e glifos são registrados como metadados próprios."
+    }
+  ],
+  "capitulos": [
+    {
+      "livroSlug": "19-salmos",
+      "capitulo": 119,
+      "tipo": "divisao-editorial",
+      "fonteId": "estrutura-acrostica-salmo-119",
+      "status": "aprovado",
+      "notaEditorial": "Identificação descritiva das estrofes do acróstico hebraico. Os nomes das letras seguem uma transliteração acadêmica de referência; estes cabeçalhos não são apresentados como títulos da edição ACF.",
+      "secoes": [
+        { "id": "sl119-aleph", "inicioVersiculo": 1, "fimVersiculo": 8, "titulo": "Aleph", "letraHebraica": "א" },
+        { "id": "sl119-beth", "inicioVersiculo": 9, "fimVersiculo": 16, "titulo": "Beth", "letraHebraica": "ב" },
+        { "id": "sl119-gimel", "inicioVersiculo": 17, "fimVersiculo": 24, "titulo": "Gimel", "letraHebraica": "ג" },
+        { "id": "sl119-daleth", "inicioVersiculo": 25, "fimVersiculo": 32, "titulo": "Daleth", "letraHebraica": "ד" },
+        { "id": "sl119-he", "inicioVersiculo": 33, "fimVersiculo": 40, "titulo": "He", "letraHebraica": "ה" },
+        { "id": "sl119-waw", "inicioVersiculo": 41, "fimVersiculo": 48, "titulo": "Waw", "letraHebraica": "ו" },
+        { "id": "sl119-zayin", "inicioVersiculo": 49, "fimVersiculo": 56, "titulo": "Zayin", "letraHebraica": "ז" },
+        { "id": "sl119-heth", "inicioVersiculo": 57, "fimVersiculo": 64, "titulo": "Heth", "letraHebraica": "ח" },
+        { "id": "sl119-teth", "inicioVersiculo": 65, "fimVersiculo": 72, "titulo": "Teth", "letraHebraica": "ט" },
+        { "id": "sl119-yod", "inicioVersiculo": 73, "fimVersiculo": 80, "titulo": "Yod", "letraHebraica": "י" },
+        { "id": "sl119-kaph", "inicioVersiculo": 81, "fimVersiculo": 88, "titulo": "Kaph", "letraHebraica": "כ" },
+        { "id": "sl119-lamed", "inicioVersiculo": 89, "fimVersiculo": 96, "titulo": "Lamed", "letraHebraica": "ל" },
+        { "id": "sl119-mem", "inicioVersiculo": 97, "fimVersiculo": 104, "titulo": "Mem", "letraHebraica": "מ" },
+        { "id": "sl119-nun", "inicioVersiculo": 105, "fimVersiculo": 112, "titulo": "Nun", "letraHebraica": "נ" },
+        { "id": "sl119-samekh", "inicioVersiculo": 113, "fimVersiculo": 120, "titulo": "Samekh", "letraHebraica": "ס" },
+        { "id": "sl119-ayin", "inicioVersiculo": 121, "fimVersiculo": 128, "titulo": "Ayin", "letraHebraica": "ע" },
+        { "id": "sl119-pe", "inicioVersiculo": 129, "fimVersiculo": 136, "titulo": "Pe", "letraHebraica": "פ" },
+        { "id": "sl119-tsade", "inicioVersiculo": 137, "fimVersiculo": 144, "titulo": "Tsade", "letraHebraica": "צ" },
+        { "id": "sl119-qoph", "inicioVersiculo": 145, "fimVersiculo": 152, "titulo": "Qoph", "letraHebraica": "ק" },
+        { "id": "sl119-resh", "inicioVersiculo": 153, "fimVersiculo": 160, "titulo": "Resh", "letraHebraica": "ר" },
+        { "id": "sl119-shin", "inicioVersiculo": 161, "fimVersiculo": 168, "titulo": "Shin", "letraHebraica": "ש" },
+        { "id": "sl119-taw", "inicioVersiculo": 169, "fimVersiculo": 176, "titulo": "Taw", "letraHebraica": "ת" }
+      ]
+    }
+  ]
+}

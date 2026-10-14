@@ -534,6 +534,21 @@ apareceram corretas na tela de leitura. Testes automatizados novos
 (`BibliaAPI.web.test.ts`, `erroAmigavel.test.ts`) cobrem a
 classificação e a ausência de retry em `limite`/`invalido`.
 
+### 2.2e Divisões do acróstico no Salmo 119 `✅ implementação local`
+
+O leitor bíblico agora mostra as 22 letras hebraicas como cabeçalhos antes de
+cada estrofe do Salmo 119 (Aleph–Taw; oito versículos por seção). Os cabeçalhos
+são metadados editoriais separados do texto ACF e não podem ser selecionados,
+grifados, anotados ou incluídos nas ações de texto dos versículos. A cobertura
+está limitada ao Salmo 119; não representa títulos editoriais da edição ACF nem
+cobertura de todos os títulos presentes em outras Bíblias.
+
+O catálogo offline fica em `core/biblia/dados/titulosSecao.json`, com fontes
+estruturais/ortográficas e status registrados. O validador
+`npm run check:titulos-secao` confere referências e os 22 intervalos. Typecheck
+e inspeção visual/assistiva ainda devem ser registrados antes de declarar o
+aceite integral.
+
 ### 2.2c Tamanho de fonte na leitura do capítulo `✅`
 **Funcionalidade:** controle A-/A+ no cabeçalho da leitura, 3 passos
 (15/17/19px), aplicado ao texto do capítulo inteiro. Persistido por
@@ -700,6 +715,30 @@ capítulo 3 ao 9 selecionou exatamente 3-9 (7 capítulos, confirmado via
 arrastar de um capítulo já selecionado (5) até 7 desmarcou só 5-7,
 mantendo 3, 4, 8 e 9 selecionados — confirma o comportamento "estilo
 Fotos" de estender ou encolher com o mesmo gesto.
+
+**Melhoria de robustez (2026-10-14):** o gesto ignora botão secundário e
+ponteiros não principais, espera deslocamento intencional de 5 px, captura o
+ponteiro quando suportado e bloqueia seleção de texto durante o arraste. O
+intervalo é recalculado a partir do capítulo âncora, então voltar sobre as
+células encolhe a seleção sem deixar itens residuais. Cliques simples continuam
+alternando um capítulo. Cancelamento, perda de foco e desmontagem removem a
+captura e restauram estilos; um arraste real também impede o clique de soltar de
+abrir a leitura. Sete testes DOM cobrem esses contratos e passaram. No browser
+desktop, o arraste 3–9 e a redução de 5–7 foram conferidos visualmente; a
+seleção foi cancelada sem gravar progresso. Permanecem pendentes inspeção em
+touch e o gesto nativo por deslizamento, que ainda não está implementado.
+
+**Alternativa para mobile e acessibilidade (2026-10-14):** o botão
+“Selecionar intervalo” ativa a escolha das duas pontas com toques normais; o
+primeiro capítulo fica realçado e o segundo fecha o intervalo, incluindo todas
+as células entre eles. Se a ponta inicial já estava selecionada, o intervalo é
+removido. O modo funciona em Android/iOS e web, sem depender de arrastar.
+Breakpoints usam 5 colunas abaixo de 360 px, 6 abaixo de 480 px, 8 abaixo de
+720 px, 10 abaixo de 1024 px e 12 em telas maiores, limitadas à quantidade de
+capítulos. Isso mantém células de pelo menos 44 px em larguras móveis comuns;
+os quatro controles de lote têm altura mínima de 44 px. O modo anuncia as
+instruções e a primeira ponta ao leitor de tela. Testes de intervalo nos dois
+sentidos e dos breakpoints passaram. QA físico/emulador permanece pendente.
 
 ### 2.5 Navegar entre capítulos `✅`
 **Funcionalidade:** anterior/próximo, cruzando de um livro pro outro nas
@@ -1596,8 +1635,9 @@ explicitamente, com controle fácil de desativar depois.
 **Funcionalidade:** implementada 2026-08-19 em `app/sobre.tsx`,
 alcançada por um link em Configurações → Sobre. Seções: o que é o
 projeto (independente, sem vínculo institucional), fonte do texto
-bíblico (Almeida Corrigida Fiel, domínio público, embutido no app —
-por isso a leitura funciona offline), origem dos resumos (conteúdo
+bíblico (Almeida Corrigida Fiel, embutida localmente; a permissão de
+redistribuição integral ainda está sendo confirmada — ver
+`docs/LICENCA-TEXTO-ACF.md`), origem dos resumos (conteúdo
 autoral, posição tradicional/conservadora nas questões de debate
 acadêmico real, citando visão alternativa quando relevante),
 limitações (não é uma edição acadêmica/crítica), privacidade (sem

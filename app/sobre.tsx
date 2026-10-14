@@ -3,6 +3,7 @@ import { Linking, ScrollView, Text, View } from "react-native";
 import { BotaoTema } from "../components/BotaoTema";
 
 const URL_REPOSITORIO = "https://github.com/LoadCG/biblia-plataforma";
+const URL_DIREITOS_ACF = "https://www.biblias.com.br/direitos-autorais";
 
 function Secao({ titulo, children }: { titulo: string; children: string }) {
   return (
@@ -37,12 +38,20 @@ export default function Sobre() {
         </Secao>
 
         <Secao titulo="Texto bíblico">
-          O texto integral usado no app é a Almeida Corrigida Fiel (ACF),
-          uma tradução em domínio público. Por ser de domínio público, o
-          texto inteiro (cerca de 31 mil versículos) está embutido no
-          próprio aplicativo — a leitura funciona offline, sem depender de
-          uma API externa a cada capítulo aberto.
+          O app usa a Almeida Corrigida Fiel (ACF), armazenada localmente
+          para permitir leitura offline. Os termos de direitos publicados
+          pela Sociedade Bíblica Trinitariana do Brasil identificam a ACF
+          como protegida por direitos autorais. A autorização para distribuir
+          o texto integral neste projeto ainda está sendo confirmada; consulte
+          os termos da editora no link abaixo.
         </Secao>
+        <Text
+          onPress={() => Linking.openURL(URL_DIREITOS_ACF)}
+          accessibilityRole="link"
+          className="text-sm font-semibold text-cor-destaque dark:text-cor-destaque-dark -mt-4 mb-6"
+        >
+          Direitos autorais da ACF — Sociedade Bíblica Trinitariana do Brasil
+        </Text>
 
         <Secao titulo="Resumos por livro">
           Os resumos históricos e teológicos de cada um dos 66 livros

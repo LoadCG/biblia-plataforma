@@ -10,6 +10,7 @@ import type { Livro } from "../../../../core/content/tipos";
 import { carregarUltimaLeitura } from "../../../../core/leitura/ultimaLeitura";
 import { progressoRepository } from "../../../../core/repositories";
 import { mostrarToast } from "../../../../core/util/toast";
+import { aplicarIntervaloCapitulos } from "../../../../core/util/aplicarIntervaloCapitulos";
 import { useOwnerId } from "../../../../core/useOwnerId";
 
 const SET_VAZIO = new Set<number>();
@@ -22,6 +23,8 @@ export default function EscolherLivro() {
   const [lidosPorLivro, setLidosPorLivro] = useState<Record<string, Set<number>>>({});
   const [livroSelecaoAtiva, setLivroSelecaoAtiva] = useState<string | null>(null);
   const [selecionados, setSelecionados] = useState<Set<number>>(new Set());
+  const [modoIntervalo, setModoIntervalo] = useState(false);
+  const [capituloInicioIntervalo, setCapituloInicioIntervalo] = useState<number | null>(null);
 
   useEffect(() => {
     // Se veio de "trocar livro" durante a leitura (com o slug do livro atual
@@ -59,6 +62,8 @@ export default function EscolherLivro() {
   }, [termo]);
 
   function alternarModoSelecao(slug: string) {
+    setModoIntervalo(false);
+    setCapituloInicioIntervalo(null);
     if (livroSelecaoAtiva === slug) {
       setLivroSelecaoAtiva(null);
       setSelecionados(new Set());
@@ -69,6 +74,15 @@ export default function EscolherLivro() {
   }
 
   function alternarCapituloSelecionado(cap: number) {
+    if (modoIntervalo) {
+      if (capituloInicioIntervalo === null) {
+        setCapituloInicioIntervalo(cap);
+      } else {
+        setSelecionados((atual) => aplicarIntervaloCapitulos(atual, capituloInicioIntervalo, cap));
+        setCapituloInicioIntervalo(null);
+      }
+      return;
+    }
     setSelecionados((atual) => {
       const novo = new Set(atual);
       if (novo.has(cap)) novo.delete(cap);
@@ -129,6 +143,8 @@ export default function EscolherLivro() {
     );
     setLivroSelecaoAtiva(null);
     setSelecionados(new Set());
+    setModoIntervalo(false);
+    setCapituloInicioIntervalo(null);
   }
 
   const renderItem = ({ item }: { item: Livro }) => {
@@ -143,6 +159,8 @@ export default function EscolherLivro() {
             if (emSelecao) {
               setLivroSelecaoAtiva(null);
               setSelecionados(new Set());
+              setModoIntervalo(false);
+              setCapituloInicioIntervalo(null);
             }
             setLivroExpandido(expandido ? null : item.slug);
           }}
@@ -160,18 +178,24 @@ export default function EscolherLivro() {
         {expandido && (
           <View className="px-2 py-4 bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark rounded-b-xl -mt-2 pt-6">
             <View className="flex-row items-center justify-between px-1 mb-4">
-              <Text className="text-xs text-cor-texto-suave dark:text-cor-texto-suave-dark">
+              <Text accessibilityLiveRegion="polite" className="text-xs text-cor-texto-suave dark:text-cor-texto-suave-dark flex-1 pr-2">
                 {emSelecao
-                  ? `${selecionados.size} selecionado${selecionados.size === 1 ? "" : "s"}${
-                      Platform.OS === "web" && selecionados.size === 0 ? " — arraste pra selecionar um intervalo" : ""
-                    }`
+                  ? modoIntervalo
+                    ? capituloInicioIntervalo === null
+                      ? selecionados.size > 0
+                        ? `${selecionados.size} selecionados. Toque no primeiro capítulo do intervalo`
+                        : "Toque no primeiro capítulo do intervalo"
+                      : `Início: capítulo ${capituloInicioIntervalo} — toque no último`
+                    : `${selecionados.size} selecionado${selecionados.size === 1 ? "" : "s"}${
+                        Platform.OS === "web" && selecionados.size === 0 ? " — arraste pra selecionar um intervalo" : ""
+                      }`
                   : "Toque num capítulo pra ler, ou segure pra escolher um versículo"}
               </Text>
               <Pressable
                 onPress={() => alternarModoSelecao(item.slug)}
                 accessibilityRole="button"
                 accessibilityLabel={emSelecao ? "Cancelar seleção" : "Marcar vários capítulos como lidos"}
-                className="flex-row items-center gap-1.5 px-3 py-1.5 rounded-full bg-cor-borda dark:bg-cor-borda-dark active:opacity-70"
+                className="min-h-11 flex-row items-center gap-1.5 px-3 py-2 rounded-full bg-cor-borda dark:bg-cor-borda-dark active:opacity-70"
               >
                 <IconeUI
                   name={emSelecao ? "close" : "select-many"}
@@ -192,22 +216,42 @@ export default function EscolherLivro() {
               selecionados={emSelecao ? selecionados : undefined}
               onAlternarSelecionado={emSelecao ? alternarCapituloSelecionado : undefined}
               onMudarSelecaoEmMassa={emSelecao ? setSelecionados : undefined}
+              capituloInicioIntervalo={emSelecao && modoIntervalo ? capituloInicioIntervalo : null}
+              modoIntervalo={emSelecao && modoIntervalo}
             />
 
             {emSelecao && (
-              <View className="flex-row items-center gap-2 mt-4 px-1">
+              <View className="flex-row flex-wrap items-center gap-2 mt-4 px-1">
                 <Pressable
-                  onPress={() => setSelecionados(new Set(Array.from({ length: item.capitulos }, (_, i) => i + 1)))}
+                  onPress={() => {
+                    setSelecionados(new Set(Array.from({ length: item.capitulos }, (_, i) => i + 1)));
+                    setModoIntervalo(false);
+                    setCapituloInicioIntervalo(null);
+                  }}
                   accessibilityRole="button"
-                  className="px-3 py-2 rounded-full border border-cor-borda dark:border-cor-borda-dark active:opacity-70"
+                  className="min-h-11 px-3 py-2 rounded-full border border-cor-borda dark:border-cor-borda-dark active:opacity-70"
                 >
                   <Text className="text-xs font-semibold text-cor-texto dark:text-cor-texto-dark">Selecionar todos</Text>
+                </Pressable>
+                <Pressable
+                  onPress={() => {
+                    setModoIntervalo((atual) => !atual);
+                    setCapituloInicioIntervalo(null);
+                  }}
+                  accessibilityRole="button"
+                  accessibilityLabel={modoIntervalo ? "Cancelar seleção por intervalo" : "Selecionar intervalo de capítulos"}
+                  accessibilityState={{ selected: modoIntervalo }}
+                  className="min-h-11 px-3 py-2 rounded-full border border-cor-borda dark:border-cor-borda-dark active:opacity-70"
+                >
+                  <Text className="text-xs font-semibold text-cor-texto dark:text-cor-texto-dark">
+                    {modoIntervalo ? "Cancelar intervalo" : "Selecionar intervalo"}
+                  </Text>
                 </Pressable>
                 <Pressable
                   onPress={() => marcarSelecionados(item, false)}
                   disabled={selecionados.size === 0}
                   accessibilityRole="button"
-                  className={`px-3 py-2 rounded-full border border-cor-borda dark:border-cor-borda-dark ${selecionados.size === 0 ? "opacity-40" : "active:opacity-70"}`}
+                  className={`min-h-11 px-3 py-2 rounded-full border border-cor-borda dark:border-cor-borda-dark ${selecionados.size === 0 ? "opacity-40" : "active:opacity-70"}`}
                 >
                   <Text className="text-xs font-semibold text-cor-texto dark:text-cor-texto-dark">Desmarcar</Text>
                 </Pressable>
@@ -215,7 +259,7 @@ export default function EscolherLivro() {
                   onPress={() => marcarSelecionados(item, true)}
                   disabled={selecionados.size === 0}
                   accessibilityRole="button"
-                  className={`flex-1 items-center px-3 py-2 rounded-full bg-cor-destaque dark:bg-cor-destaque-dark ${selecionados.size === 0 ? "opacity-40" : "active:opacity-70"}`}
+                  className={`min-h-11 min-w-[140px] flex-1 items-center px-3 py-2 rounded-full bg-cor-destaque dark:bg-cor-destaque-dark ${selecionados.size === 0 ? "opacity-40" : "active:opacity-70"}`}
                 >
                   <Text className="text-xs font-semibold text-white">Marcar como lidos</Text>
                 </Pressable>

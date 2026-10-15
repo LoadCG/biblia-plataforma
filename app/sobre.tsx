@@ -1,5 +1,5 @@
 import { Link } from "expo-router";
-import { Linking, ScrollView, Text, View } from "react-native";
+import { Linking, Pressable, ScrollView, Text, View } from "react-native";
 import { BotaoTema } from "../components/BotaoTema";
 
 const URL_REPOSITORIO = "https://github.com/LoadCG/biblia-plataforma";
@@ -19,8 +19,10 @@ export default function Sobre() {
     <ScrollView className="flex-1 bg-cor-fundo dark:bg-cor-fundo-dark">
       <View className="px-5 pt-6 pb-10 max-w-2xl w-full mx-auto">
         <View className="flex-row items-center justify-between mb-2">
-          <Link href="/voce" className="text-cor-destaque dark:text-cor-destaque-dark text-sm">
-            ← Você
+          <Link href="/voce" asChild>
+            <Pressable accessibilityRole="link" accessibilityLabel="Voltar para seu perfil" className="min-h-11 justify-center pr-3 active:opacity-70">
+              <Text className="text-cor-destaque dark:text-cor-destaque-dark text-sm">← Você</Text>
+            </Pressable>
           </Link>
           <BotaoTema />
         </View>

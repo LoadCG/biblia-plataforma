@@ -2,6 +2,17 @@
 
 ## Execução
 
+### Perfil web — conferência desktop em 2026-10-15
+
+- Ambiente: navegador local Expo Web, rota `/voce`, janela 1280×720, tema claro,
+  perfil Visitante sem histórico nem itens salvos.
+- O layout em duas áreas, Minha biblioteca, atividade vazia, progresso e medalhas
+  apareceu sem overflow horizontal. A página mantém rolagem vertical; a parte
+  inferior das medalhas continua abaixo da dobra. A árvore acessível expôs título,
+  botões de Salvos/Anotações e links de Configurações/Ajuda com nomes claros.
+- Não foram alterados dados do perfil. Estado com conteúdo, tema escuro, foco por
+  teclado, zoom e viewport móvel não foram verificados neste recorte.
+
 ### Fluxo de seleção de versículos — 2026-10-02
 
 - Revisão estática do Leitor e da grade de escolha encontrou referências
@@ -182,6 +193,13 @@
 | VIS-UI-21 | A grade de escolha tratava versículos grifados como “lidos”, inclusive no rótulo acessível e na cor verde de capítulo concluído. | P2 | Expor estado “grifado” com cor de marcação distinta, sem usar `selected` como sinônimo de status. | Corrigido estruturalmente; contraste em claro/escuro e navegação ainda pendentes. |
 | VIS-UI-22 | A barra da seleção anotava o versículo de menor número, mas anunciava anotação para o conjunto todo; fechar também podia deixar expansão de cores na próxima seleção. | P2 | Nomear o alvo da nota e limpar o estado secundário junto com a seleção. | Corrigido no código; fluxo de modal/retorno de foco ainda pendente. |
 | VIS-UI-23 | Na captura de 688×860, o fim da barra cortava “Compartilhar” e “Imagem” sem indicar que havia mais opções; a barra de rolagem nativa também ficava branca no modo escuro. | P1 | Mostrar controles laterais acessíveis por páginas com sobreposição entre ações; ocultar a barra nativa. | Corrigido e conferido em claro/escuro; foco, teclado e viewports adicionais pendentes. |
+| VIS-UI-24 | Ao trocar o filtro de testamento em Descubra, a lista horizontal de livros podia conservar o deslocamento anterior e esconder os primeiros livros no mobile. | P2 | Reiniciar a rolagem horizontal ao mudar o testamento, mantendo o gesto por toque e o arrasto web existente. | Corrigido em código com retorno suave ao início; validação visual em aparelho/browser mobile pendente. |
+| VIS-UI-25 | Em Minha biblioteca, “Limpar filtros” também apagava a seleção em lote, sem deixar claro que a ação cancelaria a seleção. | P1 | Tratar filtros e seleção como estados distintos: limpar busca/ordem/categoria/coleção sem descartar itens selecionados; exibir a ação só com filtros ativos. | Corrigido; o contador agora descreve o resultado filtrado sem depender da seleção. Inspeção visual e fluxo completo em viewport mobile pendentes. |
+| VIS-UI-26 | Vários controles de organização, filtro, ordenação e seleção em Minha biblioteca tinham alvo mínimo de 40 px em telas de toque. | P2 | Elevar alvos interativos dessa tela para pelo menos 44 px, mantendo espaçamento responsivo e estilos existentes. | Corrigido em classes de layout; validação em aparelho e ampliação de texto pendentes. |
+| VIS-UI-27 | A lista de resumos carregava progresso só na montagem e podia exibir zero provisório ou contagem desatualizada ao voltar de um resumo. | P1 | Atualizar progresso ao recuperar foco, separar carregando/erro/dados confirmados e oferecer nova tentativa sem bloquear a lista. Encurtar o placeholder para caber em telas estreitas. | Corrigido no fluxo da tela; typecheck, contratos de acessibilidade/UI/copy e diff passaram. Inspeção mobile real e falha induzida permanecem pendentes. |
+| VIS-UI-28 | Os links de retorno no topo de seis rotas informativas tinham área de toque menor que os demais controles usados em mobile. | P2 | Padronizar alvos mínimos de 44 px, nomes acessíveis de navegação e feedback de toque sem alterar os destinos. | Corrigido em Resumos, detalhe de resumo, Minha biblioteca, Estatísticas, Configurações e Sobre. Inspeção visual/assistiva mobile continua pendente. |
+| VIS-UI-29 | Links secundários da Home, Perfil e detalhes de Medalhas tinham alvos menores que 44 px ou nomes pouco específicos para tecnologias assistivas. | P2 | Padronizar área de toque, feedback e rótulos acessíveis preservando texto e destinos. | Corrigido em Home, Perfil e detalhes de Medalhas. Inspeção visual/assistiva em viewport mobile real continua pendente. |
+| VIS-UI-30 | Sugestões recentes, recarga de resultados, retry do versículo do dia, limpeza de filtros e ações de seleção bíblica tinham alvos móveis menores que 44 px. | P2 | Padronizar altura mínima dos controles compactos de uso frequente sem mudar sua função. | Corrigido nas superfícies Descubra, Minha biblioteca, Versículo do dia e leitura bíblica. Fluxos visuais e leitor de tela em viewport real continuam pendentes. |
 
 ## Fechamento do incremento de microfeedback
 
@@ -364,3 +382,14 @@ como aprovado, defeito reproduzível ou bloqueado.
   depois da mudança; resultados registrados no relatório de execução.
 - Limite: detalhes e ícones ainda precisam de inspeção visual em browser nos
   temas claro/escuro; a matriz não os marca como aprovados visualmente.
+
+## Continuação de estados web — Estatísticas — 2026-10-15
+
+- A rota local `/estatisticas` abriu com os dados vazios confirmados: 0 livros,
+  capítulos, versículos grifados e notas, além de 0 minutos estimados. A árvore
+  acessível expôs o título “Minhas estatísticas” e o controle de tema escuro.
+- A página carregou sem ficar em spinner e os valores permaneceram consistentes
+  com um perfil local sem atividade. Nenhum dado foi criado ou alterado.
+- Limite: esta passagem conferiu a árvore acessível, não o layout por captura
+  com viewport CSS controlado; falha/retry, tema escuro e leitor de tela real
+  seguem pendentes. A origem descartável usada foi `localhost:8092`.

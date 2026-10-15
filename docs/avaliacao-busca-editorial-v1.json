@@ -1,0 +1,43 @@
+{
+  "versao": 1,
+  "data": "2026-10-13",
+  "statusDosRotulos": "provisorios; primeira leitura editorial assistida por IA; requer revisao humana independente",
+  "escala": {
+    "central": "O resumo é um destino especialmente adequado para estudar essa intenção.",
+    "relevante": "O resumo aborda o tema de maneira útil, mas não é necessariamente um destino principal.",
+    "contextual": "A palavra aparece em contexto relacionado; o resultado pode não responder à intenção temática.",
+    "naoAvaliado": "Não há julgamento registrado; ausência de rótulo não significa irrelevância."
+  },
+  "consultas": [
+    { "consulta": "Jesus", "intencao": "Conhecer a pessoa, os ensinos e a vida de Jesus.", "central": ["40-mateus", "41-marcos", "42-lucas", "43-joao"], "relevante": ["44-atos"], "ambigua": false },
+    { "consulta": "paz", "intencao": "Encontrar textos sobre paz como tema espiritual e comunitário.", "central": ["43-joao", "48-galatas", "50-filipenses", "33-miqueias"], "relevante": ["38-zacarias"], "contextual": ["06-josue", "07-juizes"], "ambigua": true },
+    { "consulta": "fé", "intencao": "Estudar fé e confiança em Deus.", "central": ["59-tiago", "58-hebreus", "45-romanos", "48-galatas"], "relevante": ["35-habacuque"], "ambigua": true },
+    { "consulta": "obras", "intencao": "Entender obras, prática da fé e vida cristã.", "central": ["59-tiago", "48-galatas", "56-tito"], "relevante": ["45-romanos"], "ambigua": true },
+    { "consulta": "perdão", "intencao": "Encontrar exemplos e ensino sobre perdão e reconciliação.", "central": ["32-jonas", "47-2-corintios", "01-genesis"], "relevante": ["25-lamentacoes", "33-miqueias"], "ambigua": true },
+    { "consulta": "reconciliação", "intencao": "Estudar reconciliação entre pessoas e com Deus.", "central": ["47-2-corintios", "45-romanos", "01-genesis"], "ambigua": true },
+    { "consulta": "ansiedade", "intencao": "Buscar ensino bíblico sobre preocupação e cuidado em meio às necessidades.", "central": ["40-mateus", "50-filipenses"], "contextual": ["35-habacuque"], "ambigua": false },
+    { "consulta": "sofrimento", "intencao": "Encontrar livros que tratem sofrimento e perseverança.", "central": ["18-jo", "60-1-pedro", "47-2-corintios"], "relevante": ["41-marcos"], "ambigua": true },
+    { "consulta": "oração", "intencao": "Estudar oração pessoal e comunitária.", "central": ["19-salmos", "42-lucas", "16-neemias"], "relevante": ["05-deuteronomio", "25-lamentacoes"], "ambigua": true },
+    { "consulta": "esperança", "intencao": "Encontrar textos de esperança e consolo em contextos difíceis.", "central": ["23-isaias", "60-1-pedro", "24-jeremias", "33-miqueias"], "relevante": ["14-2-cronicas"], "ambigua": true },
+    { "consulta": "sabedoria", "intencao": "Estudar literatura e ensinamentos de sabedoria.", "central": ["20-proverbios", "21-eclesiastes"], "relevante": ["11-1-reis", "19-salmos"], "ambigua": false },
+    { "consulta": "justiça", "intencao": "Estudar justiça social, ética e retidão.", "central": ["30-amos", "45-romanos", "03-levitico"], "relevante": ["20-proverbios"], "ambigua": true },
+    { "consulta": "pobreza", "intencao": "Encontrar textos sobre pobreza, vulnerabilidade e tratamento dos pobres.", "central": ["59-tiago", "42-lucas", "20-proverbios"], "ambigua": true },
+    { "consulta": "êxodo", "intencao": "Localizar o livro e a narrativa do êxodo de Israel.", "central": ["02-exodo"], "relevante": ["01-genesis", "03-levitico", "04-numeros", "05-deuteronomio"], "ambigua": false },
+    { "consulta": "exílio", "intencao": "Estudar o exílio e a experiência de Judá e Israel.", "central": ["26-ezequiel", "27-daniel", "14-2-cronicas"], "relevante": ["23-isaias", "13-1-cronicas"], "ambigua": true },
+    { "consulta": "criação", "intencao": "Estudar relatos e reflexões bíblicas sobre criação.", "central": ["01-genesis"], "relevante": ["18-jo", "23-isaias", "51-colossenses"], "ambigua": false },
+    { "consulta": "aliança", "intencao": "Estudar alianças bíblicas e seus contextos.", "central": ["02-exodo", "05-deuteronomio", "10-2-samuel"], "relevante": ["24-jeremias", "06-josue"], "ambigua": true },
+    { "consulta": "Espírito Santo", "intencao": "Estudar o Espírito Santo e sua atuação no Novo Testamento.", "central": ["44-atos"], "relevante": ["26-ezequiel", "65-judas"], "ambigua": true },
+    { "consulta": "ressurreição", "intencao": "Estudar a ressurreição de Jesus e seu significado cristão.", "central": ["40-mateus", "41-marcos", "42-lucas", "43-joao", "46-1-corintios"], "ambigua": false },
+    { "consulta": "graça", "intencao": "Estudar a graça de Deus e sua relação com a vida cristã.", "central": ["48-galatas", "49-efesios", "56-tito"], "relevante": ["45-romanos"], "contextual": ["65-judas"], "ambigua": true },
+    { "consulta": "salvação", "intencao": "Estudar salvação no cânon e na teologia cristã.", "central": ["45-romanos", "49-efesios", "48-galatas"], "relevante": ["29-joel", "51-colossenses"], "ambigua": true },
+    { "consulta": "família", "intencao": "Encontrar narrativas e ensino sobre relações familiares.", "central": ["01-genesis", "08-rute"], "relevante": ["10-2-samuel", "18-jo"], "ambigua": true },
+    { "consulta": "casamento", "intencao": "Estudar casamento em narrativas, poesia e ensino apostólico.", "central": ["46-1-corintios", "22-cantares", "08-rute"], "relevante": ["28-oseias", "39-malaquias"], "ambigua": true },
+    { "consulta": "dinheiro", "intencao": "Encontrar ensino sobre dinheiro, riqueza e generosidade.", "central": ["54-1-timoteo", "20-proverbios"], "ambigua": false },
+    { "consulta": "trabalho", "intencao": "Estudar trabalho, sustento e descanso.", "central": ["20-proverbios", "21-eclesiastes", "53-2-tessalonicenses"], "relevante": ["51-colossenses"], "ambigua": true },
+    { "consulta": "liderança", "intencao": "Encontrar exemplos e orientações para liderança comunitária.", "central": ["54-1-timoteo", "56-tito", "16-neemias"], "relevante": ["04-numeros", "64-3-joao"], "ambigua": true },
+    { "consulta": "luto", "intencao": "Encontrar linguagem bíblica para luto, perda e esperança.", "central": ["25-lamentacoes", "19-salmos"], "relevante": ["66-apocalipse"], "ambigua": true },
+    { "consulta": "medo", "intencao": "Estudar medo, coragem e confiança em Deus.", "central": ["19-salmos", "27-daniel"], "relevante": ["34-naum", "04-numeros"], "ambigua": true },
+    { "consulta": "louvor", "intencao": "Estudar louvor e adoração a Deus.", "central": ["19-salmos", "58-hebreus", "66-apocalipse"], "relevante": ["65-judas"], "ambigua": false },
+    { "consulta": "reino de Deus", "intencao": "Estudar o anúncio e o ensino sobre o Reino de Deus.", "central": ["40-mateus", "41-marcos", "42-lucas"], "contextual": ["10-2-samuel", "11-1-reis"], "ambigua": true }
+  ]
+}

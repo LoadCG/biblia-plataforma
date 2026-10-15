@@ -1,5 +1,5 @@
 import { Link, router, useLocalSearchParams } from "expo-router";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Pressable, ScrollView, Text, TextInput, useWindowDimensions, View } from "react-native";
 import { IconeUI, type IconeUINome } from "../../components/icone/IconeUI";
 import { BotaoTema } from "../../components/BotaoTema";
@@ -66,9 +66,22 @@ export default function Pesquisa() {
   const buscaAtiva = useRef(0);
   const favoritaAtiva = useRef(0);
   const refFiltroLivro = useArrastarParaRolar();
+  const refScrollFiltroLivro = useRef<ScrollView | null>(null);
+  const conectarFiltroLivro = useCallback((instancia: ScrollView | null) => {
+    refScrollFiltroLivro.current = instancia;
+    refFiltroLivro(instancia);
+  }, [refFiltroLivro]);
   const idTemaParametro = Array.isArray(parametros.tema) ? parametros.tema[0] : parametros.tema;
   const temaSelecionado = idTemaParametro ? TEMAS_BUSCA.find((tema) => tema.id === idTemaParametro) ?? null : null;
   const hrefPrimeiraLeitura = temaSelecionado ? hrefReferenciaBiblica(temaSelecionado.referencias[0]) : null;
+  const livrosDisponiveisNoFiltro = useMemo(
+    () => testamento === "todos" ? livros : livros.filter((livro) => livro.testamento === testamento),
+    [testamento]
+  );
+
+  useEffect(() => {
+    refScrollFiltroLivro.current?.scrollTo({ x: 0, animated: true });
+  }, [testamento]);
 
   useEffect(() => {
     if (idTemaParametro && !temaSelecionado) {
@@ -134,6 +147,10 @@ export default function Pesquisa() {
   function alterarTestamento(proximo: typeof testamento) {
     if (proximo === testamento) return;
     reiniciarBusca();
+    if (livroFiltro && proximo !== "todos") {
+      const livroSelecionado = livros.find((livro) => livro.slug === livroFiltro);
+      if (livroSelecionado && livroSelecionado.testamento !== proximo) setLivroFiltro(undefined);
+    }
     setTestamento(proximo);
   }
 
@@ -143,7 +160,15 @@ export default function Pesquisa() {
     setLivroFiltro(proximo);
   }
 
+  function limparFiltros() {
+    if (testamento === "todos" && !livroFiltro) return;
+    reiniciarBusca();
+    setTestamento("todos");
+    setLivroFiltro(undefined);
+  }
+
   const resultadosResumo = useMemo(() => (termo.trim() ? buscarLivros(termo) : []), [termo]);
+  const quantidadeResultadosExibidos = abaExibicao === "biblia" ? resultadosBiblia.length : resultadosResumo.length;
 
   useEffect(() => {
     const idBusca = ++buscaAtiva.current;
@@ -333,14 +358,24 @@ export default function Pesquisa() {
               </Pressable>
             ))}
           </View>
-          <ScrollView ref={refFiltroLivro} horizontal showsHorizontalScrollIndicator={false} accessibilityLabel="Filtrar por livro">
+          <ScrollView ref={conectarFiltroLivro} horizontal showsHorizontalScrollIndicator={false} accessibilityLabel="Filtrar por livro">
             <Pressable onPress={() => alterarLivroFiltro(undefined)} accessibilityRole="radio" accessibilityState={{ checked: !livroFiltro }}
               // @ts-expect-error accessibilityChecked é uma extensão do react-native-web
               accessibilityChecked={!livroFiltro} className={`mr-2 px-3 py-1.5 rounded-full border ${!livroFiltro ? "border-cor-destaque dark:border-cor-destaque-dark" : "border-cor-borda dark:border-cor-borda-dark"}`}><Text className="text-xs text-cor-texto dark:text-cor-texto-dark">Todos os livros</Text></Pressable>
-            {livros.map((livro) => <Pressable key={livro.slug} onPress={() => alterarLivroFiltro(livro.slug)} accessibilityRole="radio" accessibilityState={{ checked: livroFiltro === livro.slug }}
+            {livrosDisponiveisNoFiltro.map((livro) => <Pressable key={livro.slug} onPress={() => alterarLivroFiltro(livro.slug)} accessibilityRole="radio" accessibilityState={{ checked: livroFiltro === livro.slug }}
               // @ts-expect-error accessibilityChecked é uma extensão do react-native-web
               accessibilityChecked={livroFiltro === livro.slug} className={`mr-2 px-3 py-1.5 rounded-full border ${livroFiltro === livro.slug ? "border-cor-destaque dark:border-cor-destaque-dark" : "border-cor-borda dark:border-cor-borda-dark"}`}><Text className="text-xs text-cor-texto dark:text-cor-texto-dark">{livro.nome}</Text></Pressable>)}
           </ScrollView>
+          {testamento !== "todos" || livroFiltro ? (
+            <View className="mt-2 flex-row items-center justify-between gap-3">
+              <Text className="flex-1 text-xs text-cor-texto-suave dark:text-cor-texto-suave-dark" numberOfLines={1}>
+                Filtros: {testamento === "todos" ? "Toda a Bíblia" : testamento}{livroFiltro ? ` · ${livros.find((livro) => livro.slug === livroFiltro)?.nome ?? "Livro selecionado"}` : ""}
+              </Text>
+              <Pressable onPress={limparFiltros} accessibilityRole="button" accessibilityLabel="Limpar filtros de testamento e livro" className="min-h-11 justify-center px-2 active:opacity-60">
+                <Text className="text-xs font-semibold text-cor-destaque dark:text-cor-destaque-dark">Limpar filtros</Text>
+              </Pressable>
+            </View>
+          ) : null}
           </View>
         ) : null}
       </View>
@@ -353,7 +388,7 @@ export default function Pesquisa() {
                 ? `Busca indisponível: ${erroBusca}`
                 : abaExibicao === "biblia" && temMaisResultados
                   ? `${resultadosBiblia.length} resultados carregados, há mais resultados disponíveis`
-                  : `${abaExibicao === "biblia" ? resultadosBiblia.length : resultadosResumo.length} resultados encontrados`}
+                  : `${quantidadeResultadosExibidos} ${quantidadeResultadosExibidos === 1 ? "resultado encontrado" : "resultados encontrados"}`}
             </Text>
           ) : null}
           {termo.trim() ? (
@@ -431,7 +466,7 @@ export default function Pesquisa() {
                     );
                   })}
                   {temMaisResultados ? (
-                    <Pressable onPress={carregarMaisResultados} disabled={carregandoMais} accessibilityRole="button" accessibilityState={{ busy: carregandoMais, disabled: carregandoMais }} className="rounded-full border border-cor-borda dark:border-cor-borda-dark px-4 py-3 items-center mt-2 active:opacity-70">
+                    <Pressable onPress={carregarMaisResultados} disabled={carregandoMais} accessibilityRole="button" accessibilityState={{ busy: carregandoMais, disabled: carregandoMais }} className="min-h-11 rounded-full border border-cor-borda dark:border-cor-borda-dark px-4 items-center justify-center mt-2 active:opacity-70">
                       <Text className="font-bold text-cor-texto dark:text-cor-texto-dark">{carregandoMais ? "Carregando…" : erroCarregarMais ? "Tentar novamente" : "Carregar mais resultados"}</Text>
                     </Pressable>
                   ) : null}
@@ -539,7 +574,7 @@ export default function Pesquisa() {
               {favoritas.length > 0 ? (
                 <View className="mb-5">
                   <Text className="text-sm font-semibold text-cor-texto-suave dark:text-cor-texto-suave-dark mb-2">Pesquisas favoritas</Text>
-              <View className="flex-row flex-wrap gap-2">{favoritas.slice(0, 8).map((item) => <Pressable key={item.termo} onPress={() => alterarTermo(item.termo)} accessibilityRole="button" className="px-3 py-2 rounded-full bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark border border-cor-borda dark:border-cor-borda-dark active:opacity-70"><Text className="text-xs font-semibold text-cor-texto dark:text-cor-texto-dark">★ {item.termo}</Text></Pressable>)}</View>
+              <View className="flex-row flex-wrap gap-2">{favoritas.slice(0, 8).map((item) => <Pressable key={item.termo} onPress={() => alterarTermo(item.termo)} accessibilityRole="button" className="min-h-11 justify-center px-3 rounded-full bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark border border-cor-borda dark:border-cor-borda-dark active:opacity-70"><Text className="text-xs font-semibold text-cor-texto dark:text-cor-texto-dark">★ {item.termo}</Text></Pressable>)}</View>
                 </View>
               ) : null}
               <View className={`flex-row items-end justify-between ${desktop ? "mt-2 mb-4" : "mb-3"}`}>

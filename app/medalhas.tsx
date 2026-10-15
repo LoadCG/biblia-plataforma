@@ -155,8 +155,10 @@ export default function Medalhas() {
                       : "Este marco não tem livros pendentes."}
                 </Text>
                 {livrosPendentes.slice(0, 6).map((livro) => (
-                  <Link key={livro.slug} href={`/resumos/${livro.slug}`} className="py-2 text-cor-destaque dark:text-cor-destaque-dark">
-                    Abrir resumo de {livro.nome} →
+                  <Link key={livro.slug} href={`/resumos/${livro.slug}`} asChild>
+                    <Pressable accessibilityRole="link" accessibilityLabel={`Abrir resumo de ${livro.nome}`} className="self-start min-h-11 justify-center active:opacity-70">
+                      <Text className="text-cor-destaque dark:text-cor-destaque-dark">Abrir resumo de {livro.nome} →</Text>
+                    </Pressable>
                   </Link>
                 ))}
                 {livrosPendentes.length > 6 ? <Text className="text-xs text-cor-texto-suave dark:text-cor-texto-suave-dark mt-2">E mais {livrosPendentes.length - 6} livros.</Text> : null}

@@ -1,4 +1,4 @@
-# Estado do projeto e próximos passos (revisado em 2026-10-04)
+# Estado do projeto e próximos passos (revisado em 2026-10-13)
 
 Este é o documento de referência pra responder duas perguntas: **em
 que etapa estamos de verdade** (sem otimismo nem pessimismo) e **o que
@@ -125,7 +125,7 @@ traduções licenciadas, notificações push), a distância é grande e
   nunca fazer — mas sem entrar na lista priorizada abaixo até o app
   nativo estar pronto o bastante pra essa conversa fazer sentido.
 
-## Estado verificado e próximos passos — 2026-10-04
+## Estado verificado e próximos passos — 2026-10-15
 
 O plano unificado do trimestre está em [`docs/PLANO-MESTRE-Q4-2026.md`](./docs/PLANO-MESTRE-Q4-2026.md).
 Ele separa implementação local, verificação estrutural, inspeção visual,
@@ -183,63 +183,50 @@ revisão humana, execução remota e distribuição.
 
 ### Próxima ordem de execução
 
-0. **Anotações multi-versículo — QA web funcional concluído, com gates nativos e
-   visuais pendentes:** em `localhost:8082`, perfil descartável, foram conferidos
-   criação contínua/descontínua, abertura pelo membro secundário, extensão sem
-   alterar o texto, promoção de nota individual, conflito sem sobrescrita,
-   persistência após recarga e exclusão. “Salvos” exibiu um item por grupo;
-   busca/edição, atividade e o cartão do Versículo do Dia preservaram as
-   referências. Os dados temporários foram removidos. Cinco testes focados e os
-   checks registrados na matriz passaram. Ainda faltam runtime SQLite em
-   dispositivo/emulador, estados de erro/ocupado/foco, tecnologia assistiva
-   física e inspeção em viewport CSS medido. Evidências em
-   [`PLANO-MELHORIAS-UI-DESIGN.md`](./PLANO-MELHORIAS-UI-DESIGN.md) e na matriz.
-1. **Fechar fluxo de seleção:** conferir a11y de teclado/modal/foco, ações em
-   lote, cópia/compartilhamento/imagem e grade; cobrir claro/escuro e breakpoints
-   web tocados. Não inferir QA de dispositivo nem usar armazenamento pessoal para
-   gravações. Critérios detalhados estão no plano focal.
-2. **Home desktop — em andamento:** a coluna de apoio agora diferencia carga,
-   erro recuperável e valores carregados; o estado zero só aparece após resposta
-   bem-sucedida. `typecheck`, `check:ui` e `check:a11y` passaram; a origem local
-   mostrou a carga e o perfil vazio carregado em claro/escuro. Faltam capturas
-   integrais em 1280×900 e 1440×900, estados com histórico/lembrete, falha
-   induzida e viewport CSS conhecido. A imagem CUA recorta a janela e não serve
-   como evidência de clipping nem de proporção das colunas.
-3. **Descubra e Planos — inspeção parcial feita:** Descubra/Esperança mostrou
-   quatro referências e temas relacionados. Em origem localhost isolada, o plano
-   foi conferido em 0/7, 1/7 e 7/7 (“Plano concluído”); os sete dias foram
-   desmarcados e a origem voltou a 0/7. O detalhe foi revisto em claro/escuro no
-   recorte 1280×720, preferência restaurada ao claro. Ao iniciar uma sessão, o
-   botão Voltar retornava a Início; foi corrigido para voltar ao detalhe do plano
-   e a sessão continuou disponível. A retomada abriu o primeiro capítulo.
-   Conteúdo adicional continua condicionado às duas revisões humanas. Completar
-   erro, checkpoint após avançar e viewports do plano mestre e seguir
-   [`docs/PLANO-TEMAS-DESCOBERTA.md`](./docs/PLANO-TEMAS-DESCOBERTA.md) antes de publicar
-   conteúdo novo.
-4. **Estados web — em andamento:** Home tem carga/erro/retry explícitos; Toast
-   agora cancela a animação anterior, evita que um temporizador antigo feche uma
-   mensagem nova, respeita movimento reduzido e desliga native driver na web.
-   Salvamento/remoção no Versículo do Dia foi observado localmente e revertido.
-   Falta a revisão visual dos consumidores, tema escuro do Toast, erros induzidos
-   e leitor de tela real.
-5. **Hover web:** padrão centralizado aplicado a links, botões,
-   abas, opções e switches por capacidade do ponteiro, com preferência de
-   movimento reduzido; exportação e 17 rotas conferidas. Estado animado real de
-   mouse, foco/teclado completo e coarse pointer continuam pendentes. Detalhes em
-   [`docs/PLANO-HOVER-INTERACOES.md`](./docs/PLANO-HOVER-INTERACOES.md).
-6. **CI e SEO:** workflow atualizado para `actions/checkout@v7` e
-   `actions/setup-node@v7`, preservando Node 22 do projeto. O run
-   [`37254924178`](https://github.com/LoadCG/biblia-plataforma/actions/runs/37254924178)
-   passou para `b737c2c`; deploy de produção `Ready`. Rotas dos três planos,
-   68 links de leitura e a rota de 1 Coríntios 13 responderam 200; capítulo
-   inválido respondeu 404. Falta acompanhar indexação e migração do runner.
-7. **Conteúdo — aguardando gate humano:** `check:revisao-editorial` confirmou
-   cinco propostas com governança explícita; `check:copy-ui` verificou 116
-   fontes e `check:editorial` confirmou 66 resumos, 5 planos e 72 dias. Esses
-   checks validam estrutura/cobertura, não juízo editorial. Próximo passo é
-   obter leituras humanas independentes dos rascunhos antes de integrar lote.
-8. **Mobile dedicado, validação nativa e lojas:** permanecem deferidos; não são
-   pré-requisitos para avançar o escopo web autorizado.
+1. **Concluído em 2026-10-15 — estabilização do trabalho local (P0):** diffs
+   preexistentes de busca/editorial, Home, Planos e melhorias móveis foram
+   preservados. Busca web confirmou referência direta, troca rápida, filtros e
+   paginação. `npm run validate` passou (25 suítes/183 testes, 84 contratos de
+   a11y, 26 de UI, Expo Doctor 21/21); `check:copy-ui`, `export:web` (1.189
+   capítulos) e `git diff --check` também passaram. As versões de seis pacotes
+   Expo foram alinhadas ao SDK 57. A vulnerabilidade crítica transitiva de
+   `shell-quote` foi corrigida com override compatível; a auditoria caiu de 79
+   para 78 achados (19 moderados, 59 altos, nenhum crítico; 53 em dependências
+   de produção). A correção global foi evitada porque propunha downgrade do
+   Expo e encontrou conflito de pares entre Reanimated e Worklets. Não foi
+   declarado aceite de SQLite nativo.
+2. **Fechar casos restantes de atualização ao voltar às telas (P1):** os fluxos
+   Home → Bíblia → marcar capítulo → Home e Plano → leitor → avançar referência
+   → retomar foram validados no navegador sem recarga; a troca rápida de abas
+   também foi exercitada. O perfil de teste foi restaurado. Ainda falta conferir
+   lembrete com histórico, progresso intermediário sem concluir dia, respostas de
+   erro/retry e execução nativa.
+3. **Concluir composição desktop da Home e Planos (P1):** Home passou a duas
+   colunas a partir de 1024 px e foi inspecionada em 1024 e 1440, clara, e em
+   1024 escura. Medições do DOM em 1024/1280/1440 ficaram dentro da largura; a
+   captura em 1280 é limitada pela janela física. Listagem/detalhe de Planos
+   foram inspecionados em desktop. Restam outros estados de perfil, verificação
+   de foco e capturas controladas nos tamanhos planejados.
+4. **Fechar a revisão funcional/assistiva da busca (P1):** referência direta,
+   troca rápida, filtro por testamento/livro e paginação foram confirmados no
+   navegador; a busca editorial e trechos têm testes e QA anteriores. Restam
+   falha/retry induzidos, leitor de tela real e SQLite/dispositivo nativo.
+   Preservar semânticas separadas e usar a triagem rotulada antes de alterar
+   ranking ou vocabulário editorial.
+5. **Continuar o Ciclo 3 de estados web (P2):** o inventário estático encontrou
+   alvo de toque pequeno no botão de ação do Toast; corrigido para 44×44 px e
+   coberto no verificador. `validate`, `check:copy-ui` e export passaram. Seguem
+   pendentes revisão visual das severidades, falha/retry induzidos, movimento
+   reduzido observado, foco e leitor de tela real. Reproduzir falhas apenas em
+   armazenamento/origem descartável.
+6. **Gates externos em fila separada:** SQLite/FTS5 e acessibilidade com leitor
+   de tela físico, áudio em aparelhos, erros de armazenamento induzidos, leitores
+   humanos independentes para conteúdo editorial e medição visual com viewport
+   controlado. Cada gate precisa de ambiente/responsável; os verificadores
+   estáticos não substituem essas evidências.
+7. **Escopo explicitamente adiado:** redesign mobile dedicado, publicação em
+   lojas, novas vozes de áudio, sincronização/contas e novos conteúdos editoriais.
+   Não iniciar sem decisão/recursos correspondentes.
 
 O benchmark externo registrado acima é uma fotografia datada, não uma medição
 atualizada neste ciclo. Planos anteriores estão classificados em

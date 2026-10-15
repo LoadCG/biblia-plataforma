@@ -1,6 +1,6 @@
 # Plano mestre de evolução — outubro a dezembro de 2026
 
-Atualizado em 2026-10-04. Este documento define a ordem das próximas entregas
+Atualizado em 2026-10-13. Este documento define a ordem das próximas entregas
 e aponta para a decomposição técnica/editorial existente. O estado real deve ser
 comprovado por diff, verificações e evidências; itens instalados não equivalem a
 aceite visual, assistivo, nativo ou de publicação.
@@ -39,6 +39,49 @@ concluir esse gate sem alegar QA runtime que não ocorreu.
 | P3 | Metadados e gestão de sessão/perfil ainda não têm conta ou sincronização. | Não iniciar autenticação/cloud sem decisão de produto, privacidade e backend. Melhorias locais devem permanecer exportáveis e segregadas por owner. | Nenhum dado pessoal enviado sem nova decisão explícita e desenho de segurança. |
 
 **Progresso 2026-10-06:** o inventário confirmou que Descubra combina busca bíblica (FTS5 nativo e varredura local web) e busca editorial separada; Salvos tem filtro local por texto/referência e não deve compartilhar o algoritmo de relevância bíblica. A busca nativa limitava o conjunto antes dos filtros, tinha fallback sem filtros/relevância e uma consulta vazia podia cair num `LIKE %%`. Corrigido: filtros e pontuação são aplicados antes do limite, o fallback usa todos os termos escapados e passa pelo mesmo pós-processamento, consultas vazias retornam lista vazia e empate fica na ordem canônica dos livros. Web reduziu lookup repetido do livro. A correspondência web agora segue FTS para prefixos de palavras e frases exatas; buscas editorial e bíblica compartilham normalização de consulta, mantendo seu escopo/relevância distintos. `typecheck`, `check:a11y`, `check:ui`, `check:copy-ui` e `git diff --check` passaram. Não foram executados testes, navegador ou runtime SQLite; consultas/paginação, equivalência real web/nativo e estados da tela continuam pendentes de QA funcional. Portanto P1 está parcialmente implementado, sem aceite integral.
+
+**Avanço de UX em 2026-10-13 — filtros da busca bíblica:** a lista de livros
+agora acompanha o testamento selecionado. Ao alternar para um testamento
+incompatível com o livro atual, a seleção do livro é removida para evitar uma
+combinação impossível que antes terminava em falso estado vazio. Quando há
+filtros ativos, a tela identifica a seleção e oferece uma ação única para
+limpá-los. Typecheck e verificadores estruturais de acessibilidade, UI e copy
+passaram. A inspeção visual e a equivalência com a busca SQLite nativa continuam
+pendentes; este recorte melhora a UX web sem fechar o P1 da busca.
+
+**Avanço de UX móvel em Minha biblioteca — 2026-10-13:** “Limpar filtros” agora
+atua apenas na busca, categoria, ordenação e coleção; a seleção em lote fica
+intacta e continua com seus próprios controles de cancelar/agir. A ação só é
+mostrada quando há filtros aplicados, e o contador anuncia os itens após filtro.
+Os controles de toque de filtros, organização e lote foram alinhados a 44 px.
+TypeScript e contratos estruturais passaram. O percurso visual mobile, ampliação
+de texto e persistência real de undo continuam pendentes.
+
+**Avanço móvel em Resumos — 2026-10-15:** a lista recarrega o progresso quando
+recupera foco após retornar de um resumo, não exibe zero enquanto a leitura do
+repositório está pendente e oferece retry inline em falha inicial sem retirar a
+lista. Atualizações posteriores preservam a contagem confirmada e sinalizam
+falhas por Toast. O placeholder foi encurtado para caber melhor em telas
+estreitas. Inspeção visual mobile e erro induzido continuam pendentes.
+
+**Continuação móvel — navegação superior:** os links de retorno de Resumos,
+detalhe de resumo, Minha biblioteca, Estatísticas, Configurações e Sobre agora
+oferecem alvo mínimo de 44 px, nome acessível e feedback de toque. Destinos foram
+preservados. Tipagem e contratos estruturais passam; inspeção visual/assistiva
+em aparelho segue como gate externo.
+
+**Continuação móvel — ações secundárias:** links de estatísticas na Home,
+privacidade/atividade/início de leitura no Perfil e acesso aos resumos nos
+detalhes de Medalhas agora têm alvos mínimos de 44 px, feedback de toque e
+rótulos acessíveis. Os destinos e a hierarquia visual foram mantidos. Contratos
+de UI e acessibilidade foram ampliados; revisão visual em viewport real ainda é
+gate externo.
+
+**Continuação móvel — controles compactos:** sugestões recentes e paginação de
+Descubra, limpeza de filtros, retry do Versículo do dia e ações de copiar,
+compartilhar e criar imagem para versículos selecionados passaram a respeitar
+altura mínima de 44 px em mobile. A matriz responsiva registra a inspeção visual
+e assistiva real como pendente.
 
 ### Execução funcional — ordem e gates
 
@@ -230,6 +273,22 @@ falha de armazenamento também não foi possível. Permanecem pendentes capturas
 integrais em 1280×900 e 1440×900, outros estados de histórico/lembrete, erro
 induzido e medição responsiva.
 
+**Progresso em 2026-10-13:** reproduzido um dado obsoleto ao marcar Gênesis 1
+como lido, voltar à aba Início e encontrar sequência zero e ausência de
+“Continue lendo”; recarregar a página fazia os dados aparecerem. A causa era a
+carga executada somente na montagem de uma aba que permanece montada. A Home
+agora recarrega progresso, sequência, capítulos recentes e lembrete ao recuperar
+foco, cancelando a atualização pendente ao perder foco. O fluxo foi repetido no
+navegador: Gênesis 1 passou a aparecer como leitura recente com sequência 1, sem
+recarregar a página; alternar rapidamente entre Bíblia e Início também terminou
+com os dados corretos. A leitura e o progresso de teste foram removidos ao
+final. A Home passou a usar duas colunas a partir de 1024 px; em 1024, 1280 e
+1440 px as caixas medidas ficaram dentro do documento, e 1024/1440 foram
+inspecionados visualmente em tema claro; 1024 também foi conferido no escuro.
+A captura em 1280 px foi limitada pela largura física do navegador, então ali a
+conclusão de ausência de overflow vem da geometria do DOM. Teste de lembrete com
+histórico, falha induzida e validação nativa continuam pendentes.
+
 ### Ciclo 2 — comparação desktop de Descubra e Planos (P1)
 
 O detalhe temático será expandido conforme [`PLANO-TEMAS-DESCOBERTA.md`](./PLANO-TEMAS-DESCOBERTA.md): conteúdo adicional permanece em revisão editorial e só aparece após publicação aprovada.
@@ -277,6 +336,28 @@ continuou disponível após voltar e o botão Continuar sessão reabriu a leitur
 Resta testar retomada após avançar uma referência. Lista escura, 1280×900/1440×900
 e falha induzida seguem pendentes.
 
+**Progresso em 2026-10-13:** a revisão do retorno de sessões identificou que o
+detalhe do plano lia progresso e sessões apenas ao montar. O retorno do leitor
+pode manter essa tela montada, deixando o botão de retomada com um índice antigo.
+O detalhe agora recarrega esses dados ao recuperar foco e ignora respostas
+assíncronas depois de perder foco. O fluxo foi exercitado: avançar do primeiro
+para o segundo trecho, voltar ao plano e selecionar “Continuar sessão” abriu
+Provérbios 2 como leitura 2 de 3; o Dia 1 foi concluído e depois desmarcado para
+restaurar o perfil de teste a 0/7. Lista e detalhe foram inspecionados em desktop
+e não mostraram clipping. Falta conferir explicitamente o progresso intermediário
+sem completar o dia, falha/retry e plataformas nativas.
+
+**Continuação em 2026-10-15 — busca bíblica web:** a referência sem acento
+`Joao 3:16` retornou João 3:16 canônico; trocar `De` por `Deus` rapidamente
+terminou com a consulta atual e sem resultados obsoletos; o filtro do Novo
+Testamento limitou a lista e “Carregar mais” acumulou de 50 para 100 resultados.
+Ao selecionar João e então Antigo Testamento, o livro incompatível foi removido
+e os resultados corresponderam ao testamento selecionado. Busca temporária
+limpa ao final, sem favoritas ou dados pessoais gravados. O fluxo manual web
+principal está validado; falha/retry visual, SQLite nativo e leitor de tela real
+permanecem gates externos. Evidência detalhada em
+[`PLANO-TECNICO-BUSCA.md`](../PLANO-TECNICO-BUSCA.md).
+
 ### Ciclo 3 — fechar sistema de estados web (P1)
 
 1. Comparar cada consumidor de `EstadoCarregando`, `EstadoErro`, `EstadoVazio` e
@@ -312,6 +393,16 @@ ao claro e o versículo terminou não salvo. `typecheck`, contratos UI/a11y e
 check de copy passaram. Não foi possível induzir falha, testar leitor de tela
 real, inspecionar outras severidades/expiração ou preferências de movimento; a
 evidência não fecha o ciclo inteiro.
+
+**Revisão estática em 2026-10-15:** o botão opcional do Toast não atendia ao alvo
+mínimo de toque usado nas ações principais. Altura e largura agora são de pelo
+menos 44 px e o verificador de acessibilidade cobre o contrato. `npm run
+validate` passou com 25 suítes/183 testes, 84 contratos a11y, 26 contratos UI e
+Expo Doctor 21/21; `npm run check:copy-ui` e `npm run export:web` também passaram,
+com 1.189 rotas de leitura geradas. A sessão web travou ao tentar abrir outra
+rota depois da exportação; a aparência do Toast e as severidades restantes não
+foram reinspecionadas. Continuam pendentes falha induzida, leitor de tela real,
+movimento reduzido observado e runtime nativo.
 
 ### Ciclo 4 — regressão visual automatizada (P2 após Ciclos 1 e 2)
 

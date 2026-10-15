@@ -1,6 +1,6 @@
 # Inventário de estados de interface
 
-Data: 2026-10-01
+Data: 2026-10-15
 Escopo inicial: superfícies com operações assíncronas e componentes compartilhados.
 
 Este inventário veio da leitura estática do código. Não representa inspeção visual nem teste em leitor de tela.
@@ -43,6 +43,12 @@ exaustivo; revisão visual e assistiva ainda está pendente.
 | Detalhe de plano | `EstadoCarregando` | `EstadoErro` com retry | estado concluído quando todos os dias finalizam | Toast nas ações | Progresso anuncia papel e valor; falhas não aparecem como conclusão ou zero; retorno, marcação, referências e ações por dia têm alvo mínimo de 44 px. |
 | Medalhas e detalhe | `EstadoCarregando` ao entrar/retomar a rota | `EstadoErro` inline com retry | não aplicável: progresso vazio válido é dado disponível, não erro | navegação ao detalhe e a resumos pendentes | Atualiza no foco; resposta tardia descartada; barra anuncia valor. Inspeção visual das rotas e falha induzida seguem pendentes. |
 | Toast global | — | — | — | alerta com ação opcional e severidade semântica | Varredura AST em 2026-10-02 encontrou 73 chamadas a `mostrarToast`, todas com severidade explícita e sem opção dinâmica. O contrato exige severidade; a animação evita corrida entre mensagens, limpa o temporizador no unmount e respeita movimento reduzido. Toast de sucesso ao remover o Versículo do Dia foi visto em tema escuro, com texto e símbolo distinguíveis; faltam as demais severidades, Toast isolado, expiração automática e movimento reduzido. |
+
+**Revisão estática em 2026-10-15:** o botão de ação do Toast global (“Desfazer” e
+“Abrir configurações”) tinha altura compacta, abaixo do alvo mínimo de 44 px
+usado nas demais ações principais. A classe responsiva agora define altura e
+largura mínimas de 44 px; o contrato de acessibilidade protege esse tamanho.
+Não houve nova inspeção visual/assistiva do Toast nesta sessão.
 
 Na inspeção local de 2026-10-04, a Home mostrou estados de carregamento e dados
 vazios confirmados, em vez de zeros provisórios; falha de armazenamento não foi

@@ -112,11 +112,17 @@ Checklist completo e detalhado (funcionalidade + UX/UI, item por item) em [`FUNC
 - **Acessibilidade de leitura**: controle de tamanho da fonte, fonte serifada opcional e tema dark/light fluído, compartilhados entre leitura de resumo e de capítulo.
 - **Modo Foco e Wayfinding**: barras de navegação que somem no scroll durante a leitura, barra fixa de navegação entre capítulos.
 - **Grifos em várias cores, notas e versículos salvos**: sistema completo com persistência local, reunidos numa única tela (`/salvo`).
-- **Busca**: por nome/conteúdo dos resumos e por palavra em toda a Bíblia (full-text local), tolerante a acentos.
+- **Busca**: por nome/conteúdo dos resumos e por palavra em toda a Bíblia (full-text local), tolerante a acentos. A busca editorial combina termos e aceita frase entre aspas; seu índice local é preparado sob demanda.
 - **Planos de leitura diária**: trilhas com progresso por dia e lembrete discreto na Início quando um plano fica parado.
 - **Progresso, streak e conquistas**: sequência de dias lendo, medalhas por marcos do cânon, estatísticas pessoais de leitura.
 - **Compartilhamento de versículos**: cartão de imagem gerado na hora (Canvas no web, captura de View no nativo), com texto, referência e identidade visual do app.
 - **Privacidade em primeiro lugar**: sem conta obrigatória — perfil, progresso e grifos ficam isolados por um ID anônimo de dispositivo. Exportar (JSON) ou apagar todos os seus dados a qualquer momento, direto em Configurações.
+
+## Verificação da busca editorial
+
+- `npm run avaliar:busca-editorial` compara a recuperação dos livros centrais e relevantes de um conjunto de 30 consultas com uma ordenação de referência sem contagem de evidências. Os rótulos atuais são provisórios e precisam de revisão humana; a métrica não avalia relevância como verdade de produto.
+- `npm run medir:busca-editorial` mede a primeira busca e a distribuição de 900 consultas aquecidas no processo Node atual. Não representa renderização web, SQLite nativo ou resultado de release.
+- Arquivos de critérios, rótulos, resultados e pendências: [`docs/PLANO-TECNICO-BUSCA.md`](./PLANO-TECNICO-BUSCA.md) e [`docs/AVALIACAO-BUSCA-EDITORIAL.md`](./docs/AVALIACAO-BUSCA-EDITORIAL.md).
 
 ## Autor
 

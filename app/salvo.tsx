@@ -220,13 +220,9 @@ export default function Salvo() {
     setFiltro("todos");
     setOrdem("recentes");
     setColecaoFiltro(null);
-    setSelecionados(new Set());
-    setModoSelecao(false);
   }
 
-  const possuiFiltrosAtivos = Boolean(
-    termo.trim() || filtro !== "todos" || ordem !== "recentes" || colecaoFiltro || selecionados.size,
-  );
+  const possuiFiltrosAtivos = Boolean(termo.trim() || filtro !== "todos" || ordem !== "recentes" || colecaoFiltro);
   const quantidadePorFiltro = (chave: Filtro) => chave === "todos"
     ? atividade.length
     : atividade.filter((item) => item.tipo === chave).length;
@@ -250,8 +246,10 @@ export default function Salvo() {
     <ScrollView className="flex-1 bg-cor-fundo dark:bg-cor-fundo-dark" refreshControl={<RefreshControl refreshing={atualizando} onRefresh={atualizar} tintColor={escuro ? "#e0a75e" : "#8a5a2b"} />}>
       <View className={`px-5 pt-6 pb-10 ${desktop ? "max-w-6xl" : "max-w-2xl"} w-full mx-auto`}>
         <View className="flex-row items-center justify-between mb-2">
-          <Link href="/voce" className="text-cor-destaque dark:text-cor-destaque-dark text-sm">
-            ← Você
+          <Link href="/voce" asChild>
+            <Pressable accessibilityRole="link" accessibilityLabel="Voltar para seu perfil" className="min-h-11 justify-center pr-3 active:opacity-70">
+              <Text className="text-cor-destaque dark:text-cor-destaque-dark text-sm">← Você</Text>
+            </Pressable>
           </Link>
           <BotaoTema />
         </View>
@@ -270,7 +268,7 @@ export default function Salvo() {
             </Pressable>
           ) : null}
         </View>
-        <Pressable onPress={() => setOpcoesAbertas((abertas) => !abertas)} accessibilityRole="button" accessibilityState={{ expanded: opcoesAbertas }} accessibilityLabel={opcoesAbertas ? "Ocultar organização e coleções" : "Organizar itens e ver coleções"} className={`self-start min-h-10 flex-row items-center gap-2 rounded-full border border-cor-borda dark:border-cor-borda-dark px-3 active:opacity-70 ${desktop ? "" : "mb-4"}`}>
+        <Pressable onPress={() => setOpcoesAbertas((abertas) => !abertas)} accessibilityRole="button" accessibilityState={{ expanded: opcoesAbertas }} accessibilityLabel={opcoesAbertas ? "Ocultar organização e coleções" : "Organizar itens e ver coleções"} className={`self-start min-h-11 flex-row items-center gap-2 rounded-full border border-cor-borda dark:border-cor-borda-dark px-3 active:opacity-70 ${desktop ? "" : "mb-4"}`}>
           <IconeUI name="clear-filter" size={15} color={escuro ? "#e0a75e" : "#8a5a2b"} />
           <Text className="text-xs font-semibold text-cor-texto dark:text-cor-texto-dark">{opcoesAbertas ? "Ocultar opções" : "Organizar e coleções"}</Text>
           <IconeUI name={opcoesAbertas ? "close" : "next-chevron"} size={14} color={escuro ? "#b3a894" : "#6b6153"} />
@@ -279,15 +277,15 @@ export default function Salvo() {
         {opcoesAbertas ? <>
         <View className="flex-row flex-wrap items-center gap-2 mb-4">
           <Text className="text-xs font-semibold text-cor-texto-suave dark:text-cor-texto-suave-dark mr-1">Outros itens:</Text>
-          <Pressable onPress={() => setFiltro("pesquisa")} accessibilityRole="tab" accessibilityLabel="Pesquisas favoritas" accessibilityState={{ selected: filtro === "pesquisa" }} className={`min-h-10 flex-row items-center gap-1.5 px-3.5 rounded-full border active:opacity-70 ${filtro === "pesquisa" ? "bg-cor-destaque dark:bg-cor-destaque-dark border-cor-destaque dark:border-cor-destaque-dark" : "border-cor-borda dark:border-cor-borda-dark"}`}>
+          <Pressable onPress={() => setFiltro("pesquisa")} accessibilityRole="tab" accessibilityLabel="Pesquisas favoritas" accessibilityState={{ selected: filtro === "pesquisa" }} className={`min-h-11 flex-row items-center gap-1.5 px-3.5 rounded-full border active:opacity-70 ${filtro === "pesquisa" ? "bg-cor-destaque dark:bg-cor-destaque-dark border-cor-destaque dark:border-cor-destaque-dark" : "border-cor-borda dark:border-cor-borda-dark"}`}>
             <Text className={`text-xs font-semibold ${filtro === "pesquisa" ? "text-white dark:text-cor-texto" : "text-cor-texto dark:text-cor-texto-dark"}`}>Pesquisas</Text>
             <Text className={`text-[11px] font-bold ${filtro === "pesquisa" ? "text-white/80 dark:text-cor-texto/80" : "text-cor-texto-suave dark:text-cor-texto-suave-dark"}`}>{quantidadePorFiltro("pesquisa")}</Text>
           </Pressable>
         </View>
         <View className={`flex-row flex-wrap items-center gap-2 mb-4 ${desktop ? "max-w-3xl" : ""}`}>
           <Text className="text-xs font-semibold text-cor-texto-suave dark:text-cor-texto-suave-dark mr-1">Ordenar:</Text>
-          <Pressable onPress={() => setOrdem("recentes")} accessibilityRole="radio" accessibilityLabel="Ordenar por mais recentes" accessibilityState={{ checked: ordem === "recentes" }} className={`min-h-10 px-3.5 justify-center rounded-full border ${ordem === "recentes" ? "bg-cor-destaque-fundo dark:bg-cor-destaque-fundo-dark border-cor-destaque dark:border-cor-destaque-dark" : "border-cor-borda dark:border-cor-borda-dark"}`}><Text className="text-xs font-semibold text-cor-texto dark:text-cor-texto-dark">Mais recentes</Text></Pressable>
-          <Pressable onPress={() => setOrdem("biblica")} accessibilityRole="radio" accessibilityLabel="Ordenar pela ordem bíblica" accessibilityState={{ checked: ordem === "biblica" }} className={`min-h-10 px-3.5 justify-center rounded-full border ${ordem === "biblica" ? "bg-cor-destaque-fundo dark:bg-cor-destaque-fundo-dark border-cor-destaque dark:border-cor-destaque-dark" : "border-cor-borda dark:border-cor-borda-dark"}`}><Text className="text-xs font-semibold text-cor-texto dark:text-cor-texto-dark">Ordem bíblica</Text></Pressable>
+          <Pressable onPress={() => setOrdem("recentes")} accessibilityRole="radio" accessibilityLabel="Ordenar por mais recentes" accessibilityState={{ checked: ordem === "recentes" }} className={`min-h-11 px-3.5 justify-center rounded-full border ${ordem === "recentes" ? "bg-cor-destaque-fundo dark:bg-cor-destaque-fundo-dark border-cor-destaque dark:border-cor-destaque-dark" : "border-cor-borda dark:border-cor-borda-dark"}`}><Text className="text-xs font-semibold text-cor-texto dark:text-cor-texto-dark">Mais recentes</Text></Pressable>
+          <Pressable onPress={() => setOrdem("biblica")} accessibilityRole="radio" accessibilityLabel="Ordenar pela ordem bíblica" accessibilityState={{ checked: ordem === "biblica" }} className={`min-h-11 px-3.5 justify-center rounded-full border ${ordem === "biblica" ? "bg-cor-destaque-fundo dark:bg-cor-destaque-fundo-dark border-cor-destaque dark:border-cor-destaque-dark" : "border-cor-borda dark:border-cor-borda-dark"}`}><Text className="text-xs font-semibold text-cor-texto dark:text-cor-texto-dark">Ordem bíblica</Text></Pressable>
         </View>
 
         <View className={`${desktop ? "flex-row flex-wrap items-center justify-between" : ""} mb-4 rounded-2xl border border-cor-borda dark:border-cor-borda-dark bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark px-4 py-4`}>
@@ -296,14 +294,14 @@ export default function Salvo() {
               <Text accessibilityRole="header" className="text-sm font-extrabold text-cor-texto dark:text-cor-texto-dark">Coleções</Text>
               <Text className="text-xs text-cor-texto-suave dark:text-cor-texto-suave-dark mt-0.5">Agrupe itens por tema ou estudo.</Text>
             </View>
-            <Pressable onPress={() => { setGerenciandoColecoes((aberto) => !aberto); setEditandoColecao(null); }} accessibilityRole="button" accessibilityLabel={gerenciandoColecoes ? "Concluir gerenciamento de coleções" : "Gerenciar coleções"} className="min-h-10 flex-row items-center gap-1.5 rounded-full px-3 bg-cor-destaque-fundo dark:bg-cor-destaque-fundo-dark active:opacity-70">
+            <Pressable onPress={() => { setGerenciandoColecoes((aberto) => !aberto); setEditandoColecao(null); }} accessibilityRole="button" accessibilityLabel={gerenciandoColecoes ? "Concluir gerenciamento de coleções" : "Gerenciar coleções"} className="min-h-11 flex-row items-center gap-1.5 rounded-full px-3 bg-cor-destaque-fundo dark:bg-cor-destaque-fundo-dark active:opacity-70">
               <IconeUI name={gerenciandoColecoes ? "close" : "edit"} size={15} color={escuro ? "#e0a75e" : "#8a5a2b"} />
               <Text className="text-xs font-bold text-cor-destaque dark:text-cor-destaque-dark">{gerenciandoColecoes ? "Concluir" : "Gerenciar"}</Text>
             </Pressable>
           </View>
           {desktop ? <Text className="flex-1 text-xs text-cor-texto-suave dark:text-cor-texto-suave-dark mx-6">Use coleções para agrupar passagens por tema.</Text> : null}
           <View className={`flex-row flex-wrap gap-2 ${desktop ? "w-full mt-3" : ""}`}>
-            <Pressable onPress={() => setColecaoFiltro(null)} accessibilityRole="radio" accessibilityState={{ checked: !colecaoFiltro }} className={`min-h-10 flex-row items-center rounded-full border px-3 ${!colecaoFiltro ? "bg-cor-destaque-fundo dark:bg-cor-destaque-fundo-dark border-cor-destaque dark:border-cor-destaque-dark" : "border-cor-borda dark:border-cor-borda-dark"}`}>
+            <Pressable onPress={() => setColecaoFiltro(null)} accessibilityRole="radio" accessibilityState={{ checked: !colecaoFiltro }} className={`min-h-11 flex-row items-center rounded-full border px-3 ${!colecaoFiltro ? "bg-cor-destaque-fundo dark:bg-cor-destaque-fundo-dark border-cor-destaque dark:border-cor-destaque-dark" : "border-cor-borda dark:border-cor-borda-dark"}`}>
               <Text className="text-xs font-semibold text-cor-texto dark:text-cor-texto-dark">Todas</Text>
               <Text className="text-[11px] font-bold text-cor-texto-suave dark:text-cor-texto-suave-dark ml-1.5">{quantidadeItens}</Text>
             </Pressable>
@@ -312,11 +310,11 @@ export default function Salvo() {
               const ativa = colecaoFiltro === colecao.id;
               return (
                 <View key={colecao.id} className={`flex-row items-center rounded-full border ${ativa ? "bg-cor-destaque-fundo dark:bg-cor-destaque-fundo-dark border-cor-destaque dark:border-cor-destaque-dark" : "border-cor-borda dark:border-cor-borda-dark"}`}>
-                  <Pressable onPress={() => setColecaoFiltro(colecao.id)} accessibilityRole="radio" accessibilityState={{ checked: ativa }} accessibilityLabel={`${colecao.nome}, ${quantidade} itens`} className="min-h-10 flex-row items-center pl-3 pr-2">
+                  <Pressable onPress={() => setColecaoFiltro(colecao.id)} accessibilityRole="radio" accessibilityState={{ checked: ativa }} accessibilityLabel={`${colecao.nome}, ${quantidade} itens`} className="min-h-11 flex-row items-center pl-3 pr-2">
                     <Text className="text-xs font-semibold text-cor-texto dark:text-cor-texto-dark">{colecao.nome}</Text>
                     <Text className="text-[11px] font-bold text-cor-texto-suave dark:text-cor-texto-suave-dark ml-1.5">{quantidade}</Text>
                   </Pressable>
-                  {gerenciandoColecoes ? <Pressable onPress={() => { setEditandoColecao(colecao); setNomeColecao(colecao.nome); }} accessibilityRole="button" accessibilityLabel={`Editar coleção ${colecao.nome}`} className="min-w-10 min-h-10 items-center justify-center pr-1"><IconeUI name="edit" size={15} color={escuro ? "#e0a75e" : "#8a5a2b"} /></Pressable> : null}
+                  {gerenciandoColecoes ? <Pressable onPress={() => { setEditandoColecao(colecao); setNomeColecao(colecao.nome); }} accessibilityRole="button" accessibilityLabel={`Editar coleção ${colecao.nome}`} className="min-w-11 min-h-11 items-center justify-center pr-1"><IconeUI name="edit" size={15} color={escuro ? "#e0a75e" : "#8a5a2b"} /></Pressable> : null}
                 </View>
               );
             })}
@@ -344,11 +342,11 @@ export default function Salvo() {
           <View className="rounded-2xl border border-cor-destaque dark:border-cor-destaque-dark bg-cor-destaque-fundo dark:bg-cor-destaque-fundo-dark p-4 mb-4">
             <View className="flex-row items-center justify-between gap-2 mb-3">
               <Text accessibilityRole="header" className="text-sm font-extrabold text-cor-texto dark:text-cor-texto-dark">{selecionados.size} {selecionados.size === 1 ? "item selecionado" : "itens selecionados"}</Text>
-              <Pressable onPress={() => { setSelecionados(new Set()); setModoSelecao(false); }} accessibilityRole="button" accessibilityLabel="Cancelar seleção" className="min-h-10 justify-center px-2 active:opacity-70"><Text className="text-xs font-bold text-cor-destaque dark:text-cor-destaque-dark">Cancelar</Text></Pressable>
+              <Pressable onPress={() => { setSelecionados(new Set()); setModoSelecao(false); }} accessibilityRole="button" accessibilityLabel="Cancelar seleção" className="min-h-11 justify-center px-2 active:opacity-70"><Text className="text-xs font-bold text-cor-destaque dark:text-cor-destaque-dark">Cancelar</Text></Pressable>
             </View>
             <View className="flex-row flex-wrap gap-2">
-              {colecoes.map((colecao) => <Pressable key={colecao.id} onPress={() => associarSelecionados(colecao.id)} accessibilityRole="button" accessibilityLabel={`Adicionar itens selecionados a ${colecao.nome}`} className="min-h-10 justify-center px-3 rounded-full border border-cor-destaque/30 dark:border-cor-destaque-dark/30 bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark"><Text className="text-xs font-semibold text-cor-texto dark:text-cor-texto-dark">{colecao.nome}</Text></Pressable>)}
-              <Pressable onPress={excluirSelecionados} accessibilityRole="button" accessibilityLabel={`Excluir ${selecionados.size} itens selecionados`} className="min-h-10 flex-row items-center gap-1.5 px-3 rounded-full bg-red-600 active:opacity-80"><IconeUI name="delete" size={15} color="#ffffff" /><Text className="text-xs font-bold text-white">Excluir</Text></Pressable>
+              {colecoes.map((colecao) => <Pressable key={colecao.id} onPress={() => associarSelecionados(colecao.id)} accessibilityRole="button" accessibilityLabel={`Adicionar itens selecionados a ${colecao.nome}`} className="min-h-11 justify-center px-3 rounded-full border border-cor-destaque/30 dark:border-cor-destaque-dark/30 bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark"><Text className="text-xs font-semibold text-cor-texto dark:text-cor-texto-dark">{colecao.nome}</Text></Pressable>)}
+              <Pressable onPress={excluirSelecionados} accessibilityRole="button" accessibilityLabel={`Excluir ${selecionados.size} itens selecionados`} className="min-h-11 flex-row items-center gap-1.5 px-3 rounded-full bg-red-600 active:opacity-80"><IconeUI name="delete" size={15} color="#ffffff" /><Text className="text-xs font-bold text-white">Excluir</Text></Pressable>
             </View>
           </View>
         ) : null}
@@ -363,7 +361,7 @@ export default function Salvo() {
               accessibilityState={{ selected: filtro === chave }}
               // @ts-expect-error accessibilitySelected é uma extensão do react-native-web, não existe nos tipos do React Native
               accessibilitySelected={filtro === chave}
-              className={`min-h-10 flex-row items-center gap-1.5 px-3.5 rounded-full border active:opacity-70 ${
+              className={`min-h-11 flex-row items-center gap-1.5 px-3.5 rounded-full border active:opacity-70 ${
                 filtro === chave
                   ? "bg-cor-destaque dark:bg-cor-destaque-dark border-cor-destaque dark:border-cor-destaque-dark"
                   : "border-cor-borda dark:border-cor-borda-dark"
@@ -384,15 +382,15 @@ export default function Salvo() {
         </ScrollView>
 
         {possuiFiltrosAtivos ? (
-          <Pressable testID="limpar-filtros-salvo" onPress={limparFiltros} accessibilityRole="button" accessibilityLabel="Limpar filtros e seleção" className="self-start flex-row items-center gap-1.5 mb-4 rounded-full border border-cor-borda dark:border-cor-borda-dark px-3 py-1.5 active:opacity-70">
+          <Pressable testID="limpar-filtros-salvo" onPress={limparFiltros} accessibilityRole="button" accessibilityLabel="Limpar filtros" className="self-start min-h-11 flex-row items-center gap-1.5 mb-4 rounded-full border border-cor-borda dark:border-cor-borda-dark px-3 active:opacity-70">
             <IconeUI name="clear-filter" size={15} color={escuro ? "#e0a75e" : "#8a5a2b"} />
             <Text className="text-xs font-semibold text-cor-destaque dark:text-cor-destaque-dark">Limpar filtros</Text>
           </Pressable>
         ) : null}
 
         <View className={`${desktop ? "max-w-4xl" : ""} flex-row items-center justify-between mb-2`}>
-          <Text accessibilityLiveRegion="polite" className="text-xs font-semibold text-cor-texto-suave dark:text-cor-texto-suave-dark">{possuiFiltrosAtivos && !selecionados.size ? `Mostrando ${filtrados.length} de ${quantidadeItens}` : `${filtrados.length} ${filtrados.length === 1 ? "item" : "itens"}`}</Text>
-          {modoSelecao || filtrados.length > 0 ? <Pressable onPress={() => { setModoSelecao((ativo) => !ativo); setSelecionados(new Set()); }} accessibilityRole="button" accessibilityLabel={modoSelecao ? "Sair do modo de seleção" : "Selecionar itens"} className="min-h-10 flex-row items-center gap-1.5 px-2 active:opacity-70"><IconeUI name={modoSelecao ? "close" : "select-many"} size={16} color={escuro ? "#e0a75e" : "#8a5a2b"} /><Text className="text-xs font-bold text-cor-destaque dark:text-cor-destaque-dark">{modoSelecao ? "Cancelar seleção" : "Selecionar"}</Text></Pressable> : null}
+          <Text accessibilityLiveRegion="polite" className="text-xs font-semibold text-cor-texto-suave dark:text-cor-texto-suave-dark">{possuiFiltrosAtivos ? `Mostrando ${filtrados.length} de ${quantidadeItens}` : `${filtrados.length} ${filtrados.length === 1 ? "item" : "itens"}`}</Text>
+          {modoSelecao || filtrados.length > 0 ? <Pressable onPress={() => { setModoSelecao((ativo) => !ativo); setSelecionados(new Set()); }} accessibilityRole="button" accessibilityLabel={modoSelecao ? "Sair do modo de seleção" : "Selecionar itens"} className="min-h-11 flex-row items-center gap-1.5 px-2 active:opacity-70"><IconeUI name={modoSelecao ? "close" : "select-many"} size={16} color={escuro ? "#e0a75e" : "#8a5a2b"} /><Text className="text-xs font-bold text-cor-destaque dark:text-cor-destaque-dark">{modoSelecao ? "Cancelar seleção" : "Selecionar"}</Text></Pressable> : null}
         </View>
         {erroAoCarregar ? (
           <EstadoErro titulo="Não foi possível carregar seus itens salvos" descricao="Tente novamente. Suas anotações e coleções continuam guardadas neste dispositivo." aoTentarNovamente={() => setTentativa((valor) => valor + 1)} />

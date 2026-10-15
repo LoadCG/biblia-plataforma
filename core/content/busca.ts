@@ -70,15 +70,23 @@ function correspondeTitulo(palavrasTitulo: string[], consulta: string[], fraseEx
   });
 }
 
-function recortarTrecho(texto: string, indice: number, tamanhoTermo: number): string {
-  const inicio = Math.max(0, indice - 40);
-  const fim = Math.min(texto.length, indice + tamanhoTermo + 40);
+function recortarTrecho(texto: string, indice: number, tamanhoTermo: number, margem = 40): string {
+  let inicio = Math.max(0, indice - margem);
+  let fim = Math.min(texto.length, indice + tamanhoTermo + margem);
+  if (inicio > 0 && !/\s/.test(texto[inicio - 1]) && !/\s/.test(texto[inicio])) {
+    const proximoEspaco = texto.slice(inicio, indice).search(/\s/);
+    if (proximoEspaco >= 0) inicio += proximoEspaco + 1;
+  }
+  if (fim < texto.length && !/\s/.test(texto[fim - 1]) && !/\s/.test(texto[fim])) {
+    const ultimoEspaco = texto.slice(indice + tamanhoTermo, fim).search(/\s(?=[^\s]*$)/);
+    if (ultimoEspaco >= 0) fim = indice + tamanhoTermo + ultimoEspaco;
+  }
   const prefixo = inicio > 0 ? "…" : "";
   const sufixo = fim < texto.length ? "…" : "";
   return prefixo + texto.slice(inicio, fim).trim() + sufixo;
 }
 
-type CorrespondenciaTrecho = { trecho: string; termo: string };
+type CorrespondenciaTrecho = { trecho: string; termo: string; evidencias: number };
 
 type PalavraIndexada = { valor: string; inicio: number; fim: number };
 type TextoIndexado = { original: string; palavras: PalavraIndexada[] };
@@ -130,28 +138,43 @@ function obterIndiceEditorial(): ResumoIndexado[] {
   return indiceEditorial;
 }
 
-function encontrarTrechoEmTexto(texto: TextoIndexado, consulta: string[], fraseExata: boolean): string | null {
+function encontrarTrechoEmTexto(
+  texto: TextoIndexado,
+  consulta: string[],
+  fraseExata: boolean
+): { trecho: string; evidencias: number } | null {
   const palavrasTexto = texto.palavras;
 
   let palavrasEncontradas: typeof palavrasTexto;
+  let evidencias: number;
   if (fraseExata) {
-    const inicioFrase = palavrasTexto.findIndex((_, inicio) =>
-      consulta.every((palavra, indice) => palavrasTexto[inicio + indice]?.valor === palavra)
+    const iniciosFrase = palavrasTexto.flatMap((_, inicio) =>
+      consulta.every((palavra, indice) => palavrasTexto[inicio + indice]?.valor === palavra) ? [inicio] : []
     );
-    if (inicioFrase === -1) return null;
-    palavrasEncontradas = palavrasTexto.slice(inicioFrase, inicioFrase + consulta.length);
+    if (iniciosFrase.length === 0) return null;
+    palavrasEncontradas = palavrasTexto.slice(iniciosFrase[0], iniciosFrase[0] + consulta.length);
+    evidencias = iniciosFrase.length;
   } else {
     palavrasEncontradas = [];
+    const contagens: number[] = [];
     for (const palavraConsulta of consulta) {
-      const encontrada = palavrasTexto.find(({ valor }) => correspondeToken(valor, palavraConsulta));
-      if (!encontrada) return null;
-      palavrasEncontradas.push(encontrada);
+      const encontradas = palavrasTexto.filter(({ valor }) => correspondeToken(valor, palavraConsulta));
+      if (encontradas.length === 0) return null;
+      palavrasEncontradas.push(encontradas[0]);
+      contagens.push(encontradas.length);
     }
+    evidencias = Math.min(...contagens);
   }
 
   const inicio = Math.min(...palavrasEncontradas.map(({ inicio: inicioPalavra }) => inicioPalavra));
   const fim = Math.max(...palavrasEncontradas.map(({ fim: fimPalavra }) => fimPalavra));
-  return recortarTrecho(texto.original, inicio, fim - inicio);
+  if (!fraseExata && fim - inicio > 120) {
+    const trechos = palavrasEncontradas
+      .sort((a, b) => a.inicio - b.inicio)
+      .map(({ inicio: inicioPalavra, fim: fimPalavra }) => recortarTrecho(texto.original, inicioPalavra, fimPalavra - inicioPalavra, 16));
+    return { trecho: trechos.join(" "), evidencias };
+  }
+  return { trecho: recortarTrecho(texto.original, inicio, fim - inicio), evidencias };
 }
 
 function encontrarTrecho(
@@ -160,11 +183,15 @@ function encontrarTrecho(
   fraseExata: boolean,
   termoEvidencia: string
 ): CorrespondenciaTrecho | null {
+  let primeiraCorrespondencia: string | null = null;
+  let evidencias = 0;
   for (const texto of resumo.textos) {
-    const trecho = encontrarTrechoEmTexto(texto, consulta, fraseExata);
-    if (trecho) return { trecho, termo: termoEvidencia };
+    const correspondencia = encontrarTrechoEmTexto(texto, consulta, fraseExata);
+    if (!correspondencia) continue;
+    primeiraCorrespondencia ??= correspondencia.trecho;
+    evidencias += correspondencia.evidencias;
   }
-  return null;
+  return primeiraCorrespondencia ? { trecho: primeiraCorrespondencia, termo: termoEvidencia, evidencias } : null;
 }
 
 function encontrarCorrespondencia(
@@ -295,7 +322,9 @@ export function buscarLivros(termoBruto: string): ResultadoBusca[] {
     const correspondencia = encontrarCorrespondencia(item, termosBusca, fraseExata);
     if (correspondencia) {
       const direto = correspondencia.termo === termo || correspondencia.termo === consulta;
-      const score = direto ? 300 : 220;
+      // Mais menções no mesmo livro sinalizam centralidade sem atravessar
+      // as faixas de prioridade de título, conteúdo literal e tema.
+      const score = (direto ? 300 : 220) + Math.min(correspondencia.evidencias, 20);
       resultados.push({ livro: resumo, trecho: correspondencia.trecho, score, camposCoincidentes: [direto ? "conteudo" : "tema"] });
     }
   }

@@ -1,7 +1,7 @@
 # Plano técnico — busca bíblica e descoberta
 
-**Revisado em:** 7 de outubro de 2026
-**Status após execução:** implementação, typecheck, suíte integral e inspeção manual web dos fluxos principais concluídos. Nesta continuação, busca editorial AND, frase entre aspas e prevenção de correspondência curta parcial foram cobertas por testes automatizados, ainda sem conferência interativa no navegador. As etapas 1–5 seguem parciais apenas nas validações que pedem SQLite/dispositivo nativo, leitor de tela real, benchmark reproduzível por ambiente e julgamento editorial top 5. Unificação (etapa 6) e SEO/export (etapa 7) ficam fora desta rodada.
+**Revisado em:** 15 de outubro de 2026
+**Status:** fluxo web e busca editorial implementados e cobertos pela suíte local; jornadas principais da busca bíblica também foram exercitadas manualmente no navegador. Nove resumos receberam ajustes editoriais apoiados em passagens; uma regressão recente garante que trechos de consultas AND com termos distantes continuem curtos e exibam ambas as evidências. O ranking ainda precisa de uma avaliação rotulada antes de qualquer mudança de pontuação. Permanecem validações de erro/retry por falha real, SQLite/dispositivo nativo, leitor de tela real e benchmark reproduzível por ambiente. Busca unificada e SEO/export seguem condicionais e fora do foco imediato.
 
 Este plano trata as jornadas atualmente reunidas em `Descubra`, sem assumir que devam virar um único mecanismo de busca. Busca bíblica, busca editorial dos resumos e navegação por temas têm fontes, resultados e ações diferentes. A arquitetura deve continuar separada até que exista uma necessidade comprovada de busca unificada.
 
@@ -156,7 +156,9 @@ Verificações desta rodada: typecheck passou; suíte integral (24 suítes/170 t
 
 **Progresso manual web:** em desktop e viewport 390×844 foram vistos referência direta, vazio, filtro, busca rápida e foco básico por teclado. Na sessão atual, “perdão” mostrou 6 resultados bíblicos e 10 resumos com trechos; `Joao 3:16` gerou uma referência direta; `Deus` mostrou `50+` e anúncio acessível de continuidade; Novo Testamento aplicou-se e carregar mais acumulou 100 resultados, sinalizando `100+`. Erro e retry foram cobertos por contrato/código, não por falha de rede simulada. Leitor de tela real e teste nativo continuam pendentes.
 
-**Cobertura visual pendente desta continuação:** conferir interativamente, na aba “Nos Resumos”, uma frase entre aspas, uma consulta AND e o termo curto `fé`. A regra correspondente está coberta por testes unitários; a inspeção pode ser feita em conjunto com o próximo ciclo de feedback de UX.
+**Continuação manual em 2026-10-15:** no navegador local com perfil sem dados de teste, `Joao 3:16` abriu o resultado canônico João 3:16. A troca imediata de `De` para `Deus` terminou com resultados da consulta atual e sem resultados antigos visíveis. Novo Testamento limitou os resultados às referências desse testamento; “Carregar mais” acumulou 50 para 100, manteve o filtro e anunciou a quantidade. Selecionar João e então Antigo Testamento limpou o livro incompatível e exibiu somente resultados do AT. A busca temporária foi apagada ao final; nenhuma favorita ou dado pessoal foi gravado. A tela não foi induzida a erro de rede. O retry continua coberto por testes/contrato e inspeção de código, não por acionamento visual.
+
+**Cobertura visual concluída nesta continuação:** a aba “Nos Resumos” mostrou Gênesis com os dois termos em `criação descanso`, encontrou a frase exata `"criação e o descanso"` e exibiu trechos contendo `fé`, sem o falso positivo `feitas` em Gênesis. Após o novo desempate, `Jesus` mostrou Mateus, João, Marcos e Lucas nas quatro primeiras posições. A árvore de acessibilidade do navegador mostrou `1 resultado encontrado` para a consulta com um único resumo; falta conferir o anúncio com leitor de tela real.
 
 **Fallback nativo FTS:** quando FTS falha, a consulta agora percorre a tabela bíblica local e reaplica a função de correspondência compartilhada com o web. Isso mantém normalização de acentos, AND por prefixo de palavra e frase citada contígua. O custo de ler a tabela inteira só ocorre após erro do FTS; testes de regressão cobrem acentos/prefixos e frases. Ainda falta validar essa situação em SQLite real no dispositivo, porque a suíte atual usa mock do banco.
 
@@ -175,7 +177,22 @@ Verificações desta rodada: typecheck passou; suíte integral (24 suítes/170 t
 - Trecho corresponde ao motivo de inclusão do resultado.
 - Empates continuam determinísticos e o custo não piora de forma mensurável.
 
-**Estado atualizado:** a amostra exploratória dos dez termos `esperança`, `sabedoria`, `oração`, `justiça`, `libertação`, `ansiedade`, `perdão`, `amor`, `fé` e `medo` revelou a ausência de resultados editoriais para “perdão”; foi adicionada expansão controlada via “misericórdia” e “reconciliação”, com teste que exige trecho de evidência. A revisão encontrou ainda falsos positivos em termos curtos dentro de palavras maiores (`fé` em `feitas`) e a busca não honrava a dica de termos combinados/frases. Títulos e conteúdo agora respeitam limites de palavras (prefixo para termos longos, igualdade para tokens de até dois caracteres); termos múltiplos usam AND no mesmo campo de texto e frases entre aspas exigem sequência contígua. Consultas reconhecidas como referências bíblicas continuam destinadas à aba Bíblia. Títulos, tokens e offsets dos trechos são pré-indexados uma vez sob demanda, mantendo os trechos originais. Não alterei pesos: falta avaliação humana de relevância top 5 em 30 consultas para justificar novo ranking.
+**Estado atualizado:** a amostra exploratória dos dez termos `esperança`, `sabedoria`, `oração`, `justiça`, `libertação`, `ansiedade`, `perdão`, `amor`, `fé` e `medo` revelou a ausência de resultados editoriais para “perdão”; foi adicionada expansão controlada via “misericórdia” e “reconciliação”, com teste que exige trecho de evidência. A revisão encontrou ainda falsos positivos em termos curtos dentro de palavras maiores (`fé` em `feitas`) e a busca não honrava a dica de termos combinados/frases. Títulos e conteúdo agora respeitam limites de palavras (prefixo para termos longos, igualdade para tokens de até dois caracteres); termos múltiplos usam AND no mesmo campo de texto e frases entre aspas exigem sequência contígua. Consultas reconhecidas como referências bíblicas continuam destinadas à aba Bíblia. Títulos, tokens e offsets dos trechos são indexados uma vez sob demanda, mantendo os trechos originais. A [triagem de 30 consultas](docs/AVALIACAO-BUSCA-EDITORIAL.md) mostrou que o empate apenas por ordem canônica ocultava os evangelhos na busca por `Jesus`; uma quantidade limitada de evidências por resumo agora desempata resultados da mesma faixa de prioridade. Restam lacunas de vocabulário nos resumos e validação das intenções com leitores antes de introduzir pesos editoriais mais específicos.
+
+**Continuação de 12 de outubro:** os resumos fonte de Atos, Provérbios, Marcos e Lucas foram revisados com referências textuais específicas; o catálogo JSON e o relatório de cobertura foram regenerados. A busca por `Espírito Santo` agora prioriza Atos, `dinheiro` inclui Provérbios e `reino de Deus` inclui os três evangelhos sinóticos entre os cinco primeiros. A cronologia das parábolas no resumo de Lucas também foi corrigida. `docs/AVALIACAO-BUSCA-EDITORIAL.md` registra os resultados e as lacunas que permanecem.
+
+**Próxima etapa editorial — consultas amplas (`paz`, `ansiedade`, `pobreza`, `louvor`):**
+
+1. Registrar, para cada termo, o resultado atual, o livro ausente e a passagem primária que justifica sua inclusão. Uma menção contextual ou apenas morfológica não basta; o resumo deve explicar a passagem e sua localização.
+2. Atualizar somente os resumos em que a passagem desenvolve o assunto: paz em João 14:27; preocupação com necessidades diárias em Mateus 6:25–34; tratamento dado aos pobres em Tiago 2:1–6; louvor em Hebreus 13:15 e nas cenas do trono de Apocalipse 4:8–11. Evitar promessas de ausência de sofrimento ou uma leitura que culpe quem vive ansiedade ou pobreza.
+3. Regenerar o catálogo derivado e o relatório de cobertura. Acrescentar testes de integração que exigem livro e trecho correspondente nos resultados; preservar a prioridade por evidência literal e a semântica das consultas com aspas.
+4. Repetir a triagem dos quatro termos e registrar as posições reais, incluindo qualquer resultado ainda pouco pertinente. Rodar testes, typecheck e verificações editoriais; manter validação em dispositivo e com leitores como pendências distintas.
+
+**Critério de conclusão:** os quatro termos encontram pelo menos um novo livro sustentado por texto-fonte, sem alterar pesos/sinônimos nem apresentar expansão sem evidência no trecho exibido.
+
+**Execução concluída em 12 de outubro:** João, Mateus, Tiago, Hebreus e Apocalipse foram revisados; catálogo e relatório de cobertura regenerados. Os cinco pares consulta/livro têm regressão com trecho literal visível. A triagem atualizada está em `docs/AVALIACAO-BUSCA-EDITORIAL.md`. Testes, typecheck e verificação editorial passaram. A posição de Habacuque para `ansiedade` permanece como observação de qualidade, sem alteração prematura dos pesos.
+
+**Revisão de qualidade do código:** consultas com termos distantes no mesmo parágrafo produziam trechos longos, cortados pelo cartão de duas linhas. O recorte agora reúne fragmentos curtos na ordem do texto e evita cortar palavras nas bordas; uma regressão cobre `amor oração` em 1 Timóteo. A ordenação e os critérios de correspondência não mudaram.
 
 ### Etapa 4 — acessibilidade e inspeção assistida
 
@@ -208,7 +225,7 @@ Verificações desta rodada: typecheck passou; suíte integral (24 suítes/170 t
 - Decisão explícita: manter busca atual ou introduzir índice/otimização, com benefício e custo apresentados.
 - Nenhuma otimização introduz complexidade sem melhoria observável.
 
-**Medições preliminares (não são benchmark de release):** no Codex In-app Browser em localhost, dez buscas aquecidas do campo até o anúncio levaram 734–904 ms (p50 815 ms; p95 904 ms), incluindo debounce de 500 ms, renderização e espera. Busca bíblica em processo Node v26.7.0, asset `assets/biblia.json` de 4.024.657 bytes: primeira chamada (importação, construção do índice e busca) 270,85 ms; dez consultas aquecidas (`amor`, `oração`, `esperança`, `João`, `sabedoria`, sem correspondência, `perdão`, `salvação`, `luz`, `fé`) 88,74–107,62 ms (p50 92,25 ms; p95 107,62 ms). Para a busca editorial com o novo índice, medição exploratória no mesmo runtime: primeira consulta, já com módulo importado, 40,62 ms para indexar e buscar; em oito consultas com 20 repetições cada, medianas de 0,27–1,47 ms e máximos entre 0,34–2,21 ms. Inclui busca, coleta e ordenação dos resultados, não é comparável diretamente à busca bíblica nem a UI. As medições Node não representam navegador/dispositivo e não criam orçamento. Falta protocolo reproduzível no browser e medir em dispositivo nativo.
+**Medições preliminares (não são benchmark de release):** no Codex In-app Browser em localhost, dez buscas aquecidas do campo até o anúncio levaram 734–904 ms (p50 815 ms; p95 904 ms), incluindo debounce de 500 ms, renderização e espera. Busca bíblica em processo Node v26.7.0, asset `assets/biblia.json` de 4.024.657 bytes: primeira chamada (importação, construção do índice e busca) 270,85 ms; dez consultas aquecidas (`amor`, `oração`, `esperança`, `João`, `sabedoria`, sem correspondência, `perdão`, `salvação`, `luz`, `fé`) 88,74–107,62 ms (p50 92,25 ms; p95 107,62 ms). Para a busca editorial com índice, a medição anterior registrou primeira consulta de 40,62 ms e medianas de 0,27–1,47 ms em oito consultas aquecidas. Após o desempate por evidências, outra medição exploratória registrou primeira consulta `Jesus` de 32,41 ms e medianas de 0,37–0,76 ms em cinco consultas aquecidas, com 30 repetições cada. São amostras de processos Node diferentes; incluem busca e ordenação, mas não representam navegador/dispositivo nem justificam um orçamento de release. Falta protocolo reproduzível no browser e medir em dispositivo nativo.
 
 ### Etapa 6 — decisão de produto sobre unificação, temas e planos
 
@@ -241,7 +258,7 @@ Verificações desta rodada: typecheck passou; suíte integral (24 suítes/170 t
 ## 5. Métricas e artefatos de qualidade
 
 - **Conjunto de regressão da busca bíblica:** entradas, filtros, itens esperados e justificativa; começar com 20–30 consultas diversas.
-- **Conjunto editorial:** 30 consultas avaliadas por posição e justificativa antes de alterar ranking.
+- **Conjunto editorial:** triagem de 30 consultas e posições em `docs/AVALIACAO-BUSCA-EDITORIAL.md`; validar intenções e relevância com leitores antes de ajustar pesos específicos.
 - **Precisão@5:** proporção de resultados relevantes entre os cinco primeiros quando houver pelo menos cinco candidatos; classificar relevância com critérios definidos.
 - **Latência:** p50/p95, distinguindo primeira carga do índice e buscas subsequentes.
 - **Estabilidade:** mesma consulta/filtros devem produzir a mesma sequência.
@@ -249,14 +266,87 @@ Verificações desta rodada: typecheck passou; suíte integral (24 suítes/170 t
 
 Não transformar métricas experimentais em gates de CI até estabilizar conjuntos, rótulos e ambiente de execução.
 
-## 6. Fechamento desta rodada e próximos passos
+## 6. Próximas etapas priorizadas — revisão de 13 de outubro
 
-1. **Concluído no código:** paginação incremental, invalidação de respostas antigas, sinalização de mais resultados, referências sem acento, equivalência semântica do fallback FTS, expansão editorial para “perdão”, busca editorial AND/frase com correspondência por limites de palavra e índice lazy de títulos/trechos.
+### Etapa A — transformar a triagem editorial em avaliação reproduzível
+
+**Objetivo:** separar correspondências literais frequentes de resultados realmente úteis para a intenção de busca, sem presumir que frequência equivale a relevância.
+
+**Ações**
+1. Fixar um conjunto dourado versionado com as 30 consultas da triagem; incluir consulta, intenção provável, resultados relevantes esperados e justificativa editorial. Marcar explicitamente consultas ambíguas em vez de inventar uma intenção única.
+2. Julgar até os cinco primeiros resultados por consulta em quatro classes: central, relevante, apenas contextual e irrelevante. Distinguir resultados com nome exato do livro dos encontrados no conteúdo.
+3. Registrar precisão@5, cobertura dos livros centrais esperados e casos de falso positivo, junto com os resultados atuais. Não usar métricas como gate de CI enquanto os rótulos não tiverem revisão independente.
+4. Examinar primeiro `ansiedade` (Habacuque antes de Mateus e Filipenses), `paz`, `graça`, `salvação` e `medo`; não editar conteúdo correto só para alterar posições.
+
+**Aceite:** consultas e rótulos têm justificativa verificável; resultados atuais são reproduzíveis; desacordos e ambiguidades ficam registrados; nenhuma mudança de ranking ocorre nesta etapa.
+
+### Etapa B — decidir se o ranking precisa de ajuste
+
+**Dependência:** Etapa A concluída.
+
+**Ações**
+1. Comparar o ranking atual com uma alternativa simples que não use contagem de evidências, além de no máximo uma alternativa explicitamente motivada pelos erros rotulados.
+2. Verificar separadamente títulos exatos, conteúdo literal e expansões temáticas; nenhum resultado temático pode parecer evidência literal.
+3. Conferir que um ajuste não prejudique termos curtos, AND, frases citadas, sinônimos, empates canônicos ou snippets que provam a correspondência.
+4. Só implementar a alternativa se melhorar os erros-alvo sem reduzir a qualidade agregada nem introduzir pesos difíceis de explicar. Caso contrário, manter a regra atual e registrar a decisão.
+
+**Aceite:** decisão baseada no conjunto dourado, regressões dos comportamentos existentes, ordenação determinística e comparação documentada antes/depois.
+
+### Etapa C — estabelecer benchmark repetível antes de otimizar
+
+**Dependência:** conjunto de consultas da Etapa A estabilizado. Pode ocorrer em paralelo com a Etapa B, sem alterar matching.
+
+**Ações**
+1. Documentar comando, versão do runtime, dispositivo/browser, estado frio/aquecido e consultas utilizadas.
+2. Medir construção do índice, matching, ordenação e tempo percebido da UI separadamente; reportar p50/p95 e tamanho dos dados.
+3. Repetir em web e SQLite nativo real quando um dispositivo/emulador estiver disponível; não usar mocks como evidência de desempenho do banco.
+4. Manter a implementação atual se não houver gargalo reproduzível; só então avaliar reduzir alocações por token ou adicionar índice.
+
+**Aceite:** qualquer pessoa da equipe consegue repetir o procedimento; resultados frios e aquecidos não são misturados; otimização só avança quando há gargalo observável.
+
+### Etapa D — fechar a validação de acessibilidade e plataforma
+
+**Dependência:** acesso a leitor de tela e app/dispositivo nativo. Não bloqueia a avaliação editorial web.
+
+**Ações**
+1. No web, verificar leitor de tela, foco, zoom/escala e contraste para abas, filtros, resultados, vazio, erro, retry e paginação.
+2. No nativo, exercitar FTS5 e fallback real, referências, filtros e paginação; comparar os casos dourados com o web.
+3. Registrar dispositivo, sistema, tecnologia assistiva, resultado e limitações. Se o ambiente não estiver disponível, deixar a validação manual pendente sem simular aprovação.
+
+**Aceite:** nenhum caminho principal depende apenas de cor ou toque visual; busca nativa e web têm comportamento equivalente ou diferença documentada; erros recuperáveis têm saída anunciada.
+
+### Etapa E — consolidar e decidir encerramento
+
+**Dependência:** A–D concluídas ou cada limitação explicitamente aceita pelo responsável do produto.
+
+**Ações**
+1. Atualizar este plano, a triagem editorial e o README/documentação da busca sem duplicar listas de tarefas antigas.
+2. Reexecutar verificações relevantes e rever o diff completo, preservando alterações locais que não pertençam à busca.
+3. Manter etapas de unificação e SEO/export fora da sequência até haver necessidade de produto ou mudança de rota.
+
+**Aceite:** evidências, riscos residuais, testes e pendências de ambiente ficam explícitos; nenhuma etapa aparece como concluída sem validação observável.
+
+**Progresso em 13 de outubro:** a primeira execução local das Etapas A–E foi concluída até os limites deste ambiente. A avaliação e o benchmark agora são repetíveis por comandos do projeto; a revisão humana independente, leitores de tela e dispositivo SQLite real continuam pendentes e estão documentados em `docs/AVALIACAO-BUSCA-EDITORIAL.md`.
+
+- **A — executada como primeira leitura:** conjunto v1 estruturado com 30 intenções prováveis e rótulos centrais/relevantes/contextuais. Todos os top 5 atuais foram comparados com esses rótulos. Revisão humana independente ainda não foi feita; portanto, os números são exploratórios.
+- **B — decisão provisória:** a regra atual recupera 81/84 centrais e 39/40 relevantes no top 5, contra 54/84 e 32/40 na referência sem contagem de evidências. Manter o ranking atual até a revisão independente; não ajustar pesos nesta execução.
+- **C — executada para busca editorial em Node:** adicionado `npm run medir:busca-editorial`; em duas execuções no host atual, primeira busca ficou em 43,281–45,989 ms e buscas aquecidas em p50 0,828–0,904 ms/p95 1,804–1,958 ms. Não representa browser ou SQLite nativo.
+- **D — parcial:** `npm run validate` passou e verificou os contratos automatizados; leitor de tela real e validação no dispositivo não estavam disponíveis nesta execução.
+- **E — executada para a documentação existente:** README, plano técnico e triagem receberam comandos, critérios, comparação, benchmark e pendências. A revisão de release e aceitação das limitações continuam aguardando a validação externa.
+
+**Próxima ação dependente de terceiros/ambiente:** obter segunda leitura dos rótulos e intenções do conjunto v1; em paralelo, repetir testes de acessibilidade com leitor de tela e executar os casos dourados em um dispositivo/emulador que inicialize SQLite FTS5.
+
+## 7. Fechamento desta rodada e histórico
+
+1. **Concluído no código:** paginação incremental, invalidação de respostas antigas, sinalização de mais resultados, referências sem acento, equivalência semântica do fallback FTS, expansão editorial para “perdão”, busca editorial AND/frase com correspondência por limites de palavra, índice lazy de títulos/trechos, desempate por evidências e anúncio singular de um resultado.
 2. **Concluído nas verificações disponíveis:** testes focados e suíte integral; contratos estáticos de acessibilidade/UI/Maestro; revisão de diff.
 3. **Concluído nesta rodada em web:** consulta por “perdão”, referência sem acento, filtros por testamento, carregamento além de 50 itens e anúncio da quantidade carregada; foco web básico e árvore de acessibilidade inspecionados.
-4. **Validação dependente de ambiente externo:** exercitar SQLite/FTS e fallback em app nativo; testar com leitor de tela; medir carga fria e p50/p95 num browser reproduzível e em dispositivo físico; avaliar manualmente top 5 em 30 consultas editoriais antes de alterar pesos.
+4. **Validação dependente de ambiente externo ou curadoria:** exercitar SQLite/FTS e fallback em app nativo; testar com leitor de tela; medir carga fria e p50/p95 num browser reproduzível e em dispositivo físico; revisar o vocabulário ausente e confirmar a intenção das 30 consultas editoriais com leitores antes de novos pesos.
 5. **Futuro condicional:** prototipar busca unificada apenas se a pesquisa com pessoas usuárias identificar uma necessidade; SEO/export somente se novas rotas ou páginas forem aprovadas.
 
-## 7. Condições de encerramento
+6. **Executado em 13 de outubro:** criado o conjunto exploratório [`docs/avaliacao-busca-editorial-v1.json`](docs/avaliacao-busca-editorial-v1.json) e o comparador `npm run avaliar:busca-editorial`. Rótulos atuais: 81/84 livros centrais e 39/40 relevantes recuperados no top 5; referência sem contagem de evidências: 54/84 e 32/40. Criado `npm run medir:busca-editorial`: duas execuções no Node v26.7.0/Windows x64, catálogo 287 KiB, 900 buscas aquecidas por execução, p50 0,828–0,904 ms/p95 1,804–1,958 ms; primeiras chamadas 43,281–45,989 ms. O comparador e as medições são exploratórios, não gates de CI.
+7. **Validação desta execução:** `npm run validate` passou (typecheck, 181 testes, acessibilidade, Maestro, UI responsiva, cobertura/revisão editorial, planos, temas e Expo Doctor: 21/21). `npm run check:content` compara o JSON gerado ao `HEAD` e, por isso, detecta as alterações editoriais locais ainda não commitadas; a determinância do gerador será conferida separadamente sem descartar a diferença legítima.
 
-A implementação local desta rodada está concluída. A iniciativa de validação só pode ser considerada encerrada após os bloqueadores 3–4 serem resolvidos ou aceitos como pendências pelo responsável pelo produto. As etapas 6–7 não bloqueiam a busca existente e permanecem condicionais.
+## 8. Condições de encerramento
+
+A implementação local desta rodada está concluída. A iniciativa de validação só pode ser considerada encerrada após revisão humana dos rótulos e bloqueadores de dispositivo/tecnologia assistiva serem resolvidos ou aceitos explicitamente como pendências pelo responsável do produto. O ranking permanece sem alteração nesta avaliação. As etapas 6–7 não bloqueiam a busca existente e permanecem condicionais.

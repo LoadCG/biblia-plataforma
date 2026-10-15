@@ -1,8 +1,9 @@
-import { Link } from "expo-router";
-import { useEffect, useMemo, useState } from "react";
+import { Link, useFocusEffect } from "expo-router";
+import { useCallback, useMemo, useRef, useState } from "react";
 import { FlatList, Pressable, Text, TextInput, View } from "react-native";
 import { BotaoTema } from "../../components/BotaoTema";
 import { EstadoVazio } from "../../components/EstadoVazio";
+import { EstadoErro } from "../../components/EstadoErro";
 import { buscarLivros } from "../../core/content/busca";
 import { coresDoGenero } from "../../core/content/genero";
 import { livros } from "../../core/content/livros";
@@ -49,15 +50,45 @@ export default function ListaResumos() {
   const ownerId = useOwnerId();
   const [termo, setTermo] = useState("");
   const [lidos, setLidos] = useState<string[]>([]);
+  const [estadoProgresso, setEstadoProgresso] = useState<"carregando" | "disponivel" | "erro">("carregando");
+  const [tentativaProgresso, setTentativaProgresso] = useState(0);
+  const progressoCarregado = useRef(false);
+  const ownerProgresso = useRef<string | null>(null);
 
-  useEffect(() => {
-    if (!ownerId) return;
+  useFocusEffect(useCallback(() => {
+    if (!ownerId) {
+      setLidos([]);
+      setEstadoProgresso("carregando");
+      progressoCarregado.current = false;
+      ownerProgresso.current = null;
+      return;
+    }
+
+    if (ownerProgresso.current !== ownerId) {
+      setLidos([]);
+      progressoCarregado.current = false;
+      ownerProgresso.current = ownerId;
+    }
+    if (!progressoCarregado.current) setEstadoProgresso("carregando");
+
     let ativo = true;
     livrosLidosRepository.listar(ownerId)
-      .then((itens) => { if (ativo) setLidos(itens); })
-      .catch(() => { if (ativo) mostrarToast("Não foi possível carregar seu progresso de leitura", { severidade: "erro" }); });
+      .then((itens) => {
+        if (!ativo) return;
+        setLidos(itens);
+        progressoCarregado.current = true;
+        setEstadoProgresso("disponivel");
+      })
+      .catch(() => {
+        if (!ativo) return;
+        if (progressoCarregado.current) {
+          mostrarToast("Não foi possível atualizar seu progresso de leitura", { severidade: "erro" });
+        } else {
+          setEstadoProgresso("erro");
+        }
+      });
     return () => { ativo = false; };
-  }, [ownerId]);
+  }, [ownerId, tentativaProgresso]));
 
   const lidosSet = useMemo(() => new Set(lidos), [lidos]);
   const listaFiltrada = useMemo(() => buscarLivros(termo), [termo]);
@@ -74,16 +105,26 @@ export default function ListaResumos() {
           <View className="mb-4">
             <View className="flex-row items-start justify-between mb-2">
               <View className="flex-1 mr-3">
-                <Link href="/" className="text-cor-destaque dark:text-cor-destaque-dark text-sm mb-1">
-                  ← Início
+                <Link href="/" asChild>
+                  <Pressable accessibilityRole="link" accessibilityLabel="Voltar para início" className="min-h-11 justify-center self-start pr-3 mb-1 active:opacity-70">
+                    <Text className="text-cor-destaque dark:text-cor-destaque-dark text-sm">← Início</Text>
+                  </Pressable>
                 </Link>
                 <Text accessibilityRole="header" className="text-2xl font-bold text-cor-texto dark:text-cor-texto-dark">Estude por resumos</Text>
               </View>
               <BotaoTema />
             </View>
-            <Text className="text-sm text-cor-texto-suave dark:text-cor-texto-suave-dark mb-3">
-              {lidos.length} de {livros.length} livros lidos
-            </Text>
+            {estadoProgresso === "erro" ? (
+              <EstadoErro
+                titulo="Progresso indisponível"
+                descricao="A lista de resumos continua disponível. Tente carregar seu progresso novamente."
+                aoTentarNovamente={() => setTentativaProgresso((atual) => atual + 1)}
+              />
+            ) : (
+              <Text className="text-sm text-cor-texto-suave dark:text-cor-texto-suave-dark mb-3">
+                {estadoProgresso === "carregando" ? "Carregando seu progresso de leitura…" : `${lidos.length} de ${livros.length} livros lidos`}
+              </Text>
+            )}
             <View className="relative">
               <TextInput
                 testID="busca-resumos"
@@ -91,7 +132,7 @@ export default function ListaResumos() {
                 accessibilityHint="Digite o nome de um livro ou uma palavra do resumo"
                 value={termo}
                 onChangeText={setTermo}
-                placeholder="Buscar por livro ou palavra no resumo..."
+                placeholder="Buscar livro ou palavra"
                 placeholderTextColor="#9ca3af"
                 className="px-4 pr-12 py-3 rounded-full border border-cor-borda dark:border-cor-borda-dark bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark text-cor-texto dark:text-cor-texto-dark"
               />

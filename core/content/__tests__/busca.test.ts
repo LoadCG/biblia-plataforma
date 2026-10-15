@@ -60,6 +60,14 @@ describe("busca editorial", () => {
     expect(fraseInvertida).toEqual([]);
   });
 
+  it("resume termos distantes sem ocultar a evidência no cartão", () => {
+    const resultado = buscarLivros("amor oração").find(({ livro }) => livro.slug === "54-1-timoteo");
+
+    expect(resultado?.trecho).toContain("oração");
+    expect(resultado?.trecho).toContain("amor");
+    expect(resultado?.trecho?.length).toBeLessThan(120);
+  });
+
   it("expande temas por vocabulário controlado", () => {
     const resultados = buscarLivros("esperança");
     expect(resultados.length).toBeGreaterThan(0);
@@ -106,6 +114,42 @@ describe("busca editorial", () => {
     expect(resultados.every((resultado) => resultado.score > 0)).toBe(true);
     expect(resultados.every((resultado) => resultado.camposCoincidentes.length > 0)).toBe(true);
     expect(resultados).toEqual(buscarLivros("esperança"));
+  });
+
+  it("prioriza livros que desenvolvem o assunto em vários trechos", () => {
+    const evangelhos = new Set(["40-mateus", "41-marcos", "42-lucas", "43-joao"]);
+    const resultadosJesus = buscarLivros("Jesus");
+    const resultadosFe = buscarLivros("fé");
+
+    expect(resultadosJesus.slice(0, 4).every(({ livro }) => evangelhos.has(livro.slug))).toBe(true);
+    expect(resultadosJesus.slice(0, 5).some(({ livro }) => livro.slug === "01-genesis")).toBe(false);
+    expect(resultadosFe.slice(0, 2).map(({ livro }) => livro.slug)).toEqual(["59-tiago", "58-hebreus"]);
+    expect(buscarLivros("criação descanso")[0].livro.slug).toBe("01-genesis");
+  });
+
+  it("encontra temas presentes nos resumos editoriais atualizados", () => {
+    const espiritoSanto = buscarLivros("Espírito Santo");
+    const dinheiro = buscarLivros("dinheiro");
+    const reinoDeDeus = buscarLivros("reino de Deus").slice(0, 5).map(({ livro }) => livro.slug);
+
+    expect(espiritoSanto[0]).toMatchObject({ livro: { slug: "44-atos" } });
+    expect(espiritoSanto[0].trecho).toContain("Espírito Santo");
+    expect(dinheiro.some(({ livro, trecho }) => livro.slug === "20-proverbios" && trecho?.includes("dinheiro"))).toBe(true);
+    expect(reinoDeDeus).toEqual(expect.arrayContaining(["40-mateus", "41-marcos", "42-lucas"]));
+  });
+
+  it.each([
+    ["paz", "43-joao"],
+    ["ansiedade", "40-mateus"],
+    ["pobreza", "59-tiago"],
+    ["louvor", "58-hebreus"],
+    ["louvor", "66-apocalipse"],
+  ])("encontra %s no resumo de %s com evidência visível", (consulta, slug) => {
+    const resultado = buscarLivros(consulta).find(({ livro }) => livro.slug === slug);
+    const normalizar = (texto: string) => texto.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+
+    expect(resultado?.camposCoincidentes).toContain("conteudo");
+    expect(normalizar(resultado?.trecho ?? "")).toContain(consulta);
   });
 
   it.each(referenciasDouradas)("mantém a referência %s fora da busca de resumos", (consulta, livroSlug, capitulo) => {

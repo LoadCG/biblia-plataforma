@@ -27,4 +27,4 @@ Os capítulos 1–9 formam uma introdução em que a sabedoria é personificada 
 - Imagens do cotidiano — como formigas, caminhos e palavras — tornam ideias éticas abstratas concretas e memoráveis.
 
 ## 🎯 Por Que Isso Importa Hoje
-Provérbios convida o leitor a avaliar como escolhas, palavras e relações afetam a vida em comunidade. Seus ditos são observações e instruções sapienciais, não fórmulas que garantem prosperidade ou resultados iguais em toda situação; devem ser lidos junto com outros gêneros bíblicos, inclusive lamentos e protestos contra a injustiça.
+Provérbios convida o leitor a avaliar como escolhas, palavras e relações afetam a vida em comunidade. O uso do dinheiro e dos bens também aparece em ditos sobre generosidade e confiança na riqueza (11:24–28). Seus ditos são observações e instruções sapienciais, não fórmulas que garantem prosperidade ou resultados iguais em toda situação; devem ser lidos junto com outros gêneros bíblicos, inclusive lamentos e protestos contra a injustiça.

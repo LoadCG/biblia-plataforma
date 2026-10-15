@@ -1413,18 +1413,18 @@ export default function Leitura() {
                 {!desktop ? <Text className="text-cor-texto dark:text-cor-texto-dark font-semibold text-sm">{versiculosSelecionados.size > 1 ? `Anotar ${versiculosSelecionados.size}` : "Anotação"}</Text> : null}
               </Pressable>
 
-              <Pressable onPress={copiarVersiculos} disabled={acoesSelecaoOcupadas} accessibilityRole="button" accessibilityLabel="Copiar versículos selecionados" className={`items-center justify-center active:opacity-70 ${acoesSelecaoOcupadas ? "opacity-50" : ""} ${desktop ? "w-11 h-11 rounded-full bg-cor-borda dark:bg-cor-borda-dark" : "flex-row gap-1 bg-cor-borda dark:bg-cor-borda-dark px-4 py-2 rounded-lg"}`}>
+              <Pressable onPress={copiarVersiculos} disabled={acoesSelecaoOcupadas} accessibilityRole="button" accessibilityLabel="Copiar versículos selecionados" className={`items-center justify-center active:opacity-70 ${acoesSelecaoOcupadas ? "opacity-50" : ""} ${desktop ? "w-11 h-11 rounded-full bg-cor-borda dark:bg-cor-borda-dark" : "min-h-11 flex-row gap-1 bg-cor-borda dark:bg-cor-borda-dark px-4 rounded-lg"}`}>
                 <IconeUI name="copy" size={18} className="text-cor-texto dark:text-cor-texto-dark" />
                 {!desktop ? <Text className="text-cor-texto dark:text-cor-texto-dark font-semibold text-sm">Copiar</Text> : null}
               </Pressable>
 
-              <Pressable onPress={compartilharVersiculos} disabled={acoesSelecaoOcupadas} accessibilityRole="button" accessibilityLabel="Compartilhar versículos selecionados" className={`items-center justify-center active:opacity-70 ${acoesSelecaoOcupadas ? "opacity-50" : ""} ${desktop ? "w-11 h-11 rounded-full bg-cor-borda dark:bg-cor-borda-dark" : `flex-row gap-1 bg-cor-borda dark:bg-cor-borda-dark px-4 py-2 rounded-lg ${versiculosSelecionados.size === 1 ? "" : "mr-6"}`}`}>
+              <Pressable onPress={compartilharVersiculos} disabled={acoesSelecaoOcupadas} accessibilityRole="button" accessibilityLabel="Compartilhar versículos selecionados" className={`items-center justify-center active:opacity-70 ${acoesSelecaoOcupadas ? "opacity-50" : ""} ${desktop ? "w-11 h-11 rounded-full bg-cor-borda dark:bg-cor-borda-dark" : `min-h-11 flex-row gap-1 bg-cor-borda dark:bg-cor-borda-dark px-4 rounded-lg ${versiculosSelecionados.size === 1 ? "" : "mr-6"}`}`}>
                 <IconeUI name="share" size={18} className="text-cor-texto dark:text-cor-texto-dark" />
                 {!desktop ? <Text className="text-cor-texto dark:text-cor-texto-dark font-semibold text-sm">Compartilhar</Text> : null}
               </Pressable>
 
               {versiculosSelecionados.size === 1 ? (
-                <Pressable onPress={gerarImagemDoVersiculoSelecionado} disabled={acoesSelecaoOcupadas} accessibilityRole="button" accessibilityLabel="Criar imagem deste versículo" className={`items-center justify-center active:opacity-70 ${acoesSelecaoOcupadas ? "opacity-50" : ""} ${desktop ? "w-11 h-11 rounded-full bg-cor-borda dark:bg-cor-borda-dark" : "flex-row gap-1 bg-cor-borda dark:bg-cor-borda-dark px-4 py-2 rounded-lg mr-6"}`}>
+                <Pressable onPress={gerarImagemDoVersiculoSelecionado} disabled={acoesSelecaoOcupadas} accessibilityRole="button" accessibilityLabel="Criar imagem deste versículo" className={`items-center justify-center active:opacity-70 ${acoesSelecaoOcupadas ? "opacity-50" : ""} ${desktop ? "w-11 h-11 rounded-full bg-cor-borda dark:bg-cor-borda-dark" : "min-h-11 flex-row gap-1 bg-cor-borda dark:bg-cor-borda-dark px-4 rounded-lg mr-6"}`}>
                   <IconeUI name="image" size={18} className="text-cor-texto dark:text-cor-texto-dark" />
                   {!desktop ? <Text className="text-cor-texto dark:text-cor-texto-dark font-semibold text-sm">Imagem</Text> : null}
                 </Pressable>

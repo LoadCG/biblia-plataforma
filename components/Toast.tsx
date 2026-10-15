@@ -131,7 +131,7 @@ export function Toast() {
             accessibilityRole="button"
             accessibilityLabel={payload.acaoLabel}
             accessibilityHint="Ativa a ação antes que o aviso desapareça"
-            className={`px-3 py-1.5 rounded-full ${estilo.acao} active:opacity-70`}
+            className={`min-h-11 min-w-11 justify-center px-3 py-1.5 rounded-full ${estilo.acao} active:opacity-70`}
           >
             <Text className={`${estilo.texto} text-sm font-bold`}>{payload.acaoLabel}</Text>
           </Pressable>

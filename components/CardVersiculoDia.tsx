@@ -231,7 +231,7 @@ export function CardVersiculoDia({ periodoDoDia }: Props) {
         >
           <Text className="text-cor-texto/90 dark:text-white/90 text-xs font-semibold uppercase tracking-widest">Versículo do Dia</Text>
           <Text className="text-cor-texto-suave dark:text-white/80 text-sm">{erro}</Text>
-          <Pressable onPress={carregarVersiculo} accessibilityRole="button" accessibilityLabel="Tentar novamente" className="px-4 py-2 rounded-full bg-black/5 dark:bg-white/10 active:opacity-70">
+          <Pressable onPress={carregarVersiculo} accessibilityRole="button" accessibilityLabel="Tentar novamente" className="min-h-11 justify-center px-4 rounded-full bg-black/5 dark:bg-white/10 active:opacity-70">
             <Text className="text-cor-texto dark:text-white font-semibold text-sm">Tentar novamente</Text>
           </Pressable>
         </LinearGradient>

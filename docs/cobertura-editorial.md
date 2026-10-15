@@ -8,7 +8,7 @@ Relatório gerado por `npm run relatorio:editorial`. As contagens descrevem estr
 - Livros no conteúdo derivado: 66
 - Antigo Testamento: 39
 - Novo Testamento: 27
-- Palavras nas fontes Markdown: 37.875
+- Palavras nas fontes Markdown: 38.025
 - Seções esperadas por livro: panoDeFundo, linhaDoTempo, autorProposito, resumoConteudo, curiosidades, porQueImporta
 
 ## Planos de leitura

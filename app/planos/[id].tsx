@@ -1,6 +1,6 @@
-import { Link, router, useLocalSearchParams } from "expo-router";
+import { Link, router, useFocusEffect, useLocalSearchParams } from "expo-router";
 import Head from "expo-router/head";
-import { useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { Pressable, ScrollView, Text, useWindowDimensions, View } from "react-native";
 import { IconeUI } from "../../components/icone/IconeUI";
 import { BotaoTema } from "../../components/BotaoTema";
@@ -40,7 +40,7 @@ export default function DetalhePlano() {
   const [tentativa, setTentativa] = useState(0);
   const [acaoEmAndamento, setAcaoEmAndamento] = useState<number | null>(null);
 
-  useEffect(() => {
+  useFocusEffect(useCallback(() => {
     if (!ownerId || !plano) {
       setCarregando(true);
       return;
@@ -61,7 +61,7 @@ export default function DetalhePlano() {
       if (ativo) setCarregando(false);
     });
     return () => { ativo = false; };
-  }, [ownerId, plano, tentativa]);
+  }, [ownerId, plano, tentativa]));
 
   async function iniciarDia(dia: number, reiniciar = false) {
     if (!ownerId || !plano) return;

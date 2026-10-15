@@ -1,5 +1,5 @@
-import { Link, router, useLocalSearchParams } from "expo-router";
-import { useEffect, useMemo, useState } from "react";
+import { Link, router, useFocusEffect, useLocalSearchParams } from "expo-router";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Platform, Pressable, ScrollView, Text, useWindowDimensions, View } from "react-native";
 import { EstadoCarregando } from "../../components/EstadoCarregando";
 import { EstadoErro } from "../../components/EstadoErro";
@@ -142,7 +142,7 @@ export default function Inicio() {
   const desktop = useWindowDimensions().width >= 1024;
   const refContinueLendo = useArrastarParaRolar();
 
-  useEffect(() => {
+  const carregarProgresso = useCallback(() => {
     if (!ownerId) return;
     let ativo = true;
     setEstadoProgresso("carregando");
@@ -171,6 +171,8 @@ export default function Inicio() {
     });
     return () => { ativo = false; };
   }, [ownerId, tentativaCarregar]);
+
+  useFocusEffect(useCallback(() => carregarProgresso(), [carregarProgresso]));
 
   const lidosSet = useMemo(() => new Set(lidos), [lidos]);
   const conquistas = useMemo(() => calcularConquistas(lidosSet), [lidosSet]);
@@ -215,9 +217,9 @@ export default function Inicio() {
           </View>
         </View>
 
-        <View className="xl:flex-row xl:items-start xl:gap-6">
+        <View className="lg:flex-row lg:items-start lg:gap-6">
           {/* Leitura: versículo, retomada e descoberta seguem a ordem da jornada. */}
-          <View className="xl:flex-[1.2] xl:min-w-0">
+          <View className="lg:flex-[1.2] lg:min-w-0">
             <CardVersiculoDia periodoDoDia={periodoDoDia} />
 
             {recentes.length > 0 ? (
@@ -267,7 +269,7 @@ export default function Inicio() {
           </View>
 
           {/* Progresso pessoal e conquistas ficam agrupados na coluna de apoio. */}
-          <View className="xl:flex-[0.85] xl:min-w-0 xl:pt-1">
+          <View className="lg:flex-[0.85] lg:min-w-0 lg:pt-1">
         {estadoProgresso === "disponivel" ? (
           <>
         {lembretePlano ? (
@@ -299,7 +301,7 @@ export default function Inicio() {
               <Text className="text-[11px] font-semibold uppercase tracking-[1.5px] text-cor-texto-suave dark:text-cor-texto/65 mb-1.5">
                 Sua jornada
               </Text>
-              <Text className="text-xl font-bold text-cor-texto dark:text-cor-texto mb-1">Estudo por Resumos</Text>
+              <Text className="text-xl lg:text-lg xl:text-xl font-bold text-cor-texto dark:text-cor-texto mb-1">Estudo por Resumos</Text>
               <Text className="text-sm text-cor-texto-suave dark:text-cor-texto/75 mb-3">
                 {lidos.length} de {livros.length} resumos marcados como lidos
               </Text>
@@ -318,7 +320,7 @@ export default function Inicio() {
                 />
               </View>
             </View>
-            <View aria-hidden={true} className="w-28 h-20 ml-2 overflow-hidden">
+            <View aria-hidden={true} className="w-28 h-20 ml-2 overflow-hidden lg:w-16 lg:h-14 lg:ml-1 xl:w-28 xl:h-20 xl:ml-2">
               <IlustracaoPlano escuro={escuro} />
             </View>
           </Pressable>
@@ -328,8 +330,10 @@ export default function Inicio() {
 
         <CardConquistas conquistas={conquistas} />
 
-        <Link href="/estatisticas" className="mt-4 text-sm font-semibold text-cor-destaque dark:text-cor-destaque-dark self-center py-2">
-          Ver todas as estatísticas
+        <Link href="/estatisticas" asChild>
+          <Pressable accessibilityRole="link" accessibilityLabel="Ver todas as estatísticas" className="mt-4 min-h-11 self-center justify-center active:opacity-70">
+            <Text className="text-sm font-semibold text-cor-destaque dark:text-cor-destaque-dark">Ver todas as estatísticas</Text>
+          </Pressable>
         </Link>
           </>
         ) : (

@@ -152,7 +152,7 @@ export default function Voce() {
         </Pressable>
 
         <Link href="/privacidade" asChild>
-          <Pressable accessibilityRole="link" className="self-start min-h-10 flex-row items-center gap-2 px-1 mb-5 active:opacity-70">
+          <Pressable accessibilityRole="link" accessibilityLabel="Saiba mais sobre privacidade" className="self-start min-h-11 flex-row items-center gap-2 px-1 mb-5 active:opacity-70">
             <IconeUI name="info" size={15} color={cores.textoSuave} />
             <Text className="text-xs text-cor-texto-suave dark:text-cor-texto-suave-dark">Seus dados ficam neste dispositivo. <Text className="font-bold text-cor-destaque dark:text-cor-destaque-dark">Saiba mais</Text></Text>
           </Pressable>
@@ -210,7 +210,13 @@ export default function Voce() {
 
             <View className="flex-row items-center justify-between gap-3 mb-3">
               <Text accessibilityRole="header" className="text-base font-extrabold text-cor-texto dark:text-cor-texto-dark">Atividade recente</Text>
-              {atividade.length > 3 ? <Link href="/salvo" className="text-xs font-bold text-cor-destaque dark:text-cor-destaque-dark py-2">Ver tudo</Link> : null}
+              {atividade.length > 3 ? (
+                <Link href="/salvo" asChild>
+                  <Pressable accessibilityRole="link" accessibilityLabel="Ver toda a atividade salva" className="min-h-11 justify-center active:opacity-70">
+                    <Text className="text-xs font-bold text-cor-destaque dark:text-cor-destaque-dark">Ver tudo</Text>
+                  </Pressable>
+                </Link>
+              ) : null}
             </View>
             {recentes.length === 0 ? (
               <View className="rounded-2xl border border-cor-borda dark:border-cor-borda-dark bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark mb-4"><EstadoVazio titulo="Sua jornada começa aqui" descricao="Salve um versículo, faça uma nota ou grife uma passagem durante a leitura." acao={{ rotulo: "Abrir a Bíblia", aoPressionar: () => router.push("/biblia") }} /></View>
@@ -230,7 +236,7 @@ export default function Voce() {
                 </Text>
                 {sequencia > 0 ? <Text style={{ color: cores.destaque }} className="text-xs font-bold mt-1.5">{mensagemStreak(sequencia)}</Text> : null}
                 {sequencia === 0 ? (
-                  <Pressable onPress={() => router.push("/biblia")} accessibilityRole="link" className="self-start min-h-10 flex-row items-center gap-1.5 mt-2 active:opacity-70">
+                  <Pressable onPress={() => router.push("/biblia")} accessibilityRole="link" accessibilityLabel="Começar leitura bíblica" className="self-start min-h-11 flex-row items-center gap-1.5 mt-2 active:opacity-70">
                     <Text className="text-xs font-bold text-cor-destaque dark:text-cor-destaque-dark">Começar leitura</Text>
                     <IconeUI name="next" size={14} color={cores.destaque} />
                   </Pressable>

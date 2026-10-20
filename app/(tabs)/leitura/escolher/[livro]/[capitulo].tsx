@@ -93,7 +93,7 @@ export default function EscolherVersiculo() {
               lidos={grifados}
               rotulo="Versículo"
               rotuloEstado="grifado"
-              onSelecionar={(versiculo) => router.push(`/leitura/${livro.slug}/${capitulo}?versiculo=${versiculo}`)}
+              onSelecionar={(versiculo) => router.push(`/biblia/${livro.slug}/${capitulo}?versiculo=${versiculo}`)}
             />
           </>
         )}

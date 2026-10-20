@@ -11,7 +11,7 @@ import { BotaoTema } from "../../components/BotaoTema";
 import { calcularConquistas } from "../../core/content/conquistas";
 import { livros, obterLivro } from "../../core/content/livros";
 import { planosLeitura } from "../../core/content/planos";
-import { useResumoSequencia } from "../../core/estatisticas/useResumoSequencia";
+import { calcularSequenciaAtual } from "../../core/estatisticas/streak";
 import { obterLembretePlano, type LembretePlano } from "../../core/leitura/lembretePlanos";
 import { livrosLidosRepository, progressoRepository } from "../../core/repositories";
 import { useColorScheme } from "../../core/theme";
@@ -54,7 +54,7 @@ function CardContinueLendo({ item, escuro }: { item: CapituloLido; escuro: boole
 
   return (
     <Pressable
-      onPress={() => router.push(`/leitura/${livro.slug}/${item.capitulo}`)}
+      onPress={() => router.push(`/biblia/${livro.slug}/${item.capitulo}`)}
       accessibilityRole="link"
       accessibilityLabel={`${livro.nome}, capítulo ${item.capitulo}`}
       className="w-32 mr-3 rounded-2xl bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark px-3.5 py-4 shadow-sm active:opacity-80"
@@ -75,7 +75,7 @@ function CardContinueLendo({ item, escuro }: { item: CapituloLido; escuro: boole
 
 function CardComecarLeitura({ escuro }: { escuro: boolean }) {
   return (
-    <Link href="/leitura/escolher" asChild>
+    <Link href="/biblia/escolher" asChild>
       <Pressable
         accessibilityRole="link"
         accessibilityLabel="Começar a leitura bíblica escolhendo um livro"
@@ -127,8 +127,7 @@ export default function Inicio() {
   const parametros = useLocalSearchParams<{ previewPeriodo?: string | string[] }>();
   const ownerId = useOwnerId();
   const [lidos, setLidos] = useState<string[]>([]);
-  const [datasLeitura, setDatasLeitura] = useState<string[]>([]);
-  const resumoSequencia = useResumoSequencia(datasLeitura);
+  const [sequencia, setSequencia] = useState(0);
   const [recentes, setRecentes] = useState<CapituloLido[]>([]);
   const [estadoProgresso, setEstadoProgresso] = useState<"carregando" | "disponivel" | "erro">("carregando");
   const [tentativaCarregar, setTentativaCarregar] = useState(0);
@@ -148,7 +147,7 @@ export default function Inicio() {
     let ativo = true;
     setEstadoProgresso("carregando");
     setLidos([]);
-    setDatasLeitura([]);
+    setSequencia(0);
     setRecentes([]);
     setLembretePlano(null);
     Promise.allSettled([
@@ -161,7 +160,7 @@ export default function Inicio() {
       if (resultadoLidos.status === "fulfilled") setLidos(resultadoLidos.value);
       if (resultadoProgresso.status === "fulfilled") {
         const itens = resultadoProgresso.value;
-        setDatasLeitura(itens.map((i) => i.lidoEm));
+        setSequencia(calcularSequenciaAtual(itens.map((i) => i.lidoEm)));
         setRecentes(capitulosRecentes(itens, 10));
       }
       if (resultadoLembrete.status === "fulfilled") setLembretePlano(resultadoLembrete.value);
@@ -327,7 +326,7 @@ export default function Inicio() {
           </Pressable>
         </Link>
 
-        <CardStreak resumo={resumoSequencia} />
+        <CardStreak sequencia={sequencia} />
 
         <CardConquistas conquistas={conquistas} />
 

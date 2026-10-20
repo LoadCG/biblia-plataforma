@@ -187,7 +187,7 @@ export default function EscolherLivro() {
                         : "Toque no primeiro capítulo do intervalo"
                       : `Início: capítulo ${capituloInicioIntervalo} — toque no último`
                     : `${selecionados.size} selecionado${selecionados.size === 1 ? "" : "s"}${
-                        Platform.OS === "web" && selecionados.size === 0 ? " — arraste; no celular, segure e arraste para selecionar um intervalo" : ""
+                        Platform.OS === "web" && selecionados.size === 0 ? " — arraste pra selecionar um intervalo" : ""
                       }`
                   : "Toque num capítulo pra ler, ou segure pra escolher um versículo"}
               </Text>
@@ -211,8 +211,8 @@ export default function EscolherLivro() {
             <GradeCapitulos
               totalCapitulos={item.capitulos}
               lidos={lidos}
-              onSelecionar={(cap) => router.push(`/leitura/${item.slug}/${cap}`)}
-              onSelecionarLongo={(cap) => router.push(`/leitura/escolher/${item.slug}/${cap}`)}
+              onSelecionar={(cap) => router.push(`/biblia/${item.slug}/${cap}`)}
+              onSelecionarLongo={(cap) => router.push(`/biblia/escolher/${item.slug}/${cap}`)}
               selecionados={emSelecao ? selecionados : undefined}
               onAlternarSelecionado={emSelecao ? alternarCapituloSelecionado : undefined}
               onMudarSelecaoEmMassa={emSelecao ? setSelecionados : undefined}

@@ -20,7 +20,6 @@ import type { Nota, ReferenciaVersiculo } from "../../../../core/types/leitura";
 import { livros, obterLivro, obterResumo } from "../../../../core/content/livros";
 import { obterDiaPlano, obterPlano } from "../../../../core/content/planos";
 import { hrefReferenciaBiblica } from "../../../../core/biblia/parseReferencia";
-import { hrefRetornoBusca, ORIGEM_PESQUISA } from "../../../../core/biblia/navegacaoBusca";
 import { TextoComReferencias } from "../../../../components/TextoComReferencias";
 import { CartaoVersiculoImagem } from "../../../../components/CartaoVersiculoImagem";
 import { DicaContextual } from "../../../../components/DicaContextual";
@@ -92,14 +91,14 @@ function lerNumerosVersiculos(parametro?: string | string[]): number[] {
 }
 
 function hrefCapitulo(livroSlug: string | undefined, numero: number, origem?: string) {
-  if (!livroSlug) return "/leitura/escolher";
-  const href = `/leitura/${livroSlug}/${numero}`;
+  if (!livroSlug) return "/biblia/escolher";
+  const href = `/biblia/${livroSlug}/${numero}`;
   return origem === ORIGEM_ABA_BIBLIA ? `${href}?origem=${ORIGEM_ABA_BIBLIA}` : href;
 }
 
 export default function Leitura() {
   const desktop = useWindowDimensions().width >= 1024;
-  const params = useLocalSearchParams<{ livro: string; capitulo: string; versiculo?: string; versiculos?: string; planoId?: string; diaPlano?: string; indicePlano?: string; origem?: string; consulta?: string; testamento?: string; livroFiltro?: string }>();
+  const params = useLocalSearchParams<{ livro: string; capitulo: string; versiculo?: string; versiculos?: string; planoId?: string; diaPlano?: string; indicePlano?: string; origem?: string }>();
   const abertaPelaAbaBiblia = params.origem === ORIGEM_ABA_BIBLIA;
   const livro = obterLivro(params.livro ?? "");
   const capitulo = parseInt(params.capitulo ?? "", 10);
@@ -142,8 +141,6 @@ export default function Leitura() {
   const [versiculoAutoScrollRealizado, setVersiculoAutoScrollRealizado] = useState(false);
   const [destaqueAlvo, setDestaqueAlvo] = useState(!!versiculoAlvo && versiculosDoLink.length <= 1);
   const [capituloLido, setCapituloLido] = useState(false);
-  const [concluindoSessaoPlano, setConcluindoSessaoPlano] = useState(false);
-  const concluindoSessaoPlanoRef = useRef(false);
   const [notas, setNotas] = useState<Map<number, Nota>>(new Map());
   const [anotacaoEditando, setAnotacaoEditando] = useState<AlvoAnotacao | null>(null);
   const [modalAjustesAberto, setModalAjustesAberto] = useState(false);
@@ -463,7 +460,7 @@ export default function Leitura() {
         <IconeUI name="warning" size={48} className="text-cor-texto-suave dark:text-cor-texto-suave-dark mb-4" />
         <Text className="text-xl font-bold text-cor-texto dark:text-cor-texto-dark mb-2 text-center">Capítulo não encontrado</Text>
         <Text className="text-cor-texto-suave dark:text-cor-texto-suave-dark mb-6 text-center">Parece que você tentou acessar um capítulo que não existe neste livro.</Text>
-        <Link href={livro ? { pathname: "/leitura/escolher", params: { livro: livro.slug } } : "/biblia"} asChild>
+        <Link href={livro ? { pathname: "/biblia/escolher", params: { livro: livro.slug } } : "/"} asChild>
           <Pressable accessibilityRole="link" className="bg-cor-borda dark:bg-cor-borda-dark px-6 py-3 rounded-full active:opacity-70">
             <Text className="text-cor-texto dark:text-cor-texto-dark font-bold">Voltar para {livro ? livro.nome : "Início"}</Text>
           </Pressable>
@@ -499,9 +496,6 @@ export default function Leitura() {
 
   async function concluirLeituraDoPlano() {
     if (!ownerId || !livro || !planoEmAndamento || !diaEmAndamento || numeroDiaPlano === null) return;
-    if (concluindoSessaoPlanoRef.current) return;
-    concluindoSessaoPlanoRef.current = true;
-    setConcluindoSessaoPlano(true);
     try {
       const referenciaAtual = diaEmAndamento.referencias[indicePlano];
       if (!referenciaAtual) return;
@@ -529,9 +523,6 @@ export default function Leitura() {
       router.replace(`${href}${separador}planoId=${encodeURIComponent(planoEmAndamento.id)}&diaPlano=${numeroDiaPlano}&indicePlano=${proximoIndice}`);
     } catch {
       mostrarToast("Não foi possível atualizar sua sessão. Tente novamente.", { severidade: "erro" });
-    } finally {
-      concluindoSessaoPlanoRef.current = false;
-      setConcluindoSessaoPlano(false);
     }
   }
 
@@ -650,19 +641,11 @@ export default function Leitura() {
       return;
     }
 
-    if (params.origem === ORIGEM_PESQUISA) {
-      router.replace(hrefRetornoBusca(params.consulta, {
-        testamento: params.testamento,
-        livroFiltro: params.livroFiltro,
-      }));
-      return;
-    }
-
     if (abertaPelaAbaBiblia) {
       if (livro) {
-        router.replace({ pathname: "/leitura/escolher", params: { livro: livro.slug } });
+        router.replace({ pathname: "/biblia/escolher", params: { livro: livro.slug } });
       } else {
-        router.replace("/leitura/escolher");
+        router.replace("/biblia/escolher");
       }
       return;
     }
@@ -675,10 +658,10 @@ export default function Leitura() {
     // Links diretos e cold starts não têm histórico para voltar. Mantém a
     // pessoa na área da Bíblia e preserva o livro que estava lendo.
     if (!livro) {
-      router.replace("/leitura/escolher");
+      router.replace("/biblia/escolher");
       return;
     }
-    router.replace({ pathname: "/leitura/escolher", params: { livro: livro.slug } });
+    router.replace({ pathname: "/biblia/escolher", params: { livro: livro.slug } });
   }
 
   async function aplicarCorGrifo(cor: string) {
@@ -758,9 +741,9 @@ export default function Leitura() {
   function alternarAudio() {
     if (audioEstado === "iniciando" || audioEstado === "pausando" || audioEstado === "interrompendo") return;
     if (audioEstado === "reproduzindo") {
-      pausarAudio(origemAudio);
+      pausarAudio();
     } else if (audioEstado === "pausado" || audioEstado === "interrompido" || audioEstado === "erro") {
-      continuarAudio(origemAudio);
+      continuarAudio();
     } else {
       iniciarLeituraAudio();
     }
@@ -999,7 +982,7 @@ export default function Leitura() {
               estreita, mantemos o botão de alternância para o resumo, que
               evita disputar espaço com os controles de leitura. */}
           {desktop ? (
-            <Link href={{ pathname: "/leitura/escolher", params: { livro: livro.slug } }} asChild>
+            <Link href={{ pathname: "/biblia/escolher", params: { livro: livro.slug } }} asChild>
               <Pressable
                 accessibilityRole="link"
                 accessibilityLabel={`Escolher capítulo de ${livro.nome}`}
@@ -1213,15 +1196,9 @@ export default function Leitura() {
               <View className="rounded-2xl border border-cor-destaque dark:border-cor-destaque-dark bg-cor-destaque-fundo dark:bg-cor-destaque-fundo-dark px-4 py-4 mt-6">
                 <Text className="text-xs font-bold uppercase tracking-wide text-cor-destaque dark:text-cor-destaque-dark">{planoEmAndamento.titulo} · Dia {diaEmAndamento.dia}</Text>
                 <Text className="text-base font-bold text-cor-texto dark:text-cor-texto-dark mt-1">Leitura {indicePlano + 1} de {diaEmAndamento.referencias.length}</Text>
-                <Pressable
-                  onPress={concluirLeituraDoPlano}
-                  disabled={concluindoSessaoPlano}
-                  accessibilityRole="button"
-                  accessibilityState={{ disabled: concluindoSessaoPlano, busy: concluindoSessaoPlano }}
-                  className="rounded-full bg-cor-destaque dark:bg-cor-destaque-dark px-4 py-3 items-center mt-3 active:opacity-80 disabled:opacity-60"
-                >
+                <Pressable onPress={concluirLeituraDoPlano} accessibilityRole="button" className="rounded-full bg-cor-destaque dark:bg-cor-destaque-dark px-4 py-3 items-center mt-3 active:opacity-80">
                   <Text className="text-white dark:text-cor-texto font-bold">
-                    {concluindoSessaoPlano ? "Salvando progresso…" : indicePlano + 1 >= diaEmAndamento.referencias.length ? "Concluir dia" : "Concluir e avançar"}
+                    {indicePlano + 1 >= diaEmAndamento.referencias.length ? "Concluir dia" : "Concluir e avançar"}
                   </Text>
                 </Pressable>
               </View>
@@ -1502,7 +1479,7 @@ export default function Leitura() {
               <IconeUI name="previous" size={24} className="text-cor-texto dark:text-cor-texto-dark" />
             </Pressable>
 
-          <Link href={{ pathname: "/leitura/escolher", params: { livro: livro.slug } }} asChild>
+          <Link href={{ pathname: "/biblia/escolher", params: { livro: livro.slug } }} asChild>
             <Pressable accessibilityRole="link" className="flex-1 items-center px-4 py-1.5 active:opacity-60">
               <Text className="text-sm font-bold text-cor-texto dark:text-cor-texto-dark" numberOfLines={1}>
                 {livro.nome} {capitulo}

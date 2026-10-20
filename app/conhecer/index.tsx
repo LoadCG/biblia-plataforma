@@ -2,6 +2,7 @@ import Head from "expo-router/head";
 import { Link } from "expo-router";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { TEMAS_EVANGELISTICOS } from "../../core/content/temasEvangelisticos";
+import { EfeitosEditorial } from "../../components/EfeitosEditorial";
 
 const ESTUDOS = [
   {
@@ -35,16 +36,20 @@ export default function Conhecer() {
         <meta name="description" content="Leituras introdutórias sobre Jesus, a Bíblia e a história da salvação." />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Montserrat:wght@600;700;800;900&display=swap" rel="stylesheet" />
+        <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
       </Head>
       <ScrollView className="conhecer-page flex-1" contentContainerStyle={{ flexGrow: 1 }}>
+        <EfeitosEditorial />
         <View className="conhecer-shell">
+          <View className="editorial-navegacao">
           <Link href="/" asChild>
             <Pressable accessibilityRole="link" className="conhecer-voltar">
               <Text className="conhecer-voltar-seta" aria-hidden={true}>←</Text>
               <Text className="conhecer-voltar-texto">Voltar à mensagem</Text>
             </Pressable>
           </Link>
+            <Text className="editorial-assinatura">TEM ALGUÉM QUE TE AMA.</Text>
+          </View>
 
           <View className="conhecer-abertura">
             <Text className="conhecer-sobretitulo">UM PRIMEIRO PASSO</Text>
@@ -52,8 +57,12 @@ export default function Conhecer() {
               Conhecer mais sobre <Text className="conhecer-destaque">esse amor.</Text>
             </Text>
             <Text className="conhecer-introducao">
-              A história que você acabou de conhecer continua. Explore estas leituras no seu ritmo, sem cadastro e sem compromisso.
+              Há uma história por trás dessa mensagem. Conheça Jesus, explore a Bíblia e encontre um ponto de partida. No seu ritmo.
             </Text>
+            <View className="editorial-indice">
+              <Text className="editorial-indice-texto">TRÊS CAMINHOS PARA COMEÇAR</Text>
+              <Text className="editorial-indice-seta" aria-hidden={true}>↓</Text>
+            </View>
           </View>
 
           <View className="conhecer-lista">
@@ -67,7 +76,10 @@ export default function Conhecer() {
                   </View>
                   <Text className="conhecer-card-titulo">{estudo.titulo}</Text>
                   <Text className="conhecer-card-descricao">{estudo.descricao}</Text>
-                  <Text className="conhecer-card-link">COMEÇAR A LEITURA <Text aria-hidden={true}>→</Text></Text>
+                  <View className="conhecer-card-rodape">
+                    <Text className="conhecer-card-link">COMEÇAR A LEITURA</Text>
+                    <Text className="conhecer-card-rodape-seta" aria-hidden={true}>→</Text>
+                  </View>
                 </Pressable>
               </Link>
             ))}
@@ -75,7 +87,7 @@ export default function Conhecer() {
 
           <View className="temas-abertura">
             <Text className="conhecer-sobretitulo">LEITURAS POR ASSUNTO</Text>
-            <Text accessibilityRole="header" className="temas-titulo">Tem algum assunto que gostaria de explorar?</Text>
+            <Text accessibilityRole="header" className="temas-titulo">Por onde você gostaria de <Text className="conhecer-destaque">começar?</Text></Text>
             <Text className="temas-descricao">
               Escolha apenas se fizer sentido para você. Estes caminhos não são diagnósticos nem substituem cuidado profissional.
             </Text>

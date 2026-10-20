@@ -855,10 +855,28 @@ Este gate foi superado para o **protótipo local**: o usuário definiu `/` como 
 - Preview local: `/`, `/conhecer` e `/conhecer/temas/ansiedade-e-preocupacao` foram abertos. A árvore acessível expõe títulos, ordem das seções, textos e links bíblicos.
 - `npm run typecheck`: ainda retorna três erros em arquivos modificados anteriormente no workspace, fora deste incremento: um tipo de resumo em `app/(tabs)/biblia.tsx` e duas chamadas sem argumento em `app/(tabs)/leitura/[livro]/[capitulo].tsx`. Nenhum erro foi apontado nos arquivos deste incremento.
 - `npm run check:a11y`: o verificador para ao tentar abrir `app/(tabs)/index.tsx`, que não existe neste checkout. A rota e o checker fazem parte de alterações locais preexistentes e não foram modificados nesta etapa.
-- A compilação Vercel anterior foi concluída, mas a versão com o catálogo temático depende da implantação da branch atual. O domínio pretendido e a rota final do QR ainda não foram confirmados.
+- O incremento estático com o catálogo temático foi publicado em prévia protegida da Vercel. O domínio pretendido e a rota final do QR ainda não foram confirmados.
 
 ### Portão D7 — revisão de lançamento
 
 O código está em condição de revisão, mas a publicação pública e a impressão do panfleto não estão aprovadas. Em consulta feita em 2026-10-20, o Registro.br informou que `temalguemquemeama.com.br` estava disponível para registro. A consulta não registra nem reserva o domínio. Ainda é necessário decidir quem será o titular da conta e do domínio, nomear a organização responsável e o revisor pastoral, conferir referências e conteúdo, aprovar a tradução e seus direitos e testar acessibilidade, rolagem e carregamento em aparelho real e rede móvel. O endereço e o QR só devem ser finalizados depois dessas verificações. [Consulta oficial do Registro.br](https://registro.br/busca-dominio/?fqdn=temalguemquemeama.com.br).
 
 O formulário e Neon permanecem no ciclo posterior D8–D13. Antes de coletar pedidos de oração ou relatos, definir quem recebe e responde, finalidade, base legal, aviso de privacidade, acesso, retenção e exclusão. Relatos podem conter informações de saúde, vida sexual ou convicção religiosa, que a LGPD trata como dados pessoais sensíveis; não ativar a coleta antes dessa definição. [Lei nº 13.709/2018, arts. 5º e 11](https://www.planalto.gov.br/ccivil_03/_ato2015-2018/2018/lei/l13709.htm).
+
+
+## 24. Refinamento visual da experiência pública
+
+Atualizado em 2026-10-20, após revisão das telas enviadas pelo usuário.
+
+A direção visual é editorial e tipográfica, com referências nas seleções oficiais [Minimal](https://www.awwwards.com/websites/minimal/) e [Typography](https://www.awwwards.com/websites/typography/) do Awwwards. As referências orientam composição, espaços e hierarquia; o projeto não reproduz um layout específico nem declara premiação.
+
+- Paleta: cinza escuro em degradê, texto marfim, acento areia e um cartão claro para destacar o primeiro caminho de leitura. Montserrat Black nos títulos e Caveat nos destaques manuscritos.
+- O hub passa a ter navegação horizontal, abertura editorial, cartões com categorias e setas alinhadas, lista temática com divisórias e uma chamada da Bíblia com botão em linha única.
+- A landing usa um palco fixo durante a rolagem. O texto se dissolve em partículas amostradas de suas palavras. O avanço depende da rolagem, inclusive ao voltar. O canvas processa até 1.600 partículas por quadro, com cache limitado, sem bibliotecas adicionais.
+- Hover: luz suave seguindo o ponteiro, deslocamento discreto dos cartões, giro das setas e contraste nos botões. Controles continuam com foco de teclado visível e área de toque adequada.
+- As leituras e os temas entram ao alcançar a tela. As animações usam transformações e opacidade, com limpeza dos observadores ao navegar.
+- O carregamento aparece apenas enquanto as fontes estão pendentes, com limite de 2,2 segundos, saída suave e opção de continuar imediatamente. Não há porcentagem simulada ou espera mínima artificial.
+- A opção “Ler sem animações” disponibiliza a narrativa completa em leitura contínua. A preferência de movimento reduzido do sistema também desativa o palco fixo, a poeira e os efeitos de entrada.
+- O HTML estático permanece legível se JavaScript, canvas ou observadores não estiverem disponíveis.
+
+Verificação local: exportação concluída, 23 rotas críticas e 1.312 arquivos HTML conferidos. Navegação, tema claro/escuro, avanço da narrativa e leitura contínua revisados no navegador. Layouts conferidos em 390, 960 e 1.280 pixels, sem extravasamento horizontal nos elementos principais. Nenhum erro de console observado nas páginas revisadas. O typecheck continua apontando somente os três erros preexistentes descritos na seção 23. Ainda é necessária a revisão em aparelhos reais antes do lançamento.

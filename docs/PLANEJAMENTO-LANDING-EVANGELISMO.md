@@ -836,30 +836,29 @@ Este gate foi superado para o **protótipo local**: o usuário definiu `/` como 
 
 ## 23. Estado da implementação
 
-### CP4 — primeiro incremento local
+**Atualizado em 2026-10-20.** O primeiro incremento estático está implementado na branch de prévia. O escopo técnico D0–D6 está substancialmente entregue; D7 permanece como aprovação de lançamento.
 
-**Em andamento.** Foi preservado o trabalho que já existia no repositório e implementado o seguinte corte local:
+### Entregas no incremento estático
 
-- `/` serve a landing evangelística na web; a entrada nativa encaminha para `/biblia`.
-- `/biblia` contém a home atual do app; o leitor foi movido para `/leitura`.
-- Capítulos e caminhos de seleção antigos sob `/biblia/...` foram mantidos como compatibilidade e redirecionados para `/leitura/...`; os links internos e o gerador de páginas de capítulo foram atualizados.
-- `/conhecer` e páginas introdutórias sobre Jesus, Bíblia e salvação foram adicionadas como rascunhos estáticos, com links para referências e para `/leitura`.
-- A landing usa dez quadros curtos: cinco de acolhimento, revelação no sexto e quatro sobre Jesus e o evangelho; tem alternância monocromática, transição ao rolar, respeito a movimento reduzido e CTAs opcionais. O texto é rascunho e precisa de revisão bíblica/pastoral.
-- Não há formulário ativo, coleta de relato, analytics nem conexão Neon nesta etapa.
+- Na web, `/` abre a narrativa e, no aplicativo nativo, a entrada continua direcionando para `/biblia`.
+- `/biblia` contém a entrada do app; `/leitura` abre o seletor e os capítulos são exportados em `/leitura/:livro/:capitulo`.
+- Redirecionamentos preservam os caminhos antigos de capítulos e seletores sob `/biblia/...`.
+- `/conhecer` reúne três leituras introdutórias e um catálogo opcional de doze assuntos adaptados em linguagem simples. Cada assunto abre sua própria leitura estática, com referências que levam ao leitor.
+- A landing mantém dez quadros curtos, abre com “Tem alguém que te ama.”, revela Jesus no sexto quadro, explica a mensagem cristã e oferece caminhos opcionais. Usa degradê de cinza, tema claro/escuro, Montserrat e Caveat, dissolução textual progressiva e respeito a `prefers-reduced-motion`.
+- As leituras e os doze temas são rascunhos editoriais. Não há coleta de relatos ou pedidos de oração, endpoint, analytics ou conexão Neon nesta versão.
+- A página explica que os temas são caminhos de leitura, não diagnósticos, e informa com clareza que o site ainda não recebe relatos nem pedidos de oração.
 
-### Evidência técnica local
+### Verificações realizadas
 
-- `npm run typecheck`: concluído sem erros após correção do `ref` e do atributo acessível do botão de tema.
-- `npm run export:web`: concluído; o Expo SDK 57 exportou 110 rotas estáticas, e o gerador produziu 1.189 páginas de capítulos.
-- O HTML estático de `/` contém a primeira frase, os dez quadros e os metadados corretos. A ativação de `asyncRoutes` apenas para web (com padrão nativo desativado) reduziu a carga JavaScript local inicial da landing de cerca de 630 KB para **497.766 bytes em gzip**: runtime 3.925 B, layout/rota 4.771 B, chunk comum 196.365 B e entrada 292.705 B. A página não carrega o chunk de dados bíblicos de 4,2 MB. Esses números são gzip local dos arquivos exportados; a compressão e o waterfall reais da Vercel em celular ainda não foram medidos. Manter uma medição em aparelho/rede móvel como gate antes de divulgar o QR.
-- Avisos do build sobre suporte incompleto de notificações push na web e `localStorage` experimental apareceram na renderização; não interromperam o export. Ainda precisam de triagem para saber se afetam a landing ou são avisos gerais do shell.
-- Nenhuma suíte de testes foi executada nesta etapa.
+- `npm run export:web`: concluído com Expo SDK 57. Foram exportadas as páginas da aplicação, os doze caminhos temáticos e 1.189 capítulos bíblicos.
+- `npm run check:static`: concluído. O verificador cobre a landing, o hub, os três estudos introdutórios, as doze leituras temáticas, metadados e as 1.189 páginas de capítulos; encontrou 1.312 arquivos HTML.
+- Preview local: `/`, `/conhecer` e `/conhecer/temas/ansiedade-e-preocupacao` foram abertos. A árvore acessível expõe títulos, ordem das seções, textos e links bíblicos.
+- `npm run typecheck`: ainda retorna três erros em arquivos modificados anteriormente no workspace, fora deste incremento: um tipo de resumo em `app/(tabs)/biblia.tsx` e duas chamadas sem argumento em `app/(tabs)/leitura/[livro]/[capitulo].tsx`. Nenhum erro foi apontado nos arquivos deste incremento.
+- `npm run check:a11y`: o verificador para ao tentar abrir `app/(tabs)/index.tsx`, que não existe neste checkout. A rota e o checker fazem parte de alterações locais preexistentes e não foram modificados nesta etapa.
+- A compilação Vercel anterior foi concluída, mas a versão com o catálogo temático depende da implantação da branch atual. O domínio pretendido e a rota final do QR ainda não foram confirmados.
 
-### Ainda pendente antes de fechar CP4/CP5
+### Portão D7 — revisão de lançamento
 
-1. Revisar o texto sequencial para manter a promessa inicial clara e confirmar o ponto de revelação com leitores; obter revisão pastoral antes de publicar.
-2. Medir a carga inicial real da landing na Vercel e em celular; avaliar se ~498 KB gzip de JavaScript inicial é aceitável ou se a rota precisa ser reduzida/isolar mais.
-3. Abrir um preview em navegador e conferir a rolagem, troca de tema, movimento reduzido, foco, leitor de tela, URLs diretas, navegação nativa e redirecionamentos.
-4. Escolher se as demais áreas do app ficam em suas rotas atuais ou passam a `/biblia/...`; por ora somente a home do app e o leitor receberam os caminhos acordados, enquanto pesquisa, perfil, planos e utilitários permanecem onde estavam.
-5. Finalizar o fluxo editorial e o impresso; o QR/domínio final não está validado.
-6. Para uma fase futura de formulário: nomear responsável e substituto, definir prazo de resposta, aviso de privacidade, retenção e expurgo, base legal e processo de acesso antes de escolher/provisionar Neon ou implementar envio.
+O código está em condição de revisão, mas a publicação pública e a impressão do panfleto não estão aprovadas. Ainda é necessário nomear a organização/titular e o revisor pastoral, conferir referências e conteúdo, aprovar a tradução e seus direitos, validar o domínio no Registro.br e testar acessibilidade, rolagem e carregamento em aparelho real e rede móvel. O endereço e o QR só devem ser finalizados depois dessas verificações.
+
+O formulário e Neon permanecem no ciclo posterior D8–D13. Antes de coletar pedidos de oração ou relatos, definir quem recebe e responde, finalidade, base legal, aviso de privacidade, acesso, retenção e exclusão. Relatos podem conter informações de saúde, vida sexual ou convicção religiosa, que a LGPD trata como dados pessoais sensíveis; não ativar a coleta antes dessa definição. [Lei nº 13.709/2018, arts. 5º e 11](https://www.planalto.gov.br/ccivil_03/_ato2015-2018/2018/lei/l13709.htm).

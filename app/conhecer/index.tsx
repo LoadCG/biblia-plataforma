@@ -1,6 +1,7 @@
 import Head from "expo-router/head";
 import { Link } from "expo-router";
 import { Pressable, ScrollView, Text, View } from "react-native";
+import { TEMAS_EVANGELISTICOS } from "../../core/content/temasEvangelisticos";
 
 const ESTUDOS = [
   {
@@ -71,6 +72,27 @@ export default function Conhecer() {
               </Link>
             ))}
           </View>
+
+          <View className="temas-abertura">
+            <Text className="conhecer-sobretitulo">LEITURAS POR ASSUNTO</Text>
+            <Text accessibilityRole="header" className="temas-titulo">Tem algum assunto que gostaria de explorar?</Text>
+            <Text className="temas-descricao">
+              Escolha apenas se fizer sentido para você. Estes caminhos não são diagnósticos nem substituem cuidado profissional.
+            </Text>
+          </View>
+
+          <View className="temas-lista">
+            {TEMAS_EVANGELISTICOS.map((tema, indice) => (
+              <Link key={tema.slug} href={`/conhecer/temas/${tema.slug}` as never} asChild>
+                <Pressable accessibilityRole="link" className="tema-card">
+                  <Text className="tema-card-numero">{String(indice + 1).padStart(2, "0")}</Text>
+                  <Text className="tema-card-rotulo">{tema.rotulo}</Text>
+                  <Text className="tema-card-seta" aria-hidden={true}>↗</Text>
+                </Pressable>
+              </Link>
+            ))}
+          </View>
+          <Text className="temas-aviso">Nesta versão, cada assunto abre uma leitura. O site ainda não recebe relatos nem pedidos de oração.</Text>
 
           <View className="conhecer-biblia">
             <View className="conhecer-biblia-textos">

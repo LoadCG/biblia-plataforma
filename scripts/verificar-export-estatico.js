@@ -4,10 +4,10 @@ const biblia = require("../assets/biblia.json");
 
 const raiz = path.resolve(process.argv[2] || "dist");
 const casos = [
-  ["index.html", "Bíblia Plataforma — leitura bíblica offline", null],
-  ["biblia/01-genesis/1.html", null, null],
-  ["biblia/46-1-corintios/13.html", null, null],
-  ["biblia/66-apocalipse/22.html", null, null],
+  ["index.html", "Tem alguém que te ama.", null],
+  ["leitura/01-genesis/1.html", null, null],
+  ["leitura/46-1-corintios/13.html", null, null],
+  ["leitura/66-apocalipse/22.html", null, null],
   ["resumos/01-genesis.html", "Resumo de Gênesis — Bíblia Plataforma", "Pano de Fundo Histórico"],
   ["resumos/66-apocalipse.html", "Resumo de Apocalipse — Bíblia Plataforma", "Pano de Fundo Histórico"],
   ["planos/sabedoria-7.html", "Semana da Sabedoria — Bíblia Plataforma", "Semana da Sabedoria"],
@@ -54,8 +54,8 @@ for (let indiceLivro = 0; indiceLivro < biblia.length; indiceLivro++) {
     .replace(/^-|-$/g, "")}`;
 
   for (let capitulo = 1; capitulo <= livro.chapters.length; capitulo++) {
-    const arquivo = path.join(raiz, "biblia", slug, `${capitulo}.html`);
-    if (!fs.existsSync(arquivo)) throw new Error(`Rota estática de leitura ausente: biblia/${slug}/${capitulo}.html`);
+    const arquivo = path.join(raiz, "leitura", slug, `${capitulo}.html`);
+    if (!fs.existsSync(arquivo)) throw new Error(`Rota estática de leitura ausente: leitura/${slug}/${capitulo}.html`);
     capitulosGerados++;
   }
 }

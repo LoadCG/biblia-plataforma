@@ -1,0 +1,1612 @@
+import { Link, router, useFocusEffect, useLocalSearchParams } from "expo-router";
+import { Fragment, useCallback, useEffect, useRef, useState, useMemo } from "react";
+import { ActivityIndicator, Animated, Image, NativeSyntheticEvent, NativeScrollEvent, Pressable, ScrollView, Text, useWindowDimensions, View, LayoutAnimation, Platform, UIManager } from "react-native";
+import * as Sharing from "expo-sharing";
+import { captureRef } from "react-native-view-shot";
+
+if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
+  UIManager.setLayoutAnimationEnabledExperimental(true);
+}
+import { IconeUI } from "../../../../components/icone/IconeUI";
+import { BotaoTema } from "../../../../components/BotaoTema";
+import { ModalNota } from "../../../../components/ModalNota";
+import { Tooltip } from "../../../../components/Tooltip";
+import { Modal } from "react-native";
+import { buscarReferencia } from "../../../../core/biblia/BibliaAPI";
+import type { CapituloTexto } from "../../../../core/biblia/tipos";
+import { indexarTitulosSecao, obterTitulosSecao } from "../../../../core/biblia/titulosSecao";
+import { formatarReferenciaVersiculos } from "../../../../core/biblia/formatarReferenciaVersiculos";
+import type { Nota, ReferenciaVersiculo } from "../../../../core/types/leitura";
+import { livros, obterLivro, obterResumo } from "../../../../core/content/livros";
+import { obterDiaPlano, obterPlano } from "../../../../core/content/planos";
+import { hrefReferenciaBiblica } from "../../../../core/biblia/parseReferencia";
+import { hrefRetornoBusca, ORIGEM_PESQUISA } from "../../../../core/biblia/navegacaoBusca";
+import { TextoComReferencias } from "../../../../components/TextoComReferencias";
+import { CartaoVersiculoImagem } from "../../../../components/CartaoVersiculoImagem";
+import { DicaContextual } from "../../../../components/DicaContextual";
+import { coresDoGenero, descricaoDoGenero } from "../../../../core/content/genero";
+import {
+  carregarPreferenciasLeitura,
+  FAMILIA_SERIFADA,
+  INDICE_PADRAO,
+  salvarFonteSerifada,
+  salvarIndiceFonte,
+  TAMANHOS_FONTE,
+} from "../../../../core/leitura/preferenciaFonte";
+import { salvarUltimaLeitura } from "../../../../core/leitura/ultimaLeitura";
+import { grifosRepository, notasRepository, planosRepository, progressoRepository, versiculosSalvosRepository } from "../../../../core/repositories";
+import { copiar, compartilhar } from "../../../../core/estatisticas/compartilhador";
+import { continuarAudio, iniciarAudio, pararAudio, pausarAudio, suportaAudio, suportaPausaAudio, type EstadoAudio } from "../../../../core/leitura/audio";
+import { alternarTema, useColorScheme } from "../../../../core/theme";
+import { gerarImagemVersiculo } from "../../../../core/util/gerarImagemVersiculo";
+import { mensagemErroAmigavel } from "../../../../core/util/erroAmigavel";
+import { linkVersiculos } from "../../../../core/util/linkVersiculo";
+import { mostrarToast } from "../../../../core/util/toast";
+import { scrollSuave } from "../../../../core/util/scrollSuave";
+import { useArrastarParaRolar } from "../../../../core/util/useArrastarParaRolar";
+import { useOwnerId } from "../../../../core/useOwnerId";
+import { ativarComEspaco } from "../../../../core/util/ativarComEspaco";
+import { PressableComTecladoWeb } from "../../../../core/util/propsPressableWeb";
+
+const ALTURA_AREA_NAVEGACAO_CAPITULO = 80;
+const ALTURA_RESERVA_SELECAO_DESKTOP = 148;
+const ORIGEM_ABA_BIBLIA = "aba-biblia";
+const ROTULOS_CORES_GRIFO: Record<string, string> = {
+  "bg-yellow-300/40 dark:bg-yellow-600/30": "amarelo",
+  "bg-red-300/40 dark:bg-red-600/30": "vermelho",
+  "bg-green-300/40 dark:bg-green-600/30": "verde",
+  "bg-blue-300/40 dark:bg-blue-600/30": "azul",
+  "bg-purple-300/40 dark:bg-purple-600/30": "roxo",
+  "bg-orange-300/40 dark:bg-orange-600/30": "laranja",
+};
+
+type AlvoAnotacao = {
+  referencias: ReferenciaVersiculo[];
+  referenciasAlteradas?: boolean;
+  grupoId?: string;
+  textoInicial: string;
+};
+
+function formatarFaixasVersiculos(versiculos: number[]): string {
+  const ordenados = [...versiculos].sort((a, b) => a - b);
+  const faixas: string[] = [];
+
+  for (let indice = 0; indice < ordenados.length; indice++) {
+    const inicio = ordenados[indice];
+    let fim = inicio;
+    while (ordenados[indice + 1] === fim + 1) {
+      fim = ordenados[indice + 1];
+      indice++;
+    }
+    faixas.push(inicio === fim ? `${inicio}` : `${inicio}–${fim}`);
+  }
+
+  return faixas.join(", ");
+}
+
+function lerNumerosVersiculos(parametro?: string | string[]): number[] {
+  const valor = Array.isArray(parametro) ? parametro[0] : parametro;
+  if (!valor) return [];
+  return [...new Set(valor.split(",").map(Number).filter((numero) => Number.isInteger(numero) && numero > 0))]
+    .sort((a, b) => a - b);
+}
+
+function hrefCapitulo(livroSlug: string | undefined, numero: number, origem?: string) {
+  if (!livroSlug) return "/leitura/escolher";
+  const href = `/leitura/${livroSlug}/${numero}`;
+  return origem === ORIGEM_ABA_BIBLIA ? `${href}?origem=${ORIGEM_ABA_BIBLIA}` : href;
+}
+
+export default function Leitura() {
+  const desktop = useWindowDimensions().width >= 1024;
+  const params = useLocalSearchParams<{ livro: string; capitulo: string; versiculo?: string; versiculos?: string; planoId?: string; diaPlano?: string; indicePlano?: string; origem?: string; consulta?: string; testamento?: string; livroFiltro?: string }>();
+  const abertaPelaAbaBiblia = params.origem === ORIGEM_ABA_BIBLIA;
+  const livro = obterLivro(params.livro ?? "");
+  const capitulo = parseInt(params.capitulo ?? "", 10);
+  const versiculosDoLink = lerNumerosVersiculos(params.versiculos);
+  const versiculoAlvo = params.versiculo ? parseInt(params.versiculo, 10) : (versiculosDoLink[0] ?? null);
+  const numeroDiaPlano = params.diaPlano ? parseInt(params.diaPlano, 10) : null;
+  const indicePlano = params.indicePlano ? parseInt(params.indicePlano, 10) : 0;
+  const planoEmAndamento = params.planoId ? obterPlano(params.planoId) : undefined;
+  const diaEmAndamento = params.planoId && numeroDiaPlano ? obterDiaPlano(params.planoId, numeroDiaPlano) : undefined;
+  const ownerId = useOwnerId();
+  const { colorScheme } = useColorScheme();
+  const escuro = colorScheme === "dark";
+
+  const indiceLivro = livro ? livros.indexOf(livro) : -1;
+  const valido = !!livro && !!capitulo && capitulo >= 1 && capitulo <= (livro?.capitulos ?? 1);
+
+  const anterior =
+    capitulo > 1
+      ? { slug: livro?.slug, nome: livro?.nome, capitulo: capitulo - 1 }
+      : indiceLivro > 0
+        ? { slug: livros[indiceLivro - 1].slug, nome: livros[indiceLivro - 1].nome, capitulo: livros[indiceLivro - 1].capitulos }
+        : null;
+
+  const proximo =
+    capitulo < (livro?.capitulos ?? 0)
+      ? { slug: livro?.slug, nome: livro?.nome, capitulo: capitulo + 1 }
+      : indiceLivro >= 0 && indiceLivro < livros.length - 1
+        ? { slug: livros[indiceLivro + 1].slug, nome: livros[indiceLivro + 1].nome, capitulo: 1 }
+        : null;
+
+  const [dados, setDados] = useState<CapituloTexto | null>(null);
+  const titulosPorVersiculo = useMemo(
+    () => indexarTitulosSecao(obterTitulosSecao(livro?.slug ?? "", capitulo)),
+    [livro?.slug, capitulo]
+  );
+  const [erro, setErro] = useState<string | null>(null);
+  const [grifos, setGrifos] = useState<Map<number, string | undefined>>(new Map());
+  const [salvos, setSalvos] = useState<Set<number>>(new Set());
+  const [focoAtivo, setFocoAtivo] = useState(false);
+  const [versiculoAutoScrollRealizado, setVersiculoAutoScrollRealizado] = useState(false);
+  const [destaqueAlvo, setDestaqueAlvo] = useState(!!versiculoAlvo && versiculosDoLink.length <= 1);
+  const [capituloLido, setCapituloLido] = useState(false);
+  const [concluindoSessaoPlano, setConcluindoSessaoPlano] = useState(false);
+  const concluindoSessaoPlanoRef = useRef(false);
+  const [notas, setNotas] = useState<Map<number, Nota>>(new Map());
+  const [anotacaoEditando, setAnotacaoEditando] = useState<AlvoAnotacao | null>(null);
+  const [modalAjustesAberto, setModalAjustesAberto] = useState(false);
+  const [abaAtual, setAbaAtual] = useState<"texto" | "resumo">("texto");
+  const resumo = obterResumo(livro?.slug ?? "");
+  const [versiculosSelecionados, setVersiculosSelecionados] = useState<Set<number>>(() => new Set(versiculosDoLink));
+  const [acoesSelecaoOcupadas, setAcoesSelecaoOcupadas] = useState(false);
+  const [mostrarTodasCores, setMostrarTodasCores] = useState(false);
+  const CORES_DISPONIVEIS = [
+    "bg-yellow-300/40 dark:bg-yellow-600/30",
+    "bg-red-300/40 dark:bg-red-600/30",
+    "bg-green-300/40 dark:bg-green-600/30",
+    "bg-blue-300/40 dark:bg-blue-600/30",
+    "bg-purple-300/40 dark:bg-purple-600/30",
+    "bg-orange-300/40 dark:bg-orange-600/30",
+  ];
+  const MAPA_CORES_SOLIDAS: Record<string, string> = {
+    "bg-yellow-300/40 dark:bg-yellow-600/30": "bg-yellow-400",
+    "bg-red-300/40 dark:bg-red-600/30": "bg-red-400",
+    "bg-green-300/40 dark:bg-green-600/30": "bg-green-400",
+    "bg-blue-300/40 dark:bg-blue-600/30": "bg-blue-400",
+    "bg-purple-300/40 dark:bg-purple-600/30": "bg-purple-400",
+    "bg-orange-300/40 dark:bg-orange-600/30": "bg-orange-400",
+  };
+  const [coresRecentes, setCoresRecentes] = useState<string[]>([CORES_DISPONIVEIS[0], CORES_DISPONIVEIS[1], CORES_DISPONIVEIS[2]]);
+  const [indiceFonte, setIndiceFonte] = useState(INDICE_PADRAO);
+  const [fonteSerifada, setFonteSerifada] = useState(false);
+  const [carregandoPreferenciasFonte, setCarregandoPreferenciasFonte] = useState(true);
+  const [salvandoPreferenciasFonte, setSalvandoPreferenciasFonte] = useState(false);
+  const [progresso, setProgresso] = useState(0);
+  const [versiculoRealcado, setVersiculoRealcado] = useState<number | null>(null);
+  const [audioEstado, setAudioEstado] = useState<EstadoAudio>("ocioso");
+  const [versiculoFalando, setVersiculoFalando] = useState<number | null>(null);
+  const [imagemVersiculo, setImagemVersiculo] = useState<string | null>(null);
+  const [cartaoNativoParaCapturar, setCartaoNativoParaCapturar] = useState<{ texto: string; referencia: string } | null>(null);
+  const refCartaoNativo = useRef<View>(null);
+  const origemAudio = useMemo(() => ({}), [params.livro, params.capitulo]);
+  const refBarraSelecao = useArrastarParaRolar();
+  const refScrollAcoesSelecao = useRef<ScrollView>(null);
+  const estadoRolagemAcoes = useRef({ larguraConteudo: 0, larguraVisivel: 0, deslocamento: 0 });
+  const [indicadoresAcoes, setIndicadoresAcoes] = useState({ rolavel: false, voltar: false, avancar: false });
+  const conectarBarraSelecao = useCallback((instancia: ScrollView | null) => {
+    refScrollAcoesSelecao.current = instancia;
+    refBarraSelecao(instancia);
+  }, [refBarraSelecao]);
+
+  function atualizarIndicadoresAcoes(parcial: Partial<typeof estadoRolagemAcoes.current>) {
+    estadoRolagemAcoes.current = { ...estadoRolagemAcoes.current, ...parcial };
+    const { larguraConteudo, larguraVisivel, deslocamento } = estadoRolagemAcoes.current;
+    const podeRolar = larguraConteudo > larguraVisivel + 2;
+    setIndicadoresAcoes({
+      rolavel: podeRolar,
+      voltar: podeRolar && deslocamento > 2,
+      avancar: podeRolar && deslocamento + larguraVisivel < larguraConteudo - 2,
+    });
+  }
+
+  useEffect(() => {
+    if (versiculosSelecionados.size === 0) {
+      estadoRolagemAcoes.current = { larguraConteudo: 0, larguraVisivel: 0, deslocamento: 0 };
+      setIndicadoresAcoes({ rolavel: false, voltar: false, avancar: false });
+      return;
+    }
+    refScrollAcoesSelecao.current?.scrollTo({ x: 0, animated: false });
+    atualizarIndicadoresAcoes({ deslocamento: 0 });
+  }, [versiculosSelecionados.size]);
+
+  // Altura real do cabeçalho, medida via onLayout (varia entre a aba
+  // Texto — que tem uma linha extra de título — e a aba Resumo).
+  // Usada tanto pra deslocar o cabeçalho pra fora da tela quanto pra
+  // reservar o mesmo espaço fixo no topo do conteúdo, sempre — ver
+  // nota grande abaixo sobre por que esse espaço não pode variar com
+  // o scroll.
+  const [alturaHeader, setAlturaHeader] = useState(96);
+  const progressoFoco = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    Animated.timing(progressoFoco, {
+      toValue: focoAtivo ? 1 : 0,
+      duration: 220,
+      useNativeDriver: Platform.OS !== "web",
+    }).start();
+  }, [focoAtivo, progressoFoco]);
+
+  const headerTranslateY = progressoFoco.interpolate({ inputRange: [0, 1], outputRange: [0, -alturaHeader] });
+
+  const scrollRef = useRef<ScrollView>(null);
+  const posicoes = useRef<Record<number, number>>({});
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    function onKeyDown(e: KeyboardEvent) {
+      const alvo = e.target as HTMLElement | null;
+      if (alvo && ["INPUT", "TEXTAREA"].includes(alvo.tagName)) return;
+      if (e.key === "ArrowLeft" && anterior) {
+        router.replace(hrefCapitulo(anterior.slug, anterior.capitulo, params.origem));
+      } else if (e.key === "ArrowRight" && proximo) {
+        router.replace(hrefCapitulo(proximo.slug, proximo.capitulo, params.origem));
+      } else if (e.key === "t" || e.key === "T") {
+        alternarTema();
+      }
+    }
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [anterior, proximo, params.origem]);
+
+  useEffect(() => {
+    let ativo = true;
+    void carregarPreferenciasLeitura().then((preferencias) => {
+      if (!ativo) return;
+      if (preferencias.indiceFonte !== undefined) setIndiceFonte(preferencias.indiceFonte);
+      if (preferencias.fonteSerifada !== undefined) setFonteSerifada(preferencias.fonteSerifada);
+      if (preferencias.falhas) {
+        mostrarToast("Uma preferência de leitura não pôde ser carregada", { severidade: "erro" });
+      }
+    }).finally(() => {
+      if (ativo) setCarregandoPreferenciasFonte(false);
+      });
+    return () => { ativo = false; };
+  }, []);
+
+  async function ajustarFonte(delta: number) {
+    if (carregandoPreferenciasFonte || salvandoPreferenciasFonte) return;
+    const novo = Math.min(TAMANHOS_FONTE.length - 1, Math.max(0, indiceFonte + delta));
+    if (novo === indiceFonte) return;
+    setSalvandoPreferenciasFonte(true);
+    try {
+      await salvarIndiceFonte(novo);
+      setIndiceFonte(novo);
+    } catch {
+      mostrarToast("Não foi possível salvar o tamanho da fonte", { severidade: "erro" });
+    } finally {
+      setSalvandoPreferenciasFonte(false);
+    }
+  }
+
+  async function alternarFonteSerifada() {
+    if (carregandoPreferenciasFonte || salvandoPreferenciasFonte) return;
+    const novaPreferencia = !fonteSerifada;
+    setSalvandoPreferenciasFonte(true);
+    try {
+      await salvarFonteSerifada(novaPreferencia);
+      setFonteSerifada(novaPreferencia);
+    } catch {
+      mostrarToast("Não foi possível salvar a preferência de fonte", { severidade: "erro" });
+    } finally {
+      setSalvandoPreferenciasFonte(false);
+    }
+  }
+
+  function carregarCapitulo() {
+    if (!valido || !livro) return;
+    setDados(null);
+    setErro(null);
+    buscarReferencia(`${livro.nome} ${capitulo}`)
+      .then(setDados)
+      .catch((e) => setErro(mensagemErroAmigavel(e)));
+  }
+
+  useEffect(carregarCapitulo, [valido, livro, capitulo]);
+
+  useEffect(() => {
+    if (!valido || !livro) return;
+    salvarUltimaLeitura(livro.slug, capitulo);
+  }, [valido, livro, capitulo]);
+
+  useEffect(() => {
+    if (!ownerId || !livro) return;
+    let ativo = true;
+    setGrifos(new Map());
+    setSalvos(new Set());
+    setNotas(new Map());
+    setCapituloLido(false);
+    Promise.all([
+      grifosRepository.listarPorCapitulo(ownerId, livro.slug, capitulo),
+      progressoRepository.estaLido(ownerId, { livroSlug: livro.slug, capitulo }),
+      notasRepository.listarPorCapitulo(ownerId, livro.slug, capitulo),
+      versiculosSalvosRepository.listarPorCapitulo(ownerId, livro.slug, capitulo),
+    ]).then(([grifosCarregados, lido, notasCarregadas, salvosCarregados]) => {
+      if (!ativo) return;
+      setGrifos(new Map(grifosCarregados.map((g) => [g.versiculo, g.cor])));
+      setCapituloLido(lido);
+      setNotas(new Map(notasCarregadas.map((nota) => [nota.versiculo, nota])));
+      setSalvos(new Set(salvosCarregados.map((s) => s.versiculo)));
+    }).catch(() => {
+      if (ativo) mostrarToast("Não foi possível carregar seus grifos, notas e salvos deste capítulo.", { severidade: "erro" });
+    });
+    return () => { ativo = false; };
+  }, [ownerId, livro, capitulo]);
+
+  const jaRolou = useRef(false);
+  useEffect(() => {
+    jaRolou.current = false;
+    setVersiculoAutoScrollRealizado(false);
+    const versiculosValidos = new Set(
+      dados?.versiculos
+        ?.filter((versiculo) => versiculosDoLink.includes(versiculo.numero))
+        .map((versiculo) => versiculo.numero) ?? []
+    );
+    setVersiculosSelecionados(versiculosValidos);
+    setDestaqueAlvo(!!versiculoAlvo && versiculosValidos.size <= 1);
+    setMostrarTodasCores(false);
+    setProgresso(0);
+  }, [versiculoAlvo, params.versiculos, dados]);
+
+  const aoMedirVersiculo = (numero: number, y: number) => {
+    posicoes.current[numero] = y;
+
+    // Auto scroll para o versículo se for o alvo e ainda não scrollamos
+    if (versiculoAlvo === numero && !versiculoAutoScrollRealizado) {
+      setTimeout(() => {
+        scrollSuave(scrollRef, Math.max(0, y - 50));
+        setVersiculoAutoScrollRealizado(true);
+        setVersiculoRealcado(numero);
+        setTimeout(() => {
+          setDestaqueAlvo(false);
+          setVersiculoRealcado((atual) => (atual === numero ? null : atual));
+        }, 2500);
+      }, 100);
+    }
+  };
+
+  // Reescrito do zero (2026-08-20) depois de 3 bugs reportados pelo
+  // usuário testando no celular: cabeçalho demorava pra sumir, era
+  // difícil trazer de volta arrastando pra cima, e "glitchava"
+  // (aparecia/sumia repetidas vezes) ao chegar no fim da página.
+  //
+  // Causa raiz dos 3, achada investigando como front-end sênior: o
+  // cabeçalho E a tab bar do app (`NavbarContext`) eram desmontados/
+  // remontados quando o foco ligava/desligava — isso muda a altura
+  // real da área visível do ScrollView (`layoutMeasurement.height`).
+  // Só que a lógica de decisão usava exatamente esse valor
+  // (`alturaRolavel = contentSize.height - layoutMeasurement.height`)
+  // pra saber se estava "perto do fim" — ou seja, a decisão de
+  // esconder o cabeçalho influenciava a própria métrica usada pra
+  // tomar a próxima decisão. Um loop de realimentação clássico: some →
+  // a área visível cresce → "perto do fim" deixa de ser verdade →
+  // aparece de novo → área visível encolhe → "perto do fim" volta a
+  // ser verdade → some de novo, repetindo enquanto o dedo continua na
+  // tela. É o mesmo motivo pelo qual apps de verdade (Twitter,
+  // Instagram, YouVersion) sempre implementam essa barra como uma
+  // camada sobreposta (`position: absolute`/`fixed`) que nunca
+  // participa do layout do conteúdo abaixo — ver o cabeçalho logo
+  // abaixo, agora `Animated.View` absoluto, e a tab bar do app, que
+  // parou de ser escondida por esta tela (`app/(tabs)/_layout.tsx`
+  // não recebe mais `setOculta` daqui). Com isso,
+  // `layoutMeasurement.height` fica estável durante toda a leitura, e
+  // o loop de realimentação deixa de existir estruturalmente — não é
+  // só um ajuste de threshold.
+  //
+  // Corrigido também o algoritmo de decisão em si: a versão antiga
+  // comparava o delta entre o evento de scroll atual e o anterior
+  // (~a cada 32ms) contra um limiar fixo — um arrasto lento pra cima
+  // gera vários eventos de poucos pixels cada, nenhum sozinho cruzando
+  // o limiar, então "nunca" trazia o cabeçalho de volta (era preciso
+  // um chute rápido). A versão nova acumula a distância percorrida
+  // *desde a última troca de direção* (zera o acumulador sempre que a
+  // direção muda) — é o padrão usado por bibliotecas de "hide on
+  // scroll" consolidadas, funciona igual pra arrasto lento ou rápido.
+  const DELTA_MINIMO = 4; // ignora jitter/ruído residual de momentum
+  const LIMIAR_ACUMULADO = 32; // distância na mesma direção antes de reagir
+  const MARGEM_BORDA = 64; // perto do topo/fim, cabeçalho sempre visível
+  const ultimoY = useRef(0);
+  const acumulado = useRef(0);
+  const direcaoAtual = useRef<"cima" | "baixo">("cima");
+
+  function aoRolar(e: NativeSyntheticEvent<NativeScrollEvent>) {
+    setDestaqueAlvo(false);
+
+    const { contentOffset, contentSize, layoutMeasurement } = e.nativeEvent;
+    const alturaRolavel = Math.max(0, contentSize.height - layoutMeasurement.height);
+    // Overscroll elástico (arrastar além do início/fim, comum no
+    // iOS/web) manda `contentOffset.y` fora de [0, alturaRolavel]
+    // durante a animação de retorno — sem o clamp, isso ainda geraria
+    // ruído na direção detectada mesmo com layoutMeasurement estável.
+    const y = Math.max(0, Math.min(contentOffset.y, alturaRolavel));
+    const diferenca = y - ultimoY.current;
+    ultimoY.current = y;
+    setProgresso(alturaRolavel > 0 ? y / alturaRolavel : 0);
+
+    // Não recolha o cabeçalho enquanto um de seus controles mantém foco
+    // de teclado: o elemento ativo precisa continuar visível para que a
+    // próxima tecla não opere sobre um controle oculto.
+    if (
+      Platform.OS === "web" &&
+      typeof document !== "undefined" &&
+      document.getElementById("leitor-cabecalho")?.contains(document.activeElement)
+    ) {
+      acumulado.current = 0;
+      setFocoAtivo(false);
+      return;
+    }
+
+    if (y <= MARGEM_BORDA || (alturaRolavel > 0 && y >= alturaRolavel - MARGEM_BORDA)) {
+      acumulado.current = 0;
+      setFocoAtivo(false);
+      return;
+    }
+
+    if (Math.abs(diferenca) < DELTA_MINIMO) return;
+
+    const direcao = diferenca > 0 ? "baixo" : "cima";
+    if (direcao !== direcaoAtual.current) {
+      direcaoAtual.current = direcao;
+      acumulado.current = 0;
+    }
+    acumulado.current += Math.abs(diferenca);
+
+    if (acumulado.current >= LIMIAR_ACUMULADO) {
+      setFocoAtivo(direcao === "baixo");
+    }
+  }
+
+  if (!livro || !valido) {
+    return (
+      <View className="flex-1 items-center justify-center bg-cor-fundo dark:bg-cor-fundo-dark px-6">
+        <IconeUI name="warning" size={48} className="text-cor-texto-suave dark:text-cor-texto-suave-dark mb-4" />
+        <Text className="text-xl font-bold text-cor-texto dark:text-cor-texto-dark mb-2 text-center">Capítulo não encontrado</Text>
+        <Text className="text-cor-texto-suave dark:text-cor-texto-suave-dark mb-6 text-center">Parece que você tentou acessar um capítulo que não existe neste livro.</Text>
+        <Link href={livro ? { pathname: "/leitura/escolher", params: { livro: livro.slug } } : "/biblia"} asChild>
+          <Pressable accessibilityRole="link" className="bg-cor-borda dark:bg-cor-borda-dark px-6 py-3 rounded-full active:opacity-70">
+            <Text className="text-cor-texto dark:text-cor-texto-dark font-bold">Voltar para {livro ? livro.nome : "Início"}</Text>
+          </Pressable>
+        </Link>
+      </View>
+    );
+  }
+
+  async function alternarGrifo(numeroVersiculo: number, cor?: string) {
+    if (!ownerId || !livro) return;
+    try {
+      const ativo = await grifosRepository.alternar(ownerId, { livroSlug: livro.slug, capitulo, versiculo: numeroVersiculo }, cor);
+      setGrifos((atual) => {
+        const novo = new Map(atual);
+        if (ativo) novo.set(numeroVersiculo, cor);
+        else novo.delete(numeroVersiculo);
+        return novo;
+      });
+    } catch {
+      mostrarToast("Não foi possível salvar o grifo. Tente novamente.", { severidade: "erro" });
+    }
+  }
+
+  async function alternarCapituloLido() {
+    if (!ownerId || !livro) return;
+    try {
+      const ativo = await progressoRepository.alternar(ownerId, { livroSlug: livro.slug, capitulo });
+      setCapituloLido(ativo);
+    } catch {
+      mostrarToast("Não foi possível atualizar o progresso deste capítulo. Tente novamente.", { severidade: "erro" });
+    }
+  }
+
+  async function concluirLeituraDoPlano() {
+    if (!ownerId || !livro || !planoEmAndamento || !diaEmAndamento || numeroDiaPlano === null) return;
+    if (concluindoSessaoPlanoRef.current) return;
+    concluindoSessaoPlanoRef.current = true;
+    setConcluindoSessaoPlano(true);
+    try {
+      const referenciaAtual = diaEmAndamento.referencias[indicePlano];
+      if (!referenciaAtual) return;
+      const sessao = await planosRepository.obterSessao(ownerId, planoEmAndamento.id, numeroDiaPlano);
+      const concluidas = Array.from(new Set([...(sessao?.referenciasConcluidas ?? []), referenciaAtual]));
+      await progressoRepository.definirVarios(ownerId, [{ livroSlug: livro.slug, capitulo }], true);
+      setCapituloLido(true);
+
+      const proximoIndice = indicePlano + 1;
+      if (proximoIndice >= diaEmAndamento.referencias.length) {
+        await planosRepository.definirDiaConcluido(ownerId, planoEmAndamento.id, numeroDiaPlano, true);
+        await planosRepository.removerSessao(ownerId, planoEmAndamento.id, numeroDiaPlano);
+        mostrarToast(`Dia ${numeroDiaPlano} concluído`, { severidade: "sucesso" });
+        router.replace(`/planos/${planoEmAndamento.id}`);
+        return;
+      }
+
+      await planosRepository.salvarSessao(ownerId, planoEmAndamento.id, numeroDiaPlano, proximoIndice, concluidas);
+      const href = hrefReferenciaBiblica(diaEmAndamento.referencias[proximoIndice]);
+      if (!href) {
+        mostrarToast("A próxima referência deste plano não está disponível.", { severidade: "aviso" });
+        return;
+      }
+      const separador = href.includes("?") ? "&" : "?";
+      router.replace(`${href}${separador}planoId=${encodeURIComponent(planoEmAndamento.id)}&diaPlano=${numeroDiaPlano}&indicePlano=${proximoIndice}`);
+    } catch {
+      mostrarToast("Não foi possível atualizar sua sessão. Tente novamente.", { severidade: "erro" });
+    } finally {
+      concluindoSessaoPlanoRef.current = false;
+      setConcluindoSessaoPlano(false);
+    }
+  }
+
+  async function salvarNota(texto: string) {
+    if (!ownerId || !anotacaoEditando) throw new Error("Não foi possível identificar este versículo");
+    const alvo = anotacaoEditando;
+    let nota: Nota;
+    if (alvo.grupoId) {
+      nota = await notasRepository.salvarVarios(ownerId, alvo.referencias, texto, alvo.grupoId);
+    } else if (alvo.referencias.length > 1) {
+      nota = await notasRepository.salvarVarios(ownerId, alvo.referencias, texto);
+    } else {
+      nota = await notasRepository.salvar(ownerId, alvo.referencias[0], texto);
+    }
+    const referenciasSalvas = nota.referencias ?? alvo.referencias;
+    setNotas((atual) => {
+      const novo = new Map(atual);
+      for (const ref of referenciasSalvas) novo.set(ref.versiculo, { ...nota, ...ref, referencias: referenciasSalvas });
+      return novo;
+    });
+  }
+
+  async function removerNota() {
+    if (!ownerId || !anotacaoEditando) throw new Error("Não foi possível identificar este versículo");
+    const alvo = anotacaoEditando;
+    await notasRepository.remover(ownerId, alvo.referencias[0]);
+    setNotas((atual) => {
+      const novo = new Map(atual);
+      for (const ref of alvo.referencias) novo.delete(ref.versiculo);
+      return novo;
+    });
+  }
+
+  function abrirAnotacaoDaSelecao() {
+    if (!livro || numerosSelecionados.length === 0) return;
+    const refsSelecionadas = numerosSelecionados.map((versiculo) => ({ livroSlug: livro.slug, capitulo, versiculo }));
+    const notasSelecionadas = numerosSelecionados.map((versiculo) => notas.get(versiculo) ?? null);
+    const existentes = notasSelecionadas.filter((nota): nota is Nota => nota !== null);
+
+    if (numerosSelecionados.length === 1 && existentes.length === 1) {
+      const nota = existentes[0];
+      setAnotacaoEditando({
+        referencias: nota.referencias ?? [{ livroSlug: nota.livroSlug, capitulo: nota.capitulo, versiculo: nota.versiculo }],
+        grupoId: nota.grupoId,
+        textoInicial: nota.texto,
+      });
+      return;
+    }
+
+    if (existentes.length === 0) {
+      setAnotacaoEditando({ referencias: refsSelecionadas, textoInicial: "" });
+      return;
+    }
+
+    if (existentes.length === 1 && !existentes[0].grupoId) {
+      setAnotacaoEditando({
+        referencias: refsSelecionadas,
+        referenciasAlteradas: true,
+        textoInicial: existentes[0].texto,
+      });
+      return;
+    }
+
+    const grupoId = existentes[0]?.grupoId;
+    const mesmaAnotacao = grupoId !== undefined && existentes.every((nota) => nota.grupoId === grupoId);
+    if (mesmaAnotacao) {
+      const nota = existentes[0];
+      const referenciasDoGrupo = nota.referencias ?? refsSelecionadas.filter((ref) => existentes.some((item) => item.versiculo === ref.versiculo));
+      const referenciasComNovas = [...referenciasDoGrupo];
+      for (const ref of refsSelecionadas) {
+        if (!referenciasComNovas.some((existente) => existente.livroSlug === ref.livroSlug && existente.capitulo === ref.capitulo && existente.versiculo === ref.versiculo)) {
+          referenciasComNovas.push(ref);
+        }
+      }
+      setAnotacaoEditando({
+        referencias: referenciasComNovas,
+        referenciasAlteradas: referenciasComNovas.length > referenciasDoGrupo.length,
+        grupoId,
+        textoInicial: nota.texto,
+      });
+      return;
+    }
+
+    mostrarToast(
+      "A seleção inclui anotações existentes. Edite o grupo atual ou selecione versículos sem anotação para criar outra.",
+      { severidade: "aviso" },
+    );
+  }
+
+  function selecionarVersiculo(numero: number) {
+    setDestaqueAlvo(false);
+    setFocoAtivo(false);
+    setVersiculosSelecionados((atual) => {
+      const novo = new Set(atual);
+      if (novo.has(numero)) novo.delete(numero);
+      else novo.add(numero);
+      if (novo.size === 0) setMostrarTodasCores(false);
+      return novo;
+    });
+  }
+
+  function limparSelecaoVersiculos() {
+    setVersiculosSelecionados(new Set());
+    setMostrarTodasCores(false);
+  }
+
+  function voltarDoLeitor() {
+    if (acoesSelecaoOcupadas) return;
+    if (versiculosSelecionados.size > 0) {
+      limparSelecaoVersiculos();
+      return;
+    }
+
+    if (planoEmAndamento && numeroDiaPlano) {
+      router.replace(`/planos/${planoEmAndamento.id}`);
+      return;
+    }
+
+    if (params.origem === ORIGEM_PESQUISA) {
+      router.replace(hrefRetornoBusca(params.consulta, {
+        testamento: params.testamento,
+        livroFiltro: params.livroFiltro,
+      }));
+      return;
+    }
+
+    if (abertaPelaAbaBiblia) {
+      if (livro) {
+        router.replace({ pathname: "/leitura/escolher", params: { livro: livro.slug } });
+      } else {
+        router.replace("/leitura/escolher");
+      }
+      return;
+    }
+
+    if (router.canGoBack()) {
+      router.back();
+      return;
+    }
+
+    // Links diretos e cold starts não têm histórico para voltar. Mantém a
+    // pessoa na área da Bíblia e preserva o livro que estava lendo.
+    if (!livro) {
+      router.replace("/leitura/escolher");
+      return;
+    }
+    router.replace({ pathname: "/leitura/escolher", params: { livro: livro.slug } });
+  }
+
+  async function aplicarCorGrifo(cor: string) {
+    if (!ownerId || !livro || versiculosSelecionados.size === 0 || acoesSelecaoOcupadas) return;
+
+    // Atualiza a lista de recentes
+    setCoresRecentes((atual) => {
+      const semACor = atual.filter((c) => c !== cor);
+      return [cor, ...semACor].slice(0, 3);
+    });
+    setMostrarTodasCores(false);
+
+    // Mantém a seleção visível até que todas as gravações terminem. Se
+    // houver falha parcial, a pessoa ainda consegue ver e tentar de novo.
+    setAcoesSelecaoOcupadas(true);
+    try {
+      const todosComEstaCor = Array.from(versiculosSelecionados).every((versiculo) =>
+        grifos.has(versiculo) && (grifos.get(versiculo) ?? "bg-cor-grifo dark:bg-cor-grifo-dark") === cor,
+      );
+      for (const versiculo of versiculosSelecionados) {
+        const jaTemEstaCor = grifos.has(versiculo) &&
+          (grifos.get(versiculo) ?? "bg-cor-grifo dark:bg-cor-grifo-dark") === cor;
+        if (!todosComEstaCor && jaTemEstaCor) continue;
+        const ativo = await grifosRepository.alternar(
+          ownerId,
+          { livroSlug: livro.slug, capitulo, versiculo },
+          todosComEstaCor ? undefined : cor,
+        );
+        setGrifos((atual) => {
+          const novo = new Map(atual);
+          if (ativo) novo.set(versiculo, todosComEstaCor ? undefined : cor);
+          else novo.delete(versiculo);
+          return novo;
+        });
+      }
+      mostrarToast(todosComEstaCor ? "Grifos removidos." : "Grifos atualizados.", { severidade: "sucesso" });
+      limparSelecaoVersiculos();
+    } catch {
+      mostrarToast("Não foi possível atualizar todos os grifos. A seleção foi mantida para você tentar novamente.", { severidade: "erro" });
+    } finally {
+      setAcoesSelecaoOcupadas(false);
+    }
+  }
+
+  function conteudoVersiculosSelecionados(): { texto: string; textoCopiado: string; url: string | null; quantidade: number } | null {
+    if (!dados?.versiculos || versiculosSelecionados.size === 0 || !livro) return null;
+    const array = Array.from(versiculosSelecionados).sort((a, b) => a - b);
+    const textosPorNumero = new Map(dados.versiculos.map((versiculo) => [versiculo.numero, versiculo.texto]));
+    const numerosValidos = array.filter((versiculo) => textosPorNumero.has(versiculo));
+    if (numerosValidos.length === 0) return null;
+    const textoBiblico = numerosValidos
+      .map((versiculo) => {
+        const texto = textosPorNumero.get(versiculo)?.trim().replace(/\s+/g, " ");
+        return texto ? `${versiculo}. ${texto}` : "";
+      })
+      .filter((texto) => texto.length > 0)
+      .join(" ");
+    if (!textoBiblico) return null;
+    const referencia = `${livro.nome} ${capitulo}:${formatarFaixasVersiculos(numerosValidos)}`;
+    const texto = `“${textoBiblico}”\n\n${referencia}`;
+    const url = linkVersiculos(livro.slug, capitulo, numerosValidos);
+    const textoCopiado = `${texto}${url ? `\n${url}` : ""}`;
+    return { texto, url, textoCopiado, quantidade: numerosValidos.length };
+  }
+
+  const observadorAudio = {
+    aoMudarEstado: setAudioEstado,
+    aoIniciarVersiculo: setVersiculoFalando,
+    aoErro: (mensagem: string) => mostrarToast(mensagem, { severidade: "erro" }),
+  };
+
+  function iniciarLeituraAudio(indice = 0) {
+    if (!dados?.versiculos?.length) return;
+    iniciarAudio(dados.versiculos, observadorAudio, indice, origemAudio);
+  }
+
+  function alternarAudio() {
+    if (audioEstado === "iniciando" || audioEstado === "pausando" || audioEstado === "interrompendo") return;
+    if (audioEstado === "reproduzindo") {
+      pausarAudio(origemAudio);
+    } else if (audioEstado === "pausado" || audioEstado === "interrompido" || audioEstado === "erro") {
+      continuarAudio(origemAudio);
+    } else {
+      iniciarLeituraAudio();
+    }
+  }
+
+  function interromperLeituraAudio() {
+    pararAudio(true, origemAudio);
+  }
+
+  // Para o áudio ao sair da tela ou trocar de capítulo — sem isso a
+  // fala continuaria em segundo plano falando um capítulo que a
+  // pessoa já não está mais vendo.
+  useFocusEffect(useCallback(() => () => pararAudio(false, origemAudio), [origemAudio, params.livro, params.capitulo]));
+
+  // Acompanha o versículo sendo lido em voz alta, rolando a tela até
+  // ele — as posições já foram medidas via onLayout na primeira
+  // renderização do capítulo.
+  useEffect(() => {
+    if (versiculoFalando === null) return;
+    const y = posicoes.current[versiculoFalando];
+    if (y !== undefined) {
+      scrollSuave(scrollRef, Math.max(0, y - 100));
+    }
+  }, [versiculoFalando]);
+
+  function gerarImagemDoVersiculoSelecionado() {
+    if (!dados?.versiculos || versiculosSelecionados.size !== 1 || !livro) return;
+    const numero = Array.from(versiculosSelecionados)[0];
+    const texto = dados.versiculos.find((v) => v.numero === numero)?.texto;
+    if (!texto) return;
+    const referencia = `${livro.nome} ${capitulo}:${numero}`;
+
+    if (Platform.OS === "web") {
+      try {
+        const imagem = gerarImagemVersiculo(texto, referencia);
+        if (imagem) {
+          setImagemVersiculo(imagem);
+          limparSelecaoVersiculos();
+        }
+      } catch {
+        mostrarToast("Não foi possível gerar a imagem. Tente novamente.", { severidade: "erro" });
+      }
+      return;
+    }
+
+    // No nativo não dá pra desenhar em Canvas — renderiza o cartão
+    // como uma View de verdade fora da tela e captura ela no próximo
+    // efeito, depois que já tiver montado com o texto certo.
+    setAcoesSelecaoOcupadas(true);
+    setCartaoNativoParaCapturar({ texto, referencia });
+  }
+
+  // Captura o cartão nativo assim que ele terminar de montar/renderizar
+  // com o texto pedido (ver `gerarImagemDoVersiculoSelecionado`).
+  useEffect(() => {
+    if (!cartaoNativoParaCapturar || !refCartaoNativo.current) return;
+    let cancelado = false;
+    (async () => {
+      try {
+        const uri = await captureRef(refCartaoNativo, { format: "png", quality: 1 });
+        if (!cancelado) {
+          setImagemVersiculo(uri);
+          limparSelecaoVersiculos();
+        }
+      } catch {
+        if (!cancelado) mostrarToast("Não foi possível gerar a imagem.", { severidade: "erro" });
+      } finally {
+        if (!cancelado) {
+          setCartaoNativoParaCapturar(null);
+          setAcoesSelecaoOcupadas(false);
+        }
+      }
+    })();
+    return () => {
+      cancelado = true;
+    };
+  }, [cartaoNativoParaCapturar]);
+
+  async function compartilharImagemVersiculo() {
+    if (!imagemVersiculo) return;
+    if (Platform.OS === "web") {
+      const link = document.createElement("a");
+      link.href = imagemVersiculo;
+      link.download = `${livro?.slug ?? "versiculo"}-${capitulo}.png`;
+      link.click();
+      mostrarToast("Imagem baixada!", { severidade: "sucesso" });
+      return;
+    }
+    try {
+      const disponivel = await Sharing.isAvailableAsync();
+      if (!disponivel) {
+        mostrarToast("Compartilhamento não disponível neste dispositivo.", { severidade: "informacao" });
+        return;
+      }
+      await Sharing.shareAsync(imagemVersiculo, { mimeType: "image/png", dialogTitle: "Compartilhar versículo" });
+    } catch {
+      mostrarToast("Não foi possível compartilhar a imagem. Tente novamente.", { severidade: "erro" });
+    }
+  }
+
+  async function copiarVersiculos() {
+    const conteudo = conteudoVersiculosSelecionados();
+    if (!conteudo || acoesSelecaoOcupadas) return;
+    setAcoesSelecaoOcupadas(true);
+    try {
+      const quantidade = conteudo.quantidade;
+      const resultado = await copiar(conteudo.textoCopiado, {
+        mensagemCopiado: quantidade === 1
+          ? "Versículo copiado para a área de transferência."
+          : `${quantidade} versículos copiados para a área de transferência.`,
+      });
+      if (resultado === "copiado") limparSelecaoVersiculos();
+    } finally {
+      setAcoesSelecaoOcupadas(false);
+    }
+  }
+
+  async function compartilharVersiculos() {
+    const conteudo = conteudoVersiculosSelecionados();
+    if (!conteudo || acoesSelecaoOcupadas) return;
+    setAcoesSelecaoOcupadas(true);
+    try {
+      const quantidade = conteudo.quantidade;
+      const resultado = await compartilhar(conteudo.texto, {
+        titulo: `Compartilhar ${quantidade} ${quantidade === 1 ? "versículo" : "versículos"}`,
+        url: conteudo.url ?? undefined,
+        textoCopiado: conteudo.textoCopiado,
+        mensagemCompartilhado: quantidade === 1 ? "Versículo compartilhado." : `${quantidade} versículos compartilhados.`,
+        mensagemCopiado: quantidade === 1
+          ? "Versículo copiado para a área de transferência."
+          : `${quantidade} versículos copiados para a área de transferência.`,
+      });
+      if (resultado === "compartilhado" || resultado === "copiado") limparSelecaoVersiculos();
+    } finally {
+      setAcoesSelecaoOcupadas(false);
+    }
+  }
+
+  async function alternarSalvosSelecionados() {
+    if (!ownerId || !livro || versiculosSelecionados.size === 0 || acoesSelecaoOcupadas) return;
+    const array = Array.from(versiculosSelecionados);
+    const setAtual = new Set(salvos);
+    const remover = array.every((versiculo) => setAtual.has(versiculo));
+    setAcoesSelecaoOcupadas(true);
+    try {
+      for (const versiculo of array) {
+        const estaSalvo = setAtual.has(versiculo);
+        if (estaSalvo === !remover) continue;
+        const ativo = await versiculosSalvosRepository.alternar(ownerId, { livroSlug: livro.slug, capitulo, versiculo });
+        if (ativo) setAtual.add(versiculo);
+        else setAtual.delete(versiculo);
+        setSalvos(new Set(setAtual));
+      }
+      mostrarToast(remover ? "Versículos removidos dos salvos." : "Versículos salvos.", { severidade: "sucesso" });
+    } catch {
+      mostrarToast("Não foi possível atualizar todos os versículos salvos. Tente novamente.", { severidade: "erro" });
+    } finally {
+      setAcoesSelecaoOcupadas(false);
+    }
+  }
+
+  const tamanhoFonte = TAMANHOS_FONTE[indiceFonte];
+  const numerosSelecionados = Array.from(versiculosSelecionados).sort((a, b) => a - b);
+  const referenciaSelecao = formatarFaixasVersiculos(numerosSelecionados);
+  const todosSelecionadosSalvos = numerosSelecionados.length > 0 && numerosSelecionados.every((versiculo) => salvos.has(versiculo));
+
+  return (
+    <View className="flex-1 bg-cor-fundo dark:bg-cor-fundo-dark">
+      {/* Barra fina de progresso — persistente mesmo com o cabeçalho
+          escondido (foco de leitura), por isso fica fora do overlay
+          animado abaixo, com seu próprio espaço reservado (top: 2). */}
+      <View className="h-0.5 bg-cor-borda dark:bg-cor-borda-dark">
+        <View className="h-0.5 bg-cor-destaque dark:bg-cor-destaque-dark" style={{ width: `${progresso * 100}%` }} />
+      </View>
+
+      {/* Cabeçalho como camada sobreposta (`position: absolute`), SEMPRE
+          montada — nunca desmonta/remonta mais. Ver a nota grande em
+          `aoRolar` pra entender por que isso é essencial: um cabeçalho
+          que participa do layout do conteúdo abaixo (crescendo/
+          encolhendo o ScrollView ao aparecer/sumir) realimenta a
+          própria lógica que decide se ele deve aparecer ou sumir,
+          causando o "glitch" perto do fim da leitura. Como camada
+          solta por cima, esconder/mostrar é só uma questão visual
+          (`translateY` animado) que não move nem redimensiona nada
+          embaixo. */}
+      <Animated.View
+        nativeID="leitor-cabecalho"
+        onLayout={(e) => {
+          // Guarda contra loop de remontagem infinito (bug real achado
+          // ao testar, 2026-08-20): sem o limiar, jitter de subpixel na
+          // medição (ex. 95.998 vs 96.002 entre um layout e outro, comum
+          // no RNW por causa do ResizeObserver que faz `onLayout` no
+          // web) fazia `setAlturaHeader` disparar de novo a cada
+          // render, que muda o `paddingTop` do ScrollView, que altera
+          // sutilmente o layout, retriggando o próprio `onLayout` — um
+          // loop sem fim que travava o app inteiro (visível nos logs
+          // como "Running application main" se repetindo dezenas de
+          // vezes por carregamento).
+          const novaAltura = e.nativeEvent.layout.height;
+          setAlturaHeader((atual) => (Math.abs(atual - novaAltura) > 0.5 ? novaAltura : atual));
+        }}
+        style={{
+          transform: [{ translateY: headerTranslateY }],
+          position: "absolute",
+          top: 2,
+          left: 0,
+          right: 0,
+          zIndex: 20,
+          // Animated.View não aplica as classes NativeWind do container
+          // no DOM web; sem valores explícitos, o cabeçalho ficava
+          // transparente e o texto rolava por trás dos controles.
+          backgroundColor: escuro ? "#1b1712" : "#faf8f4",
+          borderBottomWidth: 1,
+          borderBottomColor: escuro ? "#3a3226" : "#e6ded0",
+        }}
+        className="bg-cor-fundo dark:bg-cor-fundo-dark border-b border-cor-borda dark:border-cor-borda-dark"
+      >
+        <View className={`${desktop ? "max-w-[760px] w-full mx-auto px-8 py-2 relative" : "px-3 py-2"} flex-row items-center justify-between`}>
+          <Pressable
+            onPress={voltarDoLeitor}
+            accessibilityRole="button"
+            accessibilityLabel={versiculosSelecionados.size > 0 ? "Cancelar seleção de versículos" : "Voltar"}
+            accessibilityHint={versiculosSelecionados.size > 0
+              ? "Cancela a seleção atual sem sair do capítulo."
+              : planoEmAndamento && numeroDiaPlano
+                ? `Volta para o plano ${planoEmAndamento.titulo}.`
+              : abertaPelaAbaBiblia
+                ? "Volta à escolha de livros da Bíblia."
+                : "Volta à tela de onde você abriu esta leitura."}
+            className="w-10 h-10 items-center justify-center active:opacity-60"
+          >
+            <IconeUI name={versiculosSelecionados.size > 0 ? "close" : "back"} size={24} className="text-cor-texto dark:text-cor-texto-dark" />
+          </Pressable>
+
+          {/* No desktop, o centro abre a escolha de capítulo; na variante
+              estreita, mantemos o botão de alternância para o resumo, que
+              evita disputar espaço com os controles de leitura. */}
+          {desktop ? (
+            <Link href={{ pathname: "/leitura/escolher", params: { livro: livro.slug } }} asChild>
+              <Pressable
+                accessibilityRole="link"
+                accessibilityLabel={`Escolher capítulo de ${livro.nome}`}
+                className="absolute left-1/2 -translate-x-1/2 h-10 flex-row items-center gap-1 px-3 rounded-full active:opacity-60"
+              >
+                <Text className="text-sm font-semibold text-cor-texto dark:text-cor-texto-dark" numberOfLines={1}>
+                  {livro.nome} {capitulo}
+                </Text>
+                <IconeUI name="chevron-down" size={18} className="text-cor-texto-suave dark:text-cor-texto-suave-dark" />
+              </Pressable>
+            </Link>
+          ) : (
+            <Pressable
+              onPress={() => setAbaAtual((atual) => (atual === "texto" ? "resumo" : "texto"))}
+              accessibilityRole="button"
+              accessibilityLabel={abaAtual === "texto" ? "Ver resumo do livro" : "Ver texto bíblico"}
+              className="flex-row items-center gap-1 px-3 py-1.5 rounded-full bg-cor-borda dark:bg-cor-borda-dark active:opacity-60"
+            >
+              <IconeUI name={abaAtual === "texto" ? "open-book" : "book-collection"} size={14} className="text-cor-texto dark:text-cor-texto-dark" />
+              <Text className="text-xs font-bold text-cor-texto dark:text-cor-texto-dark">
+                {abaAtual === "texto" ? "Ver resumo" : "Ver Bíblia"}
+              </Text>
+            </Pressable>
+          )}
+
+          <View className="flex-row items-center gap-1">
+            {desktop ? (
+              <Pressable
+                onPress={() => setAbaAtual((atual) => (atual === "texto" ? "resumo" : "texto"))}
+                accessibilityRole="button"
+                accessibilityLabel={abaAtual === "texto" ? "Ver resumo do livro" : "Ver texto bíblico"}
+                className="w-10 h-10 items-center justify-center active:opacity-60"
+              >
+                <IconeUI name={abaAtual === "texto" ? "open-book" : "book-collection"} size={21} className="text-cor-texto dark:text-cor-texto-dark" />
+              </Pressable>
+            ) : null}
+            {suportaAudio() && abaAtual === "texto" ? (
+              <>
+                <Pressable
+                  onPress={alternarAudio}
+                  accessibilityRole="button"
+                  accessibilityLabel={audioEstado === "reproduzindo"
+                    ? suportaPausaAudio() ? "Pausar leitura em voz alta" : `Interromper leitura no versículo ${versiculoFalando ?? "atual"}`
+                    : audioEstado === "pausado"
+                      ? "Continuar leitura em voz alta"
+                      : audioEstado === "interrompido"
+                        ? `Continuar do início do versículo ${versiculoFalando ?? "atual"}`
+                        : audioEstado === "erro"
+                          ? `Tentar novamente a partir do versículo ${versiculoFalando ?? "atual"}`
+                          : audioEstado === "iniciando" ? "Iniciando leitura em voz alta"
+                            : audioEstado === "pausando" ? "Pausando leitura em voz alta"
+                              : audioEstado === "interrompendo" ? "Interrompendo leitura em voz alta" : "Ouvir capítulo em voz alta"}
+                  accessibilityHint={audioEstado === "interrompido" ? "A leitura recomeça no início deste versículo." : undefined}
+                  accessibilityState={{ disabled: !dados?.versiculos?.length || audioEstado === "iniciando" || audioEstado === "pausando" || audioEstado === "interrompendo", busy: audioEstado === "iniciando" || audioEstado === "pausando" || audioEstado === "interrompendo" }}
+                  disabled={!dados?.versiculos?.length || audioEstado === "iniciando" || audioEstado === "pausando" || audioEstado === "interrompendo"}
+                  className="w-10 h-10 items-center justify-center rounded-full active:bg-cor-borda dark:active:bg-cor-borda-dark"
+                >
+                  <IconeUI
+                    name={audioEstado === "reproduzindo" && suportaPausaAudio() ? "pause" : "audio"}
+                    size={22}
+                    className="text-cor-texto dark:text-cor-texto-dark"
+                  />
+                </Pressable>
+                {audioEstado !== "ocioso" ? (
+                  <PressableComTecladoWeb
+                    onPress={interromperLeituraAudio}
+                    accessibilityRole="button"
+                    accessibilityLabel="Encerrar leitura em voz alta"
+                    className="w-10 h-10 items-center justify-center rounded-full active:bg-cor-borda dark:active:bg-cor-borda-dark"
+                  >
+                    <IconeUI name="close" size={19} className="text-cor-texto dark:text-cor-texto-dark" />
+                  </PressableComTecladoWeb>
+                ) : null}
+              </>
+            ) : null}
+            <BotaoTema compacto />
+            <Pressable onPress={() => setModalAjustesAberto(true)} accessibilityRole="button" accessibilityLabel="Ajustes de leitura" className="w-10 h-10 items-center justify-center active:opacity-60">
+              <Text style={{ fontFamily: FAMILIA_SERIFADA }} className="text-lg font-bold text-cor-texto dark:text-cor-texto-dark">Aa</Text>
+            </Pressable>
+          </View>
+        </View>
+
+        {abaAtual === "texto" ? (
+          <View className={`${desktop ? "max-w-2xl w-full mx-auto px-8 pt-2 pb-5" : "pt-1 pb-3"}`}>
+            <Text accessibilityRole="header" className={`${desktop ? "text-4xl" : "text-2xl lg:text-3xl text-center"} font-bold text-cor-texto dark:text-cor-texto-dark`} style={desktop ? { fontFamily: FAMILIA_SERIFADA } : undefined}>
+              {livro?.nome} {capitulo}
+            </Text>
+          </View>
+        ) : null}
+      </Animated.View>
+      <ScrollView
+        ref={scrollRef}
+        onScroll={aoRolar}
+        scrollEventThrottle={16}
+        className="flex-1"
+        style={{
+          display: abaAtual === "texto" ? "flex" : "none",
+          marginBottom: ALTURA_AREA_NAVEGACAO_CAPITULO + (desktop && versiculosSelecionados.size > 0 ? ALTURA_RESERVA_SELECAO_DESKTOP : 0),
+        }}
+        contentContainerStyle={{ paddingTop: alturaHeader + 8 }}
+      >
+        <View className={`${desktop ? "px-8" : "px-5"} pb-32 max-w-2xl w-full mx-auto`}>
+          {!desktop ? <DicaContextual id="leitor" titulo="Faça destaques enquanto lê" descricao="Toque em um versículo para selecionar. Depois você pode grifar, salvar, anotar, copiar ou compartilhar." /> : null}
+          {erro ? (
+            <View className="items-start gap-3">
+              <Text className="text-cor-texto-suave dark:text-cor-texto-suave-dark">{erro}</Text>
+              <Pressable
+                onPress={carregarCapitulo}
+                accessibilityRole="button"
+                accessibilityLabel="Tentar novamente"
+                className="px-4 py-2 rounded-full bg-cor-destaque dark:bg-cor-destaque-dark active:opacity-70"
+              >
+                <Text className="text-white font-semibold text-sm">Tentar novamente</Text>
+              </Pressable>
+            </View>
+          ) : !dados ? (
+            <View accessibilityRole="progressbar" accessibilityLabel="Carregando capítulo" accessibilityLiveRegion="polite" className="mt-4 gap-4 opacity-50">
+              <View className="h-4 bg-cor-borda dark:bg-cor-borda-dark rounded w-3/4" />
+              <View className="h-4 bg-cor-borda dark:bg-cor-borda-dark rounded w-full" />
+              <View className="h-4 bg-cor-borda dark:bg-cor-borda-dark rounded w-5/6" />
+              <View className="h-4 bg-cor-borda dark:bg-cor-borda-dark rounded w-2/3 mt-2" />
+              <View className="h-4 bg-cor-borda dark:bg-cor-borda-dark rounded w-full" />
+              <View className="h-4 bg-cor-borda dark:bg-cor-borda-dark rounded w-4/5" />
+            </View>
+          ) : dados.versiculos ? (
+            dados.versiculos.map((v) => {
+              const tituloSecao = titulosPorVersiculo.get(v.numero);
+              const corGrifo = grifos.get(v.numero);
+              const grifado = grifos.has(v.numero);
+              const salvo = salvos.has(v.numero);
+              const nota = notas.get(v.numero);
+              const temNota = nota !== undefined;
+              const primeiroVersiculoDaNota = nota?.referencias?.reduce((menor, ref) => Math.min(menor, ref.versiculo), nota.versiculo) ?? nota?.versiculo;
+              const notaEhReferenciaPrincipal = !nota?.grupoId || primeiroVersiculoDaNota === v.numero;
+              const selecionado = versiculosSelecionados.has(v.numero);
+              return (
+                <Fragment key={v.numero}>
+                  {tituloSecao ? (
+                    <Text
+                      accessibilityRole="header"
+                      accessibilityLabel={`${tituloSecao.titulo}, letra hebraica ${tituloSecao.letraHebraica}`}
+                      className="mt-7 mb-2 px-2 text-lg font-bold text-cor-destaque dark:text-cor-destaque-dark"
+                    >
+                      {tituloSecao.titulo} · {tituloSecao.letraHebraica}
+                    </Text>
+                  ) : null}
+                <View onLayout={(e) => aoMedirVersiculo(v.numero, e.nativeEvent.layout.y)} className={`mb-0.5 -mx-2 ${destaqueAlvo && v.numero !== versiculoAlvo ? "opacity-30" : ""}`}>
+                  <PressableComTecladoWeb
+                    testID={`versiculo-${v.numero}`}
+                    onPress={() => selecionarVersiculo(v.numero)}
+                    disabled={acoesSelecaoOcupadas}
+                    accessibilityRole="checkbox"
+                    accessibilityLabel={`Versículo ${v.numero}${grifado ? ", grifado" : ""}${temNota ? ", com anotação" : ""}`}
+                    accessibilityHint={selecionado ? "Ative para remover este versículo da seleção." : "Ative para selecionar este versículo e mostrar as ações disponíveis."}
+                    accessibilityState={{ checked: selecionado }}
+                    accessibilityChecked={selecionado}
+                    className={`rounded-lg px-2 py-1.5 active:opacity-70 ${
+                      grifado
+                        ? corGrifo ? corGrifo : "bg-cor-grifo dark:bg-cor-grifo-dark"
+                        : v.numero === versiculoFalando || v.numero === versiculoRealcado
+                          ? "bg-cor-destaque-fundo dark:bg-cor-destaque-fundo-dark"
+                          : ""
+                    } ${selecionado ? "bg-cor-destaque-fundo dark:bg-cor-destaque-fundo-dark border-l-4 border-cor-destaque dark:border-cor-destaque-dark pl-1" : ""} ${
+                      v.numero === versiculoAlvo && !selecionado ? "border-l-4 border-cor-destaque dark:border-cor-destaque-dark" : ""
+                    }`}
+                  >
+                    <Text
+                      className="text-cor-texto dark:text-[#EAEAEA]"
+                      style={{ fontSize: tamanhoFonte, lineHeight: tamanhoFonte * (desktop ? 1.72 : 1.65), fontFamily: fonteSerifada ? FAMILIA_SERIFADA : undefined }}
+                    >
+                      <Text
+                        className="text-cor-texto-suave dark:text-cor-texto-suave-dark font-bold"
+                        style={{ fontSize: tamanhoFonte * 0.72, verticalAlign: "top", color: desktop ? (escuro ? "#e0a75e" : "#8a5a2b") : undefined, opacity: desktop ? 0.9 : 0.5 }}
+                      >
+                        {"  "}
+                        {v.numero}{" "}
+                      </Text>
+                      {v.texto}
+                      {temNota && !selecionado ? (
+                        <Text className="text-cor-destaque dark:text-cor-destaque-dark"> 🗒</Text>
+                      ) : null}
+                      {salvo && !selecionado ? (
+                        <Text className="text-cor-destaque dark:text-cor-destaque-dark"> 🔖</Text>
+                      ) : null}
+                    </Text>
+                    {temNota ? (
+                      <Text
+                        className="text-cor-texto-suave dark:text-cor-texto-suave-dark mt-0.5"
+                        style={{ fontSize: tamanhoFonte * 0.78 }}
+                      >
+                        📝 {notaEhReferenciaPrincipal ? nota?.texto : `Anotação compartilhada com v. ${primeiroVersiculoDaNota}`}
+                      </Text>
+                    ) : null}
+                  </PressableComTecladoWeb>
+                </View>
+                </Fragment>
+              );
+            })
+          ) : (
+            <Text
+              className="text-cor-texto dark:text-cor-texto-dark"
+              style={{ fontSize: tamanhoFonte, lineHeight: tamanhoFonte * (desktop ? 1.72 : 1.65), fontFamily: fonteSerifada ? FAMILIA_SERIFADA : undefined }}
+            >
+              {dados.texto}
+            </Text>
+          )}
+
+          {!erro && dados ? (
+            <>
+            {planoEmAndamento && diaEmAndamento ? (
+              <View className="rounded-2xl border border-cor-destaque dark:border-cor-destaque-dark bg-cor-destaque-fundo dark:bg-cor-destaque-fundo-dark px-4 py-4 mt-6">
+                <Text className="text-xs font-bold uppercase tracking-wide text-cor-destaque dark:text-cor-destaque-dark">{planoEmAndamento.titulo} · Dia {diaEmAndamento.dia}</Text>
+                <Text className="text-base font-bold text-cor-texto dark:text-cor-texto-dark mt-1">Leitura {indicePlano + 1} de {diaEmAndamento.referencias.length}</Text>
+                <Pressable
+                  onPress={concluirLeituraDoPlano}
+                  disabled={concluindoSessaoPlano}
+                  accessibilityRole="button"
+                  accessibilityState={{ disabled: concluindoSessaoPlano, busy: concluindoSessaoPlano }}
+                  className="rounded-full bg-cor-destaque dark:bg-cor-destaque-dark px-4 py-3 items-center mt-3 active:opacity-80 disabled:opacity-60"
+                >
+                  <Text className="text-white dark:text-cor-texto font-bold">
+                    {concluindoSessaoPlano ? "Salvando progresso…" : indicePlano + 1 >= diaEmAndamento.referencias.length ? "Concluir dia" : "Concluir e avançar"}
+                  </Text>
+                </Pressable>
+              </View>
+            ) : null}
+            <PressableComTecladoWeb
+              onPress={alternarCapituloLido}
+              accessibilityRole="checkbox"
+              accessibilityLabel="Capítulo lido"
+              accessibilityState={{ checked: capituloLido }}
+              accessibilityChecked={capituloLido}
+              className={`self-start px-4 py-2.5 rounded-full mt-6 active:opacity-70 ${
+                capituloLido
+                  ? "bg-green-600"
+                  : "border border-cor-borda dark:border-cor-borda-dark bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark"
+              }`}
+            >
+              <Text className={`text-sm font-semibold ${capituloLido ? "text-white" : "text-cor-texto dark:text-cor-texto-dark"}`}>
+                {capituloLido ? "✓ Capítulo lido" : "Marcar capítulo como lido"}
+              </Text>
+            </PressableComTecladoWeb>
+            </>
+          ) : null}
+        </View>
+      </ScrollView>
+
+
+      {abaAtual === "resumo" && resumo && (
+        <ScrollView className="flex-1" style={{ marginBottom: ALTURA_AREA_NAVEGACAO_CAPITULO }} contentContainerStyle={{ paddingTop: alturaHeader + 8 }}>
+          <View className="px-5 pb-32 max-w-2xl w-full mx-auto">
+            <Tooltip titulo={resumo.genero} descricao={descricaoDoGenero(resumo.genero)}>
+              <View className={`self-start flex-row items-center gap-1 px-3 py-1 rounded-full mb-3 ${coresDoGenero(resumo.genero).bg}`}>
+                <Text className={`text-xs font-semibold uppercase tracking-wide ${coresDoGenero(resumo.genero).texto}`}>{resumo.genero}</Text>
+                <Text className={`text-[10px] ${coresDoGenero(resumo.genero).texto}`}>ⓘ</Text>
+              </View>
+            </Tooltip>
+            <Text className="text-4xl font-extrabold text-cor-texto dark:text-cor-texto-dark mb-2 leading-tight">
+              {resumo.nome}
+            </Text>
+            <Text className="text-sm text-cor-texto-suave dark:text-cor-texto-suave-dark mb-5">
+              Livro {resumo.numero} de 66 · {resumo.testamento} · {resumo.capitulos} capítulos · {resumo.tempoLeituraMin} min de leitura
+            </Text>
+
+            <View className="border border-cor-borda dark:border-cor-borda-dark rounded-xl bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark mb-8">
+              {resumo.fichaRapida.map((item, i) => (
+                <View key={item.rotulo} className={`px-4 py-3 ${i < resumo.fichaRapida.length - 1 ? "border-b border-cor-borda dark:border-cor-borda-dark" : ""}`}>
+                  <Text className="text-xs font-semibold uppercase text-cor-texto-suave dark:text-cor-texto-suave-dark">{item.rotulo}</Text>
+                  <TextoComReferencias
+                    texto={item.valor}
+                    className="text-cor-texto dark:text-cor-texto-dark mt-0.5"
+                    style={{ fontSize: tamanhoFonte, lineHeight: tamanhoFonte * 1.4, fontFamily: fonteSerifada ? FAMILIA_SERIFADA : undefined }}
+                  />
+                </View>
+              ))}
+            </View>
+
+            {resumo.secoes.map((secao) => (
+              <View key={secao.id} className="mb-8">
+                <Text className="text-xl font-bold text-cor-texto dark:text-cor-texto-dark mb-3">{secao.titulo}</Text>
+                {secao.lista
+                  ? secao.itens.map((item, i) => (
+                      <TextoComReferencias key={i} texto={`•  ${item}`} className="text-cor-texto dark:text-cor-texto-dark mb-2" style={{ fontSize: tamanhoFonte, lineHeight: tamanhoFonte * 1.6, fontFamily: fonteSerifada ? FAMILIA_SERIFADA : undefined }} />
+                    ))
+                  : secao.paragrafos.map((paragrafo, i) => (
+                      <TextoComReferencias key={i} texto={paragrafo} className="text-cor-texto dark:text-cor-texto-dark mb-3.5" style={{ fontSize: tamanhoFonte, lineHeight: tamanhoFonte * 1.6, fontFamily: fonteSerifada ? FAMILIA_SERIFADA : undefined }} />
+                    ))}
+              </View>
+            ))}
+          </View>
+        </ScrollView>
+      )}
+
+      {/* Barra de Seleção Múltipla */}
+      {versiculosSelecionados.size > 0 && (
+        <View className={`absolute ${desktop ? "bottom-24" : "bottom-0"} left-0 right-0 items-center z-50 ${desktop ? "px-5 pb-5" : "bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark border-t border-cor-borda dark:border-cor-borda-dark pb-4"}`}>
+          <View className={`${desktop ? "w-full max-w-[560px] rounded-3xl border border-cor-borda dark:border-cor-borda-dark bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark shadow-xl" : "w-full"}`}>
+          <View className="px-5 py-3 border-b border-cor-borda dark:border-cor-borda-dark flex-row justify-between items-center">
+            <View className="flex-1 min-w-0 mr-3" accessibilityLiveRegion="polite">
+              <Text numberOfLines={1} ellipsizeMode="tail" className="text-cor-texto dark:text-cor-texto-dark font-bold">
+                {livro.nome} {capitulo}:{referenciaSelecao}
+              </Text>
+              <Text className="text-xs text-cor-texto-suave dark:text-cor-texto-suave-dark mt-0.5">
+                {versiculosSelecionados.size} {versiculosSelecionados.size === 1 ? "versículo selecionado" : "versículos selecionados"}
+              </Text>
+            </View>
+            <Pressable
+              onPress={limparSelecaoVersiculos}
+              disabled={acoesSelecaoOcupadas}
+              accessibilityRole="button"
+              accessibilityLabel={`Limpar seleção de ${versiculosSelecionados.size} ${versiculosSelecionados.size === 1 ? "versículo" : "versículos"}`}
+              hitSlop={10}
+              className="p-2 -m-2 active:opacity-60"
+            >
+              <IconeUI name="close" size={24} className="text-cor-texto-suave dark:text-cor-texto-suave-dark" />
+            </Pressable>
+          </View>
+          <View className="flex-row items-center">
+          {indicadoresAcoes.rolavel ? (
+            indicadoresAcoes.voltar ? (
+              <Pressable
+                onPress={() => {
+                  const { deslocamento, larguraVisivel } = estadoRolagemAcoes.current;
+                  refScrollAcoesSelecao.current?.scrollTo({
+                    x: Math.max(0, deslocamento - Math.max(120, larguraVisivel * 0.35)),
+                    animated: true,
+                  });
+                }}
+                accessibilityRole="button"
+                accessibilityLabel="Ver ações anteriores"
+                className="w-10 h-12 items-center justify-center bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark"
+              >
+                <IconeUI name="back" size={18} className="text-cor-texto dark:text-cor-texto-dark" />
+              </Pressable>
+            ) : <View className="w-10 h-12" />
+          ) : null}
+          <ScrollView
+            ref={conectarBarraSelecao}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            onLayout={(evento) => atualizarIndicadoresAcoes({ larguraVisivel: evento.nativeEvent.layout.width })}
+            onContentSizeChange={(larguraConteudo) => atualizarIndicadoresAcoes({ larguraConteudo })}
+            onScroll={(evento) => {
+              const { contentOffset, contentSize, layoutMeasurement } = evento.nativeEvent;
+              atualizarIndicadoresAcoes({
+                deslocamento: contentOffset.x,
+                larguraConteudo: contentSize.width,
+                larguraVisivel: layoutMeasurement.width,
+              });
+            }}
+            scrollEventThrottle={16}
+            className={`flex-1 ${desktop ? "px-3 py-2" : "px-5 py-3"}`}
+          >
+            <View className={`flex-row items-center ${desktop ? "gap-1" : "gap-4"}`}>
+              {/* Cores */}
+              <View className={`flex-row items-center ${desktop ? "gap-1 mr-1" : "gap-2 mr-2"}`}>
+                {(() => {
+                  const primeiroGrifado = Array.from(versiculosSelecionados).find(v => grifos.has(v));
+                  const corAtual = primeiroGrifado ? grifos.get(primeiroGrifado) || "bg-cor-grifo dark:bg-cor-grifo-dark" : null;
+
+                  let coresMostrar = mostrarTodasCores ? [...CORES_DISPONIVEIS] : [...coresRecentes];
+                  if (corAtual && !coresMostrar.includes(corAtual)) {
+                    coresMostrar.unshift(corAtual);
+                  } else if (corAtual) {
+                    coresMostrar = [corAtual, ...coresMostrar.filter(c => c !== corAtual)];
+                  }
+
+                  return coresMostrar.map((cor) => {
+                    const todosComEstaCor = numerosSelecionados.every((versiculo) =>
+                      grifos.has(versiculo) && (grifos.get(versiculo) ?? "bg-cor-grifo dark:bg-cor-grifo-dark") === cor,
+                    );
+                    const corBolinha = MAPA_CORES_SOLIDAS[cor] || cor;
+                    return (
+                      <Pressable
+                        key={cor}
+                        onPress={() => aplicarCorGrifo(cor)}
+                        accessibilityRole="button"
+                        accessibilityLabel={todosComEstaCor
+                          ? `Remover grifo ${ROTULOS_CORES_GRIFO[cor] ?? "atual"} dos versículos selecionados`
+                          : `Grifar versículos selecionados com ${ROTULOS_CORES_GRIFO[cor] ?? "a cor atual"}`}
+                        disabled={acoesSelecaoOcupadas}
+                        className={`w-11 h-11 items-center justify-center active:opacity-70 ${acoesSelecaoOcupadas ? "opacity-50" : ""}`}
+                      >
+                        <View className={`w-8 h-8 rounded-full ${corBolinha} shadow-sm items-center justify-center`}>
+                          {todosComEstaCor && <IconeUI name="close" size={18} className="text-black dark:text-[#1b1712]" />}
+                        </View>
+                      </Pressable>
+                    );
+                  });
+                })()}
+                {!mostrarTodasCores && (
+                  <Pressable
+                    onPress={() => setMostrarTodasCores(true)}
+                    accessibilityRole="button"
+                    accessibilityLabel="Ver todas as cores de grifo"
+                    disabled={acoesSelecaoOcupadas}
+                    className="w-11 h-11 items-center justify-center active:opacity-70"
+                  >
+                    <View className="w-8 h-8 rounded-full bg-cor-borda dark:bg-cor-borda-dark items-center justify-center">
+                      <IconeUI name="more" size={20} className="text-cor-texto dark:text-cor-texto-dark" />
+                    </View>
+                  </Pressable>
+                )}
+              </View>
+
+              {/* Botões de Ações */}
+              {(() => {
+                return (
+                  <Pressable
+                    onPress={alternarSalvosSelecionados}
+                    accessibilityRole="button"
+                    accessibilityLabel={todosSelecionadosSalvos ? "Remover versículos selecionados dos salvos" : "Salvar versículos selecionados"}
+                    accessibilityHint={todosSelecionadosSalvos ? "Remove todos os versículos selecionados da lista de salvos." : "Salva todos os versículos selecionados."}
+                    disabled={acoesSelecaoOcupadas}
+                    className={`items-center justify-center active:opacity-70 ${acoesSelecaoOcupadas ? "opacity-50" : ""} ${desktop ? "w-11 h-11 rounded-full bg-cor-destaque-fundo dark:bg-cor-destaque-fundo-dark" : "flex-row gap-1 bg-cor-borda dark:bg-cor-borda-dark px-4 py-2 rounded-lg"}`}
+                  >
+                    <IconeUI name={todosSelecionadosSalvos ? "bookmark" : "bookmark-outline"} size={18} className="text-cor-texto dark:text-cor-texto-dark" />
+                    {!desktop ? <Text className="text-cor-texto dark:text-cor-texto-dark font-semibold text-sm">{todosSelecionadosSalvos ? "Remover" : "Salvar"}</Text> : null}
+                  </Pressable>
+                );
+              })()}
+
+              <Pressable
+                onPress={abrirAnotacaoDaSelecao}
+                accessibilityRole="button"
+                accessibilityLabel={versiculosSelecionados.size > 1
+                  ? `Adicionar ou editar anotação para ${versiculosSelecionados.size} versículos selecionados`
+                  : `Adicionar ou editar anotação em ${livro.nome} ${capitulo}:${numerosSelecionados[0]}`}
+                accessibilityHint="Uma anotação compartilhada fica vinculada a todos os versículos selecionados. Notas existentes não serão sobrescritas."
+                disabled={acoesSelecaoOcupadas}
+                className={`items-center justify-center active:opacity-70 ${desktop ? "w-11 h-11 rounded-full bg-cor-borda dark:bg-cor-borda-dark" : "flex-row gap-1 bg-cor-borda dark:bg-cor-borda-dark px-4 py-2 rounded-lg"}`}
+              >
+                <IconeUI name="edit" size={18} className="text-cor-texto dark:text-cor-texto-dark" />
+                {!desktop ? <Text className="text-cor-texto dark:text-cor-texto-dark font-semibold text-sm">{versiculosSelecionados.size > 1 ? `Anotar ${versiculosSelecionados.size}` : "Anotação"}</Text> : null}
+              </Pressable>
+
+              <Pressable onPress={copiarVersiculos} disabled={acoesSelecaoOcupadas} accessibilityRole="button" accessibilityLabel="Copiar versículos selecionados" className={`items-center justify-center active:opacity-70 ${acoesSelecaoOcupadas ? "opacity-50" : ""} ${desktop ? "w-11 h-11 rounded-full bg-cor-borda dark:bg-cor-borda-dark" : "min-h-11 flex-row gap-1 bg-cor-borda dark:bg-cor-borda-dark px-4 rounded-lg"}`}>
+                <IconeUI name="copy" size={18} className="text-cor-texto dark:text-cor-texto-dark" />
+                {!desktop ? <Text className="text-cor-texto dark:text-cor-texto-dark font-semibold text-sm">Copiar</Text> : null}
+              </Pressable>
+
+              <Pressable onPress={compartilharVersiculos} disabled={acoesSelecaoOcupadas} accessibilityRole="button" accessibilityLabel="Compartilhar versículos selecionados" className={`items-center justify-center active:opacity-70 ${acoesSelecaoOcupadas ? "opacity-50" : ""} ${desktop ? "w-11 h-11 rounded-full bg-cor-borda dark:bg-cor-borda-dark" : `min-h-11 flex-row gap-1 bg-cor-borda dark:bg-cor-borda-dark px-4 rounded-lg ${versiculosSelecionados.size === 1 ? "" : "mr-6"}`}`}>
+                <IconeUI name="share" size={18} className="text-cor-texto dark:text-cor-texto-dark" />
+                {!desktop ? <Text className="text-cor-texto dark:text-cor-texto-dark font-semibold text-sm">Compartilhar</Text> : null}
+              </Pressable>
+
+              {versiculosSelecionados.size === 1 ? (
+                <Pressable onPress={gerarImagemDoVersiculoSelecionado} disabled={acoesSelecaoOcupadas} accessibilityRole="button" accessibilityLabel="Criar imagem deste versículo" className={`items-center justify-center active:opacity-70 ${acoesSelecaoOcupadas ? "opacity-50" : ""} ${desktop ? "w-11 h-11 rounded-full bg-cor-borda dark:bg-cor-borda-dark" : "min-h-11 flex-row gap-1 bg-cor-borda dark:bg-cor-borda-dark px-4 rounded-lg mr-6"}`}>
+                  <IconeUI name="image" size={18} className="text-cor-texto dark:text-cor-texto-dark" />
+                  {!desktop ? <Text className="text-cor-texto dark:text-cor-texto-dark font-semibold text-sm">Imagem</Text> : null}
+                </Pressable>
+              ) : null}
+            </View>
+          </ScrollView>
+          {indicadoresAcoes.rolavel ? (
+            indicadoresAcoes.avancar ? (
+              <Pressable
+                onPress={() => {
+                  const { deslocamento, larguraConteudo, larguraVisivel } = estadoRolagemAcoes.current;
+                  const passo = Math.max(120, larguraVisivel * 0.35);
+                  refScrollAcoesSelecao.current?.scrollTo({
+                    x: Math.min(larguraConteudo - larguraVisivel, deslocamento + passo),
+                    animated: true,
+                  });
+                }}
+                accessibilityRole="button"
+                accessibilityLabel="Ver mais ações"
+                className="w-10 h-12 items-center justify-center bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark"
+              >
+                <IconeUI name="next" size={18} className="text-cor-texto dark:text-cor-texto-dark" />
+              </Pressable>
+            ) : <View className="w-10 h-12" />
+          ) : null}
+          </View>
+          </View>
+        </View>
+      )}
+
+      {/* Barra fixa de navegação (Estilo Pílula Flutuante) — sempre
+          visível agora (2026-08-20): antes sumia junto com o
+          cabeçalho no foco de leitura, mas como ela mesma é pequena,
+          discreta e não atrapalha a leitura, virou também a referência
+          permanente de "onde estou" (livro/capítulo) quando o
+          cabeçalho está escondido, no lugar da antiga faixa mínima que
+          existia só pra isso (removida — duplicava a mesma
+          informação). */}
+      <View className="absolute bottom-6 left-0 right-0 items-center justify-center pointer-events-box-none">
+        <View
+          {...(Platform.OS === "web" ? { title: "Atalhos: ← → troca de capítulo, T alterna o tema" } : {})}
+          className="bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark shadow-md rounded-full px-2 py-1.5 flex-row items-center max-w-[280px] pointer-events-auto border border-cor-borda dark:border-cor-borda-dark"
+        >
+
+          <Pressable
+              onPress={() => anterior && router.replace(hrefCapitulo(anterior.slug, anterior.capitulo, params.origem))}
+              disabled={!anterior}
+              accessibilityRole="button"
+              accessibilityLabel="Capítulo anterior"
+              className={`w-11 h-11 items-center justify-center rounded-full ${anterior ? "active:opacity-60" : "opacity-30"}`}
+            >
+              <IconeUI name="previous" size={24} className="text-cor-texto dark:text-cor-texto-dark" />
+            </Pressable>
+
+          <Link href={{ pathname: "/leitura/escolher", params: { livro: livro.slug } }} asChild>
+            <Pressable accessibilityRole="link" className="flex-1 items-center px-4 py-1.5 active:opacity-60">
+              <Text className="text-sm font-bold text-cor-texto dark:text-cor-texto-dark" numberOfLines={1}>
+                {livro.nome} {capitulo}
+              </Text>
+            </Pressable>
+          </Link>
+
+          <Pressable
+            onPress={() => proximo && router.replace(hrefCapitulo(proximo.slug, proximo.capitulo, params.origem))}
+            disabled={!proximo}
+            accessibilityRole="button"
+            accessibilityLabel="Próximo capítulo"
+            className={`w-11 h-11 items-center justify-center rounded-full ${proximo ? "active:opacity-60" : "opacity-30"}`}
+          >
+            <IconeUI name="next-chevron" size={24} className="text-cor-texto dark:text-cor-texto-dark" />
+          </Pressable>
+        </View>
+      </View>
+
+      {anotacaoEditando !== null ? (
+        <ModalNota
+          key={anotacaoEditando.grupoId ?? anotacaoEditando.referencias.map((ref) => ref.versiculo).join("-")}
+          visivel
+          referencias={anotacaoEditando.referencias}
+          referenciasAlteradas={anotacaoEditando.referenciasAlteradas}
+          referencia={formatarReferenciaVersiculos(anotacaoEditando.referencias)}
+          textoInicial={anotacaoEditando.textoInicial}
+          onFechar={() => setAnotacaoEditando(null)}
+          onSalvar={salvarNota}
+          onRemover={removerNota}
+        />
+      ) : null}
+
+      {/* Modal de Ajustes de Leitura */}
+      <Modal visible={modalAjustesAberto} transparent animationType="fade">
+        <Pressable className="flex-1 bg-black/50 justify-end" onPress={() => setModalAjustesAberto(false)}>
+          <Pressable className="bg-cor-fundo dark:bg-cor-fundo-dark rounded-t-3xl p-6 pb-12" onPress={e => e.stopPropagation()}>
+            <Text className="text-lg font-bold text-cor-texto dark:text-cor-texto-dark mb-6 text-center">Configurações de Leitura</Text>
+
+            <View className="flex-row items-center justify-between bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark rounded-xl p-2 mb-4 border border-cor-borda dark:border-cor-borda-dark">
+              <Pressable onPress={() => ajustarFonte(-1)} accessibilityRole="button" accessibilityLabel="Diminuir tamanho da fonte" accessibilityState={{ disabled: carregandoPreferenciasFonte || salvandoPreferenciasFonte || indiceFonte === 0, busy: carregandoPreferenciasFonte || salvandoPreferenciasFonte }} className="flex-1 py-3 items-center active:opacity-60" disabled={carregandoPreferenciasFonte || salvandoPreferenciasFonte || indiceFonte === 0}>
+                <Text className={`font-bold text-sm ${indiceFonte === 0 ? "text-cor-texto-suave dark:text-cor-texto-suave-dark opacity-40" : "text-cor-texto dark:text-cor-texto-dark"}`}>A-</Text>
+              </Pressable>
+              <View className="w-px h-8 bg-cor-borda dark:bg-cor-borda-dark" />
+              <Pressable onPress={() => ajustarFonte(1)} accessibilityRole="button" accessibilityLabel="Aumentar tamanho da fonte" accessibilityState={{ disabled: carregandoPreferenciasFonte || salvandoPreferenciasFonte || indiceFonte === TAMANHOS_FONTE.length - 1, busy: carregandoPreferenciasFonte || salvandoPreferenciasFonte }} className="flex-1 py-3 items-center active:opacity-60" disabled={carregandoPreferenciasFonte || salvandoPreferenciasFonte || indiceFonte === TAMANHOS_FONTE.length - 1}>
+                <Text className={`font-bold text-lg ${indiceFonte === TAMANHOS_FONTE.length - 1 ? "text-cor-texto-suave dark:text-cor-texto-suave-dark opacity-40" : "text-cor-texto dark:text-cor-texto-dark"}`}>A+</Text>
+              </Pressable>
+            </View>
+
+            <View className="flex-row gap-4 mb-2">
+              <PressableComTecladoWeb
+                onPress={alternarFonteSerifada}
+                onKeyDown={(event) => ativarComEspaco(event, alternarFonteSerifada)}
+                disabled={carregandoPreferenciasFonte || salvandoPreferenciasFonte}
+                accessibilityRole="switch"
+                accessibilityLabel="Fonte serifada"
+                accessibilityState={{ checked: fonteSerifada, disabled: carregandoPreferenciasFonte || salvandoPreferenciasFonte, busy: carregandoPreferenciasFonte || salvandoPreferenciasFonte }}
+                accessibilityChecked={fonteSerifada}
+                className={`flex-1 p-3 rounded-xl border active:opacity-70 ${fonteSerifada ? "bg-cor-destaque-fundo dark:bg-cor-destaque-fundo-dark border-cor-destaque dark:border-cor-destaque-dark" : "border-cor-borda dark:border-cor-borda-dark"} items-center justify-center`}
+              >
+                <Text style={{ fontFamily: FAMILIA_SERIFADA }} className="text-cor-texto dark:text-cor-texto-dark font-bold">Fonte Serifada</Text>
+              </PressableComTecladoWeb>
+
+              <View className="flex-1 p-1 items-center justify-center border border-cor-borda dark:border-cor-borda-dark rounded-xl">
+                <BotaoTema />
+              </View>
+            </View>
+          </Pressable>
+        </Pressable>
+      </Modal>
+
+      <Modal visible={!!imagemVersiculo} transparent animationType="fade">
+        <Pressable className="flex-1 bg-black/70 items-center justify-center p-6" onPress={() => setImagemVersiculo(null)}>
+          <Pressable onPress={(e) => e.stopPropagation()} className="items-center max-w-[420px] w-full">
+            {imagemVersiculo ? (
+              <Image source={{ uri: imagemVersiculo }} className="w-full aspect-square rounded-2xl mb-4" resizeMode="contain" />
+            ) : null}
+            <View className="flex-row gap-3">
+              <Pressable
+                onPress={compartilharImagemVersiculo}
+                accessibilityRole="button"
+                accessibilityLabel={Platform.OS === "web" ? "Baixar imagem" : "Compartilhar imagem"}
+                className="flex-row items-center gap-1.5 bg-cor-destaque dark:bg-cor-destaque-dark px-5 py-2.5 rounded-full active:opacity-70"
+              >
+                {/* dark:cor-destaque-dark é um dourado claro, feito pra
+                    texto/ícone em cima, não pra fundo com branco — branco
+                    aqui dava só ~2.1:1 de contraste (mesmo problema já
+                    corrigido no card "Estudo por Resumos" do Início) */}
+                <IconeUI name={Platform.OS === "web" ? "download" : "share"} size={18} color={escuro ? "#2a241c" : "white"} />
+                <Text className="text-white dark:text-cor-texto font-semibold text-sm">{Platform.OS === "web" ? "Baixar" : "Compartilhar"}</Text>
+              </Pressable>
+              <Pressable onPress={() => setImagemVersiculo(null)} accessibilityRole="button" accessibilityLabel="Fechar" className="px-5 py-2.5 rounded-full border border-white/30 active:opacity-70">
+                <Text className="text-white font-semibold text-sm">Fechar</Text>
+              </Pressable>
+            </View>
+          </Pressable>
+        </Pressable>
+      </Modal>
+
+      {cartaoNativoParaCapturar ? (
+        <View style={{ position: "absolute", top: -9999, left: -9999 }}>
+          <CartaoVersiculoImagem ref={refCartaoNativo} texto={cartaoNativoParaCapturar.texto} referencia={cartaoNativoParaCapturar.referencia} />
+        </View>
+      ) : null}
+    </View>
+  );
+}

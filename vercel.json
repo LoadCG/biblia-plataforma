@@ -1,8 +1,14 @@
 {
-  "buildCommand": "node scripts/gerar-conteudo.js && npx expo export --platform web && node scripts/gerar-rotas-leitura.js",
+  "buildCommand": "node scripts/gerar-conteudo.js && npx expo export --platform web --clear && node scripts/gerar-rotas-leitura.js",
   "outputDirectory": "dist",
   "installCommand": "npm ci",
   "cleanUrls": true,
   "trailingSlash": false,
+  "redirects": [
+    { "source": "/biblia/escolher", "destination": "/leitura/escolher", "permanent": true },
+    { "source": "/biblia/escolher/:livro/:capitulo", "destination": "/leitura/escolher/:livro/:capitulo", "permanent": true },
+    { "source": "/biblia/:livro/:capitulo.html", "destination": "/leitura/:livro/:capitulo", "permanent": true },
+    { "source": "/biblia/:livro/:capitulo", "destination": "/leitura/:livro/:capitulo", "permanent": true }
+  ],
   "rewrites": []
 }

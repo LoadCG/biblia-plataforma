@@ -2,7 +2,7 @@ const fs = require("fs");
 const path = require("path");
 
 const raiz = path.resolve(__dirname, "..");
-const destino = path.join(raiz, "dist", "biblia");
+const destino = path.join(raiz, "dist", "leitura");
 const biblia = require(path.join(raiz, "assets", "biblia.json"));
 
 const contagens = biblia.map((livro) => {

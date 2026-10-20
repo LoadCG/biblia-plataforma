@@ -30,8 +30,8 @@ const CORES = {
 };
 
 const ABAS = [
-  { nome: "index", href: "/" as const, rotulo: "Início", icone: "home" as const },
-  { nome: "biblia", href: "/biblia" as const, rotulo: "Bíblia", icone: "open-book" as const },
+  { nome: "biblia", href: "/biblia" as const, rotulo: "Início", icone: "home" as const },
+  { nome: "leitura", href: "/leitura" as const, rotulo: "Bíblia", icone: "open-book" as const },
   { nome: "pesquisa", href: "/pesquisa" as const, rotulo: "Descubra", icone: "search" as const },
   { nome: "voce", href: "/voce" as const, rotulo: "Você", icone: "profile" as const },
 ];

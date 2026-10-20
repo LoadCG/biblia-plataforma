@@ -74,3 +74,26 @@ html.dark body {
     -webkit-user-select: none;
   }
 }
+
+/* A narrativa pública continua legível sem JavaScript; o observer apenas
+   reduz a ênfase dos quadros fora da área de leitura. Movimento reduzido
+   elimina o efeito, preservando texto, ordem e rolagem natural. */
+.landing-evangelismo .landing-frase {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 420ms ease-out, transform 420ms ease-out;
+}
+
+.landing-evangelismo.landing-com-animacao .landing-quadro:not(.landing-quadro-ativo) .landing-frase {
+  opacity: 0.34;
+  transform: translateY(12px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .landing-evangelismo .landing-frase,
+  .landing-evangelismo.landing-com-animacao .landing-quadro:not(.landing-quadro-ativo) .landing-frase {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}

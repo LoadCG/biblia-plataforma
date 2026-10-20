@@ -106,7 +106,6 @@ export default function LandingEvangelismo() {
 
       <ScrollView
         ref={raizRef}
-        dataSet={{ tema: temaClaro ? "claro" : "escuro" }}
         className={`landing-evangelismo ${tema}`}
         contentContainerStyle={{ flexGrow: 1 }}
         showsVerticalScrollIndicator={false}
@@ -137,7 +136,6 @@ export default function LandingEvangelismo() {
             return (
               <View
                 key={textoCompleto}
-                dataSet={{ indice: String(indice) }}
                 className={`landing-quadro flex-col items-center justify-center ${indice === 0 ? "landing-quadro-ativo" : "landing-quadro-futuro"}`}
               >
                 <Text className="landing-numero">MENSAGEM {String(indice + 1).padStart(2, "0")}</Text>

@@ -3,9 +3,27 @@ import { Link } from "expo-router";
 import { Pressable, ScrollView, Text, View } from "react-native";
 
 const ESTUDOS = [
-  { href: "/conhecer/jesus", titulo: "Quem é Jesus?", descricao: "Conheça sua vida, seus ensinamentos e o que a Bíblia diz sobre sua morte e ressurreição." },
-  { href: "/conhecer/biblia", titulo: "O que é a Bíblia?", descricao: "Uma introdução simples aos livros e à história que atravessa a Bíblia." },
-  { href: "/conhecer/salvacao", titulo: "A história da salvação", descricao: "Da criação à esperança cristã: entenda o que a Bíblia chama de salvação." },
+  {
+    href: "/conhecer/jesus",
+    numero: "01",
+    tema: "JESUS",
+    titulo: "Quem é Jesus?",
+    descricao: "Conheça a vida de Jesus, seu cuidado pelas pessoas e por que sua morte e ressurreição são centrais para a fé cristã.",
+  },
+  {
+    href: "/conhecer/biblia",
+    numero: "02",
+    tema: "ESCRITURAS",
+    titulo: "O que é a Bíblia?",
+    descricao: "Uma introdução aos livros da Bíblia e à história que atravessa suas páginas.",
+  },
+  {
+    href: "/conhecer/salvacao",
+    numero: "03",
+    tema: "ESPERANÇA",
+    titulo: "A história da salvação",
+    descricao: "Entenda o que a Bíblia chama de salvação, da criação à esperança cristã.",
+  },
 ];
 
 export default function Conhecer() {
@@ -14,42 +32,61 @@ export default function Conhecer() {
       <Head>
         <title>Conhecer mais sobre esse amor</title>
         <meta name="description" content="Leituras introdutórias sobre Jesus, a Bíblia e a história da salvação." />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Montserrat:wght@600;700;800;900&display=swap" rel="stylesheet" />
       </Head>
-      <ScrollView className="flex-1 bg-black" contentContainerStyle={{ flexGrow: 1 }}>
-        <View className="w-full max-w-3xl self-center px-6 pb-16 pt-8 md:px-10 md:pt-14">
+      <ScrollView className="conhecer-page flex-1" contentContainerStyle={{ flexGrow: 1 }}>
+        <View className="conhecer-shell">
           <Link href="/" asChild>
-            <Pressable accessibilityRole="link" className="min-h-11 self-start justify-center pr-4">
-              <Text className="text-sm text-white/70">← Voltar à mensagem</Text>
+            <Pressable accessibilityRole="link" className="conhecer-voltar">
+              <Text className="conhecer-voltar-seta" aria-hidden={true}>←</Text>
+              <Text className="conhecer-voltar-texto">Voltar à mensagem</Text>
             </Pressable>
           </Link>
-          <Text accessibilityRole="header" className="mt-8 text-4xl font-semibold leading-tight text-white md:text-5xl">
-            Conhecer mais sobre esse amor
-          </Text>
-          <Text className="mt-5 text-lg leading-8 text-white/80">
-            Você pode explorar estas leituras no seu ritmo. Não é preciso criar uma conta nem assumir um compromisso.
-          </Text>
 
-          <View className="mt-9 gap-3">
+          <View className="conhecer-abertura">
+            <Text className="conhecer-sobretitulo">UM PRIMEIRO PASSO</Text>
+            <Text accessibilityRole="header" className="conhecer-titulo">
+              Conhecer mais sobre <Text className="conhecer-destaque">esse amor.</Text>
+            </Text>
+            <Text className="conhecer-introducao">
+              A história que você acabou de conhecer continua. Explore estas leituras no seu ritmo, sem cadastro e sem compromisso.
+            </Text>
+          </View>
+
+          <View className="conhecer-lista">
             {ESTUDOS.map((estudo) => (
               <Link key={estudo.href} href={estudo.href as never} asChild>
-                <Pressable className="min-h-28 justify-center rounded-2xl border border-white/20 px-5 py-5 active:bg-white/10">
-                  <Text className="text-xl font-semibold text-white">{estudo.titulo}</Text>
-                  <Text className="mt-2 text-sm leading-6 text-white/70">{estudo.descricao}</Text>
+                <Pressable accessibilityRole="link" className="conhecer-card">
+                  <View className="conhecer-card-topo">
+                    <Text className="conhecer-card-numero">{estudo.numero}</Text>
+                    <Text className="conhecer-card-tema">{estudo.tema}</Text>
+                    <Text className="conhecer-card-seta" aria-hidden={true}>↗</Text>
+                  </View>
+                  <Text className="conhecer-card-titulo">{estudo.titulo}</Text>
+                  <Text className="conhecer-card-descricao">{estudo.descricao}</Text>
+                  <Text className="conhecer-card-link">COMEÇAR A LEITURA <Text aria-hidden={true}>→</Text></Text>
                 </Pressable>
               </Link>
             ))}
           </View>
 
-          <View className="mt-10 border-t border-white/15 pt-8">
-            <Text className="text-base leading-7 text-white/80">
-              Se preferir, você pode abrir a Bíblia e ler diretamente os textos citados.
-            </Text>
+          <View className="conhecer-biblia">
+            <View className="conhecer-biblia-textos">
+              <Text className="conhecer-biblia-sobretitulo">PREFERE IR DIRETO À FONTE?</Text>
+              <Text className="conhecer-biblia-titulo">Leia a Bíblia por conta própria.</Text>
+              <Text className="conhecer-biblia-descricao">Abra os textos citados e confira a mensagem nas próprias Escrituras.</Text>
+            </View>
             <Link href="/leitura" asChild>
-              <Pressable className="mt-5 min-h-12 items-center justify-center rounded-full bg-white px-6">
-                <Text className="font-semibold text-black">Abrir a Bíblia online</Text>
+              <Pressable accessibilityRole="link" className="conhecer-biblia-botao">
+                <Text className="conhecer-biblia-botao-texto">Abrir a Bíblia online</Text>
+                <Text className="conhecer-biblia-botao-seta" aria-hidden={true}>↗</Text>
               </Pressable>
             </Link>
           </View>
+
+          <Text className="conhecer-rodape">Uma leitura cristã baseada na Bíblia.</Text>
         </View>
       </ScrollView>
     </>

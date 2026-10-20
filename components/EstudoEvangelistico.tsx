@@ -22,49 +22,80 @@ export function EstudoEvangelistico({
       <Head>
         <title>{titulo} — Tem alguém que te ama</title>
         <meta name="description" content={descricao} />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Montserrat:wght@600;700;800;900&display=swap" rel="stylesheet" />
       </Head>
-      <ScrollView className="flex-1 bg-black" contentContainerStyle={{ flexGrow: 1 }}>
-        <View className="w-full max-w-3xl self-center px-6 pb-16 pt-8 md:px-10 md:pt-14">
+      <ScrollView className="conhecer-page flex-1" contentContainerStyle={{ flexGrow: 1 }}>
+        <View className="estudo-shell">
           <Link href="/conhecer" asChild>
-            <Pressable accessibilityRole="link" className="min-h-11 self-start justify-center pr-4">
-              <Text className="text-sm text-white/70">← Conhecer mais</Text>
+            <Pressable accessibilityRole="link" className="conhecer-voltar">
+              <Text className="conhecer-voltar-seta" aria-hidden={true}>←</Text>
+              <Text className="conhecer-voltar-texto">Todas as leituras</Text>
             </Pressable>
           </Link>
-          <Text accessibilityRole="header" className="mt-8 text-4xl font-semibold leading-tight text-white md:text-5xl">
-            {titulo}
-          </Text>
-          <Text className="mt-5 text-lg leading-8 text-white/80">{descricao}</Text>
 
-          {secoes.map((secao) => (
-            <View key={secao.titulo} className="mt-10 border-t border-white/15 pt-7">
-              <Text accessibilityRole="header" className="text-2xl font-semibold leading-snug text-white">
-                {secao.titulo}
-              </Text>
-              <Text className="mt-3 text-base leading-7 text-white/80">{secao.texto}</Text>
-              {secao.referencias?.length ? (
-                <View className="mt-4 flex-row flex-wrap gap-x-4 gap-y-2">
-                  {secao.referencias.map((referencia) => (
-                    <Link key={referencia.rotulo} href={referencia.href as never} asChild>
-                      <Pressable accessibilityRole="link" className="min-h-11 justify-center">
-                        <Text className="text-sm font-semibold text-white underline">{referencia.rotulo}</Text>
-                      </Pressable>
-                    </Link>
-                  ))}
-                </View>
-              ) : null}
+          <View className="estudo-abertura">
+            <Text className="conhecer-sobretitulo">LEITURA INTRODUTÓRIA</Text>
+            <Text accessibilityRole="header" className="estudo-titulo">{titulo}</Text>
+            <Text className="estudo-descricao">{descricao}</Text>
+            <View className="estudo-nota">
+              <Text className="estudo-nota-marca" aria-hidden={true}>i</Text>
+              <Text className="estudo-nota-texto">Leia com calma. As referências levam aos trechos da Bíblia para você conferir o contexto.</Text>
             </View>
-          ))}
+          </View>
 
-          <View className="mt-12 border-t border-white/15 pt-8">
-            <Text className="text-base leading-7 text-white/75">
-              Estas páginas são um começo para leitura e reflexão. Elas não substituem o texto bíblico nem cuidado profissional quando necessário.
+          <View className="estudo-secoes">
+            {secoes.map((secao, indice) => (
+              <View key={secao.titulo} className="estudo-secao">
+                <View className="estudo-secao-indice">
+                  <Text className="estudo-secao-numero">{String(indice + 1).padStart(2, "0")}</Text>
+                  <View className="estudo-secao-linha" />
+                </View>
+                <View className="estudo-secao-conteudo">
+                  <Text accessibilityRole="header" className="estudo-secao-titulo">{secao.titulo}</Text>
+                  <Text className="estudo-secao-texto">{secao.texto}</Text>
+                  {secao.referencias?.length ? (
+                    <View className="estudo-referencias">
+                      <Text className="estudo-referencias-legenda">LEIA NA BÍBLIA</Text>
+                      <View className="estudo-referencias-lista">
+                        {secao.referencias.map((referencia) => (
+                          <Link key={referencia.rotulo} href={referencia.href as never} asChild>
+                            <Pressable accessibilityRole="link" className="estudo-referencia">
+                              <Text className="estudo-referencia-texto">{referencia.rotulo}</Text>
+                              <Text className="estudo-referencia-seta" aria-hidden={true}>↗</Text>
+                            </Pressable>
+                          </Link>
+                        ))}
+                      </View>
+                    </View>
+                  ) : null}
+                </View>
+              </View>
+            ))}
+          </View>
+
+          <View className="estudo-final">
+            <Text className="estudo-final-sobretitulo">CONTINUE NO SEU RITMO</Text>
+            <Text className="estudo-final-titulo">A próxima página pode ser <Text className="conhecer-destaque">a Bíblia.</Text></Text>
+            <Text className="estudo-final-descricao">
+              Estas explicações são um começo. Leia os textos bíblicos, faça perguntas e tire suas próprias conclusões.
             </Text>
             <Link href="/leitura" asChild>
-              <Pressable className="mt-6 min-h-12 items-center justify-center rounded-full bg-white px-6">
-                <Text className="font-semibold text-black">Abrir a Bíblia online</Text>
+              <Pressable accessibilityRole="link" className="conhecer-biblia-botao estudo-final-botao">
+                <Text className="conhecer-biblia-botao-texto">Abrir a Bíblia online</Text>
+                <Text className="conhecer-biblia-botao-seta" aria-hidden={true}>↗</Text>
+              </Pressable>
+            </Link>
+            <Link href="/conhecer" asChild>
+              <Pressable accessibilityRole="link" className="estudo-outra-leitura">
+                <Text className="estudo-outra-leitura-texto">Explorar outras leituras</Text>
+                <Text className="estudo-outra-leitura-seta" aria-hidden={true}>→</Text>
               </Pressable>
             </Link>
           </View>
+
+          <Text className="conhecer-rodape">Uma leitura cristã baseada na Bíblia.</Text>
         </View>
       </ScrollView>
     </>

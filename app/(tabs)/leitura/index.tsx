@@ -13,11 +13,11 @@ export default function BibliaTab() {
       if (ultima) {
         router.replace(`/biblia/${ultima.livroSlug}/${ultima.capitulo}?origem=aba-biblia`);
       } else {
-        router.replace("/biblia/escolher");
+        router.replace("/leitura/escolher");
       }
     }).catch(() => {
       mostrarToast("Não foi possível recuperar sua última leitura", { severidade: "erro" });
-      router.replace("/biblia/escolher");
+      router.replace("/leitura/escolher");
     });
   }, []);
 

@@ -29,8 +29,28 @@ function Palavras({ texto, destaque = false }: { texto: string; destaque?: boole
 export default function LandingEvangelismo() {
   const raizRef = useRef<HTMLElement>(null);
   const [temaClaro, setTemaClaro] = useState(false);
+  const [preferenciaTemaCarregada, setPreferenciaTemaCarregada] = useState(false);
   const [leituraContinua, setLeituraContinua] = useState(false);
   const [quadroAtual, setQuadroAtual] = useState(0);
+
+  useEffect(() => {
+    try {
+      setTemaClaro(window.localStorage.getItem("landing-tema") === "claro");
+    } catch {
+      // A página continua funcional quando o navegador bloqueia armazenamento local.
+    } finally {
+      setPreferenciaTemaCarregada(true);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!preferenciaTemaCarregada) return;
+    try {
+      window.localStorage.setItem("landing-tema", temaClaro ? "claro" : "escuro");
+    } catch {
+      // A escolha continua valendo durante esta visita mesmo sem persistência.
+    }
+  }, [preferenciaTemaCarregada, temaClaro]);
 
   useEffect(() => {
     const raiz = raizRef.current;
@@ -50,7 +70,7 @@ export default function LandingEvangelismo() {
     const limparQuadros = () => {
       quadros.forEach((quadro) => {
         quadro.style.removeProperty("opacity");
-        quadro.style.removeProperty("visibility");
+        quadro.style.removeProperty("pointer-events");
         quadro.querySelector<HTMLElement>(".landing-frase")?.style.removeProperty("opacity");
         quadro.querySelector<HTMLElement>(".landing-numero")?.style.removeProperty("opacity");
       });
@@ -124,7 +144,7 @@ export default function LandingEvangelismo() {
       const saida = limitar((fase - .56) / .4);
       quadros.forEach((quadro, i) => {
         quadro.style.opacity = i === indice ? "1" : "0";
-        quadro.style.visibility = i === indice ? "visible" : "hidden";
+        quadro.style.pointerEvents = i === indice ? "auto" : "none";
         const frase = quadro.querySelector<HTMLElement>(".landing-frase");
         if (frase) frase.style.opacity = i === indice ? String(entrada * (1 - saida)) : "0";
         const numero = quadro.querySelector<HTMLElement>(".landing-numero");
@@ -169,11 +189,12 @@ export default function LandingEvangelismo() {
         <title>Tem alguém que te ama.</title>
         <meta name="description" content="Uma mensagem sobre o amor de Deus revelado em Jesus Cristo." />
         <meta name="theme-color" content={temaClaro ? "#e7e8eb" : "#202227"} />
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Montserrat:wght@400;500;600;800;900&display=swap" rel="stylesheet" />
       </Head>
-      <main ref={raizRef} className={`landing-evangelismo ${temaClaro ? "landing-tema-claro" : "landing-tema-escuro"}${leituraContinua ? " landing-leitura-continua" : ""}`}>
+      <main
+        ref={raizRef}
+        tabIndex={0}
+        className={`landing-evangelismo ${temaClaro ? "landing-tema-claro" : "landing-tema-escuro"}${leituraContinua ? " landing-leitura-continua" : ""}`}
+      >
         <EfeitosEditorial />
         <header className="landing-cabecalho">
           <span className="landing-assinatura">UMA MENSAGEM PARA VOCÊ</span>
@@ -187,29 +208,47 @@ export default function LandingEvangelismo() {
           </button>
           </div>
         </header>
-        <div className="landing-progresso" aria-label={`Mensagem ${quadroAtual + 1} de ${QUADROS.length}`}>
+        <div
+          className="landing-progresso"
+          role="progressbar"
+          aria-label="Progresso da mensagem"
+          aria-valuemin={1}
+          aria-valuemax={QUADROS.length}
+          aria-valuenow={quadroAtual + 1}
+          aria-valuetext={`Mensagem ${quadroAtual + 1} de ${QUADROS.length}`}
+        >
           <span className="landing-progresso-trilho"><span className="landing-progresso-preenchido" style={{ width: `${((quadroAtual + 1) / QUADROS.length) * 100}%` }} /></span>
           <span className="landing-progresso-texto">{String(quadroAtual + 1).padStart(2, "0")} / {String(QUADROS.length).padStart(2, "0")}</span>
         </div>
         <section className="landing-sequencia" style={{ "--quadros": QUADROS.length } as CSSProperties} aria-label="Uma mensagem sobre o amor">
           <div className="landing-palco">
             {QUADROS.map((quadro, indice) => (
-              <section key={quadro.antes} className="landing-quadro" aria-label={`Mensagem ${indice + 1}`}>
+              <div key={quadro.antes} className="landing-quadro">
                 <span className="landing-numero">{String(indice + 1).padStart(2, "0")} <span aria-hidden="true">/</span> UMA MENSAGEM PARA VOCÊ</span>
                 <div className="landing-frase" role="heading" aria-level={indice === 0 ? 1 : 2} aria-label={quadro.antes + quadro.destaque}>
                   <Palavras texto={quadro.antes} /><Palavras texto={quadro.destaque} destaque />
                 </div>
                 {indice === 0 && <span className="landing-convite-rolagem">Role para descobrir <span aria-hidden="true">↓</span></span>}
-              </section>
+                {indice === 0 && (
+                  <a
+                    className="landing-pular"
+                    href="#continuacao"
+                    onClick={() => window.requestAnimationFrame(() => document.getElementById("landing-final-titulo")?.focus())}
+                  >
+                    Ir direto às opções
+                    <span aria-hidden="true">↓</span>
+                  </a>
+                )}
+              </div>
             ))}
             <canvas className="landing-poeira" aria-hidden="true" />
           </div>
         </section>
-        <section className="landing-final">
+        <section id="continuacao" className="landing-final" aria-labelledby="landing-final-titulo">
           <span className="landing-final-sobretitulo">A HISTÓRIA CONTINUA</span>
-          <h2 className="landing-final-titulo">Quer conhecer mais sobre <span className="landing-destaque">esse amor?</span></h2>
-          <p className="landing-final-descricao">Leia sobre Jesus, a Bíblia e a esperança que a fé cristã apresenta. Sem cadastro e no seu ritmo.</p>
-          <Link href="/conhecer" className="landing-acao landing-acao-principal">Conhecer mais sobre esse amor <span aria-hidden="true">↗</span></Link>
+          <h2 id="landing-final-titulo" tabIndex={-1} className="landing-final-titulo">Quer conhecer mais sobre <span className="landing-destaque">esse amor?</span></h2>
+          <p className="landing-final-descricao">Sem cadastro e no seu ritmo: escolha leituras curtas sobre Jesus, a Bíblia e a salvação, ou abra o leitor bíblico.</p>
+          <Link href="/conhecer" className="landing-acao landing-acao-principal">Conhecer Jesus e a Bíblia <span aria-hidden="true">↗</span></Link>
           <Link href="/leitura" className="landing-acao landing-acao-secundaria">Abrir a Bíblia online <span aria-hidden="true">↗</span></Link>
           <p className="landing-referencias">Para conferir a mensagem: João 3:16, Romanos 3:23 e 5:8, Efésios 2:8-9, 1 Coríntios 15:3-4.</p>
           <p className="landing-assinatura-final">Uma leitura cristã baseada na Bíblia.</p>

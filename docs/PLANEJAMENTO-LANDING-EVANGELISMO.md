@@ -211,8 +211,8 @@ O roadmap não usa datas estimadas porque ainda não há responsáveis, disponib
 | CP1 | Roteiro e primeira redação | **Não iniciado** | Manuscrito completo com referências e notas editoriais. |
 | CP2 | Revisão de conteúdo | **Não iniciado** | Texto revisado e versão editorial aprovada para implementação. |
 | CP3 | Descoberta técnica e mapa de URLs | **Parcial** — rotas principais e artefatos atuais foram inspecionados; falta inventário total e medição em exportação/preview limpo. | Arquitetura escolhida e matriz de rotas/redirecionamentos aprovada. |
-| CP4 | Implementação em ambiente controlado | **Não iniciado** | Landing e app navegáveis em preview, sem publicação no domínio final. |
-| CP5 | Verificação funcional, visual e editorial | **Não iniciado** | Evidências de QA e lista de pendências aceita. |
+| CP4 | Implementação em ambiente controlado | **Concluído nesta branch** — landing e refinamentos de navegação estão disponíveis no Expo Web; nenhuma publicação de domínio foi feita. | Landing e app navegáveis em preview, sem publicação no domínio final. |
+| CP5 | Verificação funcional, visual e editorial | **Parcial** — teste responsivo em nove viewports e smoke test da navegação; falta animação normal, aparelhos, leitores de tela e aprovação editorial. | Evidências de QA e lista de pendências aceita. |
 | CP6 | Aprovação para produção e domínio | **Não iniciado** | Deploy público aprovado, HTTPS e rotas validados. |
 | CP7 | Prova impressa e distribuição | **Não iniciado** | QR testado em exemplar físico e tiragem autorizada pelo responsável. |
 | CP8 | Manutenção | **Não iniciado** | Responsável, processo de correção e renovação do domínio registrados. |
@@ -297,6 +297,9 @@ O impresso e o site podem ter ritmos diferentes: o panfleto pode resumir o evang
 - hub `/conhecer` e páginas de aprofundamento incluídos conforme a matriz de conteúdo aprovada;
 - tema claro/escuro e preferência conforme decisão CP0;
 - sequência de frases com transições acionadas pela rolagem, sem travar o controle do visitante e com alternativa para movimento reduzido;
+- acesso direto à continuação a partir do primeiro quadro, rolagem navegável por teclado e texto dos quadros disponível integralmente na árvore acessível mesmo durante a animação;
+- indicador de progresso semântico, legível e atualizado por quadro (sem anúncio contínuo por pixel), CTAs com descrição do conteúdo de destino, preferência de tema persistida localmente e layout respeitando áreas seguras do celular;
+- fallback de fontes locais do sistema na landing, sem requisição a Google Fonts nessa rota; confirmar a tipografia e a rede da página `/conhecer` em QA;
 - app acessível na raiz definida para ele e leitor em `/leitura`;
 - rotas antigas redirecionadas segundo a matriz aprovada;
 - metadados específicos para landing, app e conteúdo editorial;
@@ -305,7 +308,7 @@ O impresso e o site podem ter ritmos diferentes: o panfleto pode resumir o evang
 
 **Proteção do repositório:** antes de editar, registrar os diffs locais existentes e combinar como o trabalho novo será integrado sem sobrescrever as alterações atuais. Não limpar, resetar ou descartar arquivos existentes para abrir espaço à implementação.
 
-**Checkpoint de saída:** landing, app e leitor podem ser acessados diretamente no preview; o build de preview é reproduzível; as áreas públicas mapeadas continuam funcionando. Nenhuma mudança de DNS ou divulgação do domínio final nesta fase.
+**Checkpoint de saída:** landing, app e leitor podem ser acessados diretamente no preview; o build de preview é reproduzível; as áreas públicas mapeadas continuam funcionando. O primeiro quadro oferece um atalho acessível até as opções; o texto completo continua disponível sem depender do quadro visual ativo; o visitante consegue rolar por teclado. Nenhuma mudança de DNS ou divulgação do domínio final nesta fase.
 
 ### CP5 — Verificação em preview
 
@@ -318,6 +321,12 @@ O impresso e o site podem ter ritmos diferentes: o panfleto pode resumir o evang
 - web na raiz mostrando a landing e app nativo abrindo na Home do app;
 - teste em celular, navegador embutido de QR, conexão lenta, zoom, teclado e leitor de tela;
 - contraste dos dois temas, preferência escolhida, transições durante a rolagem e comportamento com movimento reduzido;
+- confirmar em mobile estreito (320–390 px) que “Ir direto às opções” cabe no primeiro quadro e leva ao destino sem exigir atravessar a narrativa; medir quantas telas/gestos separam a entrada da opção principal;
+- teclado: focar a área principal e percorrer a narrativa com Page Down/Space/setas; conferir contorno de foco, sequência de títulos e continuidade do foco depois de seguir o atalho;
+- leitor de tela: verificar que os dez quadros são apresentados uma vez, na ordem, tanto com animação quanto em leitura contínua; conferir nome e valor do progressbar sem repetição excessiva;
+- comparar a altura/rolagem do palco e do conteúdo em Safari iOS e webview de QR quando barras do navegador entram/saem; validar safe areas superior e inferior;
+- com cache limpo e rede lenta/bloqueio de terceiros, medir LCP/primeiro conteúdo útil e confirmar que a landing não solicita fontes externas; validar se a tipografia de fallback mantém legibilidade;
+- após alterar tema e reabrir a página, confirmar que a preferência local é mantida; conferir o fallback se localStorage estiver bloqueado;
 - service worker atualizado: primeiro acesso, visita antiga, atualização online, abertura de `/biblia` offline e rota inválida;
 - inspeção de pedidos de rede para confirmar ausência de analytics, fontes remotas, pixels e chamadas não planejadas;
 - confirmação de título, descrição, favicon/ícone, metadados sociais, sitemap e status de indexação;
@@ -844,7 +853,7 @@ Este gate foi superado para o **protótipo local**: o usuário definiu `/` como 
 - `/biblia` contém a entrada do app; `/leitura` abre o seletor e os capítulos são exportados em `/leitura/:livro/:capitulo`.
 - Redirecionamentos preservam os caminhos antigos de capítulos e seletores sob `/biblia/...`.
 - `/conhecer` reúne três leituras introdutórias e um catálogo opcional de doze assuntos adaptados em linguagem simples. Cada assunto abre sua própria leitura estática, com referências que levam ao leitor.
-- A landing mantém dez quadros curtos, abre com “Tem alguém que te ama.”, revela Jesus no sexto quadro, explica a mensagem cristã e oferece caminhos opcionais. Usa degradê de cinza, tema claro/escuro, Montserrat e Caveat, dissolução textual progressiva e respeito a `prefers-reduced-motion`.
+- A landing mantém dez quadros de rascunho, abre com “Tem alguém que te ama.”, revela Jesus no sexto quadro, explica a mensagem cristã e oferece caminhos opcionais. Usa degradê de cinza, tema claro/escuro persistido no dispositivo, fontes de sistema sem requisição externa na raiz, dissolução textual progressiva e respeito a `prefers-reduced-motion`.
 - As leituras e os doze temas são rascunhos editoriais. Não há coleta de relatos ou pedidos de oração, endpoint, analytics ou conexão Neon nesta versão.
 - A página explica que os temas são caminhos de leitura, não diagnósticos, e informa com clareza que o site ainda não recebe relatos nem pedidos de oração.
 
@@ -870,7 +879,7 @@ Atualizado em 2026-10-20, após revisão das telas enviadas pelo usuário.
 
 A direção visual é editorial e tipográfica, com referências nas seleções oficiais [Minimal](https://www.awwwards.com/websites/minimal/) e [Typography](https://www.awwwards.com/websites/typography/) do Awwwards. As referências orientam composição, espaços e hierarquia; o projeto não reproduz um layout específico nem declara premiação.
 
-- Paleta: cinza escuro em degradê, texto marfim, acento areia e um cartão claro para destacar o primeiro caminho de leitura. Montserrat Black nos títulos e Caveat nos destaques manuscritos.
+- Paleta: cinza escuro em degradê, texto marfim, acento areia e um cartão claro para destacar o primeiro caminho de leitura. A landing usa fontes do sistema nesta revisão para não bloquear o primeiro conteúdo à espera de fonte externa; reavaliar a direção tipográfica após conferir o fallback em aparelhos.
 - O hub passa a ter navegação horizontal, abertura editorial, cartões com categorias e setas alinhadas, lista temática com divisórias e uma chamada da Bíblia com botão em linha única.
 - A landing usa um palco fixo durante a rolagem. O texto se dissolve em partículas amostradas de suas palavras. O avanço depende da rolagem, inclusive ao voltar. O canvas processa até 1.600 partículas por quadro, com cache limitado, sem bibliotecas adicionais.
 - Hover: luz suave seguindo o ponteiro, deslocamento discreto dos cartões, giro das setas e contraste nos botões. Controles continuam com foco de teclado visível e área de toque adequada.
@@ -880,3 +889,45 @@ A direção visual é editorial e tipográfica, com referências nas seleções 
 - O HTML estático permanece legível se JavaScript, canvas ou observadores não estiverem disponíveis.
 
 Verificação local: exportação concluída, 23 rotas críticas e 1.312 arquivos HTML conferidos. Navegação, tema claro/escuro, avanço da narrativa e leitura contínua revisados no navegador. Layouts conferidos em 390, 960 e 1.280 pixels, sem extravasamento horizontal nos elementos principais. Nenhum erro de console observado nas páginas revisadas. O typecheck continua apontando somente os três erros preexistentes descritos na seção 23. Ainda é necessária a revisão em aparelhos reais antes do lançamento.
+
+## 25. Revisão UX/UI da landing e plano de resolução
+
+**Atualizado em 2026-10-21.** Esta revisão e a implementação estão na branch `codex/landing-evangelismo-mvp`; não alteram `master` nem publicam o domínio. Foram feitas três auditorias independentes (mobile, acessibilidade e jornada) sobre a implementação da branch. Os pontos abaixo separam problemas corrigidos no protótipo, riscos que ainda precisam de validação e decisões editoriais que não devem ser resolvidas por código.
+
+### Achados e decisão
+
+| Prioridade | Problema observado | Resolução aplicada nesta branch | Evidência ou pendência |
+|---|---|---|---|
+| P1 | A chamada principal só aparecia depois dos dez quadros — cerca de dez telas de rolagem no modo animado. | Atalho “Ir direto às opções” no primeiro quadro, com destino nomeado no final. A narrativa completa continua disponível para quem prefere seguir a sequência. Quadros inativos também deixam de interceptar ponteiro/toque. | Confirmar no CP5 em 320–390 px que cabe no primeiro viewport e funciona por toque/clique com animação ligada, teclado e leitor de tela. O número de quadros permanece rascunho editorial, não aprovado para impressão. |
+| P1 | O destino “Abrir a Bíblia online” chega à rota `/leitura`, mas a aba Bíblia permanece em “Abrindo sua última leitura” sem avançar. | **Corrigido nesta branch:** fallback usa a rota canônica `/leitura/escolher` quando não há última leitura ou há erro ao recuperá-la. | Reproduzido antes do ajuste; no reteste do Expo Web, `/leitura` encaminhou para `/leitura/escolher` e renderizou a lista de livros. Typecheck, contratos de jornada e exportação já haviam passado. O seletor foi confirmado visualmente/na árvore acessível no browser. |
+| P1 | `visibility: hidden` removia os quadros não ativos da árvore acessível e da busca do navegador. | A transição altera opacidade visual, sem retirar os outros quadros do documento acessível. Removidos rótulos de região redundantes por quadro; a sequência usa títulos h1/h2. | CP5 precisa conferir a ordem e leitura única dos dez quadros com VoiceOver e NVDA, busca do navegador e movimento reduzido. |
+| P1 | O scrollport era difícil de alcançar por teclado porque não tinha `tabIndex`. | A área principal recebe foco de teclado e contorno visível. O progresso agora expõe `progressbar` com mínimo, máximo, valor e texto por quadro. | CP5: verificar Page Down, Espaço e setas nos navegadores suportados; verificar que o progressbar não gera anúncios repetitivos. |
+| P2 | Havia unidades de viewport diferentes entre quadros, palco, raiz e modo de movimento reduzido; safe areas não estavam consideradas nos controles fixos. | A altura do quadro foi alinhada a `100dvh`, e cabeçalho/progresso usam insetos seguros do aparelho. | É risco de compatibilidade, não defeito reproduzido: verificar barras dinâmicas em Safari iOS e webview do leitor de QR. |
+| P2 | A página requisitava Montserrat e Caveat de um domínio externo na primeira visita. | A landing raiz usa fontes de sistema como fallback e remove os links de Google Fonts. A rota `/conhecer` ainda tem chamadas de fonte próprias; permanecem no escopo do CP5, sem alegar que toda a jornada está livre de terceiros. | Com cache limpo e bloqueio de terceiros, medir carregamento/legibilidade e decidir se hospedar fontes licenciadas localmente vale o custo de bytes. |
+| P2 | O tema escolhido se perdia ao sair e voltar. | A escolha claro/escuro é gravada em `localStorage`, com fallback quando armazenamento está indisponível. | CP5: reabrir, alternar tema, testar bloqueio de armazenamento e contraste em telas reais. |
+| P2 | Os links finais não explicavam o que a pessoa encontraria no hub. | A descrição agora informa que há leituras sobre Jesus, Bíblia e salvação; os dois destinos têm rótulos mais específicos. | Confirmar que a descrição corresponde ao conteúdo publicado depois de CP2. |
+| P2 | As referências no fim eram texto sem navegação. | **Adiado.** Os destinos dependem de revisar a mensagem, aprovar o comportamento de `/leitura` e resolver direitos/identidade do texto ACF descritos nos CP0/CP2/CP3. | Decidir em CP2/CP3 antes de transformar as referências em links; não criar uma promessa de leitura bíblica que os direitos ainda não sustentam. |
+| P3 | Metadados pequenos e pouco contrastados competiam com a leitura no celular. | Aumentado o tamanho do progresso, convite, controle de leitura e área de ação do atalho. | Medir contraste e legibilidade com zoom/tamanho de texto ampliado em CP5. |
+
+### Roadmap de resolução e checkpoints de execução
+
+1. **CP4a — acesso à ação (feito no código, precisa de QA):** adicionar atalho sem remover a narrativa; destino do link com título associado; conferir nomes e foco. No modo animado, somente o quadro atual recebe eventos de ponteiro, evitando camadas transparentes sobre o atalho. Saída: primeira tela tem caminho visível e tocável para ambas as opções finais.
+2. **CP4b — semântica e teclado (feito no código, precisa de QA):** manter todos os quadros na árvore acessível durante efeitos de opacidade; permitir foco/rolagem no conteúdo principal; expor o progresso apenas por etapa. Saída: nenhum conteúdo depende da animação para ser lido.
+3. **CP4c — mobile e continuidade (parcial):** alinhar unidades do palco, considerar safe areas e persistir tema; usar fonte local do sistema na rota de entrada. Saída: implementação pronta para exportar, sem afirmar compatibilidade até a prova em dispositivos.
+4. **CP5a — regressão visual e funcional (parcial):** o encaminhamento `/leitura` → `/leitura/escolher` foi confirmado em preview do Expo Web e a lista de livros renderiza. Medidos nove viewports: 320×640, 360×800, 375×812, 390×844, 414×896, 768×1024, 1024×768, 1280×800 e 1440×900. Em todos, a chamada do primeiro quadro ficou dentro do viewport, os elementos da seção final ficaram dentro da largura disponível e não houve overflow horizontal. Em 320×640, o atalho chegou à seção final, focou o título e o CTA bíblico abriu o seletor; Voltar retornou à seção final. Em 390×844, o foco visível e o destino do atalho também foram confirmados. Este navegador está com `prefers-reduced-motion` ativo, então a sequência aparece em leitura contínua e o controle manual fica oculto; falta testar animação ligada e alternância manual com preferência normal. Ainda faltam toque real, Safari iOS, Chrome Android, navegador embutido de QR, safe areas físicas e repetição em aparelhos reais.
+5. **CP5b — acessibilidade (pendente):** navegar apenas por teclado; testar VoiceOver (Safari/iOS) e NVDA (Firefox ou Chrome); conferir ordem de headings, semântica/valores do progressbar, foco após âncora, busca de frase e `prefers-reduced-motion` ligado/desligado.
+6. **CP5c — aparelho e rede (pendente):** testar Safari iOS, Chrome Android e ao menos um navegador embutido de QR; repetir com barras do navegador abertas/fechadas, safe areas, rede lenta e fontes externas bloqueadas. Salvar capturas e resultados do painel de rede.
+7. **Gate CP5 — aceitar ou corrigir:** só marcar QA concluído quando não houver bloqueador de conteúdo oculto, CTA inacessível, corte/overflow, navegação travada, erro de rota ou pedido externo não planejado. Registrar falhas e repetir apenas os casos afetados depois do ajuste.
+8. **CP6/CP7 continuam bloqueados pelos gates existentes:** revisão editorial/pastoral, responsável, direitos, domínio, privacidade e operação do impresso não são inferidos por esta implementação. Nada desta branch autoriza produção, DNS, divulgação do QR ou impressão.
+
+### Critérios de aceite para esta revisão
+
+- Um visitante pode abrir a continuação a partir do primeiro quadro em um gesto, sem ser obrigado a percorrer dez telas.
+- Com animação ligada, todas as frases permanecem acessíveis e na ordem; teclado consegue mover o scrollport e o foco é visível.
+- No modo animado, quadros transparentes inativos não interceptam o atalho ou os controles visíveis; confirmar acionamento por toque/clique em CP5.
+- O indicador anuncia uma posição por quadro, tem nome e valores acessíveis, sem `aria-live` a cada atualização de rolagem.
+- As dimensões são legíveis em largura de 320 px e com zoom; nenhum elemento fixo encobre o foco ou a chamada.
+- A preferência do tema sobrevive a uma nova visita no mesmo navegador e a página segue utilizável se armazenamento falhar.
+- `/conhecer` abriu e apresentou as três leituras introdutórias e doze temas no Expo Web. O defeito de `/leitura` foi corrigido e retestado: após o fallback para a rota canônica, a URL chegou a `/leitura/escolher` e a lista de livros apareceu. O CP5 continua incompleto até os testes de viewport/touch e a revisão em aparelhos e leitores de tela.
+- Landing raiz não precisa de Google Fonts para exibir o conteúdo; nos nove viewports listados, a chamada inicial ficou visível e não houve overflow horizontal; o atalho e o CTA bíblico funcionaram nas larguras 320 e 390 px testadas. O preview usou movimento reduzido. Compatibilidade em aparelhos, toque com animação ligada, modo contínuo acionado manualmente e leitores de tela ainda precisam de evidência no CP5.
+- Conteúdo da narrativa continua explicitamente como rascunho até aprovação pastoral; referências não ganham links para ACF sem resolver direitos e destino.

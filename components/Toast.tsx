@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from "react";
-import { Animated, Platform, Pressable, Text, View } from "react-native";
+import { Animated, Platform, Pressable, Text, useWindowDimensions, View } from "react-native";
 import { IconeUI } from "./icone/IconeUI";
 import { ouvirToast, type PayloadToast, type SeveridadeToast } from "../core/util/toast";
 import { useMovimentoReduzido } from "../core/util/useMovimentoReduzido";
+import { BREAKPOINT_DESKTOP } from "../core/util/responsivo";
 
 const DURACAO_PADRAO_MS = 2000;
 const DURACAO_COM_ACAO_MS = 4000;
@@ -21,6 +22,7 @@ const ESTILOS_SEVERIDADE: Record<SeveridadeToast, { container: string; texto: st
 // marcação de capítulos em massa, pra reverter sem precisar refazer a
 // seleção manualmente.
 export function Toast() {
+  const { width } = useWindowDimensions();
   const [payload, setPayload] = useState<PayloadToast | null>(null);
   const opacidade = useRef(new Animated.Value(0)).current;
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -103,7 +105,7 @@ export function Toast() {
       pointerEvents="box-none"
       style={{
         position: "absolute",
-        bottom: 90,
+        bottom: Platform.OS === "web" && width >= BREAKPOINT_DESKTOP ? 24 : 90,
         left: 0,
         right: 0,
         alignItems: "center",

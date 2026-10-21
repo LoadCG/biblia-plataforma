@@ -8,6 +8,8 @@ type Opcoes = {
 };
 
 const DISTANCIA_MINIMA_ARRASTO = 5;
+const TEMPO_LONGO_TOQUE = 320;
+const DISTANCIA_TOLERADA_ANTES_DO_TOQUE_LONGO = 9;
 
 // Seleção por arraste em desktop/web. O intervalo é sempre calculado entre
 // a âncora e a célula sob o ponteiro; isso permite voltar sobre o gesto e
@@ -30,6 +32,12 @@ export function useSelecaoArrasto({ ativo, selecionados, onMudarSelecao }: Opcoe
     let ancora: number | null = null;
     let ultimoCapitulo: number | null = null;
     let ponteiroId: number | null = null;
+    let toqueId: number | null = null;
+    let temporizadorToque: ReturnType<typeof setTimeout> | null = null;
+    let toqueInicioX = 0;
+    let toqueInicioY = 0;
+    let toquePendente = false;
+    let capituloToqueInicio: number | null = null;
     let removerClickCapturando = false;
     let inicioX = 0;
     let inicioY = 0;
@@ -60,6 +68,9 @@ export function useSelecaoArrasto({ ativo, selecionados, onMudarSelecao }: Opcoe
     }
 
     function aoPressionar(e: PointerEvent) {
+      // Toque tem um ciclo próprio com breve espera: o navegador precisa
+      // distinguir uma intenção de arrastar de uma rolagem iniciada na grade.
+      if (e.pointerType === "touch") return;
       if (!estadoRef.current.ativo || e.button !== 0 || e.isPrimary === false) return;
       const capitulo = capituloNoPonto(e.clientX, e.clientY);
       if (capitulo === null) return;
@@ -132,6 +143,7 @@ export function useSelecaoArrasto({ ativo, selecionados, onMudarSelecao }: Opcoe
     function aoPerderFoco() {
       moveu = true;
       aoSoltar();
+      cancelarToquePendente();
     }
 
     function aoCancelar(e: PointerEvent) {
@@ -140,8 +152,119 @@ export function useSelecaoArrasto({ ativo, selecionados, onMudarSelecao }: Opcoe
       aoSoltar(e);
     }
 
+    function cancelarToquePendente() {
+      if (temporizadorToque !== null) clearTimeout(temporizadorToque);
+      temporizadorToque = null;
+      toqueId = null;
+      toquePendente = false;
+      capituloToqueInicio = null;
+    }
+
+    function buscarToque(toques: TouchList, id: number): Touch | null {
+      for (let indice = 0; indice < toques.length; indice += 1) {
+        const toque = toques.item(indice);
+        if (toque?.identifier === id) return toque;
+      }
+      return null;
+    }
+
+    function aoIniciarToque(e: TouchEvent) {
+      if (!estadoRef.current.ativo || arrastando || toquePendente || e.touches.length !== 1) return;
+      const toque = e.changedTouches.item(0);
+      if (!toque) return;
+      const capitulo = capituloNoPonto(toque.clientX, toque.clientY);
+      if (capitulo === null) return;
+
+      toquePendente = true;
+      toqueId = toque.identifier;
+      capituloToqueInicio = capitulo;
+      toqueInicioX = toque.clientX;
+      toqueInicioY = toque.clientY;
+      temporizadorToque = setTimeout(() => {
+        if (!toquePendente || toqueId !== toque.identifier) return;
+        toquePendente = false;
+        temporizadorToque = null;
+        arrastando = true;
+        moveu = false;
+        ancora = capitulo;
+        ultimoCapitulo = capitulo;
+        ponteiroId = null;
+        inicioX = toqueInicioX;
+        inicioY = toqueInicioY;
+        base = new Set(estadoRef.current.selecionados);
+        adicionando = !base.has(capitulo);
+        node.style.userSelect = "none";
+        node.style.webkitUserSelect = "none";
+        aplicarIntervalo(capitulo, capitulo);
+      }, TEMPO_LONGO_TOQUE);
+    }
+
+    function aoMoverToque(e: TouchEvent) {
+      if (toqueId === null) return;
+      const toque = buscarToque(e.touches, toqueId) ?? buscarToque(e.changedTouches, toqueId);
+      if (!toque) return;
+
+      if (toquePendente) {
+        if (Math.hypot(toque.clientX - toqueInicioX, toque.clientY - toqueInicioY) > DISTANCIA_TOLERADA_ANTES_DO_TOQUE_LONGO) {
+          cancelarToquePendente();
+        }
+        return;
+      }
+      if (!arrastando || ancora === null) return;
+
+      // O listener é explicitamente não passivo para cancelar a rolagem só
+      // depois do toque longo. Toques e rolagens normais seguem sem bloqueio.
+      e.preventDefault();
+      if (!moveu && Math.hypot(toque.clientX - inicioX, toque.clientY - inicioY) < DISTANCIA_MINIMA_ARRASTO) return;
+      moveu = true;
+      const capitulo = capituloNoPonto(toque.clientX, toque.clientY);
+      if (capitulo === null || capitulo === ultimoCapitulo) return;
+      ultimoCapitulo = capitulo;
+      aplicarIntervalo(ancora, capitulo);
+    }
+
+    function aoFinalizarToque(e: TouchEvent) {
+      if (toqueId === null) return;
+      const toqueFinalizado = buscarToque(e.changedTouches, toqueId);
+      if (!toqueFinalizado) return;
+      if (toquePendente) {
+        const capitulo = capituloToqueInicio;
+        cancelarToquePendente();
+        if (capitulo !== null) {
+          base = new Set(estadoRef.current.selecionados);
+          adicionando = !base.has(capitulo);
+          aplicarIntervalo(capitulo, capitulo);
+        }
+        return;
+      }
+      if (arrastando) {
+        // O toque longo já aplicou a célula inicial. Evita que o click
+        // sintetizado pelo navegador alterne a seleção uma segunda vez.
+        moveu = true;
+        aoSoltar();
+      }
+      toqueId = null;
+      capituloToqueInicio = null;
+    }
+
+    function aoCancelarToque() {
+      if (toquePendente) {
+        cancelarToquePendente();
+        return;
+      }
+      if (!arrastando) return;
+      moveu = true;
+      aoSoltar();
+      toqueId = null;
+      capituloToqueInicio = null;
+    }
+
     node.addEventListener("pointerdown", aoPressionar);
     node.addEventListener("click", aoClicarCapturando, true);
+    node.addEventListener("touchstart", aoIniciarToque, { passive: true });
+    node.addEventListener("touchmove", aoMoverToque, { passive: false });
+    node.addEventListener("touchend", aoFinalizarToque);
+    node.addEventListener("touchcancel", aoCancelarToque);
     window.addEventListener("pointermove", aoMover);
     window.addEventListener("pointerup", aoSoltar);
     window.addEventListener("pointercancel", aoCancelar);
@@ -152,8 +275,14 @@ export function useSelecaoArrasto({ ativo, selecionados, onMudarSelecao }: Opcoe
       // em seleção simples.
       moveu = true;
       aoSoltar();
+      cancelarToquePendente();
+      toqueId = null;
       node.removeEventListener("pointerdown", aoPressionar);
       node.removeEventListener("click", aoClicarCapturando, true);
+      node.removeEventListener("touchstart", aoIniciarToque);
+      node.removeEventListener("touchmove", aoMoverToque);
+      node.removeEventListener("touchend", aoFinalizarToque);
+      node.removeEventListener("touchcancel", aoCancelarToque);
       window.removeEventListener("pointermove", aoMover);
       window.removeEventListener("pointerup", aoSoltar);
       window.removeEventListener("pointercancel", aoCancelar);

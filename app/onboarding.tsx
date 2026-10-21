@@ -14,7 +14,7 @@ const PASSOS = [
 export default function Onboarding() {
   const [passo, setPasso] = useState(0);
   const atual = PASSOS[passo];
-  async function finalizar(destino: "/" | "/planos") {
+  async function finalizar(destino: "/biblia" | "/planos") {
     try {
       await concluirOnboarding();
       router.replace(destino);
@@ -44,11 +44,11 @@ export default function Onboarding() {
           </Pressable>
         ) : (
           <View className="gap-3">
-            <Pressable onPress={() => finalizar("/")} accessibilityRole="button" className="rounded-full bg-cor-destaque dark:bg-cor-destaque-dark px-5 py-3.5 items-center active:opacity-80"><Text className="text-white dark:text-cor-texto font-bold">Começar a ler</Text></Pressable>
+            <Pressable onPress={() => finalizar("/biblia")} accessibilityRole="button" className="rounded-full bg-cor-destaque dark:bg-cor-destaque-dark px-5 py-3.5 items-center active:opacity-80"><Text className="text-white dark:text-cor-texto font-bold">Começar a ler</Text></Pressable>
             <Pressable onPress={() => finalizar("/planos")} accessibilityRole="button" className="rounded-full border border-cor-borda dark:border-cor-borda-dark px-5 py-3.5 items-center active:opacity-80"><Text className="text-cor-texto dark:text-cor-texto-dark font-bold">Explorar planos</Text></Pressable>
           </View>
         )}
-        <Pressable onPress={() => finalizar("/")} accessibilityRole="button" className="items-center mt-5 py-2 active:opacity-60"><Text className="text-sm text-cor-texto-suave dark:text-cor-texto-suave-dark">Pular apresentação</Text></Pressable>
+        <Pressable onPress={() => finalizar("/biblia")} accessibilityRole="button" className="items-center mt-5 py-2 active:opacity-60"><Text className="text-sm text-cor-texto-suave dark:text-cor-texto-suave-dark">Pular apresentação</Text></Pressable>
       </View>
     </View>
   );

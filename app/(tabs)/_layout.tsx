@@ -3,6 +3,7 @@ import { Tabs, TabList, TabSlot, TabTrigger, type TabTriggerSlotProps } from "ex
 import { forwardRef, startTransition, useEffect } from "react";
 import { Platform, Pressable, Text, useWindowDimensions, View } from "react-native";
 import { useColorScheme } from "../../core/theme";
+import { BREAKPOINT_DESKTOP } from "../../core/util/responsivo";
 
 // Este projeto não tem @react-navigation/bottom-tabs disponível como
 // pacote isolado (o Expo Router SDK 57 não depende mais dele
@@ -22,8 +23,6 @@ import { useColorScheme } from "../../core/theme";
 //    `className` a eles não tem efeito (o Tailwind nunca chega no DOM).
 //    Por isso essas três usam `style` inline com cores lidas na mão do
 //    tema, e só o conteúdo *dentro* deles (`BotaoAba`) usa `className`.
-const BREAKPOINT_DESKTOP = 768;
-
 const CORES = {
   light: { fundo: "#faf8f4", elevado: "#ffffff", borda: "#e6ded0", texto: "#2a241c", ativo: "#8a5a2b", inativo: "#6b6153" },
   dark: { fundo: "#1b1712", elevado: "#262019", borda: "#3a3226", texto: "#ece5d8", ativo: "#e0a75e", inativo: "#b3a894" },
@@ -127,6 +126,7 @@ export default function TabsLayout() {
         {sidebar ? (
           <TabList
             style={{
+              display: "flex",
               width: 224,
               flexDirection: "column",
               alignItems: "stretch",

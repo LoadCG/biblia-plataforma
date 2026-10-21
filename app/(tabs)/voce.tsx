@@ -4,16 +4,15 @@ import { Image, Platform, Pressable, RefreshControl, ScrollView, Text, useWindow
 import { IconeUI } from "../../components/icone/IconeUI";
 import { BotaoTema } from "../../components/BotaoTema";
 import { CardAtividade } from "../../components/CardAtividade";
+import { CardStreak } from "../../components/CardStreak";
 import { EstadoVazio } from "../../components/EstadoVazio";
-import { FogoStreak } from "../../components/FogoStreak";
 import { IconeConquista } from "../../components/IconeConquista";
 import { ModalPerfil } from "../../components/ModalPerfil";
 import { EstadoCarregando } from "../../components/EstadoCarregando";
 import { EstadoErro } from "../../components/EstadoErro";
 import { calcularConquistas, selecionarDestaquesConquistas, type Conquista } from "../../core/content/conquistas";
 import { carregarAtividade, chaveAtividade, type ItemAtividade } from "../../core/estatisticas/atividade";
-import { calcularSequenciaAtual } from "../../core/estatisticas/streak";
-import { mensagemStreak } from "../../core/estatisticas/mensagemStreak";
+import { useResumoSequencia } from "../../core/estatisticas/useResumoSequencia";
 import { livrosLidosRepository, perfilRepository, progressoRepository } from "../../core/repositories";
 import { PERFIL_PADRAO, type Perfil } from "../../core/repositories/PerfilRepository";
 import { useColorScheme } from "../../core/theme";
@@ -64,7 +63,8 @@ export default function Voce() {
   const ownerId = useOwnerId();
   const largura = useWindowDimensions().width;
   const desktop = Platform.OS === "web" && largura >= 1200;
-  const [sequencia, setSequencia] = useState(0);
+  const [datasLeitura, setDatasLeitura] = useState<string[]>([]);
+  const resumoSequencia = useResumoSequencia(datasLeitura);
   const [conquistas, setConquistas] = useState<Conquista[]>([]);
   const [atividade, setAtividade] = useState<ItemAtividade[]>([]);
   const refMedalhas = useArrastarParaRolar();
@@ -87,7 +87,7 @@ export default function Voce() {
         carregarAtividade(ownerId),
         perfilRepository.obter(ownerId),
       ]);
-      setSequencia(calcularSequenciaAtual(progresso.map((p) => p.lidoEm)));
+      setDatasLeitura(progresso.map((p) => p.lidoEm));
       setConquistas(calcularConquistas(new Set(lidos)));
       setAtividade(ativ);
       setPerfil(perfilCarregado);
@@ -219,7 +219,7 @@ export default function Voce() {
               ) : null}
             </View>
             {recentes.length === 0 ? (
-              <View className="rounded-2xl border border-cor-borda dark:border-cor-borda-dark bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark mb-4"><EstadoVazio titulo="Sua jornada começa aqui" descricao="Salve um versículo, faça uma nota ou grife uma passagem durante a leitura." acao={{ rotulo: "Abrir a Bíblia", aoPressionar: () => router.push("/biblia") }} /></View>
+              <View className="rounded-2xl border border-cor-borda dark:border-cor-borda-dark bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark mb-4"><EstadoVazio titulo="Sua jornada começa aqui" descricao="Salve um versículo, faça uma nota ou grife uma passagem durante a leitura." acao={{ rotulo: "Abrir a Bíblia", aoPressionar: () => router.push("/leitura") }} /></View>
             ) : (
               recentes.map((item) => <CardAtividade key={chaveAtividade(item)} item={item} onMudou={() => { void carregarTudo(true); }} />)
             )}
@@ -227,23 +227,7 @@ export default function Voce() {
 
           <View className={desktop ? "flex-1 min-w-0" : ""}>
             <Text accessibilityRole="header" className="text-base font-extrabold text-cor-texto dark:text-cor-texto-dark mb-3">Seu progresso</Text>
-            <View className="rounded-3xl border border-cor-borda dark:border-cor-borda-dark px-5 py-5 mb-4 flex-row items-center justify-between bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark">
-              <View className="flex-1">
-                <Text className="text-xs font-bold uppercase tracking-wide text-cor-texto-suave dark:text-cor-texto-suave-dark">Sequência de leitura</Text>
-                <Text className="text-4xl font-extrabold text-cor-texto dark:text-cor-texto-dark">{sequencia}</Text>
-                <Text style={{ color: cores.textoSuave }} className="text-xs font-semibold mt-0.5">
-                  {sequencia === 1 ? "dia seguido lendo" : "dias seguidos lendo"}
-                </Text>
-                {sequencia > 0 ? <Text style={{ color: cores.destaque }} className="text-xs font-bold mt-1.5">{mensagemStreak(sequencia)}</Text> : null}
-                {sequencia === 0 ? (
-                  <Pressable onPress={() => router.push("/biblia")} accessibilityRole="link" accessibilityLabel="Começar leitura bíblica" className="self-start min-h-11 flex-row items-center gap-1.5 mt-2 active:opacity-70">
-                    <Text className="text-xs font-bold text-cor-destaque dark:text-cor-destaque-dark">Começar leitura</Text>
-                    <IconeUI name="next" size={14} color={cores.destaque} />
-                  </Pressable>
-                ) : null}
-              </View>
-              <View className="w-16 h-16 rounded-full bg-cor-destaque-fundo dark:bg-cor-destaque-fundo-dark items-center justify-center"><FogoStreak ativo={sequencia > 0} tamanho={44} /></View>
-            </View>
+            <CardStreak resumo={resumoSequencia} />
 
             <View className="rounded-3xl border border-cor-borda dark:border-cor-borda-dark px-4 py-4 mb-4 bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark">
               <View className="flex-row items-center justify-between gap-2 mb-2">

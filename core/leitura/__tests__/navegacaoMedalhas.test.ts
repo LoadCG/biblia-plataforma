@@ -2,7 +2,7 @@ import { normalizarOrigemMedalhas, obterDestinoVoltaMedalhas } from "../navegaca
 
 describe("retorno da tela de medalhas", () => {
   it("retorna ao contexto conhecido quando a lista foi aberta pela navegação interna", () => {
-    expect(obterDestinoVoltaMedalhas("inicio", false)).toBe("/");
+    expect(obterDestinoVoltaMedalhas("inicio", false)).toBe("/biblia");
     expect(obterDestinoVoltaMedalhas("voce", false)).toBe("/voce");
   });
 

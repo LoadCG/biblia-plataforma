@@ -231,8 +231,13 @@ export default function Configuracoes() {
         const link = document.createElement("a");
         link.href = url;
         link.download = `meus-dados-${new Date().toISOString().slice(0, 10)}.json`;
+        link.style.display = "none";
+        document.body.appendChild(link);
         link.click();
-        URL.revokeObjectURL(url);
+        link.remove();
+        // Alguns navegadores ainda precisam do object URL depois do clique para
+        // concluir o download. Revogar imediatamente pode gerar arquivo vazio.
+        window.setTimeout(() => URL.revokeObjectURL(url), 1000);
         mostrarToast("Dados exportados!", { severidade: "sucesso" });
       } else {
         await Share.share({ message: json });

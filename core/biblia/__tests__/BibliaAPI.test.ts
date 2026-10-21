@@ -174,6 +174,13 @@ describe("busca global nativa", () => {
     );
   });
 
+  it("trata um versículo inexistente como busca sem resultados, não como erro", async () => {
+    (db.getAllAsync as jest.Mock).mockResolvedValueOnce([]);
+
+    await expect(buscarGlobal("João 3:99")).resolves.toEqual([]);
+    expect(db.getAllAsync).toHaveBeenCalledTimes(1);
+  });
+
   it("aceita a abreviação do livro no filtro da referência direta", async () => {
     (db.getAllAsync as jest.Mock).mockResolvedValueOnce([
       { nomeLivro: "João", versiculo: 16, texto: "Porque Deus amou o mundo." },

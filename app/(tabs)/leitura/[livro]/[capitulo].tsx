@@ -130,6 +130,7 @@ export default function Leitura() {
         : null;
 
   const [dados, setDados] = useState<CapituloTexto | null>(null);
+  const requisicaoCapitulo = useRef(0);
   const titulosPorVersiculo = useMemo(
     () => indexarTitulosSecao(obterTitulosSecao(livro?.slug ?? "", capitulo)),
     [livro?.slug, capitulo]
@@ -293,14 +294,24 @@ export default function Leitura() {
 
   function carregarCapitulo() {
     if (!valido || !livro) return;
+    const requisicao = ++requisicaoCapitulo.current;
     setDados(null);
     setErro(null);
     buscarReferencia(`${livro.nome} ${capitulo}`)
-      .then(setDados)
-      .catch((e) => setErro(mensagemErroAmigavel(e)));
+      .then((capituloCarregado) => {
+        if (requisicao === requisicaoCapitulo.current) setDados(capituloCarregado);
+      })
+      .catch((e) => {
+        if (requisicao === requisicaoCapitulo.current) setErro(mensagemErroAmigavel(e));
+      });
   }
 
-  useEffect(carregarCapitulo, [valido, livro, capitulo]);
+  useEffect(() => {
+    carregarCapitulo();
+    return () => {
+      requisicaoCapitulo.current++;
+    };
+  }, [valido, livro, capitulo]);
 
   useEffect(() => {
     if (!valido || !livro) return;
@@ -741,9 +752,9 @@ export default function Leitura() {
   function alternarAudio() {
     if (audioEstado === "iniciando" || audioEstado === "pausando" || audioEstado === "interrompendo") return;
     if (audioEstado === "reproduzindo") {
-      pausarAudio();
+      pausarAudio(origemAudio);
     } else if (audioEstado === "pausado" || audioEstado === "interrompido" || audioEstado === "erro") {
-      continuarAudio();
+      continuarAudio(origemAudio);
     } else {
       iniciarLeituraAudio();
     }

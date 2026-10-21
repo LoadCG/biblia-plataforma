@@ -79,4 +79,5 @@ describe("BibliaAPI (web) - retry em falha transitória", () => {
     expect((erroCapturado as ErroBusca).tipo).toBe("invalido");
     expect(fetchMock).toHaveBeenCalledTimes(1);
   }, 10000);
+
 });

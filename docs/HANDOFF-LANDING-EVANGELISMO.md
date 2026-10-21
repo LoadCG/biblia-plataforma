@@ -26,8 +26,8 @@ A landing inclui um atalho no primeiro quadro para a continuação, foco do tít
 2. Executar em aparelhos: Safari iOS, Chrome Android e navegador embutido de QR; conferir safe areas e barras dinâmicas.
 3. Executar CP5b com teclado, VoiceOver e NVDA; conferir ordem de títulos, progressbar, foco e preferência de movimento reduzido.
 4. Executar CP5c com rede lenta/cache limpo e verificar fontes externas em `/conhecer`.
-5. Resolver os contratos preexistentes que fazem `scripts/verificar-acessibilidade.js` e `scripts/verificar-ui-responsiva.js` falharem em outras telas (seletor antigo e capítulo bíblico).
-6. A suíte Jest anteriormente ficou em 27/28 suites (200/201 testes); a falha preexistente está em `core/leitura/__tests__/navegacaoMedalhas.test.ts` (espera `/`, recebe `/biblia`).
+5. Resolvido no estado local integrado: `npm run check:a11y` e `npm run check:ui` passaram com 111 e 38 contratos, respectivamente.
+6. A suíte Jest registrou historicamente 27/28 suites (200/201 testes), com divergência em `core/leitura/__tests__/navegacaoMedalhas.test.ts`. Não foi reexecutada nesta integração; confirmar antes de tratar como falha atual.
 7. CP0–CP3 e CP6–CP7 continuam com gates editoriais, direitos, conteúdo, domínio, privacidade e impressão. A narrativa segue rascunho até aprovação pastoral; não publicar nem divulgar QR com base apenas neste trabalho.
 
 ## Arquivos de trabalho

@@ -179,22 +179,22 @@ export function CardVersiculoDia({ periodoDoDia }: Props) {
   function ouvirVersiculoDoDia() {
     if (!dados?.texto) return;
     if (audioEstado === "reproduzindo") {
-      pausarAudio();
+      pausarAudio(origemAudio);
     } else if (audioEstado === "pausado" || audioEstado === "interrompido" || audioEstado === "erro") {
-      continuarAudio();
+      continuarAudio(origemAudio);
     } else {
       iniciarAudio([{ numero: ref?.versiculo ?? 1, texto: dados.texto }], observadorAudio, 0, origemAudio);
     }
   }
 
   const acaoAudio: AcaoMenu = audioEstado === "reproduzindo"
-    ? { label: suportaPausaAudio() ? "Pausar leitura" : "Interromper leitura", icone: suportaPausaAudio() ? "pause" : "close", onPress: pausarAudio }
+    ? { label: suportaPausaAudio() ? "Pausar leitura" : "Interromper leitura", icone: suportaPausaAudio() ? "pause" : "close", onPress: () => pausarAudio(origemAudio) }
     : audioEstado === "pausado"
-      ? { label: "Continuar leitura", icone: "audio", onPress: continuarAudio }
+      ? { label: "Continuar leitura", icone: "audio", onPress: () => continuarAudio(origemAudio) }
       : audioEstado === "interrompido"
-        ? { label: `Continuar do início do versículo ${audioVersiculo ?? "atual"}`, icone: "audio", onPress: continuarAudio }
+        ? { label: `Continuar do início do versículo ${audioVersiculo ?? "atual"}`, icone: "audio", onPress: () => continuarAudio(origemAudio) }
     : audioEstado === "erro"
-      ? { label: "Tentar ouvir novamente", icone: "audio", onPress: continuarAudio }
+      ? { label: "Tentar ouvir novamente", icone: "audio", onPress: () => continuarAudio(origemAudio) }
       : { label: "Ouvir este versículo", icone: "audio", onPress: ouvirVersiculoDoDia };
 
   const rotuloEstadoAudio = audioEstado === "iniciando"
@@ -216,7 +216,7 @@ export function CardVersiculoDia({ periodoDoDia }: Props) {
   const acoesMais: AcaoMenu[] = [
     ...(suportaAudio() && !["iniciando", "pausando", "interrompendo"].includes(audioEstado) ? [acaoAudio] : []),
     { label: "Copiar", icone: "copy", onPress: () => copiar(textoParaCompartilhar()) },
-    ...(ref ? [{ label: "Ver capítulo inteiro", icone: "open-book" as const, onPress: () => router.push(`/biblia/${ref.livroSlug}/${ref.capitulo}?versiculo=${ref.versiculo}`) }] : []),
+    ...(ref ? [{ label: "Ver capítulo inteiro", icone: "open-book" as const, onPress: () => router.push(`/leitura/${ref.livroSlug}/${ref.capitulo}?versiculo=${ref.versiculo}`) }] : []),
     ...(ref ? [{ label: "Resumo do livro", icone: "book-collection" as const, onPress: () => router.push(`/resumos/${ref.livroSlug}`) }] : []),
   ];
 
@@ -314,7 +314,7 @@ export function CardVersiculoDia({ periodoDoDia }: Props) {
                   {rotuloEstadoAudio}
                 </Text>
                 <Pressable
-                  onPress={audioEstado === "reproduzindo" ? pausarAudio : continuarAudio}
+                  onPress={() => audioEstado === "reproduzindo" ? pausarAudio(origemAudio) : continuarAudio(origemAudio)}
                   disabled={audioEstado === "iniciando" || audioEstado === "pausando" || audioEstado === "interrompendo"}
                   accessibilityRole="button"
                   accessibilityLabel={audioEstado === "iniciando"

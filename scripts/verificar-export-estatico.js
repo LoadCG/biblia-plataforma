@@ -14,7 +14,7 @@ const casos = [
   ["conhecer/temas/relacionamentos-e-limites.html", "Relacionamentos e limites | Tem alguém que te ama", "O amor busca o bem do outro"],
   ["conhecer/temas/raiva-e-conflitos.html", "Raiva e conflitos | Tem alguém que te ama", "Uma pausa pode abrir espaço para ouvir"],
   ["conhecer/temas/valor-e-autoimagem.html", "Valor e autoimagem | Tem alguém que te ama", "Seu valor não depende de desempenho"],
-  ["conhecer/temas/alcool-e-outras-drogas.html", "Álcool e outras drogas | Tem alguém que te ama", "A dependência não é motivo para humilhar"],
+  ["conhecer/temas/alcool-e-outras-drogas.html", "Álcool e outras drogas | Tem alguém que te ama", "Ninguém deve ser humilhado pelo uso de substâncias"],
   ["conhecer/temas/adiamento-e-recomeco.html", "Adiamento e recomeço | Tem alguém que te ama", "Nem todo adiamento tem a mesma causa"],
   ["conhecer/temas/ansiedade-e-preocupacao.html", "Ansiedade e preocupação | Tem alguém que te ama", "A Bíblia não manda esconder o que pesa"],
   ["conhecer/temas/rejeicao-e-pertencimento.html", "Rejeição e pertencimento | Tem alguém que te ama", "Ser recebido importa"],

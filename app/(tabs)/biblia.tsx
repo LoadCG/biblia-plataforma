@@ -11,7 +11,7 @@ import { BotaoTema } from "../../components/BotaoTema";
 import { calcularConquistas } from "../../core/content/conquistas";
 import { livros, obterLivro } from "../../core/content/livros";
 import { planosLeitura } from "../../core/content/planos";
-import { calcularSequenciaAtual } from "../../core/estatisticas/streak";
+import { useResumoSequencia } from "../../core/estatisticas/useResumoSequencia";
 import { obterLembretePlano, type LembretePlano } from "../../core/leitura/lembretePlanos";
 import { livrosLidosRepository, progressoRepository } from "../../core/repositories";
 import { useColorScheme } from "../../core/theme";
@@ -127,7 +127,7 @@ export default function Inicio() {
   const parametros = useLocalSearchParams<{ previewPeriodo?: string | string[] }>();
   const ownerId = useOwnerId();
   const [lidos, setLidos] = useState<string[]>([]);
-  const [sequencia, setSequencia] = useState(0);
+  const [datasLeitura, setDatasLeitura] = useState<string[]>([]);
   const [recentes, setRecentes] = useState<CapituloLido[]>([]);
   const [estadoProgresso, setEstadoProgresso] = useState<"carregando" | "disponivel" | "erro">("carregando");
   const [tentativaCarregar, setTentativaCarregar] = useState(0);
@@ -147,7 +147,7 @@ export default function Inicio() {
     let ativo = true;
     setEstadoProgresso("carregando");
     setLidos([]);
-    setSequencia(0);
+    setDatasLeitura([]);
     setRecentes([]);
     setLembretePlano(null);
     Promise.allSettled([
@@ -160,7 +160,7 @@ export default function Inicio() {
       if (resultadoLidos.status === "fulfilled") setLidos(resultadoLidos.value);
       if (resultadoProgresso.status === "fulfilled") {
         const itens = resultadoProgresso.value;
-        setSequencia(calcularSequenciaAtual(itens.map((i) => i.lidoEm)));
+        setDatasLeitura(itens.map((i) => i.lidoEm));
         setRecentes(capitulosRecentes(itens, 10));
       }
       if (resultadoLembrete.status === "fulfilled") setLembretePlano(resultadoLembrete.value);
@@ -176,6 +176,7 @@ export default function Inicio() {
 
   const lidosSet = useMemo(() => new Set(lidos), [lidos]);
   const conquistas = useMemo(() => calcularConquistas(lidosSet), [lidosSet]);
+  const resumoSequencia = useResumoSequencia(datasLeitura);
 
   const saudacao = obterSaudacao(periodoDoDia);
 
@@ -326,7 +327,7 @@ export default function Inicio() {
           </Pressable>
         </Link>
 
-        <CardStreak sequencia={sequencia} />
+        <CardStreak resumo={resumoSequencia} />
 
         <CardConquistas conquistas={conquistas} />
 

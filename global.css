@@ -360,7 +360,7 @@ html.dark body {
 }
 .conhecer-page .temas-aviso {
   max-width: 660px;
-  margin-top: 26px;
+  margin: 8px 0 18px;
   color: var(--conhecer-suave);
   font-size: 11px;
   font-weight: 400;
@@ -901,7 +901,7 @@ html.dark body {
     -webkit-user-select: none;
   }
 }
-/* Narrativa tipográfica: palco fixo e poeira conduzida pela rolagem. */
+/* Narrativa tipográfica: quadros fixos com transição simples guiada pela rolagem. */
 .landing-evangelismo {
   --landing-texto: #f0eee8;
   --landing-suave: #b4b5ba;
@@ -922,6 +922,22 @@ html.dark body {
   scrollbar-width: thin;
   scrollbar-color: #ffffff30 transparent;
 }
+.landing-evangelismo:focus-visible {
+  outline: 2px solid var(--landing-acento);
+  outline-offset: -4px;
+}
+.landing-transcricao,
+.landing-anuncio-leitor {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
 .landing-evangelismo.landing-tema-claro {
   --landing-texto: #292b30;
   --landing-suave: #64656a;
@@ -938,7 +954,7 @@ html.dark body {
   display: flex;
   flex-direction: row;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-end;
   gap: 20px;
   padding: calc(25px + env(safe-area-inset-top, 0px)) calc(clamp(24px, 4vw, 64px) + env(safe-area-inset-right, 0px)) 25px calc(clamp(24px, 4vw, 64px) + env(safe-area-inset-left, 0px));
   pointer-events: none;
@@ -1020,6 +1036,9 @@ html.dark body {
   font-weight: 500;
   letter-spacing: .16em;
 }
+.landing-quadro:first-child .landing-numero {
+  display: none;
+}
 .landing-numero span {
   display: inline-block;
   margin-inline: 10px;
@@ -1033,7 +1052,8 @@ html.dark body {
   align-items: baseline;
   justify-content: center;
   gap: 8px clamp(10px, 1.3vw, 20px);
-  max-width: 1200px;
+  width: min(84vw, 700px);
+  max-width: min(84vw, 700px);
   margin: 0;
   text-align: center;
 }
@@ -1055,7 +1075,17 @@ html.dark body {
   line-height: 1.1;
 }
 .landing-quadro:first-child .landing-palavra {
+  animation: landing-palavra-entrada .9s cubic-bezier(.16, 1, .3, 1) both;
   font-size: clamp(48px, 7.2vw, 112px);
+}
+.landing-quadro:first-child .landing-palavra:nth-child(1) { animation-delay: .08s; }
+.landing-quadro:first-child .landing-palavra:nth-child(2) { animation-delay: .17s; }
+.landing-quadro:first-child .landing-palavra:nth-child(3) { animation-delay: .26s; }
+.landing-quadro:first-child .landing-palavra:nth-child(4) { animation-delay: .37s; }
+.landing-quadro:first-child .landing-palavra:nth-child(5) { animation-delay: .46s; }
+@keyframes landing-palavra-entrada {
+  from { opacity: 0; transform: translate3d(0, 18px, 0) scale(.96); }
+  to { opacity: 1; transform: translate3d(0, 0, 0) scale(1); }
 }
 .landing-quadro:first-child .landing-palavra-destaque {
   font-size: clamp(70px, 10vw, 154px);
@@ -1079,12 +1109,16 @@ html.dark body {
   animation: landing-convite 2.6s ease-in-out infinite;
 }
 .landing-pular {
+  position: fixed;
+  z-index: 2;
+  bottom: 126px;
+  left: 50%;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 10px;
   min-height: 44px;
-  margin-top: 10px;
+  margin-top: 0;
   padding: 10px 16px;
   border: 1px solid var(--landing-linha);
   border-radius: 999px;
@@ -1092,6 +1126,8 @@ html.dark body {
   font-size: 12px;
   font-weight: 600;
   text-decoration: none;
+  white-space: nowrap;
+  transform: translateX(-50%);
 }
 .landing-pular span {
   color: var(--landing-acento);
@@ -1105,7 +1141,7 @@ html.dark body {
   pointer-events: none;
 }
 .landing-com-animacao .landing-sequencia {
-  height: calc((var(--quadros) + 1) * 100dvh);
+  height: calc(var(--quadros) * 100dvh);
 }
 .landing-com-animacao .landing-palco {
   position: sticky;
@@ -1116,13 +1152,6 @@ html.dark body {
   position: absolute;
   inset: 0;
   min-height: 0;
-  height: 100%;
-}
-.landing-com-animacao .landing-poeira {
-  position: absolute;
-  inset: 0;
-  display: block;
-  width: 100%;
   height: 100%;
 }
 .landing-evangelismo .landing-final {
@@ -1215,6 +1244,44 @@ html.dark body {
   font-size: 10px;
   line-height: 1.85;
 }
+.landing-referencias-titulo {
+  display: block;
+  margin-bottom: 12px;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: .13em;
+}
+.landing-referencias-lista {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+}
+.landing-referencia {
+  display: inline-flex;
+  min-height: 36px;
+  align-items: center;
+  gap: 8px;
+  padding: 0 12px;
+  border: 1px solid var(--landing-linha);
+  border-radius: 999px;
+  color: var(--landing-texto);
+  text-decoration: none;
+  transition: border-color .2s, background-color .2s, transform .2s;
+}
+.landing-referencia span {
+  color: var(--landing-acento);
+  font-size: 12px;
+}
+.landing-referencia:hover {
+  transform: translateY(-2px);
+  border-color: var(--landing-acento);
+  background: #ffffff0a;
+}
+.landing-referencia:focus-visible {
+  outline: 2px solid var(--landing-acento);
+  outline-offset: 3px;
+}
 .landing-assinatura-final {
   margin: 24px 0 0;
   color: var(--landing-suave);
@@ -1238,6 +1305,10 @@ html.dark body {
   }
 }
 @media (max-width: 680px) {
+  .landing-evangelismo .landing-final {
+    justify-content: flex-start;
+    padding-top: calc(112px + env(safe-area-inset-top, 0px));
+  }
   .landing-evangelismo .landing-cabecalho {
     padding: calc(20px + env(safe-area-inset-top, 0px)) calc(24px + env(safe-area-inset-right, 0px)) 20px calc(24px + env(safe-area-inset-left, 0px));
   }
@@ -1305,8 +1376,10 @@ html.dark body {
   .landing-com-animacao .landing-frase, .landing-com-animacao .landing-numero {
     opacity: 1 !important;
   }
-  .landing-poeira {
-    display: none !important;
+  .landing-pular {
+    position: absolute;
+    top: calc(100dvh - 150px);
+    bottom: auto;
   }
 }
 .landing-controles {
@@ -1348,7 +1421,8 @@ html.dark body {
   font-size: clamp(34px, 4.2vw, 54px);
 }
 .landing-leitura-continua .landing-convite-rolagem,
-.landing-leitura-continua .landing-progresso {
+.landing-leitura-continua .landing-progresso,
+.landing-leitura-continua .landing-pular {
   display: none;
 }
 @media (max-width: 680px) {

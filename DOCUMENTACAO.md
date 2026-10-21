@@ -1,109 +1,89 @@
 # Índice da documentação
 
-Use esta página para localizar a fonte de verdade de cada assunto. O plano
-trimestral consolida a ordem; documentos específicos detalham a execução sem
-substituir os estados e critérios mais atuais.
+Use este índice para encontrar a fonte certa sem manter filas de trabalho
+duplicadas. A ordem das prioridades fica em um único lugar; planos especializados
+guardam contratos, procedimentos e evidências da sua área.
 
-## Fontes de verdade
+## Como navegar
 
-| Necessidade | Documento | Regra |
-|---|---|---|
-| Entender produto, stack e execução local | [`README.md`](./README.md) | Visão introdutória; conferir `package.json` para versões exatas. |
-| Saber o que está concluído e o que vem primeiro | [`ESTADO-DO-PROJETO.md`](./ESTADO-DO-PROJETO.md) | Atualizar quando um marco ou prioridade mudar; nunca inferir aceite. |
-| Executar o plano do trimestre | [`docs/PLANO-MESTRE-Q4-2026.md`](./docs/PLANO-MESTRE-Q4-2026.md) | Ordem canônica das próximas frentes e critérios de saída. |
-| Seguir branch, commit, CI e recuperação | [`docs/FLUXO-GIT.md`](./docs/FLUXO-GIT.md) | Descreve apenas políticas observadas/autorizadas e evidências reais. |
-| Consultar dúvidas e lacunas de UX para visitantes novos | [`docs/auditoria-ux-novato.md`](./docs/auditoria-ux-novato.md) | Achados confirmados no fluxo e status das correções. |
-| Entender armazenamento e controles dos dados no produto | [`app/privacidade.tsx`](./app/privacidade.tsx) | Resumo funcional; não substitui política jurídica. |
-| Consultar proveniência e direitos da base bíblica | [`docs/LICENCA-TEXTO-ACF.md`](./docs/LICENCA-TEXTO-ACF.md) | Permissão para redistribuir a base ACF integral ainda precisa de confirmação. |
-| Conferir implementação funcional | [`FUNCIONALIDADES.md`](./FUNCIONALIDADES.md) | Checklist legado amplo; confirmar código/evidência antes de marcar item. |
-| Consultar decisões fechadas | [`TODO.md`](./TODO.md) | Não reabrir decisões do usuário sem pedido. |
-| Consultar histórico | [`CHANGELOG.md`](./CHANGELOG.md) | Registro cronológico; não é roadmap. |
+1. Consulte [Estado do projeto](./ESTADO-DO-PROJETO.md) para saber o que vem a
+   seguir e quais gates continuam abertos.
+2. Use o [Plano mestre Q4 2026](./docs/PLANO-MESTRE-Q4-2026.md) para a ordem
+   canônica, prioridades e critérios de aceite.
+3. Abra um plano especializado abaixo para executar ou verificar uma frente.
+4. Consulte os documentos de evidência e, por último, os planos históricos.
 
-## Planos operacionais vigentes
+`README.md` apresenta o produto e a stack. `CHANGELOG.md` registra entregas;
+`FUNCIONALIDADES.md` é o checklist legado e deve ser confirmado contra código e
+evidências. Nenhum desses documentos substitui o plano mestre.
 
-| Documento | Escopo | Relação com o plano mestre |
-|---|---|---|
-| [`PLANO-MESTRE-UX-ETAPAS-19-A-23.md`](./PLANO-MESTRE-UX-ETAPAS-19-A-23.md) | Auditoria web, estados, QA visual, nativo e release | Detalha ciclos 1–4 e 6; suas caixas só fecham com evidência correspondente. |
-| [`PLANO-MELHORIAS-UI-DESIGN.md`](./PLANO-MELHORIAS-UI-DESIGN.md) | Direção visual, componentes, histórico das inspeções e plano focal atual de seleção de versículo | Referência visual/casos já trabalhados; não mantém uma fila independente do plano mestre. |
-| [`PLANO-TEMAS-DESCOBERTA.md`](./docs/PLANO-TEMAS-DESCOBERTA.md) | Expansão de conteúdo, UX e arquitetura dos detalhes de tema | Detalha a ampliação temática; conteúdo precisa de revisão humana antes de ser publicado. |
-| [`PLANO-HOVER-INTERACOES.md`](./docs/PLANO-HOVER-INTERACOES.md) | Microinterações hover em todas as rotas e componentes acionáveis da web | Foco atual de UI; cobre apenas ponteiro hover-capable e preserva toque, teclado e movimento reduzido. |
-| [`PLANO-CONFIGURACOES.md`](./docs/PLANO-CONFIGURACOES.md) | Melhorias UX/UI, contrato de preferências, dados locais e lembrete diário | Etapas iniciais implementadas; QA visual, assistivo e do lembrete em dispositivo pendentes. |
-| [`docs/revisao-editorial/INDICE.md`](./docs/revisao-editorial/INDICE.md) | Fila de propostas editoriais pendentes | Lista rascunhos, próximas ações e o gate de duas revisões humanas. Fontes dos três planos já publicados estão em `docs/planos-publicados/`. |
-| [`PLANO-TECNICO-BUSCA.md`](./PLANO-TECNICO-BUSCA.md) | Status e evolução técnica da busca e descoberta | Execução parcial; priorizar contrato, benchmark e integração dos escopos antes de adotar índice derivado. |
-| [`docs/PLANO-TITULOS-LEITURA-BIBLICA.md`](./docs/PLANO-TITULOS-LEITURA-BIBLICA.md) | Metadados editoriais para títulos e divisões apresentados no leitor bíblico | Plano do piloto do Salmo 119; fonte/licença e revisão editorial são bloqueadores antes de publicar títulos. |
+## Fonte canônica
 
-## Estado, qualidade e conteúdo
+| Documento | Responsabilidade |
+|---|---|
+| [`README.md`](./README.md) | Apresentação do produto, stack e início de uso local. |
+| [`ESTADO-DO-PROJETO.md`](./ESTADO-DO-PROJETO.md) | Resumo curto de situação, próxima prioridade e pendências que influenciam a execução. |
+| [`docs/PLANO-MESTRE-Q4-2026.md`](./docs/PLANO-MESTRE-Q4-2026.md) | Única fila de prioridades do trimestre, critérios de saída e referências aos planos de apoio. |
+| [`DOCUMENTACAO.md`](./DOCUMENTACAO.md) | Índice e hierarquia documental. |
+| [`docs/FLUXO-GIT.md`](./docs/FLUXO-GIT.md) | Políticas observadas de branch, commit, CI e recuperação. |
+| [`TODO.md`](./TODO.md) | Decisões de produto fechadas e limites que não devem ser reabertos por inferência. |
+| [`CHANGELOG.md`](./CHANGELOG.md) | Registro cronológico de mudanças; não define prioridade. |
+| [`FUNCIONALIDADES.md`](./FUNCIONALIDADES.md) | Checklist legado; confirmar qualquer item contra o código e as evidências atuais. |
 
-- [`docs/matriz-auditoria-responsiva.md`](./docs/matriz-auditoria-responsiva.md):
-  evidência visual por rota, viewport, tema e limite da inspeção.
-- [`docs/inventario-estados-ui.md`](./docs/inventario-estados-ui.md):
-  loading, erro, vazio, feedback e recuperação por superfície.
-- [`docs/contrato-editorial.md`](./docs/contrato-editorial.md),
-  [`docs/criterios-editoriais.md`](./docs/criterios-editoriais.md) e
-  [`docs/cobertura-editorial.md`](./docs/cobertura-editorial.md): modelo,
-  critérios e cobertura automatizada; nenhum deles aprova revisão humana.
-- [`docs/revisao-editorial/INDICE.md`](./docs/revisao-editorial/INDICE.md):
-  propostas e fila de conteúdo ainda não aprovado. Fontes de planos publicados
-  ficam em [`docs/planos-publicados/`](./docs/planos-publicados/) e registram
-  explicitamente qualquer exceção ao gate editorial.
-- `.github/workflows/ci.yml`: configuração do CI; o estado de cada execução deve
-  ser consultado no link de run correspondente registrado no plano mestre.
+## Planos especializados em uso
 
-## Gates locais de conteúdo e governança
+Estes documentos detalham uma frente. Sua ordem e prioridade continuam
+subordinadas ao plano mestre; não iniciar uma fila paralela a partir deles.
 
-Em 2026-10-05 passaram `npm run check:revisao-editorial` (5 rascunhos com
-governança explícita), `npm run check:copy-ui` (116 fontes, sem padrões internos
-sinalizados) e `npm run check:editorial` (66 resumos, 5 planos e 72 dias). Esses
-gates verificam consistência automatizável e não aprovam o mérito editorial dos
-rascunhos nem dispensam revisores humanos independentes.
+| Documento | Escopo e estado registrado |
+|---|---|
+| [`PLANO-MESTRE-UX-ETAPAS-19-A-23.md`](./PLANO-MESTRE-UX-ETAPAS-19-A-23.md) | Checklists operacionais de auditoria web, estados, acessibilidade, snapshots e release. Contexto datado de 2026-10-02 é histórico; confirmar prioridade/status no plano mestre e gates externos com evidência. |
+| [`PLANO-TECNICO-BUSCA.md`](./PLANO-TECNICO-BUSCA.md) | Contratos, qualidade, desempenho e validação web/nativa da busca. Preservar a distinção entre busca bíblica e editorial. |
+| [`docs/PLANO-AUDIO-VOZES.md`](./docs/PLANO-AUDIO-VOZES.md) | Máquina de estados do player, preferências de voz e velocidade; QA auditivo em plataformas reais pendente. |
+| [`docs/PLANO-CONFIGURACOES.md`](./docs/PLANO-CONFIGURACOES.md) | Preferências locais, inicialização, sincronização de controles, lembretes e gestão de dados; QA visual/assistivo e nativo parcial. |
+| [`docs/PLANO-RESTAURACAO-DADOS.md`](./docs/PLANO-RESTAURACAO-DADOS.md) | Contrato e implementação de restauração; validar seletor real, falhas, rollback, reexportação e SQLite nativo. |
+| [`docs/PLANO-HOVER-INTERACOES.md`](./docs/PLANO-HOVER-INTERACOES.md) | Microinterações web para ponteiro hover/fino; cobertura efetiva por mouse, foco e movimento reduzido ainda parcial. |
+| [`docs/PLANO-TEMAS-DESCOBERTA.md`](./docs/PLANO-TEMAS-DESCOBERTA.md) | Arquitetura e conteúdo de detalhes temáticos; propostas editoriais aguardam revisão humana independente. |
+| [`docs/PLANO-TITULOS-LEITURA-BIBLICA.md`](./docs/PLANO-TITULOS-LEITURA-BIBLICA.md) | Metadados editoriais no leitor; piloto do Salmo 119 implementado, revisão humana e QA visual/assistivo pendentes. |
+| [`PLANO-CONTEUDO-ETAPAS-24-A-28.md`](./PLANO-CONTEUDO-ETAPAS-24-A-28.md) | Modelo e governança para expansão editorial; a execução segue o Ciclo 5 do plano mestre e a fila editorial. |
 
-## Histórico e referências
+## Evidências, decisões e conteúdo
 
-Os documentos abaixo preservam o contexto de ciclos anteriores. Não devem ser
-lidos como planos ativos nem usados para reabrir uma prioridade sem reconciliá-la
-com o plano mestre atual:
+| Documento | Uso |
+|---|---|
+| [`docs/matriz-auditoria-responsiva.md`](./docs/matriz-auditoria-responsiva.md) | Evidência visual por rota, viewport, tema e limite da inspeção. |
+| [`docs/inventario-estados-ui.md`](./docs/inventario-estados-ui.md) | Inventário de carregamento, erro, vazio, feedback e recuperação. |
+| [`docs/auditoria-ux-novato.md`](./docs/auditoria-ux-novato.md) | Achados de usabilidade para visitantes novos e status das correções. |
+| [`app/privacidade.tsx`](./app/privacidade.tsx) | Explicação ao usuário sobre armazenamento; não substitui aconselhamento jurídico. |
+| [`docs/LICENCA-TEXTO-ACF.md`](./docs/LICENCA-TEXTO-ACF.md) | Proveniência e confirmação pendente de direitos para redistribuir a base ACF integral. |
+| [`docs/revisao-editorial/INDICE.md`](./docs/revisao-editorial/INDICE.md) | Fila editorial, revisores, status e propostas ainda fora do catálogo. |
+| [`docs/planos-publicados/`](./docs/planos-publicados/) | Fontes dos planos publicados e decisões editoriais relacionadas. |
+| [`docs/contrato-editorial.md`](./docs/contrato-editorial.md), [`docs/criterios-editoriais.md`](./docs/criterios-editoriais.md) e [`docs/cobertura-editorial.md`](./docs/cobertura-editorial.md) | Modelo, critérios e cobertura automatizada; não equivalem a aprovação humana. |
+| [Workflow de CI](./.github/workflows/ci.yml) | Configuração. Consultar o run registrado no plano mestre para evidência de execução. |
+
+## Planos históricos e registros de design
+
+Os arquivos abaixo preservam decisões, especificações e evidências antigas. Não
+são fila atual; antes de reutilizar um item, reconciliar com o plano mestre.
 
 | Documento | Conteúdo preservado |
 |---|---|
-| [`PLANO-EXECUCAO-5-ETAPAS.md`](./PLANO-EXECUCAO-5-ETAPAS.md) | Primeiro ciclo funcional. |
-| [`PLANO-EXECUCAO-ETAPAS-6-A-10.md`](./PLANO-EXECUCAO-ETAPAS-6-A-10.md) | CI, SEO, Maestro, acessibilidade e builds; gates externos ainda podem estar abertos. |
-| [`PLANO-UX-INTERFACE-ETAPAS-11-A-15.md`](./PLANO-UX-INTERFACE-ETAPAS-11-A-15.md) | Ciclo de busca, Salvo, Planos e feedback. |
-| [`PLANO-UX-INTERFACE-ETAPAS-16-A-20.md`](./PLANO-UX-INTERFACE-ETAPAS-16-A-20.md) | Estados vazios, navegação e gates de responsividade/snapshots. |
-| [`PLANO-EXECUCAO-COMPLETO-CONTEUDO-UX-RELEASE.md`](./PLANO-EXECUCAO-COMPLETO-CONTEUDO-UX-RELEASE.md) | Especificação anterior de conteúdo e release, substituída pelo plano mestre atual e pela fila em `docs/revisao-editorial/INDICE.md`. |
-| [`PLANO-PROXIMOS-PASSOS-CONTEUDO-UX.md`](./PLANO-PROXIMOS-PASSOS-CONTEUDO-UX.md) | Ondas históricas absorvidas pelo plano mestre e pela fila em `docs/revisao-editorial/INDICE.md`. |
-| [`PLANO-PLATAFORMA.md`](./PLANO-PLATAFORMA.md) | Decisões de arquitetura e produto. |
-| [`PLANO-NAVEGACAO.md`](./PLANO-NAVEGACAO.md), [`PLANO-UI-COMPONENTES.md`](./PLANO-UI-COMPONENTES.md) | Rascunhos de navegação e auditoria inicial de componentes. |
-| [`ESTUDO-UX-LEITURA.md`](./ESTUDO-UX-LEITURA.md) | Fundamentos da experiência de leitura. |
-| [`frontend-log.md`](./frontend-log.md), [`backend-log.md`](./backend-log.md) | Relatos históricos de implementação; não substituem código nem CI. |
+| [`PLANO-MELHORIAS-UI-DESIGN.md`](./PLANO-MELHORIAS-UI-DESIGN.md) | Direção visual e registro de incrementos anteriores; não mantém prioridade própria. |
+| [`PLANO-UX-INTERFACE-ETAPAS-11-A-15.md`](./PLANO-UX-INTERFACE-ETAPAS-11-A-15.md) e [`PLANO-UX-INTERFACE-ETAPAS-16-A-20.md`](./PLANO-UX-INTERFACE-ETAPAS-16-A-20.md) | Ciclos anteriores de busca, Salvos, Planos, estados e responsividade. |
+| [`PLANO-EXECUCAO-5-ETAPAS.md`](./PLANO-EXECUCAO-5-ETAPAS.md), [`PLANO-EXECUCAO-ETAPAS-6-A-10.md`](./PLANO-EXECUCAO-ETAPAS-6-A-10.md) e [`PLANO-EXECUCAO-COMPLETO-CONTEUDO-UX-RELEASE.md`](./PLANO-EXECUCAO-COMPLETO-CONTEUDO-UX-RELEASE.md) | Ciclos antigos de implementação, CI, conteúdo e release. |
+| [`PLANO-PROXIMOS-PASSOS-CONTEUDO-UX.md`](./PLANO-PROXIMOS-PASSOS-CONTEUDO-UX.md) | Ondas de conteúdo/UX substituídas pelo plano mestre e índice editorial. |
+| [`PLANO-NAVEGACAO.md`](./PLANO-NAVEGACAO.md), [`PLANO-PLATAFORMA.md`](./PLANO-PLATAFORMA.md), [`PLANO-UI-COMPONENTES.md`](./PLANO-UI-COMPONENTES.md) e [`ESTUDO-UX-LEITURA.md`](./ESTUDO-UX-LEITURA.md) | Decisões e estudos de concepção; decisões fechadas também constam em `TODO.md`. |
+| [`backend-log.md`](./backend-log.md) e [`frontend-log.md`](./frontend-log.md) | Relatos históricos de execução; não substituem código, estado atual ou CI. |
 
-## Diretório `docs/`
+## Manutenção
 
-- `docs/revisao-editorial/`: fontes propostas e registros de revisão humana.
-- `docs/*.md`: critérios, contratos, matrizes e planos correntes indicados
-  acima. Evitar criar novos documentos de roadmap sem apontá-los neste índice.
-
-## Manutenção documental
-
-1. Ao mudar prioridade ou status de marco, atualizar `ESTADO-DO-PROJETO.md` e o
-   plano mestre no mesmo incremento.
-2. Ao concluir trabalho, registrar evidência no plano específico e no changelog;
-   atualizar checklist funcional quando houver comportamento novo.
-3. Manter planos antigos como históricos, com link para a fonte atual; não
-   apagar decisões ou evidência só para simplificar o índice.
-4. Distinguir implementação, verificação estrutural, inspeção visual, aceite
-   humano e publicação.
-5. Conteúdo editorial e copy de UI devem ser tratados como produto: fontes,
-   critérios, revisão e status claros; sem anotações internas na interface.
-
-## Verificações comuns
-
-```bash
-npm run typecheck
-npm run check:copy-ui
-npm run check:a11y
-npm run check:ui
-npm run check:editorial
-npm run export:web
-npm run check:static
-git diff --check
-```
+- Quando a prioridade mudar, atualizar o plano mestre e o resumo de estado no
+  mesmo incremento.
+- Atualizar um plano especializado apenas com evidência da sua frente; indicar
+  limitações e plataforma testada.
+- Marcar planos substituídos como históricos e mantê-los acessíveis enquanto
+  houver links ou decisões úteis; não duplicar suas filas no índice ativo.
+- Distinguir implementação, verificação estrutural, inspeção visual, revisão
+  humana, validação nativa e publicação.
+- Validar links locais depois de reorganizar referências. Não mover arquivos sem
+  atualizar todos os consumidores.

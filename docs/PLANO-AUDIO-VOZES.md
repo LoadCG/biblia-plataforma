@@ -12,6 +12,28 @@ Melhorar a naturalidade percebida sem cobrança por chamada. O texto bíblico pe
 4. **QA funcional pendente:** ouvir amostras e capítulos longos em Chrome, Edge, Safari, Android e iOS; testar vozes carregadas tardiamente, voz removida, pausa/retomada, troca de capítulo, modo escuro e leitor de tela. Registrar qualidade percebida, latência e falhas. Não afirmar que uma voz é neural somente pelo nome.
 5. **Decisão futura:** considerar síntese neural local opcional apenas se a comparação auditiva mostrar ganho relevante. Medir download, memória, latência e licença do motor e do modelo. Um modelo Piper pt-BR médio pesa cerca de 63 MB; não incluir no carregamento inicial do site sem protótipo aprovado.
 
+**Revisão de consistência em 2026-10-15:** pausa e retomada agora exigem a
+origem da tela, assim como a limpeza já fazia. Isso evita que um controle antigo
+do Versículo do Dia pause/retome a sessão do leitor (ou vice-versa) após uma
+troca rápida de rota. Teste unitário cobre no-op para origem antiga e execução
+para a origem ativa. A reprodução real, callbacks tardios e comportamento de
+interrupção nativa continuam dependentes de QA de engine em navegador/aparelho.
+
+**Checkpoint CP6 em 2026-10-21:** auditoria encontrou dois callbacks no player
+compacto do Versículo do Dia que passavam o evento de toque como origem. Como o
+serviço valida a identidade da origem da sessão, pausar ou retomar por esses
+controles era ignorado. Os callbacks agora encaminham a origem do cartão. Busca
+estática dos consumidores confirmou que os demais comandos de pausa e retomada
+encaminham sua origem explicitamente. A cobertura unitária existente verifica
+que comandos de origem antiga são ignorados e os da origem ativa são executados.
+
+**Qualidade de código:** problema isolado corrigido em `CardVersiculoDia.tsx`;
+nenhuma mudança na API do player. Verificação direcionada: teste unitário do
+serviço de áudio e typecheck. **QA auditivo pendente:** ouvir em navegador e em
+Android/iOS, incluindo pausa, retomada, troca de tela/capítulo, callbacks tardios
+e leitor de tela. Os mocks e a inspeção de código não validam a qualidade nem o
+comportamento da engine de voz real.
+
 ## Critérios de aceite
 
 - A leitura usa a voz selecionada quando ela está disponível e segue funcionando com a voz padrão quando não está.

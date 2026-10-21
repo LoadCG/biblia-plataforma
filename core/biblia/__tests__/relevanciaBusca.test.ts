@@ -1,4 +1,4 @@
-import { correspondeConsultaBiblica, normalizarBusca, pontuarResultado, tokenizarBusca } from "../relevanciaBusca";
+import { correspondeConsultaBiblica, encontrarIntervalosCorrespondenciaBiblica, normalizarBusca, pontuarResultado, tokenizarBusca } from "../relevanciaBusca";
 
 describe("contrato de correspondência da busca bíblica", () => {
   it("normaliza acentos, caixa e espaços repetidos", () => {
@@ -20,6 +20,30 @@ describe("contrato de correspondência da busca bíblica", () => {
   it("trata aspas incompletas como consulta lexical comum", () => {
     const termo = '"esperança viva'.replace(/^"|"$/g, "");
     expect(correspondeConsultaBiblica("Esperança viva em Deus", termo, false)).toBe(true);
+  });
+
+  it("destaca termos no início de uma palavra, sem correspondências por substring", () => {
+    const texto = "O amor vence o clamor.";
+    const intervalos = encontrarIntervalosCorrespondenciaBiblica(texto, "amor");
+    expect(intervalos.map(({ inicio, fim }) => texto.slice(inicio, fim))).toEqual(["amor"]);
+  });
+
+  it("destaca somente palavras da frase exata e preserva acentos do texto", () => {
+    const texto = "Paz, paz e oração.";
+    const intervalos = encontrarIntervalosCorrespondenciaBiblica(texto, '"paz e oração"');
+    expect(intervalos.map(({ inicio, fim }) => texto.slice(inicio, fim))).toEqual(["paz", "e", "oração"]);
+  });
+
+  it("mantém os offsets originais com espaços repetidos no texto", () => {
+    const texto = "  A   oração  ";
+    const intervalos = encontrarIntervalosCorrespondenciaBiblica(texto, "orac");
+    expect(intervalos.map(({ inicio, fim }) => texto.slice(inicio, fim))).toEqual(["oração"]);
+  });
+
+  it("inclui marcas diacríticas combinantes no intervalo destacado", () => {
+    const texto = "orac\u0327a\u0303o";
+    const intervalos = encontrarIntervalosCorrespondenciaBiblica(texto, "oracao");
+    expect(intervalos.map(({ inicio, fim }) => texto.slice(inicio, fim))).toEqual([texto]);
   });
 
   it("aceita consulta longa sem quebrar normalização nem pontuação", () => {

@@ -105,10 +105,10 @@ export const TEMAS_EVANGELISTICOS: TemaEvangelistico[] = [
     slug: "alcool-e-outras-drogas",
     rotulo: "Uso de álcool e outras drogas",
     chamada: "Álcool e outras drogas",
-    descricao: "Uma reflexão cristã que trata a dependência com dignidade e reconhece a importância de apoio qualificado.",
+    descricao: "Uma reflexão cristã que aborda o uso problemático de substâncias com dignidade e reconhece a importância de apoio qualificado.",
     secoes: [
       {
-        titulo: "A dependência não é motivo para humilhar",
+        titulo: "Ninguém deve ser humilhado pelo uso de substâncias",
         texto: "O uso de substâncias pode envolver fatores de saúde, história de vida e contexto social. Esta página não diagnostica nem promete uma solução rápida. A Bíblia chama a comunidade a tratar as pessoas com compaixão e a carregar fardos em conjunto.",
         referencias: [{ rotulo: "Gálatas 6:1–2", href: "/leitura/48-galatas/6?versiculo=1" }, { rotulo: "Romanos 12:15", href: "/leitura/45-romanos/12?versiculo=15" }],
       },

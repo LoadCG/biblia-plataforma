@@ -6,10 +6,14 @@ const contratos = [
   ["app/onboarding.tsx", 'accessibilityRole="progressbar"'],
   ["app/onboarding.tsx", "accessibilityValue={{ min: 1"],
   ["app/(tabs)/pesquisa.tsx", 'accessibilityLabel="Buscar na Bíblia e nos resumos"'],
+  ["app/(tabs)/pesquisa.tsx", 'accessibilityState={{ checked: favoritada, disabled: salvandoFavorita || !ownerId, busy: salvandoFavorita }}'],
+  ["app/(tabs)/pesquisa.tsx", 'accessibilityLabel={salvandoFavorita ? "Salvando busca favorita" : favoritada ? "Remover busca dos favoritos" : "Favoritar esta busca"}'],
+  ["app/(tabs)/pesquisa.tsx", 'rotulo="Carregando buscas favoritas"'],
+  ["app/(tabs)/pesquisa.tsx", 'titulo="Não foi possível carregar suas buscas favoritas"'],
   ["app/(tabs)/pesquisa.tsx", 'accessibilityHint={atalho.destino === "salvos" ? "Abre seus versículos salvos" : "Abre as orientações de uso"}'],
-  ["app/(tabs)/biblia/escolher/index.tsx", 'accessibilityLabel="Buscar livro da Bíblia"'],
-  ["app/(tabs)/biblia/escolher/index.tsx", 'accessibilityLabel={modoIntervalo ? "Cancelar seleção por intervalo" : "Selecionar intervalo de capítulos"}'],
-  ["app/(tabs)/biblia/escolher/index.tsx", 'accessibilityLiveRegion="polite"'],
+  ["app/(tabs)/leitura/escolher/index.tsx", 'accessibilityLabel="Buscar livro da Bíblia"'],
+  ["app/(tabs)/leitura/escolher/index.tsx", 'accessibilityLabel={modoIntervalo ? "Cancelar seleção por intervalo" : "Selecionar intervalo de capítulos"}'],
+  ["app/(tabs)/leitura/escolher/index.tsx", 'accessibilityLiveRegion="polite"'],
   ["components/GradeCapitulos.tsx", "Toque no primeiro e no último capítulo para selecionar o intervalo."],
   ["app/ajuda.tsx", 'accessibilityRole="header"'],
   ["app/ajuda.tsx", 'accessibilityRole="link"'],
@@ -17,6 +21,11 @@ const contratos = [
   ["app/privacidade.tsx", 'accessibilityHint="Abre as opções de exportação e exclusão dos seus dados"'],
   ["app/(tabs)/pesquisa.tsx", 'accessibilityLabel="Limpar busca"'],
   ["components/EstadoCarregando.tsx", 'accessibilityLabel={rotulo}'],
+  ["components/SemanaSequencia.tsx", 'accessibilityRole="text"'],
+  ["components/SemanaSequencia.tsx", "sem leitura marcada"],
+  ["components/DicaContextual.tsx", 'accessibilityState={{ disabled: salvando, busy: salvando }}'],
+  ["components/DicaContextual.tsx", "min-h-11 min-w-11 justify-center"],
+  ["components/DicaContextual.tsx", 'accessibilityLabel="Tentar carregar a dica novamente"'],
   ["app/(tabs)/pesquisa.tsx", 'rotulo="Buscando resultados"'],
   ["app/(tabs)/pesquisa.tsx", 'accessibilityLiveRegion="polite"'],
   ["app/salvo.tsx", 'accessibilityLabel="Buscar nos itens salvos"'],
@@ -25,13 +34,17 @@ const contratos = [
   ["app/salvo.tsx", 'accessibilityLabel="Voltar para seu perfil"'],
   ["app/resumos/index.tsx", 'accessibilityLabel="Voltar para início"'],
   ["app/resumos/[livro].tsx", 'accessibilityLabel="Voltar para todos os resumos"'],
+  ["app/resumos/[livro].tsx", 'accessibilityRole="checkbox"'],
+  ["app/resumos/[livro].tsx", 'accessibilityLabel={lido ? "Desmarcar livro como lido" : "Marcar livro como lido"}'],
+  ["app/resumos/[livro].tsx", 'rotulo="Carregando seu progresso neste livro"'],
+  ["app/resumos/[livro].tsx", 'titulo="Não foi possível carregar seu progresso neste livro"'],
   ["app/configuracoes.tsx", 'accessibilityLabel="Voltar para seu perfil"'],
   ["app/estatisticas.tsx", 'accessibilityLabel="Voltar para início"'],
   ["app/sobre.tsx", 'accessibilityLabel="Voltar para seu perfil"'],
-  ["app/(tabs)/index.tsx", 'accessibilityLabel="Ver todas as estatísticas"'],
+  ["app/(tabs)/biblia.tsx", 'accessibilityLabel="Ver todas as estatísticas"'],
   ["app/(tabs)/voce.tsx", 'accessibilityLabel="Saiba mais sobre privacidade"'],
   ["app/(tabs)/voce.tsx", 'accessibilityLabel="Ver toda a atividade salva"'],
-  ["app/(tabs)/voce.tsx", 'accessibilityLabel="Começar leitura bíblica"'],
+  ["components/CardStreak.tsx", 'accessibilityLabel={acao.nomeAcessivel}'],
   ["app/medalhas.tsx", 'accessibilityLabel={`Abrir resumo de ${livro.nome}`}'],
   ["app/salvo.tsx", 'accessibilityLabel="Nome da nova coleção"'],
   ["app/planos/index.tsx", 'accessibilityRole="progressbar"'],
@@ -97,4 +110,28 @@ for (const [arquivo, trecho] of contratos) {
   if (!conteudo.includes(trecho)) throw new Error(`Contrato de acessibilidade ausente em ${arquivo}: ${trecho}`);
 }
 
-console.log(`Acessibilidade: ${contratos.length} contratos críticos verificados.`);
+const landingPath = path.join(raiz, "components/LandingEvangelismo.web.tsx");
+const landing = fs.readFileSync(landingPath, "utf8");
+const contratosLanding = [
+  ["a área principal pode receber foco de teclado", /<main\b(?=[^>]*\btabIndex=\{0\})[^>]*>/s],
+  ["a narrativa completa tem região própria para tecnologia assistiva", /<section\b(?=[^>]*className="landing-transcricao")(?=[^>]*aria-label=)[^>]*>/s],
+  ["a narrativa mantém uma hierarquia de título principal e subseções", /const Tag = indice === 0 \? "h1" : "h2"/],
+  ["a apresentação animada fica fora da árvore acessível", /<section\b(?=[^>]*className="landing-sequencia")(?=[^>]*aria-hidden="true")[^>]*>/s],
+  ["o estado atual é anunciado sem interromper a leitura", /role="status"[^>]*aria-live="polite"[^>]*aria-atomic="true"/s],
+  ["o progresso declara papel e limites acessíveis", /role="progressbar"[^>]*aria-label=[^>]*aria-valuemin=\{1\}[^>]*aria-valuemax=\{QUADROS\.length\}[^>]*aria-valuenow=\{quadroAtual \+ 1\}/s],
+  ["o controle de tema expõe o nome da ação", /className="landing-botao-tema"[\s\S]{0,180}aria-label=\{temaClaro \?/],
+  ["o controle alternativo de leitura reflete seu estado", /className="landing-botao-leitura"[\s\S]{0,260}aria-pressed=\{leituraContinua\}/],
+  ["a preferência de movimento reduzido é consultada", /const reducaoDeMovimento = useReducedMotion\(\)/],
+  ["a preferência reduzida desativa a sequência guiada", /const animacaoAtiva = !leituraContinua && reducaoDeMovimento !== true/],
+];
+
+for (const [descricao, padrao] of contratosLanding) {
+  if (!padrao.test(landing)) throw new Error(`Contrato de acessibilidade ausente na landing: ${descricao}`);
+}
+
+const estilosLanding = fs.readFileSync(path.join(raiz, "global.css"), "utf8");
+if (!/@media \(prefers-reduced-motion: reduce\)[\s\S]{0,180}\.landing-evangelismo, \.landing-evangelismo \*/.test(estilosLanding)) {
+  throw new Error("Contrato de acessibilidade ausente na landing: CSS respeita a preferência por movimento reduzido");
+}
+
+console.log(`Acessibilidade: ${contratos.length + contratosLanding.length + 1} contratos críticos verificados.`);

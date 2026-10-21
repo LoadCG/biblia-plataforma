@@ -4,27 +4,26 @@
 
 Deixar a plataforma bíblica mais reconhecível, clara e acolhedora, ampliando o uso de ícones, símbolos, ilustrações, imagens e animações curtas. A identidade deve continuar serena e centrada na leitura, com comportamento coerente na web responsiva e, quando retomado, no aplicativo nativo; cobrir temas claro e escuro e preservar telas estreitas.
 
-Este documento reúne o plano de execução e um registro incremental do que já foi feito. O trabalho deve avançar por entregas pequenas, com comparação visual antes/depois e critérios objetivos de aceite.
+Este documento reúne a direção visual, especificações por superfície e o registro
+incremental do que já foi feito. Ele não mantém uma fila de execução própria;
+prioridades e critérios vigentes ficam no plano mestre Q4.
 
 ## Fonte de verdade e ordem de execução
 
-- Este documento define direção visual, escopo e ordem das superfícies.
-- `PLANO-MESTRE-UX-ETAPAS-19-A-23.md` controla os status operacionais de UI,
+- O [plano mestre Q4](./docs/PLANO-MESTRE-Q4-2026.md) define prioridades e
+  critérios de aceite.
+- `PLANO-MESTRE-UX-ETAPAS-19-A-23.md` contém checklists operacionais de UI,
   estados, auditoria e gates; não manter um segundo checklist concorrente aqui.
 - `docs/matriz-auditoria-responsiva.md` guarda evidências visuais por rota,
   viewport e tema. Estado de código não é evidência de inspeção.
 - `ESTADO-DO-PROJETO.md` é resumo de marcos, atualizado quando a prioridade muda,
   não registro de cada incremento.
 
-**Ordem vigente:** (1) fechar a validação funcional das anotações compartilhadas
-recém-implementadas; (2) concluir a auditoria do fluxo de seleção de versículos,
-incluindo estados visuais/assistivos e regressão responsiva; (3) retomar os
-Ciclos 1–3 do plano mestre na ordem registrada — Home desktop, Descubra/Planos e
-estados web; (4) tratar gates externos de CI/Preview/rotas; (5) iniciar snapshots
-após a auditoria manual. Refinamento mobile dedicado e aplicativo nativo ficam
-deferidos, sem dispensar a preservação responsiva web.
+**Ordem vigente:** consultar `ESTADO-DO-PROJETO.md` e o plano mestre Q4. A ordem
+abaixo deste cabeçalho descreve a frente visual de seleção de versículos e seu
+histórico; não substitui a fila atual nem reabre prioridades concluídas.
 
-### Foco corrente — selecionar um versículo e agir sobre ele
+### Detalhamento visual — selecionar um versículo e agir sobre ele
 
 O fluxo atravessa leitor, grade de seleção prévia e ações de grifo, salvo,
 anotação, cópia, compartilhamento e geração de imagem. Esta sequência atualiza a

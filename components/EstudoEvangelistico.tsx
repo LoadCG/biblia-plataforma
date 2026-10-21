@@ -13,10 +13,14 @@ export function EstudoEvangelistico({
   titulo,
   descricao,
   secoes,
+  rotuloAbertura = "LEITURA INTRODUTÓRIA",
+  notaAbertura = "Leia com calma. As referências levam aos trechos da Bíblia para você conferir o contexto.",
 }: {
   titulo: string;
   descricao: string;
   secoes: SecaoEstudo[];
+  rotuloAbertura?: string;
+  notaAbertura?: string;
 }) {
   return (
     <>
@@ -41,12 +45,12 @@ export function EstudoEvangelistico({
           </View>
 
           <View className="estudo-abertura">
-            <Text className="conhecer-sobretitulo">LEITURA INTRODUTÓRIA</Text>
+            <Text className="conhecer-sobretitulo">{rotuloAbertura}</Text>
             <Text accessibilityRole="header" className="estudo-titulo">{titulo}</Text>
             <Text className="estudo-descricao">{descricao}</Text>
             <View className="estudo-nota">
               <Text className="estudo-nota-marca" aria-hidden={true}>i</Text>
-              <Text className="estudo-nota-texto">Leia com calma. As referências levam aos trechos da Bíblia para você conferir o contexto.</Text>
+              <Text className="estudo-nota-texto">{notaAbertura}</Text>
             </View>
           </View>
 

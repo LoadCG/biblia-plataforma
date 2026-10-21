@@ -81,3 +81,13 @@ pm run medir:busca-editorial` foi executado duas vezes no Windows x64, Node v26.
 - Teste de FTS5 e fallback em SQLite real no dispositivo/emulador; os verificadores atuais são estáticos/unitários.
 - Leitor de tela real e avaliação de zoom, contraste e foco em tecnologias assistivas. Os contratos automatizados do projeto passaram, mas não substituem essa inspeção.
 - Benchmark de interface web no browser e benchmark nativo em ambiente identificado. A linha de base Node não permite concluir sobre esses tempos.
+
+## Implementação da interface de busca bíblica — 21 de outubro de 2026
+
+**Escopo:** revisão do diff local da tela Descubra e dos utilitários de navegação da busca, em comparação com o commit remoto atual. O checkout já continha alterações locais de busca staged e não staged; elas foram preservadas. Esta implementação toca somente a altura mínima dos controles de filtro em `app/(tabs)/pesquisa.tsx`.
+
+**Achado e correção:** os controles de testamento e livro expunham opções acessíveis com estado de rádio, mas não fixavam uma altura mínima de toque. Os botões agora usam `min-h-11` e alinhamento vertical central, padrão de 44 px usado em outros controles da interface. A alteração não muda filtros aplicados, resultados, ranking editorial ou conteúdo bíblico.
+
+**Checkpoint de qualidade:** depois da implementação, executar TypeScript, os contratos direcionados de acessibilidade e os testes unitários relacionados à normalização, navegação e sugestão de referências. Essas verificações podem detectar regressões estruturais e de comportamento; não medem a caixa renderizada em cada navegador ou zoom.
+
+**Limites restantes:** inspeção visual dos filtros em larguras móveis, navegação por teclado e avaliação com leitor de tela real continuam pendentes. A qualidade do ranking editorial permanece sujeita às validações humanas descritas acima.

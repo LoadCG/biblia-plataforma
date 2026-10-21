@@ -1,6 +1,6 @@
 # Inventário de estados de interface
 
-Data: 2026-10-15
+Data: 2026-10-16
 Escopo inicial: superfícies com operações assíncronas e componentes compartilhados.
 
 Este inventário veio da leitura estática do código. Não representa inspeção visual nem teste em leitor de tela.
@@ -31,6 +31,7 @@ exaustivo; revisão visual e assistiva ainda está pendente.
 | Superfície | Carregando | Erro | Vazio | Ação/feedback | Observação |
 |---|---|---|---|---|---|
 | Início | `EstadoCarregando` para a coluna de apoio | `EstadoErro` inline com retry para falha de leituras/progresso | CTA “Escolha um livro para começar” somente após confirmar histórico vazio | abre `/biblia/escolher`; falha do lembrete opcional usa Toast de aviso | Dados antigos são limpos ao recarregar/trocar owner; não apresenta zero enquanto a leitura do repositório está pendente ou falha. Layout responsivo existente foi preservado. |
+| Sequência diária | Exibida após confirmar progresso local | Herda erro/retry de Início e Perfil; Estatísticas mantém seu erro próprio | Zero dias com instrução objetiva e semana vazia | histórico semanal acessível; recorde e estado de hoje são informativos | Uma leitura por dia no calendário local; capítulos repetidos no mesmo dia são deduplicados. Início, Perfil e Estatísticas usam a mesma regra; as duas primeiras atualizam na virada do dia. Persistência deriva dos capítulos marcados, sem tabela independente. Falha de armazenamento e runtime nativo ainda não foram induzidos/testados. |
 | Descubra / Busca | `EstadoCarregando` | `EstadoErro` com retry | `EstadoVazio` | Limpar busca ou trocar para Bíblia; Toast para ações | Erro e vazio são distintos; retry repete a mesma consulta; “Voltar aos temas” mantém alvo mínimo de 44 px. |
 | Leitor bíblico | skeleton `progressbar` | painel com retry | parcial conforme conteúdo | Toast | Dados pessoais são carregados em conjunto por capítulo; respostas antigas são descartadas. |
 | Seletor de versículos | `EstadoCarregando` | `EstadoErro` com retry | não aplicável | — | Respostas após desmontagem ou troca de referência são ignoradas. |
@@ -38,17 +39,24 @@ exaustivo; revisão visual e assistiva ainda está pendente.
 | Planos (lista) | `EstadoCarregando` | `EstadoErro` com retry sem ocultar o catálogo | catálogo estático continua disponível | progresso conhecido por plano; falha parcial indica “Progresso indisponível” sem barra enganosa | Cada plano agora carrega progresso isoladamente; falha não bloqueia a navegação para o catálogo nem é apresentada como 0%. |
 | Salvo | `EstadoCarregando` | `EstadoErro` com retry | `EstadoVazio` | Toast com undo em lote | Loading, erro e vazio distinguíveis. |
 | Resumos | filtro síncrono | não aplicável na listagem | `EstadoVazio` | limpar busca quando há termo | Estado vazio acessível e orientativo; ação opcional no componente compartilhado. |
+| Detalhe de resumo | `EstadoCarregando` para confirmar o progresso do livro | `EstadoErro` com retry; falha ao salvar mantém o valor confirmado e mostra Toast | não aplicável | marcar/desmarcar somente após leitura confirmada; ação bloqueada durante salvamento | O carregamento evita apresentar “não lido” provisório; gravação duplicada é bloqueada. |
 | Seletor de livros | catálogo local | não aplicável | `EstadoVazio` | limpar busca quando há termo | A tela preserva o estado original sem ação quando o catálogo estiver vazio sem filtro. |
 | Cards de versículo / popover | `EstadoCarregando` | `EstadoErro` com retry | não aplicável | ações específicas | O card do dia mantém painel próprio de erro em gradiente. |
+| Dica contextual | dica só aparece após leitura da preferência | `EstadoErro` com retry; falha ao marcar como vista mantém a dica e avisa via Toast | dica não exibida após confirmação de que já foi vista | “Entendi” bloqueia novas ativações durante gravação | A dica permanece opcional; falha de armazenamento não interrompe a tela hospedeira. |
 | Detalhe de plano | `EstadoCarregando` | `EstadoErro` com retry | estado concluído quando todos os dias finalizam | Toast nas ações | Progresso anuncia papel e valor; falhas não aparecem como conclusão ou zero; retorno, marcação, referências e ações por dia têm alvo mínimo de 44 px. |
 | Medalhas e detalhe | `EstadoCarregando` ao entrar/retomar a rota | `EstadoErro` inline com retry | não aplicável: progresso vazio válido é dado disponível, não erro | navegação ao detalhe e a resumos pendentes | Atualiza no foco; resposta tardia descartada; barra anuncia valor. Inspeção visual das rotas e falha induzida seguem pendentes. |
-| Toast global | — | — | — | alerta com ação opcional e severidade semântica | Varredura AST em 2026-10-02 encontrou 73 chamadas a `mostrarToast`, todas com severidade explícita e sem opção dinâmica. O contrato exige severidade; a animação evita corrida entre mensagens, limpa o temporizador no unmount e respeita movimento reduzido. Toast de sucesso ao remover o Versículo do Dia foi visto em tema escuro, com texto e símbolo distinguíveis; faltam as demais severidades, Toast isolado, expiração automática e movimento reduzido. |
+| Toast global | — | — | — | alerta com ação opcional e severidade semântica | Varredura AST em 2026-10-02 encontrou 73 chamadas a `mostrarToast`, todas com severidade explícita e sem opção dinâmica. O contrato exige severidade; a animação evita corrida entre mensagens, limpa o temporizador no unmount e respeita movimento reduzido. Sucesso ao salvar o Versículo do Dia foi visto em tema escuro. A posição agora respeita o breakpoint comum da navegação e foi conferida na Home desktop clara/escura; Toast de sucesso ficou abaixo dos cartões. Faltam demais severidades/rotas, ação isolada, expiração e movimento reduzido observados. |
 
 **Revisão estática em 2026-10-15:** o botão de ação do Toast global (“Desfazer” e
 “Abrir configurações”) tinha altura compacta, abaixo do alvo mínimo de 44 px
 usado nas demais ações principais. A classe responsiva agora define altura e
 largura mínimas de 44 px; o contrato de acessibilidade protege esse tamanho.
-Não houve nova inspeção visual/assistiva do Toast nesta sessão.
+QA visual continuado na Home desktop revelou que 90 px de recuo cobriam o cartão
+seguinte, pois aquele valor reservava espaço para uma barra inferior ausente no
+desktop. O Toast passou a usar o breakpoint compartilhado com a navegação: 24 px
+no desktop e 90 px no celular. A posição foi vista no tema claro e o sucesso
+permaneceu legível no escuro. Leitor de tela, movimento reduzido observado e
+outras severidades seguem pendentes.
 
 Na inspeção local de 2026-10-04, a Home mostrou estados de carregamento e dados
 vazios confirmados, em vez de zeros provisórios; falha de armazenamento não foi
@@ -62,6 +70,19 @@ leitor agrupa a leitura de grifos/notas/salvos/progresso por capítulo, limpa
 valores da rota anterior, ignora respostas tardias e avisa quando o repositório
 local falha. Gravar/remover grifos, progresso, notas e avançar uma sessão guiada
 também informa falhas; a nota permanece aberta quando a gravação não conclui.
+
+**Revisão estática em 2026-10-15 — detalhe de Resumos:** o progresso “livro lido”
+agora tem estados explícitos de carregamento, erro com retry e valor confirmado.
+A ação fica indisponível antes da confirmação e enquanto grava, evita chamadas
+duplicadas e informa falha sem alterar o valor local. Contratos estruturais e
+TypeScript passaram; inspeção visual, erro induzido e leitor de tela real seguem
+pendentes.
+
+**Revisão estática em 2026-10-15 — dica contextual:** falha na leitura da
+preferência agora oferece retry inline, sem bloquear a tela hospedeira. A ação
+“Entendi” bloqueia ativações duplicadas e preserva a dica se a gravação falhar.
+Contratos, TypeScript e copy passaram; falha induzida, aparência nos dois temas
+e leitura assistiva seguem pendentes.
 
 Salvo e `CardAtividade` também comunicam falhas em criação/renomeação/exclusão de
 coleção, associação, exclusão/restauração de item e edição de nota. A seleção e

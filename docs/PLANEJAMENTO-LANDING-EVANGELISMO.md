@@ -1,9 +1,32 @@
 # Planejamento — “Tem alguém que me ama?”
 
 **Estado:** primeiro incremento de desenvolvimento em andamento; conteúdo e publicação ainda dependem de revisão e decisões operacionais.
-**Atualizado em:** 2026-10-20
+**Atualizado em:** 2026-10-21
 
 Este documento reúne a ideia compartilhada até agora e identifica decisões ainda abertas. Ele não substitui revisão bíblica e pastoral, nem autoriza alterar as rotas de produção.
+
+### Checkpoint editorial e impresso — 2026-10-21
+
+A sequência local foi revisada para evitar frases que presumem solidão ou dor,
+e agora explica pecado, graça e fé com linguagem direta. A abertura continua
+exatamente “Tem alguém que te ama.”, a revelação de Jesus permanece no sexto
+quadro e há cinco etapas antes dela. A copy revisada é um rascunho para revisão
+pastoral, ainda não aprovado para produção.
+
+Foi preparado o documento
+[`RASCUNHO-PANFLETO-TEM-ALGUEM-QUE-TE-AMA.md`](./RASCUNHO-PANFLETO-TEM-ALGUEM-QUE-TE-AMA.md):
+frente minimalista e verso com a mensagem essencial, para a compreensão não
+depender do QR ou de um celular. O verso revela Jesus e inclui somente
+referências, sem citações de tradução. O endereço e QR permanecem placeholders
+até confirmação de domínio, HTTPS e destino.
+
+Revisões especializadas foram registradas em
+[`RELATORIO-REVISAO-NARRATIVA-LANDING.md`](./RELATORIO-REVISAO-NARRATIVA-LANDING.md),
+[`RELATORIO-LANDING-UX-2026-10-21.md`](./RELATORIO-LANDING-UX-2026-10-21.md) e
+[`RELATORIO-JORNADA-QR-LEITURAS.md`](./RELATORIO-JORNADA-QR-LEITURAS.md).
+Typecheck, acessibilidade (111), copy (134 fontes), UI (38) e `git diff
+--check` passaram. Permanecem revisão pastoral, captura em viewport atual e
+testes manuais em aparelhos/tecnologia assistiva, além de domínio e QR público.
 
 ## 1. Ideia e experiência pretendida
 
@@ -18,9 +41,9 @@ O objetivo não é exigir uma resposta, cadastro, contato ou compromisso. O visi
 - A landing ocupa a raiz do site: `/`.
 - A página inicial do app atual passa para `/biblia`.
 - A entrada do leitor bíblico passa para `/leitura`.
-- O panfleto começa com a frase central, QR code e o endereço pretendido, mas também precisa comunicar o núcleo da mensagem sem depender de celular, internet ou leitura do QR. Extensão e ponto da revelação no impresso ainda precisam ser definidos.
+- O usuário produzirá a arte do panfleto no Photoshop. O conteúdo impresso ainda deve comunicar o núcleo da mensagem sem depender de celular, internet ou leitura do QR.
 - A primeira versão da landing é mobile-first, rápida e composta por texto.
-- O visual trabalha com dois temas: fundo preto e texto branco, ou fundo branco e texto preto.
+- O tema escuro usa degradê de cinza escuro, sem preto puro, com texto claro; o tema claro usa fundo claro e texto escuro.
 - A leitura apresenta mensagens curtas em sequência, dedica várias delas a aspectos bons do amor antes de revelar Jesus um pouco depois da metade e continua contando a história de Jesus depois da revelação.
 - Depois da narrativa curta, `/conhecer` oferece a escolha de um tema. Ao selecionar, a pessoa abre um formulário opcional para compartilhar um relato ou pedido de oração; pode pular o preenchimento e ir à leitura relacionada.
 - Não incluir imagens ou vídeos na primeira versão. A experiência usa frases curtas em sequência e transições animadas durante a rolagem. O formulário está no escopo planejado, mas o envio só será ativado depois de definir responsável, prazo de resposta, privacidade e segurança; a Bíblia online continua sujeita à decisão de destino e direitos.
@@ -208,8 +231,8 @@ O roadmap não usa datas estimadas porque ainda não há responsáveis, disponib
 | Marco | Fase | Estado agora | Saída principal |
 |---|---|---|---|
 | CP0 | Brief, escopo e responsáveis | **Em andamento** — ideia, domínio pretendido e intenção de rotas registrados; responsável e decisões de produto ainda abertos. | Brief aprovado e papéis atribuídos. |
-| CP1 | Roteiro e primeira redação | **Não iniciado** | Manuscrito completo com referências e notas editoriais. |
-| CP2 | Revisão de conteúdo | **Não iniciado** | Texto revisado e versão editorial aprovada para implementação. |
+| CP1 | Roteiro e primeira redação | **Parcial** — há uma narrativa de dez quadros, três estudos introdutórios e doze leituras por assunto; ainda são rascunhos. O folheto será produzido pelo usuário no Photoshop. | Manuscrito completo com referências e notas editoriais. |
+| CP2 | Revisão de conteúdo | **Pendente** — ainda falta revisão pastoral e validação da tradução e dos direitos. | Texto revisado e versão editorial aprovada para implementação. |
 | CP3 | Descoberta técnica e mapa de URLs | **Parcial** — rotas principais e artefatos atuais foram inspecionados; falta inventário total e medição em exportação/preview limpo. | Arquitetura escolhida e matriz de rotas/redirecionamentos aprovada. |
 | CP4 | Implementação em ambiente controlado | **Concluído nesta branch** — landing e refinamentos de navegação estão disponíveis no Expo Web; nenhuma publicação de domínio foi feita. | Landing e app navegáveis em preview, sem publicação no domínio final. |
 | CP5 | Verificação funcional, visual e editorial | **Parcial** — teste responsivo em nove viewports e smoke test da navegação; falta animação normal, aparelhos, leitores de tela e aprovação editorial. | Evidências de QA e lista de pendências aceita. |
@@ -854,6 +877,10 @@ Este gate foi superado para o **protótipo local**: o usuário definiu `/` como 
 - Redirecionamentos preservam os caminhos antigos de capítulos e seletores sob `/biblia/...`.
 - `/conhecer` reúne três leituras introdutórias e um catálogo opcional de doze assuntos adaptados em linguagem simples. Cada assunto abre sua própria leitura estática, com referências que levam ao leitor.
 - A landing mantém dez quadros de rascunho, abre com “Tem alguém que te ama.”, revela Jesus no sexto quadro, explica a mensagem cristã e oferece caminhos opcionais. Usa degradê de cinza, tema claro/escuro persistido no dispositivo, fontes de sistema sem requisição externa na raiz, dissolução textual progressiva e respeito a `prefers-reduced-motion`.
+- Antes do catálogo, `/conhecer` informa que a escolha abre uma leitura e que esta versão não recebe relatos nem pedidos de oração.
+- As páginas temáticas se identificam como leituras por assunto e exibem no topo o aviso de que não são diagnósticos, não substituem cuidado profissional e ainda não recebem relatos ou pedidos de oração. O aviso também aparece quando a pessoa abre um link direto.
+- As referências ao final da landing agora são atalhos diretos para os capítulos e versículos no leitor bíblico.
+- A arte do folheto será produzida pelo usuário no Photoshop. O app não terá uma ferramenta de diagramação ou impressão do folheto.
 - As leituras e os doze temas são rascunhos editoriais. Não há coleta de relatos ou pedidos de oração, endpoint, analytics ou conexão Neon nesta versão.
 - A página explica que os temas são caminhos de leitura, não diagnósticos, e informa com clareza que o site ainda não recebe relatos nem pedidos de oração.
 
@@ -862,8 +889,13 @@ Este gate foi superado para o **protótipo local**: o usuário definiu `/` como 
 - `npm run export:web`: concluído com Expo SDK 57. Foram exportadas as páginas da aplicação, os doze caminhos temáticos e 1.189 capítulos bíblicos.
 - `npm run check:static`: concluído. O verificador cobre a landing, o hub, os três estudos introdutórios, as doze leituras temáticas, metadados e as 1.189 páginas de capítulos; encontrou 1.312 arquivos HTML.
 - Preview local: `/`, `/conhecer` e `/conhecer/temas/ansiedade-e-preocupacao` foram abertos. A árvore acessível expõe títulos, ordem das seções, textos e links bíblicos.
-- `npm run typecheck`: ainda retorna três erros em arquivos modificados anteriormente no workspace, fora deste incremento: um tipo de resumo em `app/(tabs)/biblia.tsx` e duas chamadas sem argumento em `app/(tabs)/leitura/[livro]/[capitulo].tsx`. Nenhum erro foi apontado nos arquivos deste incremento.
-- `npm run check:a11y`: o verificador para ao tentar abrir `app/(tabs)/index.tsx`, que não existe neste checkout. A rota e o checker fazem parte de alterações locais preexistentes e não foram modificados nesta etapa.
+- Preview local: a landing foi reaberta após atualizar os atalhos bíblicos; os sete links aparecem na árvore acessível. Além das referências do evangelho, Marcos 10:46–52 e João 4:7–26 apoiam a parte sobre o cuidado e as conversas de Jesus. O destino de João 3:16 abre João 3 no leitor.
+- Preview local: `/conhecer/temas/luto-e-perdas` foi aberto diretamente; o título, o aviso contextual, as duas seções e os quatro atalhos bíblicos aparecem na página e na árvore acessível.
+- Revisões paralelas e checkpoints estão em [qualidade da landing](RELATORIO-QUALIDADE-LANDING.md), [qualidade dos temas](RELATORIO-QUALIDADE-TEMAS.md), [estudos introdutórios](RELATORIO-QUALIDADE-INTRODUTORIOS.md), [rotas e migração](RELATORIO-ROTAS-E-CHECKPOINTS.md) e [service worker](RELATORIO-QUALIDADE-SERVICE-WORKER.md).
+- O typecheck foi corrigido e passou; o relatório registra a atualização de `CardStreak` e as chamadas de áudio com origem estável: [qualidade de tipos TypeScript](RELATORIO-TIPOS-TYPESCRIPT.md).
+- Preview local: Tab e Espaço foram exercitados; o foco aparece na área rolável, Espaço e rolagem avançam a narrativa, e o tema claro/escuro alterna. Após retirar o blur, a segunda frase permanece nítida. Leitor de tela real, preferência de movimento reduzido, PageDown, setas, zoom 200% e aparelhos reais seguem pendentes.
+- `npm run typecheck`: concluído sem erros após alinhar a home com o resumo de sequência e passar a origem da leitura nas ações de áudio.
+- `npm run check:a11y`: 111 contratos aprovados no estado local integrado. `npm run check:ui`: 38 contratos aprovados.
 - O incremento estático com o catálogo temático foi publicado em prévia protegida da Vercel. O domínio pretendido e a rota final do QR ainda não foram confirmados.
 
 ### Portão D7 — revisão de lançamento
@@ -881,14 +913,14 @@ A direção visual é editorial e tipográfica, com referências nas seleções 
 
 - Paleta: cinza escuro em degradê, texto marfim, acento areia e um cartão claro para destacar o primeiro caminho de leitura. A landing usa fontes do sistema nesta revisão para não bloquear o primeiro conteúdo à espera de fonte externa; reavaliar a direção tipográfica após conferir o fallback em aparelhos.
 - O hub passa a ter navegação horizontal, abertura editorial, cartões com categorias e setas alinhadas, lista temática com divisórias e uma chamada da Bíblia com botão em linha única.
-- A landing usa um palco fixo durante a rolagem. O texto se dissolve em partículas amostradas de suas palavras. O avanço depende da rolagem, inclusive ao voltar. O canvas processa até 1.600 partículas por quadro, com cache limitado, sem bibliotecas adicionais.
+- A landing usa um palco fixo durante a rolagem. A rolagem controla transições simples de opacidade, posição e escala entre frases, com texto nítido. O efeito de partículas foi retirado temporariamente por solicitação do usuário.
 - Hover: luz suave seguindo o ponteiro, deslocamento discreto dos cartões, giro das setas e contraste nos botões. Controles continuam com foco de teclado visível e área de toque adequada.
 - As leituras e os temas entram ao alcançar a tela. As animações usam transformações e opacidade, com limpeza dos observadores ao navegar.
 - O carregamento aparece apenas enquanto as fontes estão pendentes, com limite de 2,2 segundos, saída suave e opção de continuar imediatamente. Não há porcentagem simulada ou espera mínima artificial.
-- A opção “Ler sem animações” disponibiliza a narrativa completa em leitura contínua. A preferência de movimento reduzido do sistema também desativa o palco fixo, a poeira e os efeitos de entrada.
+- A opção “Ler sem animações” disponibiliza a narrativa completa em leitura contínua. A preferência de movimento reduzido do sistema também desativa o palco fixo e os efeitos de entrada.
 - O HTML estático permanece legível se JavaScript, canvas ou observadores não estiverem disponíveis.
 
-Verificação local: exportação concluída, 23 rotas críticas e 1.312 arquivos HTML conferidos. Navegação, tema claro/escuro, avanço da narrativa e leitura contínua revisados no navegador. Layouts conferidos em 390, 960 e 1.280 pixels, sem extravasamento horizontal nos elementos principais. Nenhum erro de console observado nas páginas revisadas. O typecheck continua apontando somente os três erros preexistentes descritos na seção 23. Ainda é necessária a revisão em aparelhos reais antes do lançamento.
+Verificação local: exportação concluída, 23 rotas críticas e 1.312 arquivos HTML conferidos. Navegação, tema claro/escuro, avanço da narrativa e leitura contínua revisados no navegador. Layouts conferidos em 390, 960 e 1.280 pixels, sem extravasamento horizontal nos elementos principais. Nenhum erro de console observado nas páginas revisadas. Esse resultado de typecheck foi superado pela correção registrada na seção 23 e na revisão de tipos. Ainda é necessária a revisão em aparelhos reais antes do lançamento.
 
 ## 25. Revisão UX/UI da landing e plano de resolução
 

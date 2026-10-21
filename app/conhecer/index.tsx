@@ -93,6 +93,10 @@ export default function Conhecer() {
             </Text>
           </View>
 
+          <Text className="temas-aviso">
+            Ao escolher um assunto, você vai direto para uma leitura. Nesta versão, não há formulário para enviar relatos nem pedidos de oração.
+          </Text>
+
           <View className="temas-lista">
             {TEMAS_EVANGELISTICOS.map((tema, indice) => (
               <Link key={tema.slug} href={`/conhecer/temas/${tema.slug}` as never} asChild>
@@ -104,7 +108,6 @@ export default function Conhecer() {
               </Link>
             ))}
           </View>
-          <Text className="temas-aviso">Nesta versão, cada assunto abre uma leitura. O site ainda não recebe relatos nem pedidos de oração.</Text>
 
           <View className="conhecer-biblia">
             <View className="conhecer-biblia-textos">

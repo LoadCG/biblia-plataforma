@@ -1,7 +1,49 @@
 # Plano técnico — busca bíblica e descoberta
 
-**Revisado em:** 15 de outubro de 2026
+**Revisado em:** 17 de outubro de 2026
 **Status:** fluxo web e busca editorial implementados e cobertos pela suíte local; jornadas principais da busca bíblica também foram exercitadas manualmente no navegador. Nove resumos receberam ajustes editoriais apoiados em passagens; uma regressão recente garante que trechos de consultas AND com termos distantes continuem curtos e exibam ambas as evidências. O ranking ainda precisa de uma avaliação rotulada antes de qualquer mudança de pontuação. Permanecem validações de erro/retry por falha real, SQLite/dispositivo nativo, leitor de tela real e benchmark reproduzível por ambiente. Busca unificada e SEO/export seguem condicionais e fora do foco imediato.
+
+**Continuação em 16 de outubro — precisão do destaque nos resultados:** revisão
+estática encontrou que a UI usava substring para destacar termos, marcando falsos
+positivos como “amor” dentro de “clamor”. O destaque agora reutiliza tokens e
+limites de palavra da semântica bíblica; frases entre aspas destacam apenas a
+sequência contígua exata. Intervalos preservam os offsets do texto com acentos.
+Testes de regressão cobrem falso positivo lexical, frase, acentos e recorte do
+texto original. Os cinco conjuntos direcionados da busca passaram (98 testes);
+o `typecheck` global está bloqueado por incompatibilidade em arquivos alheios à
+busca (`core/estatisticas/streak.ts`, `app/(tabs)/voce.tsx` e
+`components/CardStreak.tsx`). Os contratos de acessibilidade (94), UI (34), copy
+(119 fontes) e `git diff --check` passaram. Ranking e matching não foram
+alterados.
+
+**Continuação em 17 de outubro — ação de busca favorita:** a revisão da tela
+identificou que acionamentos repetidos podiam executar toggles concorrentes e
+que uma resposta atrasada podia atualizar o marcador de uma consulta diferente.
+O controle agora mostra estado busy/disabled, tem alvo mínimo de 44 px e ignora
+respostas de uma consulta já substituída. A checagem global de TypeScript passou
+nesta rodada. Os seis conjuntos focados passaram (104 testes), assim como os
+contratos de acessibilidade (98), UI (36), copy (120 fontes) e `git diff
+--check`. A recuperação com erro real de armazenamento e o leitor de tela real
+continuam pendentes.
+
+**Estados da lista de favoritas — 17 de outubro:** ao abrir Descubra sem uma
+consulta, favoritos agora distinguem carregamento, erro recuperável e lista
+confirmada. Falha de leitura oferece retry junto às sugestões por tema; a
+disponibilidade da busca não depende desse repositório. TypeScript, 104 testes
+focados e os contratos estruturais passaram.
+
+**Referências de UX consultadas — 17 de outubro:** o tutorial oficial do
+[BibleGateway](https://www.biblegateway.com/help/tutorial/) descreve sugestões
+de palavras/frases, busca por todos os termos, qualquer termo ou frase exata e
+filtros por testamento/livro; a [ajuda do YouVersion para busca no Android](https://help.youversion.com/l/en/article/o1c2uvgi2n-bible-search-on-android)
+documenta referências/temas, filtros por versão/testamento/livro e a exibição
+apenas de filtros com correspondências; o [Blue Letter Bible](https://www.blueletter.bible/) separa seleção de intervalo/livros em opções
+avançadas. Aplicação ao projeto: preservar o conjunto de filtros atuais (não há
+facetas por livro disponíveis sem varrer todos os resultados paginados), não
+adicionar modo “qualquer termo” antes de avaliação do matching, e priorizar
+estados locais previsíveis e recuperação de favoritas. Próxima oportunidade a
+avaliar é sugestão de referência/passagem durante a digitação, mantendo a busca
+textual como fluxo principal.
 
 Este plano trata as jornadas atualmente reunidas em `Descubra`, sem assumir que devam virar um único mecanismo de busca. Busca bíblica, busca editorial dos resumos e navegação por temas têm fontes, resultados e ações diferentes. A arquitetura deve continuar separada até que exista uma necessidade comprovada de busca unificada.
 
@@ -157,6 +199,28 @@ Verificações desta rodada: typecheck passou; suíte integral (24 suítes/170 t
 **Progresso manual web:** em desktop e viewport 390×844 foram vistos referência direta, vazio, filtro, busca rápida e foco básico por teclado. Na sessão atual, “perdão” mostrou 6 resultados bíblicos e 10 resumos com trechos; `Joao 3:16` gerou uma referência direta; `Deus` mostrou `50+` e anúncio acessível de continuidade; Novo Testamento aplicou-se e carregar mais acumulou 100 resultados, sinalizando `100+`. Erro e retry foram cobertos por contrato/código, não por falha de rede simulada. Leitor de tela real e teste nativo continuam pendentes.
 
 **Continuação manual em 2026-10-15:** no navegador local com perfil sem dados de teste, `Joao 3:16` abriu o resultado canônico João 3:16. A troca imediata de `De` para `Deus` terminou com resultados da consulta atual e sem resultados antigos visíveis. Novo Testamento limitou os resultados às referências desse testamento; “Carregar mais” acumulou 50 para 100, manteve o filtro e anunciou a quantidade. Selecionar João e então Antigo Testamento limpou o livro incompatível e exibiu somente resultados do AT. A busca temporária foi apagada ao final; nenhuma favorita ou dado pessoal foi gravado. A tela não foi induzida a erro de rede. O retry continua coberto por testes/contrato e inspeção de código, não por acionamento visual.
+
+**Continuação — retorno do leitor à busca, 2026-10-15:** links de resultado
+carregam origem, consulta e filtros de testamento/livro; o leitor retorna a
+Descubra sem depender do histórico. A jornada no navegador confirmou que
+`Joao 3:16` permanece no campo e o resultado João 3:16 reaparece ao voltar.
+Durante essa inspeção, foi reproduzido um spinner infinito quando a URL restaurava
+os filtros padrão (`testamento=todos`, livro vazio): o efeito limpava os
+resultados mesmo sem mudança efetiva dos filtros e, por isso, não iniciava nova
+busca. A sincronização agora compara os filtros já normalizados e só reinicia
+quando há mudança. Um teste cobre o caso de filtros equivalentes; a jornada foi
+repetida depois da correção e carregou o resultado esperado. Parâmetros recebidos
+continuam validados antes de aplicar filtros.
+`typecheck`, seis testes focados de navegação, `check:a11y` (87 contratos),
+`check:ui` (28 superfícies/contratos), `check:copy-ui` (119 fontes) e
+`git diff --check` passaram. Falha/retry induzidos, leitor de tela real e
+SQLite/dispositivo nativo continuam pendentes.
+
+**Feedback de nova tentativa — 2026-10-15:** ao selecionar “Tentar novamente”,
+a tela agora limpa a mensagem de falha e apresenta imediatamente o carregamento,
+sem aguardar o debounce de 500 ms. A suíte de 208 testes, TypeScript e os checks
+estruturais de acessibilidade/UI/copy passaram; não foi induzida falha real de
+armazenamento nesta rodada. A recuperação visual após falha real segue pendente.
 
 **Cobertura visual concluída nesta continuação:** a aba “Nos Resumos” mostrou Gênesis com os dois termos em `criação descanso`, encontrou a frase exata `"criação e o descanso"` e exibiu trechos contendo `fé`, sem o falso positivo `feitas` em Gênesis. Após o novo desempate, `Jesus` mostrou Mateus, João, Marcos e Lucas nas quatro primeiras posições. A árvore de acessibilidade do navegador mostrou `1 resultado encontrado` para a consulta com um único resumo; falta conferir o anúncio com leitor de tela real.
 
@@ -335,6 +399,29 @@ Não transformar métricas experimentais em gates de CI até estabilizar conjunt
 - **E — executada para a documentação existente:** README, plano técnico e triagem receberam comandos, critérios, comparação, benchmark e pendências. A revisão de release e aceitação das limitações continuam aguardando a validação externa.
 
 **Próxima ação dependente de terceiros/ambiente:** obter segunda leitura dos rótulos e intenções do conjunto v1; em paralelo, repetir testes de acessibilidade com leitor de tela e executar os casos dourados em um dispositivo/emulador que inicialize SQLite FTS5.
+
+### Próxima rodada — atalho para referências digitadas
+
+**Objetivo:** reduzir etapas quando a pessoa já sabe a referência que deseja ler, sem transformar uma referência inválida ou escondida por filtros em um caminho aparentemente válido.
+
+**Concluído nesta rodada:**
+
+1. Adicionado um atalho para abrir diretamente no leitor a primeira passagem de uma referência explícita, como `João 3:16` ou `Provérbios 3:5-6`.
+2. O atalho só aparece depois da busca atual terminar e confirmar o primeiro versículo nos resultados visíveis; respeita filtros de livro e testamento sem consulta paralela.
+3. O destino reaproveita a navegação já existente, preservando consulta, origem e filtros para retornar à busca.
+4. A ação tem nome e instrução acessíveis, e aparece como opção compacta antes dos resultados. Busca por palavra, referência de capítulo sem versículo e busca na aba de resumos mantêm o fluxo atual.
+5. Cobertos por testes unitários: referência válida, referência sem acento, intervalo, versículo ausente dos resultados filtrados, capítulo sem versículo e consulta textual.
+6. A inspeção no navegador detectou que `João 3:99` acabava em falha de busca e chamava o fallback remoto. A busca agora trata referências reconhecidas porém inexistentes como zero resultados; a leitura local não aciona fallback externo para erro classificado como referência inválida. As suítes web e nativa cobrem esse contrato.
+
+**Próximas etapas em ordem estratégica:**
+
+1. Concluídos nesta rodada: testes direcionados, TypeScript, contratos de acessibilidade/UI/copy e revisão de whitespace/diff; a inspeção web mostrou a ação e o leitor de tela exibe um link com nome e dica explícitos.
+2. Fazer inspeção visual do atalho em tema escuro e testar foco por teclado/leitor de tela real; o estado inspecionado foi o navegador web em tema claro.
+3. Validar intervalo longo e filtros que excluem a referência em web e em SQLite nativo real. A invalidez explícita foi exercitada no navegador; SQLite real continua condicionado a dispositivo/emulador disponível.
+4. Como próxima melhoria de produto, avaliar sugestões durante a digitação para nomes de livros e referências incompletas. Só avançar depois de definir critérios de correspondência e teclado/seleção; manter a ação direta atual como melhoria independente.
+5. Continuar o encerramento de qualidade já aberto: segunda revisão humana do benchmark editorial, leitor de tela real e medição de busca em browser e dispositivo nativo.
+
+**Verificações desta rodada:** 5 suítes direcionadas passaram (36 testes), `typecheck`, `check:a11y` (100 contratos), `check:ui` (38 superfícies/contratos), `check:copy-ui` (120 fontes) e `git diff --check`. A inspeção web em temas claro e escuro confirmou o atalho de João 3:16 e o destino; “João 3:99” não ofereceu o atalho e ficou sem resultados depois da correção. SQLite nativo real e leitor de tela real permanecem pendentes.
 
 ## 7. Fechamento desta rodada e histórico
 

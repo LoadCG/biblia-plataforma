@@ -17,6 +17,10 @@ const SECOES = [
     titulo: "Exportar ou apagar",
     texto: "Em Configurações, na seção Meus dados, você pode exportar seus dados pessoais ou apagar grifos, notas, itens salvos, progresso e planos deste dispositivo. Apagar é permanente e não pode ser desfeito.",
   },
+  {
+    titulo: "Cuide do arquivo de backup",
+    texto: "A exportação é um arquivo JSON que pode incluir suas notas, grifos, preferências e progresso. Ele é salvo pelo navegador ou compartilhado pelo sistema do aparelho. Guarde-o em um local privado e compartilhe apenas com alguém de confiança.",
+  },
 ];
 
 export default function DadosEPrivacidade() {

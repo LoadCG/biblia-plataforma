@@ -14,7 +14,8 @@
 // - Requisições de outra origem (ex. bible-api.com) não são
 //   interceptadas — cache de API já é responsabilidade do
 //   core/biblia/BibliaAPI.ts, em memória.
-const CACHE_NAME = "biblia-plataforma-v1";
+const CACHE_PREFIX = "biblia-plataforma-";
+const CACHE_NAME = `${CACHE_PREFIX}v1`;
 
 self.addEventListener("install", (event) => {
   self.skipWaiting();
@@ -27,7 +28,11 @@ self.addEventListener("activate", (event) => {
   event.waitUntil(
     caches
       .keys()
-      .then((chaves) => Promise.all(chaves.filter((c) => c !== CACHE_NAME).map((c) => caches.delete(c))))
+      .then((chaves) => Promise.all(
+        chaves
+          .filter((chave) => chave.startsWith(CACHE_PREFIX) && chave !== CACHE_NAME)
+          .map((chave) => caches.delete(chave))
+      ))
       .then(() => self.clients.claim())
   );
 });
@@ -40,28 +45,41 @@ self.addEventListener("fetch", (event) => {
   if (url.origin !== self.location.origin) return;
 
   if (request.mode === "navigate") {
-    event.respondWith(
-      fetch(request)
+    const respostaDaRede = fetch(request);
+
+    // O cache é parte do ciclo do evento, mas não precisa atrasar a resposta
+    // que a pessoa já pode começar a ler. Falhas de cache não afetam a navegação.
+    event.waitUntil(
+      respostaDaRede
         .then((resposta) => {
-          const copia = resposta.clone();
-          caches.open(CACHE_NAME).then((cache) => cache.put(request, copia));
-          return resposta;
+          if (!resposta.ok) return;
+          return caches.open(CACHE_NAME).then((cache) => cache.put(request, resposta.clone()));
         })
-        .catch(() => caches.match(request).then((cache) => cache || caches.match("/")))
+        .catch(() => {})
+    );
+
+    event.respondWith(
+      respostaDaRede.catch(() =>
+        caches.open(CACHE_NAME).then((cache) => cache.match(request))
+      )
     );
     return;
   }
 
-  event.respondWith(
-    caches.match(request).then((cache) => {
-      if (cache) return cache;
-      return fetch(request).then((resposta) => {
-        if (resposta.ok) {
-          const copia = resposta.clone();
-          caches.open(CACHE_NAME).then((cache) => cache.put(request, copia));
-        }
-        return resposta;
-      });
-    })
+  let veioDaRede = false;
+  const resposta = caches.open(CACHE_NAME).then((cache) => cache.match(request)).then((cache) => {
+    if (cache) return cache;
+    veioDaRede = true;
+    return fetch(request);
+  });
+
+  event.waitUntil(
+    resposta
+      .then((resultado) => {
+        if (!veioDaRede || !resultado.ok) return;
+        return caches.open(CACHE_NAME).then((cache) => cache.put(request, resultado.clone()));
+      })
+      .catch(() => {})
   );
+  event.respondWith(resposta);
 });

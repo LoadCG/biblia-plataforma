@@ -105,7 +105,7 @@ export default function ListaResumos() {
           <View className="mb-4">
             <View className="flex-row items-start justify-between mb-2">
               <View className="flex-1 mr-3">
-                <Link href="/" asChild>
+                <Link href="/biblia" asChild>
                   <Pressable accessibilityRole="link" accessibilityLabel="Voltar para início" className="min-h-11 justify-center self-start pr-3 mb-1 active:opacity-70">
                     <Text className="text-cor-destaque dark:text-cor-destaque-dark text-sm">← Início</Text>
                   </Pressable>

@@ -1,12 +1,10 @@
 import { grifosRepository, livrosLidosRepository, notasRepository, progressoRepository } from "../repositories";
-import { calcularSequenciaAtual } from "./streak";
-
 export type Estatisticas = {
   livrosLidos: number;
   capitulosLidos: number;
   versiculosGrifados: number;
   notasEscritas: number;
-  sequenciaAtual: number;
+  datasLeitura: string[];
   minutosEstimados: number;
 };
 
@@ -29,7 +27,7 @@ export async function calcularEstatisticas(ownerId: string): Promise<Estatistica
     capitulosLidos: capitulos.length,
     versiculosGrifados: grifos.length,
     notasEscritas: notas.length,
-    sequenciaAtual: calcularSequenciaAtual(capitulos.map((c) => c.lidoEm)),
+    datasLeitura: capitulos.map((capitulo) => capitulo.lidoEm),
     minutosEstimados: Math.round(capitulos.length * MINUTOS_POR_CAPITULO),
   };
 }

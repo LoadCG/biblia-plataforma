@@ -1,6 +1,6 @@
 # Plano mestre de evolução — outubro a dezembro de 2026
 
-Atualizado em 2026-10-13. Este documento define a ordem das próximas entregas
+Atualizado em 2026-10-21. Este documento define a ordem das próximas entregas
 e aponta para a decomposição técnica/editorial existente. O estado real deve ser
 comprovado por diff, verificações e evidências; itens instalados não equivalem a
 aceite visual, assistivo, nativo ou de publicação.
@@ -27,10 +27,12 @@ segue implementado com QA parcial.
 
 ## Prioridade funcional seguinte — consistência da busca
 
-O usuário pediu execução em ordem estratégica das lacunas, mantendo responsividade
-web e deixando o app mobile dedicado deferido. A restauração de backup foi
-implementada e está em validação estática; antes de iniciar uma nova alteração,
-concluir esse gate sem alegar QA runtime que não ocorreu.
+O usuário pediu execução em ordem estratégica das lacunas, mantendo a
+responsividade web e deixando o redesign mobile dedicado deferido. A restauração
+de backup está implementada; testes focados, TypeScript e contratos estruturais
+passaram. Seletor de arquivos, falhas reais, rollback no runtime, reexportação e
+SQLite em dispositivo continuam como gates de QA; não bloqueiam trabalho web
+independente.
 
 | Prioridade | Lacuna | Plano de melhoria | Aceite |
 |---|---|---|---|
@@ -85,9 +87,10 @@ e assistiva real como pendente.
 
 ### Execução funcional — ordem e gates
 
-1. Fechar restauração de backup: typecheck, diff review e contratos relevantes;
-   runtime do seletor, recuperação/falha e inspeção visual ficam listados como QA
-   pendente se o ambiente não os permite.
+1. **Restauração de backup — implementação e verificações locais concluídas; QA
+   de runtime pendente:** manter pendentes seletor de arquivos, falha/rollback,
+   reexportação e SQLite real conforme `PLANO-RESTAURACAO-DADOS.md`. Não declarar
+   aceite integral por causa dos testes de unidade.
 2. Inventariar implementação das buscas em `core/content`, `core/biblia` e
    superfícies `Descubra`, leitura e resumos; registrar diferenças antes de
    editar. Preservar buscas distintas que têm objetivos diferentes.
@@ -152,6 +155,13 @@ plataforma; erros podem ser repetidos e callbacks antigos não alteram nova
 sessão. **Estado:** implementação parcial, QA de plataforma pendente. Os
 testes de código não substituem validação com engines de fala em dispositivos.
 
+**Correção de escopo de sessão em 2026-10-15:** a auditoria encontrou que
+pausar/retomar ainda aceitavam comandos sem identificar a origem, embora a
+limpeza já fosse protegida. Os comandos agora exigem a origem ativa em Leitor e
+Versículo do Dia. Um teste garante que uma origem antiga não controle a sessão
+atual e que a origem ativa continue podendo pausar/retomar. QA auditivo e teste
+de disputa real entre engines permanecem pendentes.
+
 ## Estado comprovado na revisão
 
 **Incidente de rota direta (2026-10-02):** a URL pública de 1 Coríntios 13
@@ -169,7 +179,7 @@ inválido retornou 404. As três novas rotas de planos também retornaram 200.
 | Home desktop | Parcialmente refinada | Jornada reorganizada; paisagem horária e ilustração da jornada implementadas. Home conferida em claro/escuro com perfil vazio, e estados de carga/sucesso observados. A composição integral em 1280×900 e 1440×900, outros estados de perfil e erro induzido continuam pendentes: a captura CUA não fornece viewport CSS nem enquadra a janela inteira. |
 | Descubra | Parcialmente implementada | No viewport desktop disponível, grade de oito temas, detalhe “Esperança”, links, entrada direta, recarga e busca (50 resultados/estado vazio) foram conferidos. Retorno que selecionava Início foi corrigido; tema inválido agora normaliza para `/pesquisa`. Ordem inicial de foco, indicador visível e abrir/voltar tema com Enter foram verificados; auditoria completa e viewports planejados seguem pendentes. |
 | Planos | Implementado com QA parcial | Lista e detalhe em claro/escuro; estados 0/7, 1/7 e 7/7 foram conferidos em origem local isolada e o progresso voltou a 0/7. A abertura de sessão e retomada do primeiro capítulo também foram vistas. O botão Voltar do leitor tinha levado a Início; agora retorna ao detalhe do plano quando há contexto de sessão. Erro e viewports planejados permanecem incompletos. |
-| Sistema de estados | Migração principal feita | Inventário/API/migrações existem. Varredura AST encontrou 73 chamadas a `mostrarToast`, todas classificadas; o contrato TypeScript agora exige severidade. Inspeção visual/assistiva dos consumidores continua pendente. |
+| Sistema de estados | Migração principal feita; QA visual parcial | Inventário/API/migrações existem. Varredura AST encontrou 73 chamadas a `mostrarToast`, todas classificadas; o contrato TypeScript agora exige severidade. Home desktop foi conferida em claro e no sucesso escuro; o Toast agora respeita o breakpoint da navegação e não cobre os cartões. Inspeção das outras severidades/consumidores, falha induzida, leitor de tela real e movimento reduzido continua pendente. |
 | Anotações compartilhadas | Implementadas; QA web funcional concluído, aceite integral parcial | Commit `5a1e745` adiciona grupos multi-versículo em AsyncStorage e SQLite. Em `localhost:8082`, perfil descartável: criação contínua/descontínua, reabertura por membro, extensão, promoção de nota individual, conflito sem sobrescrita, recarga, Salvos/busca/edição/exclusão, atividade e cartão do Versículo do Dia conferidos; dados de QA removidos. Cinco testes do repositório, typecheck, checks a11y/UI/copy e export passaram. Falta runtime SQLite em dispositivo/emulador, estados de erro/foco e medição visual com viewport conhecido. |
 | Copy da interface | Gate estático passou | 116 fontes de app/componentes/conteúdo verificadas localmente e no CI, sem padrões sinalizados; a heurística não substitui revisão semântica. |
 | CI remoto | Passou no workflow atualizado | Run [`37254924178`](https://github.com/LoadCG/biblia-plataforma/actions/runs/37254924178) para `b737c2c`, sucesso; validação e export passaram. Aviso do runner Ubuntu 26 continua monitorável. |
@@ -289,6 +299,59 @@ A captura em 1280 px foi limitada pela largura física do navegador, então ali 
 conclusão de ausência de overflow vem da geometria do DOM. Teste de lembrete com
 histórico, falha induzida e validação nativa continuam pendentes.
 
+**Sistema de sequência diária em 2026-10-16:** cálculo compartilhado entre
+Início, Perfil e Estatísticas agora expõe sequência atual, melhor ritmo, leitura
+de hoje e atividade dos sete dias locais. Leituras inválidas/futuras são
+ignoradas e capítulos marcados no mesmo dia não duplicam a contagem. As mensagens
+distinguem leitura de hoje e sequência mantida por ontem; o resumo atualiza ao
+retomar a tela e na virada do dia. Testes unitários cobrem limites, lacunas,
+deduplicação, recorde e datas inválidas. Em origem local isolada, marcar Gênesis
+1 atualizou Início e Perfil sem recarga; a leitura foi desmarcada depois. QA
+nativo e leitor de tela real seguem pendentes. `npm run validate` passou com 32
+suítes/221 testes, 96 contratos de acessibilidade, 4 jornadas Maestro, 35
+contratos de UI e Expo Doctor 21/21; `check:copy-ui` aprovou 120 fontes.
+
+**Correção de datas importadas do streak em 2026-10-17:** backups aceitam datas
+ISO sem horário, que o JavaScript interpretava como meia-noite UTC. Em fusos a
+oeste de UTC, isso podia mover uma leitura para o dia local anterior. O cálculo
+agora trata `AAAA-MM-DD` como data de calendário local e ignora combinações
+impossíveis; timestamps com horário mantêm a interpretação por instante. Dois
+testes cobrem esses casos. A suíte focada, typecheck e `git diff --check`
+passaram; o QA nativo/leitor de tela continua pendente.
+
+**Consistência entre superfícies em 2026-10-17:** Estatísticas agora reutiliza
+o cartão de streak compartilhado, com mensagem de estado, recorde e atividade
+dos últimos sete dias. O Perfil também passou a usar o mesmo cartão. A grade
+genérica de Estatísticas deixou de duplicar os números de sequência e recorde.
+O cartão apresenta uma ação para abrir a Bíblia enquanto a leitura de hoje não
+foi registrada; a ação some depois da leitura. A próxima validação cobre estado
+sem histórico, streak mantido por ontem, leitura de hoje, navegação da ação,
+teclado e zoom. Typecheck, 14 testes focados, contratos de acessibilidade (100),
+contratos de UI responsiva (38) e `git diff --check` passaram; inspeção visual
+em dispositivo e leitor de tela seguem pendentes.
+
+**Próximas etapas do streak:**
+
+1. **Implementação compartilhada — concluída:** o mesmo cartão e CTA contextual
+   estão em Início, Perfil e Estatísticas, sem somar passos ao streak por abrir
+   o leitor. Só o registro de capítulo lido altera a sequência.
+2. **Integridade de datas — concluída:** datas importadas `AAAA-MM-DD` são
+   interpretadas como dias locais, datas impossíveis são descartadas, e as
+   regras de sequência/recorde têm cobertura unitária, incluindo virada de mês
+   e mudança de horário de verão (15 testes focados passam em `America/New_York`).
+3. **QA web — próximo gate:** exercitar os três estados (sem histórico,
+   sequência ativa ainda sem leitura hoje, leitura hoje), confirmar retorno da
+   ação à Bíblia e revisar layout em largura estreita, desktop, teclado e zoom.
+4. **QA nativo — gate de ambiente:** conferir virada local do dia, retomada do
+   app, timezone e leitura com VoiceOver/TalkBack em aparelho/emulador. Não
+   marcar esse gate como concluído com base apenas em testes automatizados.
+
+**Tentativa de QA web em 2026-10-18:** o Metro iniciou em `localhost:8093`, mas
+nenhum navegador estava disponível no ambiente de controle para abrir a rota e
+inspecionar os estados. O servidor foi encerrado; layout e navegação continuam
+pendentes de inspeção visual, sem inferir aceite a partir do typecheck ou dos
+contratos estáticos.
+
 ### Ciclo 2 — comparação desktop de Descubra e Planos (P1)
 
 O detalhe temático será expandido conforme [`PLANO-TEMAS-DESCOBERTA.md`](./PLANO-TEMAS-DESCOBERTA.md): conteúdo adicional permanece em revisão editorial e só aparece após publicação aprovada.
@@ -347,6 +410,20 @@ restaurar o perfil de teste a 0/7. Lista e detalhe foram inspecionados em deskto
 e não mostraram clipping. Falta conferir explicitamente o progresso intermediário
 sem completar o dia, falha/retry e plataformas nativas.
 
+**Continuação em 2026-10-15 — proteção do avanço de sessão:** o botão “Concluir e
+avançar” agora bloqueia acionamentos repetidos durante a gravação, expõe os
+estados disabled/busy à acessibilidade e informa “Salvando progresso…”. No
+navegador, dois acionamentos rápidos avançaram apenas de Provérbios 1 para 2; o
+terceiro trecho apareceu como leitura 3 de 3, e concluir o dia atualizou o plano
+para 1/7. O progresso do plano foi desmarcado ao final, restaurando 0/7. `npm run
+validate` passou nesta revisão (29 suítes/207 testes, 87 contratos de
+acessibilidade, 4 jornadas Maestro, 28 contratos de UI e Expo Doctor 21/21).
+Progresso intermediário sem concluir o dia foi conferido: após avançar Mateus 1,
+voltar ao plano manteve “Continuar sessão”, que reabriu Mateus 2 como leitura 2
+de 2, sem concluir o dia. O perfil de teste foi restaurado a 0/14 e os capítulos
+temporariamente marcados como lidos foram desmarcados. Falha/retry e execução
+nativa continuam pendentes.
+
 **Continuação em 2026-10-15 — busca bíblica web:** a referência sem acento
 `Joao 3:16` retornou João 3:16 canônico; trocar `De` por `Deus` rapidamente
 terminou com a consulta atual e sem resultados obsoletos; o filtro do Novo
@@ -357,6 +434,24 @@ limpa ao final, sem favoritas ou dados pessoais gravados. O fluxo manual web
 principal está validado; falha/retry visual, SQLite nativo e leitor de tela real
 permanecem gates externos. Evidência detalhada em
 [`PLANO-TECNICO-BUSCA.md`](../PLANO-TECNICO-BUSCA.md).
+
+**Retorno da busca para leitura — 2026-10-15:** resultados bíblicos agora levam
+origem, consulta e filtros para a URL; ao voltar pelo leitor, a pesquisa pode
+reconstruir o campo, filtros e resultados, inclusive em abertura direta sem
+histórico. A volta manual pelo botão foi confirmada no navegador com `Joao 3:16`.
+Durante o teste, um spinner infinito apareceu quando os filtros padrão voltavam
+na URL sem diferirem do estado atual. A tela agora reinicia a busca somente se
+os filtros normalizados mudarem; o teste de regressão e a repetição da jornada
+confirmaram o retorno do resultado João 3:16. `npm run validate` passou com 21/21
+checks do Expo Doctor, e o export web gerou 1.189 rotas de capítulos. Falha/retry
+visual, SQLite nativo e leitor de tela real permanecem gates externos.
+
+**Nova tentativa de busca — 2026-10-15:** quando uma pesquisa falha, o botão
+“Tentar novamente” agora limpa o erro e troca imediatamente para “Buscando
+resultados”, antes do debounce de 500 ms. TypeScript, 208 testes, contratos de
+acessibilidade/UI/copy passaram nesta rodada; um erro real de armazenamento não
+foi induzido com segurança, então a confirmação visual dessa recuperação segue
+pendente.
 
 ### Ciclo 3 — fechar sistema de estados web (P1)
 
@@ -399,10 +494,29 @@ mínimo de toque usado nas ações principais. Altura e largura agora são de pe
 menos 44 px e o verificador de acessibilidade cobre o contrato. `npm run
 validate` passou com 25 suítes/183 testes, 84 contratos a11y, 26 contratos UI e
 Expo Doctor 21/21; `npm run check:copy-ui` e `npm run export:web` também passaram,
-com 1.189 rotas de leitura geradas. A sessão web travou ao tentar abrir outra
-rota depois da exportação; a aparência do Toast e as severidades restantes não
-foram reinspecionadas. Continuam pendentes falha induzida, leitor de tela real,
-movimento reduzido observado e runtime nativo.
+com 1.189 rotas de leitura geradas.
+
+**QA visual continuado em 2026-10-15:** em desktop web, o Toast ficava 90 px
+acima da borda apesar de a navegação usar barra lateral, cobrindo o cartão
+seguinte da Home. O breakpoint de desktop (768 px) foi compartilhado com a
+navegação; o Toast fica a 24 px no desktop e preserva 90 px onde existe barra
+inferior. A posição foi conferida na Home clara e o Toast de sucesso em tema
+escuro permaneceu distinguível. O teste foi feito em localhost; o versículo foi
+removido dos salvos e o tema claro restaurado. Permanecem pendentes outras
+severidades/rotas, falha induzida, leitor de tela real, movimento reduzido
+observado e runtime nativo.
+
+**Continuação em 2026-10-15 — detalhe de Resumos:** o estado “livro lido” agora
+distingue carregamento, erro recuperável e valor confirmado. A gravação bloqueia
+acionamentos duplicados, preserva o estado exibido em caso de falha e mostra
+feedback. TypeScript e contratos estáticos passaram; inspeção visual, falha
+induzida e leitor de tela real permanecem pendentes.
+
+**Continuação em 2026-10-15 — dica contextual:** falha ao consultar se uma dica
+já foi vista agora oferece retry inline e não interrompe a leitura/plano. O botão
+“Entendi” desabilita ativações repetidas durante a persistência; falha mantém a
+dica aberta e mostra Toast. Verificações estáticas passaram; aparência nos dois
+temas, erro induzido e leitor de tela real seguem pendentes.
 
 ### Ciclo 4 — regressão visual automatizada (P2 após Ciclos 1 e 2)
 
@@ -495,6 +609,94 @@ performance e processo de distribuição. Nenhum item deste ciclo é pré-requis
 para continuar melhorias web desktop.
 
 ## Regras de atualização
+
+### Checkpoints de melhoria local — 2026-10-21
+
+Frentes implementadas e verificadas nesta rodada, sem publicar nem alterar o
+estado Git preexistente:
+
+- Busca: ajuste de alvo tátil para filtros e relatório de checkpoint.
+- Introdução e temas: auditoria sem alteração de conteúdo; relatórios registram
+  os contratos e a inspeção manual ainda pendente.
+- Estados compartilhados: auditoria de feedback, estados vazios e carregamento;
+  nenhum ajuste de código adicional considerado seguro nesta rodada.
+- Exclusão de dados: aguarda todas as exclusões concorrentes antes de retornar
+  falha, evitando oferecer nova tentativa enquanto a primeira ainda executa;
+  teste cobre a corrida.
+- Áudio: callbacks do cartão do versículo agora usam a origem da sessão para
+  pausar e continuar.
+- Service worker: busca offline limitada ao cache da aplicação, sem consumir
+  entradas de outros caches na mesma origem.
+- Landing: sequência de rolagem termina na última frase sem sobrepor o CTA; o
+  indicador de progresso não cobre o encerramento. Preview local e árvore de
+  acessibilidade inspecionados.
+
+**Validação integrada:** `npm run validate` passou em 2026-10-21, incluindo
+TypeScript, 34 suítes/236 testes, contratos de acessibilidade (111), jornadas
+(4), UI (38), conteúdo editorial e Expo Doctor (21/21). `npm run export:web`
+gerou 123 rotas estáticas e 1.189 rotas de capítulos; `npm run check:static`
+verificou 23 rotas críticas e 1.312 HTMLs. `git diff --check` e `node --check
+public/sw.js` também passaram.
+
+**Pendências de qualidade:** testes visuais completos em larguras menores,
+tema claro e movimento reduzido; teclado e leitor de tela real; reprodução
+offline/atualização do SW; áudio em aparelho real; revisão pastoral/editorial;
+preview Vercel. São gates distintos da compilação local.
+
+**Dependências:** Expo, Expo Router e Expo Sharing foram alinhados às versões
+patch esperadas pelo SDK 57. Expo Doctor passou. `npm audit --omit=dev` reportou
+44 vulnerabilidades transitivas de produção (9 moderadas, 35 altas); requer
+triagem por pacote e impacto antes de qualquer atualização major, não foi
+aplicado `npm audit fix`.
+
+### Checkpoints de continuidade — 2026-10-21
+
+Frentes adicionais entregues com auditorias paralelas em superfícies isoladas:
+
+- **Leitura:** invalidação das respostas assíncronas antigas ao trocar capítulo
+  ou desmontar a tela, evitando que um resultado atrasado substitua a leitura
+  atual. Typecheck e duas suítes de API passaram; troca rápida com rede lenta
+  ainda precisa de validação manual.
+- **Configurações e privacidade:** download web mantém o Blob URL ativo por um
+  segundo após iniciar o download; a página informa que o backup JSON pode
+  conter dados pessoais e recomenda guardar a cópia em local privado. Typecheck,
+  acessibilidade e copy passaram; conferência em navegadores/aparelhos reais
+  segue pendente.
+- **Rotas e conteúdo:** auditoria de estudos introdutórios, temas, planos,
+  resumos e destinos de referências não encontrou link interno quebrado
+  comprovado. Sem mudança de código; navegação browser/teclado/leitor de tela
+  permanece como checkpoint manual.
+
+**Validação integrada adicional:** `npm run validate` passou novamente em
+2026-10-21: 34 suítes, 236 testes, 111 contratos de acessibilidade, 4 jornadas,
+38 superfícies de UI e Expo Doctor 21/21. `npm run export:web` e
+`npm run check:static` passaram, com 123 rotas estáticas, 1.189 rotas de leitura
+e 1.312 arquivos HTML verificados. `git diff --check` e `node --check public/sw.js`
+passaram; permanecem apenas avisos de normalização LF/CRLF do Git em arquivos
+editados.
+
+**Ordem proposta para próxima rodada:** (1) testes visuais em larguras móveis,
+tema claro e movimento reduzido; (2) validação manual por teclado e leitor de
+tela; (3) ensaio de troca de capítulo e download de backup em runtime real;
+(4) comportamento de offline/atualização do service worker; (5) triagem das 44
+vulnerabilidades de produção antes de mudanças incompatíveis. Revisão pastoral
+e Preview Vercel continuam gates independentes de código.
+
+### Checkpoint do panfleto e landing — 2026-10-21
+
+- Reescrevi as dez frases da landing para evitar supor sofrimento ou rejeição e
+  definir pecado, graça e fé de forma curta. A primeira frase permanece igual
+  à do panfleto e Jesus é revelado no sexto quadro, após cinco etapas iniciais.
+- Preparei proposta de verso do panfleto com a mensagem essencial para leitores
+  sem celular; a frente preserva a frase e a composição simples descritas pelo
+  usuário. O endereço e QR continuam em placeholder.
+- As auditorias separadas cobriram narrativa, UX e caminho do QR às leituras.
+  Os relatórios estão junto do planejamento da landing.
+- `typecheck`, `check:a11y`, `check:copy-ui`, `check:ui` e `git diff --check`
+  passaram após as alterações.
+- **Não aprovado para publicação/impressão:** a copy nova é rascunho. Revisão
+  pastoral, domínio/HTTPS, QR final, viewport móvel e validação assistiva
+  continuam como gates CP2, CP5, CP6 e CP7.
 
 - Uma entrega concluída requer diff, validação adequada e evidência documentada.
 - “Implementado”, “verificado estruturalmente”, “inspecionado visualmente”,

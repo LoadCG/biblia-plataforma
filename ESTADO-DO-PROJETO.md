@@ -198,9 +198,14 @@ revisão humana, execução remota e distribuição.
 2. **Fechar casos restantes de atualização ao voltar às telas (P1):** os fluxos
    Home → Bíblia → marcar capítulo → Home e Plano → leitor → avançar referência
    → retomar foram validados no navegador sem recarga; a troca rápida de abas
-   também foi exercitada. O perfil de teste foi restaurado. Ainda falta conferir
-   lembrete com histórico, progresso intermediário sem concluir dia, respostas de
-   erro/retry e execução nativa.
+   também foi exercitada. Em 2026-10-15, o avanço da sessão ganhou trava contra
+   submissão duplicada, estado acessível de ocupado e feedback “Salvando progresso…”.
+   O duplo clique avançou apenas uma referência; o fim do dia persistiu 1/7 e o
+   progresso do plano foi restaurado a 0/7. Nesta continuação, progresso
+   intermediário sem concluir dia sobreviveu ao retorno ao plano e a retomada
+   reabriu diretamente a referência pendente; os dados de teste foram removidos.
+   Ainda falta conferir lembrete com histórico, respostas de erro/retry e
+   execução nativa.
 3. **Concluir composição desktop da Home e Planos (P1):** Home passou a duas
    colunas a partir de 1024 px e foi inspecionada em 1024 e 1440, clara, e em
    1024 escura. Medições do DOM em 1024/1280/1440 ficaram dentro da largura; a
@@ -209,8 +214,14 @@ revisão humana, execução remota e distribuição.
    de foco e capturas controladas nos tamanhos planejados.
 4. **Fechar a revisão funcional/assistiva da busca (P1):** referência direta,
    troca rápida, filtro por testamento/livro e paginação foram confirmados no
-   navegador; a busca editorial e trechos têm testes e QA anteriores. Restam
-   falha/retry induzidos, leitor de tela real e SQLite/dispositivo nativo.
+   navegador; a busca editorial e trechos têm testes e QA anteriores. Resultados
+   bíblicos agora levam a consulta para o leitor e fornecem retorno explícito à
+   pesquisa em links diretos; retorno foi conferido manualmente no navegador.
+   Corrigido spinner infinito causado pela restauração de filtros padrão sem
+   mudança de estado, com teste de regressão e nova inspeção bem-sucedida.
+   Ao refazer uma busca que falhou, o erro agora some e o indicador de busca
+   aparece imediatamente. A falha de armazenamento ainda não foi induzida com
+   segurança; também restam leitor de tela real e SQLite/dispositivo nativo.
    Preservar semânticas separadas e usar a triagem rotulada antes de alterar
    ranking ou vocabulário editorial.
 5. **Continuar o Ciclo 3 de estados web (P2):** o inventário estático encontrou

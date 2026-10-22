@@ -1,5 +1,5 @@
 import { Link, router, useLocalSearchParams } from "expo-router";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { Pressable, ScrollView, Text, TextInput, useWindowDimensions, View } from "react-native";
 import { IconeUI, type IconeUINome } from "../../components/icone/IconeUI";
 import { BotaoTema } from "../../components/BotaoTema";
@@ -18,19 +18,32 @@ import { mensagemErroAmigavel } from "../../core/util/erroAmigavel";
 import { mostrarToast } from "../../core/util/toast";
 import { useOwnerId } from "../../core/useOwnerId";
 import type { PesquisaFavorita } from "../../core/types/leitura";
-import { normalizarBusca } from "../../core/biblia/relevanciaBusca";
+import { encontrarIntervalosCorrespondenciaBiblica } from "../../core/biblia/relevanciaBusca";
 import { FAMILIA_SERIFADA } from "../../core/leitura/preferenciaFonte";
 import { hrefReferenciaBiblica } from "../../core/biblia/parseReferencia";
+import { filtrosBuscaDiferem, hrefResultadoBusca } from "../../core/biblia/navegacaoBusca";
+import { obterSugestaoReferenciaBusca } from "../../core/biblia/sugestaoReferenciaBusca";
 import { useArrastarParaRolar } from "../../core/util/useArrastarParaRolar";
 
 function TextoDestacado({ texto, termo }: { texto: string; termo: string }) {
-  const tokens = normalizarBusca(termo).replace(/^"|"$/g, "").split(" ").filter(Boolean);
+  const intervalos = encontrarIntervalosCorrespondenciaBiblica(texto, termo);
+  const partes: ReactNode[] = [];
+  let cursor = 0;
+  for (const [indice, intervalo] of intervalos.entries()) {
+    if (intervalo.inicio < cursor) continue;
+    if (intervalo.inicio > cursor) partes.push(texto.slice(cursor, intervalo.inicio));
+    partes.push(
+      <Text key={`termo-destacado-${indice}`} className="font-extrabold bg-cor-destaque-fundo dark:bg-cor-destaque-fundo-dark">
+        {texto.slice(intervalo.inicio, intervalo.fim)}
+      </Text>
+    );
+    cursor = intervalo.fim;
+  }
+  if (cursor < texto.length) partes.push(texto.slice(cursor));
+
   return (
     <Text className="text-sm text-cor-texto dark:text-cor-texto-dark" numberOfLines={3}>
-      “{texto.split(/(\s+)/).map((parte, indice) => {
-        const destaque = tokens.some((token) => normalizarBusca(parte).includes(token));
-        return <Text key={`${parte}-${indice}`} className={destaque ? "font-extrabold bg-cor-destaque-fundo dark:bg-cor-destaque-fundo-dark" : ""}>{parte}</Text>;
-      })}”
+      “{partes.length > 0 ? partes : texto}”
     </Text>
   );
 }
@@ -43,9 +56,14 @@ const ATALHOS_DESCUBRA: { id: string; rotulo: string; icone: IconeUINome; destin
 const TAMANHO_PAGINA_BUSCA = 50;
 
 export default function Pesquisa() {
-  const parametros = useLocalSearchParams<{ tema?: string }>();
-  const [termo, setTermo] = useState("");
+  const parametros = useLocalSearchParams<{ tema?: string; consulta?: string; testamento?: string; livroFiltro?: string }>();
+  const consultaParametro = Array.isArray(parametros.consulta) ? parametros.consulta[0] : parametros.consulta;
+  const testamentoParametro = Array.isArray(parametros.testamento) ? parametros.testamento[0] : parametros.testamento;
+  const livroFiltroParametro = Array.isArray(parametros.livroFiltro) ? parametros.livroFiltro[0] : parametros.livroFiltro;
+  const consultaParametroAnterior = useRef(consultaParametro);
+  const [termo, setTermo] = useState(consultaParametro ?? "");
   const [favoritada, setFavoritada] = useState(false);
+  const [salvandoFavorita, setSalvandoFavorita] = useState(false);
   const [resultadosBiblia, setResultadosBiblia] = useState<ResultadoBuscaGlobal[]>([]);
   const [buscando, setBuscando] = useState(false);
   const [erroBusca, setErroBusca] = useState<string | null>(null);
@@ -56,6 +74,9 @@ export default function Pesquisa() {
   const [carregandoMais, setCarregandoMais] = useState(false);
   const [erroCarregarMais, setErroCarregarMais] = useState(false);
   const [favoritas, setFavoritas] = useState<PesquisaFavorita[]>([]);
+  const [carregandoFavoritas, setCarregandoFavoritas] = useState(false);
+  const [erroFavoritas, setErroFavoritas] = useState(false);
+  const [tentativaFavoritas, setTentativaFavoritas] = useState(0);
   const [livroFiltro, setLivroFiltro] = useState<string | undefined>();
   const [tentativaBusca, setTentativaBusca] = useState(0);
   
@@ -65,6 +86,7 @@ export default function Pesquisa() {
   const ownerId = useOwnerId();
   const buscaAtiva = useRef(0);
   const favoritaAtiva = useRef(0);
+  const salvamentoFavoritaEmAndamento = useRef(false);
   const refFiltroLivro = useArrastarParaRolar();
   const refScrollFiltroLivro = useRef<ScrollView | null>(null);
   const conectarFiltroLivro = useCallback((instancia: ScrollView | null) => {
@@ -78,6 +100,36 @@ export default function Pesquisa() {
     () => testamento === "todos" ? livros : livros.filter((livro) => livro.testamento === testamento),
     [testamento]
   );
+
+  useEffect(() => {
+    if (consultaParametroAnterior.current === consultaParametro) return;
+    consultaParametroAnterior.current = consultaParametro;
+    alterarTermo(consultaParametro ?? "");
+  }, [consultaParametro]);
+
+  useEffect(() => {
+    if (testamentoParametro === undefined && livroFiltroParametro === undefined) return;
+    const testamentoValido = testamentoParametro === "Antigo Testamento" || testamentoParametro === "Novo Testamento"
+      ? testamentoParametro
+      : "todos";
+    const slugLivroSolicitado = livroFiltroParametro || undefined;
+    const livroValido = livros.find((livro) =>
+      livro.slug === slugLivroSolicitado &&
+      (testamentoValido === "todos" || livro.testamento === testamentoValido)
+    )?.slug;
+
+    // O leitor volta com os filtros na URL. Se eles forem equivalentes ao
+    // estado padrão atual (por exemplo, "todos" e livro vazio), limpar os
+    // resultados aqui deixaria a tela carregando sem disparar outro efeito.
+    if (!filtrosBuscaDiferem(
+      { testamento, livroFiltro },
+      { testamento: testamentoValido, livroFiltro: livroValido }
+    )) return;
+
+    reiniciarBusca();
+    setTestamento(testamentoValido);
+    setLivroFiltro(livroValido);
+  }, [testamentoParametro, livroFiltroParametro, testamento, livroFiltro]);
 
   useEffect(() => {
     refScrollFiltroLivro.current?.scrollTo({ x: 0, animated: true });
@@ -100,16 +152,21 @@ export default function Pesquisa() {
   }
 
   useEffect(() => {
-    if (!ownerId) {
-      setFavoritas([]);
+    if (!ownerId || termo.trim()) {
+      if (!ownerId) setFavoritas([]);
+      setCarregandoFavoritas(false);
+      setErroFavoritas(false);
       return;
     }
     let ativo = true;
+    setCarregandoFavoritas(true);
+    setErroFavoritas(false);
     pesquisasFavoritasRepository.listarTodas(ownerId)
       .then((itens) => { if (ativo) setFavoritas(itens); })
-      .catch(() => { if (ativo) mostrarToast("Não foi possível carregar suas buscas favoritas", { severidade: "erro" }); });
+      .catch(() => { if (ativo) setErroFavoritas(true); })
+      .finally(() => { if (ativo) setCarregandoFavoritas(false); });
     return () => { ativo = false; };
-  }, [ownerId, favoritada]);
+  }, [ownerId, termo, favoritada, tentativaFavoritas]);
 
   useEffect(() => {
     const idFavorita = ++favoritaAtiva.current;
@@ -140,6 +197,7 @@ export default function Pesquisa() {
 
   function alterarTermo(proximo: string) {
     if (proximo === termo) return;
+    favoritaAtiva.current += 1;
     reiniciarBusca(proximo);
     setTermo(proximo);
   }
@@ -168,6 +226,12 @@ export default function Pesquisa() {
   }
 
   const resultadosResumo = useMemo(() => (termo.trim() ? buscarLivros(termo) : []), [termo]);
+  const sugestaoReferencia = useMemo(
+    () => !buscando && abaExibicao === "biblia" && !erroBusca
+      ? obterSugestaoReferenciaBusca(termo, resultadosBiblia)
+      : null,
+    [abaExibicao, buscando, erroBusca, resultadosBiblia, termo]
+  );
   const quantidadeResultadosExibidos = abaExibicao === "biblia" ? resultadosBiblia.length : resultadosResumo.length;
 
   useEffect(() => {
@@ -230,12 +294,26 @@ export default function Pesquisa() {
     }
   }
 
+  function tentarNovamenteBusca() {
+    setErroBusca(null);
+    setBuscando(Boolean(termo.trim()));
+    setTentativaBusca((valor) => valor + 1);
+  }
+
   async function alternarFavorita() {
-    if (!ownerId || !termo.trim()) return;
+    if (!ownerId || !termo.trim() || salvamentoFavoritaEmAndamento.current) return;
+    salvamentoFavoritaEmAndamento.current = true;
+    setSalvandoFavorita(true);
+    const idFavorita = ++favoritaAtiva.current;
+    const consulta = termo;
     try {
-      setFavoritada(await pesquisasFavoritasRepository.alternar(ownerId, termo));
+      const estadoAtualizado = await pesquisasFavoritasRepository.alternar(ownerId, consulta);
+      if (favoritaAtiva.current === idFavorita) setFavoritada(estadoAtualizado);
     } catch {
       mostrarToast("Não foi possível atualizar a busca favorita", { severidade: "erro" });
+    } finally {
+      salvamentoFavoritaEmAndamento.current = false;
+      setSalvandoFavorita(false);
     }
   }
 
@@ -353,7 +431,7 @@ export default function Pesquisa() {
             {(["todos", "Antigo Testamento", "Novo Testamento"] as const).map((valor) => (
               <Pressable key={valor} onPress={() => alterarTestamento(valor)} accessibilityRole="radio" accessibilityState={{ checked: testamento === valor }}
                 // @ts-expect-error accessibilityChecked é uma extensão do react-native-web
-                accessibilityChecked={testamento === valor} className={`px-3 py-1.5 rounded-full border ${testamento === valor ? "bg-cor-destaque-fundo dark:bg-cor-destaque-fundo-dark border-cor-destaque dark:border-cor-destaque-dark" : "border-cor-borda dark:border-cor-borda-dark"}`}>
+                accessibilityChecked={testamento === valor} className={`min-h-11 justify-center px-3 rounded-full border ${testamento === valor ? "bg-cor-destaque-fundo dark:bg-cor-destaque-fundo-dark border-cor-destaque dark:border-cor-destaque-dark" : "border-cor-borda dark:border-cor-borda-dark"}`}>
                 <Text className="text-xs font-semibold text-cor-texto dark:text-cor-texto-dark">{valor === "todos" ? "Toda a Bíblia" : valor === "Antigo Testamento" ? "Antigo Testamento" : "Novo Testamento"}</Text>
               </Pressable>
             ))}
@@ -361,10 +439,10 @@ export default function Pesquisa() {
           <ScrollView ref={conectarFiltroLivro} horizontal showsHorizontalScrollIndicator={false} accessibilityLabel="Filtrar por livro">
             <Pressable onPress={() => alterarLivroFiltro(undefined)} accessibilityRole="radio" accessibilityState={{ checked: !livroFiltro }}
               // @ts-expect-error accessibilityChecked é uma extensão do react-native-web
-              accessibilityChecked={!livroFiltro} className={`mr-2 px-3 py-1.5 rounded-full border ${!livroFiltro ? "border-cor-destaque dark:border-cor-destaque-dark" : "border-cor-borda dark:border-cor-borda-dark"}`}><Text className="text-xs text-cor-texto dark:text-cor-texto-dark">Todos os livros</Text></Pressable>
+              accessibilityChecked={!livroFiltro} className={`mr-2 min-h-11 justify-center px-3 rounded-full border ${!livroFiltro ? "border-cor-destaque dark:border-cor-destaque-dark" : "border-cor-borda dark:border-cor-borda-dark"}`}><Text className="text-xs text-cor-texto dark:text-cor-texto-dark">Todos os livros</Text></Pressable>
             {livrosDisponiveisNoFiltro.map((livro) => <Pressable key={livro.slug} onPress={() => alterarLivroFiltro(livro.slug)} accessibilityRole="radio" accessibilityState={{ checked: livroFiltro === livro.slug }}
               // @ts-expect-error accessibilityChecked é uma extensão do react-native-web
-              accessibilityChecked={livroFiltro === livro.slug} className={`mr-2 px-3 py-1.5 rounded-full border ${livroFiltro === livro.slug ? "border-cor-destaque dark:border-cor-destaque-dark" : "border-cor-borda dark:border-cor-borda-dark"}`}><Text className="text-xs text-cor-texto dark:text-cor-texto-dark">{livro.nome}</Text></Pressable>)}
+              accessibilityChecked={livroFiltro === livro.slug} className={`mr-2 min-h-11 justify-center px-3 rounded-full border ${livroFiltro === livro.slug ? "border-cor-destaque dark:border-cor-destaque-dark" : "border-cor-borda dark:border-cor-borda-dark"}`}><Text className="text-xs text-cor-texto dark:text-cor-texto-dark">{livro.nome}</Text></Pressable>)}
           </ScrollView>
           {testamento !== "todos" || livroFiltro ? (
             <View className="mt-2 flex-row items-center justify-between gap-3">
@@ -395,18 +473,50 @@ export default function Pesquisa() {
             <>
               <Pressable
                 onPress={alternarFavorita}
+                disabled={salvandoFavorita || !ownerId}
                 accessibilityRole="checkbox"
-                accessibilityLabel={favoritada ? "Remover busca dos favoritos" : "Favoritar esta busca"}
-                accessibilityState={{ checked: favoritada }}
+                accessibilityLabel={salvandoFavorita ? "Salvando busca favorita" : favoritada ? "Remover busca dos favoritos" : "Favoritar esta busca"}
+                accessibilityState={{ checked: favoritada, disabled: salvandoFavorita || !ownerId, busy: salvandoFavorita }}
                 // @ts-expect-error accessibilityChecked é uma extensão do react-native-web, não existe nos tipos do React Native
                 accessibilityChecked={favoritada}
-                className="flex-row items-center gap-1.5 self-start mb-3 px-3 py-1.5 rounded-full border border-cor-borda dark:border-cor-borda-dark active:opacity-70"
+                className="min-h-11 flex-row items-center gap-1.5 self-start mb-3 px-3 rounded-full border border-cor-borda dark:border-cor-borda-dark active:opacity-70 disabled:opacity-60"
               >
                 <Text>{favoritada ? "★" : "☆"}</Text>
                 <Text className="text-xs font-semibold text-cor-texto dark:text-cor-texto-dark">
-                  {favoritada ? "Busca favoritada" : "Favoritar esta busca"}
+                  {salvandoFavorita ? "Salvando busca…" : favoritada ? "Busca favoritada" : "Favoritar esta busca"}
                 </Text>
               </Pressable>
+
+              {sugestaoReferencia ? (
+                <Link
+                  href={hrefResultadoBusca(
+                    sugestaoReferencia.livroSlug,
+                    sugestaoReferencia.capitulo,
+                    sugestaoReferencia.versiculo,
+                    termo,
+                    { testamento, livroFiltro }
+                  )}
+                  asChild
+                >
+                  <Pressable
+                    accessibilityRole="link"
+                    accessibilityLabel={`Abrir ${sugestaoReferencia.nomeLivro} ${sugestaoReferencia.capitulo}:${sugestaoReferencia.versiculo} no leitor bíblico`}
+                    accessibilityHint="Vai diretamente para o versículo e mantém sua busca para quando você voltar."
+                    className="min-h-12 flex-row items-center justify-between rounded-2xl border border-cor-destaque/30 dark:border-cor-destaque-dark/40 bg-cor-destaque-fundo/50 dark:bg-cor-destaque-fundo-dark/30 px-4 mb-3 active:opacity-75"
+                  >
+                    <View className="flex-row items-center gap-3">
+                      <IconeUI name="open-book" size={19} color={escuro ? "#e0a75e" : "#8a5a2b"} />
+                      <View>
+                        <Text className="text-[11px] text-cor-texto-suave dark:text-cor-texto-suave-dark">Referência identificada</Text>
+                        <Text className="text-sm font-semibold text-cor-texto dark:text-cor-texto-dark">
+                          Abrir {sugestaoReferencia.nomeLivro} {sugestaoReferencia.capitulo}:{sugestaoReferencia.versiculo}
+                        </Text>
+                      </View>
+                    </View>
+                    <IconeUI name="next" size={18} color={escuro ? "#e0a75e" : "#8a5a2b"} />
+                  </Pressable>
+                </Link>
+              ) : null}
               
               {abaExibicao === 'resumos' ? (
                 resultadosResumo.length === 0 ? (
@@ -435,7 +545,7 @@ export default function Pesquisa() {
                 )
               ) : (
                 erroBusca ? (
-                  <EstadoErro titulo="Não foi possível buscar" descricao={erroBusca} aoTentarNovamente={() => setTentativaBusca((valor) => valor + 1)} />
+                  <EstadoErro titulo="Não foi possível buscar" descricao={erroBusca} aoTentarNovamente={tentarNovamenteBusca} />
                 ) : buscando ? (
                   <EstadoCarregando rotulo="Buscando resultados" className="mt-8" />
                 ) : resultadosBiblia.length === 0 ? (
@@ -451,7 +561,14 @@ export default function Pesquisa() {
                       || { slug: resultado.livroSlug }; // Fallback para não quebrar
                       
                     return (
-                    <Link key={`${resultado.livroSlug}-${resultado.capitulo}-${resultado.versiculo}-${i}`} href={`/biblia/${livroCorreto.slug}/${resultado.capitulo}?versiculo=${resultado.versiculo}`} asChild>
+                    <Link
+                      key={`${resultado.livroSlug}-${resultado.capitulo}-${resultado.versiculo}-${i}`}
+                      href={hrefResultadoBusca(livroCorreto.slug, resultado.capitulo, resultado.versiculo, termo, {
+                        testamento,
+                        livroFiltro,
+                      })}
+                      asChild
+                    >
                       <Pressable
                         accessibilityRole="link"
                         className="rounded-2xl bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark px-4 py-3 mb-2 shadow-sm active:opacity-80"
@@ -571,7 +688,15 @@ export default function Pesquisa() {
             </>
           ) : (
             <>
-              {favoritas.length > 0 ? (
+              {ownerId && carregandoFavoritas ? (
+                <EstadoCarregando rotulo="Carregando buscas favoritas" className="mb-5" />
+              ) : ownerId && erroFavoritas ? (
+                <EstadoErro
+                  titulo="Não foi possível carregar suas buscas favoritas"
+                  descricao="As sugestões por tema continuam disponíveis. Tente carregar seus favoritos novamente."
+                  aoTentarNovamente={() => setTentativaFavoritas((valor) => valor + 1)}
+                />
+              ) : ownerId && favoritas.length > 0 ? (
                 <View className="mb-5">
                   <Text className="text-sm font-semibold text-cor-texto-suave dark:text-cor-texto-suave-dark mb-2">Pesquisas favoritas</Text>
               <View className="flex-row flex-wrap gap-2">{favoritas.slice(0, 8).map((item) => <Pressable key={item.termo} onPress={() => alterarTermo(item.termo)} accessibilityRole="button" className="min-h-11 justify-center px-3 rounded-full bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark border border-cor-borda dark:border-cor-borda-dark active:opacity-70"><Text className="text-xs font-semibold text-cor-texto dark:text-cor-texto-dark">★ {item.termo}</Text></Pressable>)}</View>

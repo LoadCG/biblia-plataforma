@@ -44,7 +44,7 @@ export function hrefReferenciaBiblica(referencia: string): string | null {
   const parsed = parseReferenciaBiblica(referencia);
   if (!parsed) return null;
   const query = parsed.versiculoInicial ? `?versiculo=${parsed.versiculoInicial}` : "";
-  return `/biblia/${parsed.livroSlug}/${parsed.capitulo}${query}`;
+  return `/leitura/${parsed.livroSlug}/${parsed.capitulo}${query}`;
 }
 
 // Resolve uma referência no formato "Livro Capítulo:Versículo[-Versículo]"

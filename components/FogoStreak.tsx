@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { Animated, Easing } from "react-native";
+import { Animated, Easing, Platform } from "react-native";
 import Svg, { Path } from "react-native-svg";
 import { useMovimentoReduzido } from "../core/util/useMovimentoReduzido";
 
@@ -23,8 +23,8 @@ export function FogoStreak({ ativo, tamanho = 48 }: Props) {
     }
     const loop = Animated.loop(
       Animated.sequence([
-        Animated.timing(escala, { toValue: 1.08, duration: 650, easing: Easing.inOut(Easing.ease), useNativeDriver: true }),
-        Animated.timing(escala, { toValue: 1, duration: 650, easing: Easing.inOut(Easing.ease), useNativeDriver: true }),
+        Animated.timing(escala, { toValue: 1.08, duration: 650, easing: Easing.inOut(Easing.ease), useNativeDriver: Platform.OS !== "web" }),
+        Animated.timing(escala, { toValue: 1, duration: 650, easing: Easing.inOut(Easing.ease), useNativeDriver: Platform.OS !== "web" }),
       ])
     );
     loop.start();
@@ -32,7 +32,7 @@ export function FogoStreak({ ativo, tamanho = 48 }: Props) {
   }, [ativo, escala, movimentoReduzido]);
 
   return (
-    <Animated.View style={{ transform: [{ scale: escala }] }}>
+    <Animated.View accessible={false} aria-hidden={true} style={{ transform: [{ scale: escala }] }}>
       <Svg width={tamanho} height={tamanho} viewBox="0 0 24 24">
         <Path
           d="M12 2c1 3-2 4-2 7a3 3 0 0 0 6 0c0-1-.5-2-1-2.5.8.3 3 2 3 5.5a6 6 0 1 1-12 0c0-4 2-5 3-8 0 1.5.5 2.5 1 3.5C10.3 6 10.5 3.5 12 2Z"

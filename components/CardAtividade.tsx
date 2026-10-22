@@ -57,7 +57,7 @@ export function CardAtividade({ item, onMudou, selecionado, onSelecionar, modoBi
   const tituloItem = item.tipo === "pesquisa" ? item.termo : referencia ?? "Referência indisponível";
   const apresentacao = APRESENTACAO_TIPO[item.tipo];
   const aoPressionarConteudo = onSelecionar ?? (modoBiblioteca && item.tipo !== "pesquisa"
-    ? () => router.push(`/biblia/${item.livroSlug}/${item.capitulo}?versiculo=${item.versiculo}`)
+    ? () => router.push(`/leitura/${item.livroSlug}/${item.capitulo}?versiculo=${item.versiculo}`)
     : undefined);
 
   async function excluir(): Promise<boolean> {
@@ -90,7 +90,7 @@ export function CardAtividade({ item, onMudou, selecionado, onSelecionar, modoBi
           {
             label: "Ler",
             icone: "open-book",
-            onPress: () => router.push(`/biblia/${item.livroSlug}/${item.capitulo}?versiculo=${item.versiculo}`),
+            onPress: () => router.push(`/leitura/${item.livroSlug}/${item.capitulo}?versiculo=${item.versiculo}`),
           },
           { label: "Compartilhar", icone: "share", onPress: () => compartilhar(item.tipo === "nota" ? anotacaoComReferencia : (referenciaComLink ?? ""), item.tipo === "nota" && referencia ? { titulo: `Anotação em ${referencia}` } : {}) },
           { label: "Resumo do livro", icone: "book-collection", onPress: () => router.push(`/resumos/${item.livroSlug}`) },
@@ -151,7 +151,7 @@ export function CardAtividade({ item, onMudou, selecionado, onSelecionar, modoBi
         {modoBiblioteca && item.tipo === "nota" ? (
           <View className="flex-row flex-wrap items-center gap-2 mt-2">
             <Pressable
-              onPress={() => router.push(`/biblia/${item.livroSlug}/${item.capitulo}?versiculo=${item.versiculo}`)}
+              onPress={() => router.push(`/leitura/${item.livroSlug}/${item.capitulo}?versiculo=${item.versiculo}`)}
               accessibilityRole="button"
               accessibilityLabel={`Ler referência ${referencia}`}
               className="min-h-11 flex-row items-center gap-1.5 rounded-full bg-cor-destaque dark:bg-cor-destaque-dark px-3 active:opacity-80"

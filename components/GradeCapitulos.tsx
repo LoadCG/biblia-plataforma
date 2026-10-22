@@ -19,10 +19,10 @@ type Props = {
   /** Diferencia estados de leitura de marcações visuais sem confundir a pessoa. */
   rotuloEstado?: "lido" | "grifado";
   /** Quando presente, a grade entra em modo de seleção múltipla. No web,
-   * pressionar-e-arrastar estende a seleção por um intervalo inteiro
-   * (ver `useSelecaoArrasto`); em toque simples (ou no app nativo, sem
-   * suporte a arraste ainda) cada capítulo alterna via
-   * `onAlternarSelecionado`. */
+   * arrastar estende a seleção por um intervalo inteiro; em tela de toque,
+   * um toque simples alterna um capítulo e segurar brevemente antes de arrastar
+   * inicia o intervalo (ver `useSelecaoArrasto`). O app nativo continua com
+   * seleção por toque e pelos controles de intervalo. */
   selecionados?: Set<number>;
   onAlternarSelecionado?: (capitulo: number) => void;
   onMudarSelecaoEmMassa?: (novo: Set<number>) => void;

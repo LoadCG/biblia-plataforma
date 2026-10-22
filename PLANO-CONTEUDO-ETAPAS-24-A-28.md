@@ -1,14 +1,19 @@
 # Plano de evolução de conteúdo — etapas 24 a 28
 
-Roadmap posterior ao ciclo de UX/UI. O objetivo é aumentar profundidade,
+Documento especializado de governança e modelo editorial, subordinado ao
+plano mestre Q4. O objetivo é aumentar profundidade,
 variedade e utilidade editorial sem sacrificar consistência teológica,
 licenciamento, performance offline ou qualidade dos dados derivados.
 
-**Status em 2026-10-02: ativo, ainda não aprovado para expansão.** O catálogo
-atual contém 66 resumos e 2 planos; inventário e validações estruturais existem,
-mas schema editorial completo, taxonomia e revisões humanas independentes dos
-rascunhos continuam abertos. A fila de execução do trimestre está consolidada
-no ciclo 5 de [`docs/PLANO-MESTRE-Q4-2026.md`](./docs/PLANO-MESTRE-Q4-2026.md).
+**Status atualizado em 2026-10-15: referência especializada; fila antiga
+reconciliada, expansão editorial ainda condicionada.** O catálogo contém 66
+resumos e 5 planos; três
+planos foram publicados por decisão explícita registrada, enquanto propostas
+editoriais adicionais aguardam revisão humana independente. A prioridade e a
+fila de execução do trimestre estão consolidadas no Ciclo 5 do
+[`docs/PLANO-MESTRE-Q4-2026.md`](./docs/PLANO-MESTRE-Q4-2026.md), e a fila de
+rascunhos fica em [`docs/revisao-editorial/INDICE.md`](./docs/revisao-editorial/INDICE.md).
+Este documento mantém critérios e modelo; não cria uma ordem paralela.
 Atualização de 2026-10-14: a base ACF integral continua sendo a tradução
 selecionada pelo produto, mas sua permissão de redistribuição está pendente de
 confirmação documentada; consultar [`docs/LICENCA-TEXTO-ACF.md`](./docs/LICENCA-TEXTO-ACF.md).
@@ -34,13 +39,13 @@ confirmação documentada; consultar [`docs/LICENCA-TEXTO-ACF.md`](./docs/LICENC
 | 27.x | Devocionais e curadoria | P1 | 24.x; fluxo de revisão | conteúdo guiado rastreável e aprovado |
 | 28.x | QA editorial contínuo | P0 | inicia em 24.x e acompanha cada lote | conteúdo confiável antes de cada publicação |
 
-## Ordem de execução revisada
+## Ordem de concepção original — substituída pelo plano mestre
 
-As trilhas de UX/confiabilidade (etapas 19–23) e conteúdo (24–28) podem
-avançar em paralelo após a fundação. A publicação de conteúdo depende do gate
-editorial da etapa 28, enquanto as telas e os planos existentes continuam
-disponíveis. Builds nativos e Preview Vercel são gates de distribuição, não
-pré-requisitos para inventariar ou revisar conteúdo localmente.
+Esta ordem foi escrita antes da consolidação do plano mestre Q4 e da publicação
+excepcional de três planos. Ela registra a sequência originalmente planejada;
+use o Ciclo 5 do plano mestre para prioridades atuais e o índice editorial para
+materiais em revisão. Builds nativos e Preview Vercel são gates de distribuição,
+não pré-requisitos para inventariar ou revisar conteúdo localmente.
 
 1. **24.1 inventário** → publicar e manter `docs/cobertura-editorial.md`.
 2. **24.2 contrato mínimo** → registrar campos obrigatórios e validações sem
@@ -108,33 +113,39 @@ status e relações sem depender de parsing frágil do texto exibido.
 
 ## Etapa 25 — Novos planos de leitura
 
-### Replanejamento de portfólio (2026-10-04)
+> **Reconciliado em 2026-10-15:** os três planos que apareciam como candidatos
+> abaixo foram publicados em 2026-10-04 por decisão explícita, como exceção ao
+> gate de duas revisões humanas. As caixas das etapas 25.1–25.4 preservam o
+> planejamento original e não são uma fila ativa para redigir/publicar esses
+> mesmos planos. Consulte o [plano mestre, Ciclo 5](./docs/PLANO-MESTRE-Q4-2026.md)
+> para a prioridade editorial atual e o [índice de revisão](./docs/revisao-editorial/INDICE.md)
+> para propostas ainda fora do catálogo. Nenhuma revisão independente é dada
+> como concluída.
 
-O catálogo publicado tem dois itens: **Semana da Sabedoria** (7 dias) e
-**Os Evangelhos em 14 Dias**. Há duas propostas completas ainda fora do app:
-[`plano-primeiros-passos-7-dias.md`](./docs/revisao-editorial/plano-primeiros-passos-7-dias.md)
-e
-[`plano-justica-cuidado-esperanca-14-dias.md`](./docs/revisao-editorial/plano-justica-cuidado-esperanca-14-dias.md).
-Há também a especificação
-[`plano-formacao-30-dias.md`](./docs/revisao-editorial/plano-formacao-30-dias.md),
-sem referências e conteúdo diário completos. Nenhuma dessas propostas está
-aprovada para publicação; a redação assistida não conta como revisão humana.
+### Portfólio publicado e propostas futuras (decisão original de 2026-10-04)
+
+O catálogo contém cinco itens. **Semana da Sabedoria** (7 dias) e **Os
+Evangelhos em 14 Dias** formavam o catálogo inicial. **Primeiros passos: da
+criação à esperança** (7 dias), **Justiça, cuidado e esperança** (14 dias) e
+**Formação bíblica** (30 dias) foram publicados por exceção explícita. As fontes
+vigentes dos três últimos estão em [`docs/planos-publicados/`](./docs/planos-publicados/).
+As propostas não são tratadas como rascunhos fora do app; o registro da decisão e
+da ausência de revisão humana independente permanece em
+[`docs/revisao-editorial/INDICE.md`](./docs/revisao-editorial/INDICE.md).
 
 | Ordem | Plano/candidato | Público e necessidade | Valor distinto | Decisão/estado |
 |---:|---|---|---|---|
 | 0 | Semana da Sabedoria — 7 dias | Leitor que quer começar por poesia e sabedoria | Jornada curta já publicada | Manter; usar como comparação de carga e retomada. |
 | 0 | Os Evangelhos em 14 Dias | Leitor que busca uma leitura panorâmica de Jesus | Jornada narrativa já publicada | Manter; não criar outro plano genérico de Evangelhos. |
-| 1 | Primeiros passos: da criação à esperança — 7 dias | Iniciante ou pessoa retomando a leitura | Um arco bíblico amplo, com trechos curtos e explicação de contexto | Piloto prioritário; revisar a proposta existente e reduzir interseções desnecessárias com os dois planos publicados. |
-| 2 | Justiça, cuidado e esperança — 14 dias | Leitor temático interessado em dignidade, sofrimento, comunidade e esperança | Comparação de gêneros e passagens dos dois testamentos, preservando seus contextos | Próximo lote, depois do piloto; revisão pastoral cuidadosa e referências cruzadas justificadas. |
-| 3 | Formação bíblica — 30 dias | Leitor regular após uma experiência curta | Progressão narrativa e temática de maior fôlego | Manter em especificação até resolver carga, recuperação e currículo; não abrir nova redação ainda. |
+| 1 | Primeiros passos: da criação à esperança — 7 dias | Iniciante ou pessoa retomando a leitura | Um arco bíblico amplo, com trechos curtos e explicação de contexto | Publicado em 2026-10-04 por exceção explícita; sem revisão humana independente registrada. Fonte em `docs/planos-publicados/`. |
+| 2 | Justiça, cuidado e esperança — 14 dias | Leitor temático interessado em dignidade, sofrimento, comunidade e esperança | Comparação de gêneros e passagens dos dois testamentos, preservando seus contextos | Publicado em 2026-10-04 por exceção explícita; sem revisão humana independente registrada. Fonte em `docs/planos-publicados/`. |
+| 3 | Formação bíblica — 30 dias | Leitor regular após uma experiência curta | Progressão narrativa e temática de maior fôlego | Publicado em 2026-10-04 por exceção explícita; sem revisão humana independente registrada. Fonte em `docs/planos-publicados/`. |
 
-**Decisão de portfólio:** executar os candidatos já preparados antes de propor
-mais títulos. A proposta genérica “Evangelhos essenciais” da estratégia antiga
-foi removida porque duplicava `evangelhos-14`. “Salmos para cada dia” também
-fica fora da primeira sequência: sobrepõe a Semana da Sabedoria e compete com o
-plano de 30 dias ainda não definido. Um plano de 90 dias é adiado até haver
-evidência de uso, conclusão e retomada dos formatos curtos; não se coletam dados
-pessoais para essa avaliação.
+**Decisão de portfólio:** não criar planos redundantes com os cinco itens atuais.
+A proposta genérica “Evangelhos essenciais” foi removida porque duplicava
+`evangelhos-14`. “Salmos para cada dia” sobrepõe a Semana da Sabedoria. Um plano
+de 90 dias permanece adiado até haver evidência de necessidade; não se coletam
+dados pessoais para essa avaliação.
 
 ### 25.1 Fechar hipótese e carga de cada candidato `⬜`
 
@@ -300,7 +311,12 @@ renderização passam pelos gates automatizados e revisão humana.
 
 ---
 
-## Estratégia de portfólio editorial
+## Estratégia de portfólio editorial — registro anterior
+
+O material abaixo foi escrito antes da decisão de publicação excepcional dos
+três planos em 2026-10-04. Use-o como contexto de produto, não como status dos
+planos. O status atual e a fila humana ficam no plano mestre Q4 e no índice de
+revisão editorial.
 
 ### Personas prioritárias
 
@@ -314,11 +330,10 @@ renderização passam pelos gates automatizados e revisão humana.
 
 ### Portfólio mínimo recomendado
 
-Aplicar a ordem e as decisões da seção **Replanejamento de portfólio** da etapa
-25 acima. A recomendação anterior de “Evangelhos essenciais” duplicava um plano
-já publicado, e “Salmos para cada dia” não tinha currículo próprio nem regra
-clara em relação à Semana da Sabedoria; ambas foram substituídas por candidatos
-já documentados e ainda não aprovados. O plano de 90 dias permanece adiado.
+Aplicar as decisões da seção **Portfólio publicado e propostas futuras** da
+etapa 25 acima. “Evangelhos essenciais” duplicava um plano já publicado, e
+“Salmos para cada dia” não tinha currículo próprio nem regra clara em relação à
+Semana da Sabedoria. O plano de 90 dias permanece adiado.
 
 Cada proposta precisa declarar objetivo, público, carga diária, livros cobertos,
 critério de conclusão, distinção dos planos publicados e motivo editorial para
@@ -339,15 +354,19 @@ revisão de conteúdo, validação de referências bíblicas ou aprovação teol
 
 ### Lote C1 — ganho rápido `P0`
 
+**Registro histórico:** o plano de 7 dias preparado nesta etapa foi publicado
+por exceção em 2026-10-04; a publicação não comprova revisão humana independente.
+As propostas de resumos continuam na fila editorial indicada acima.
+
 - [ ] Revisar Gênesis, Salmos, Provérbios, Mateus, João e Romanos.
 - [ ] Corrigir inconsistências estruturais nos resumos desses livros.
 - [ ] Criar o plano de 7 dias com conteúdo aprovado.
 - [ ] Validar o fluxo completo em preview antes de ampliar o lote.
 
-**Propostas em revisão (2026-09-28):** primeira revisão editorial de Gênesis e
-um plano piloto de 7 dias estão preparados em `docs/revisao-editorial/`.
-Continuam fora do status aprovado/publicado até leitura humana independente;
-somente o resumo revisado foi regenerado no JSON derivado nesta proposta.
+**Propostas em revisão (2026-09-28; status reconciliado):** a primeira revisão
+editorial de Gênesis continua na fila humana. O plano piloto de 7 dias foi
+publicado por exceção e sua fonte atual está em `docs/planos-publicados/`; não
+registrar a publicação como revisão independente.
 
 **Continuação do lote C1 (2026-09-28):** Salmos, Provérbios, Mateus, João e
 Romanos receberam uma primeira revisão factual/editorial. As propostas e fontes
@@ -357,21 +376,30 @@ rascunhos até revisão humana independente e conferência visual no aplicativo.
 
 ### Lote C2 — profundidade `P1`
 
+**Registro histórico:** o plano temático de 14 dias foi publicado por exceção
+em 2026-10-04; isso não equivale a duas revisões humanas independentes. Use o
+índice editorial para propostas de resumo, busca e temas que ainda não entraram
+no catálogo.
+
 - [ ] Revisar Êxodo, Isaías, Jeremias, Lucas, Atos e Apocalipse.
 - [ ] Criar um plano temático de 14 dias com referências cruzadas.
 - [ ] Adicionar metadados de temas e termos de busca.
 - [ ] Testar descoberta por Busca e páginas SEO.
 
-**Propostas preparadas (2026-09-28):** a primeira revisão dos seis resumos e
-um plano temático de 14 dias estão registrados em `docs/revisao-editorial/`.
-As referências do plano foram validadas contra a base ACF local (28 trechos,
-183 versículos, 8–19 por dia). Os conteúdos seguem em rascunho; pendem revisão
-humana independente e inspeção visual antes de qualquer integração/publicação.
+**Propostas preparadas (2026-09-28; status reconciliado):** a primeira revisão
+dos seis resumos permanece em `docs/revisao-editorial/`. O plano temático de 14
+dias está publicado por exceção em `docs/planos-publicados/`; suas referências
+foram validadas contra a base ACF local (28 trechos, 183 versículos, 8–19 por
+dia), sem revisão humana independente registrada.
 A taxonomia e os termos de busca associados também foram estruturados como
 proposta em `docs/revisao-editorial/metadados-busca-proposta.md`; ainda não
 foram integrados ao schema ou à busca do app.
 
 ### Lote C3 — escala controlada `P1`
+
+**Registro histórico:** o plano de 30 dias também foi publicado por exceção em
+2026-10-04 e está em `docs/planos-publicados/`. A publicação não encerrou as
+pendências de carga, QA e revisão humana independente.
 
 - [ ] Revisar os demais livros por gênero, não por volume uniforme.
 - [ ] Criar o plano de 30 dias somente após o C1/C2 passarem nos gates.

@@ -1,6 +1,6 @@
 import { Link, Stack, useLocalSearchParams } from "expo-router";
 import Head from "expo-router/head";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { NativeScrollEvent, NativeSyntheticEvent, Pressable, ScrollView, Text, View } from "react-native";
 import { coresDoGenero, descricaoDoGenero } from "../../core/content/genero";
 import { livros, obterResumo } from "../../core/content/livros";
@@ -17,6 +17,8 @@ import { useOwnerId } from "../../core/useOwnerId";
 import { BotaoTema } from "../../components/BotaoTema";
 import { TextoComReferencias } from "../../components/TextoComReferencias";
 import { Tooltip } from "../../components/Tooltip";
+import { EstadoCarregando } from "../../components/EstadoCarregando";
+import { EstadoErro } from "../../components/EstadoErro";
 import { mostrarToast } from "../../core/util/toast";
 import { ativarComEspaco } from "../../core/util/ativarComEspaco";
 import { PressableComTecladoWeb } from "../../core/util/propsPressableWeb";
@@ -30,6 +32,10 @@ export default function ResumoLivro() {
   const resumo = obterResumo(slug ?? "");
   const ownerId = useOwnerId();
   const [lido, setLido] = useState(false);
+  const [estadoProgressoLivro, setEstadoProgressoLivro] = useState<"carregando" | "disponivel" | "erro">("carregando");
+  const [tentativaProgressoLivro, setTentativaProgressoLivro] = useState(0);
+  const [salvandoLido, setSalvandoLido] = useState(false);
+  const salvamentoLidoEmAndamento = useRef(false);
   const [progresso, setProgresso] = useState(0);
   const [indiceFonte, setIndiceFonte] = useState(INDICE_PADRAO);
   const [fonteSerifada, setFonteSerifada] = useState(false);
@@ -58,11 +64,23 @@ export default function ResumoLivro() {
   }
 
   useEffect(() => {
-    if (!ownerId || !slug) return;
+    if (!ownerId || !slug) {
+      setEstadoProgressoLivro("carregando");
+      return;
+    }
+    let ativo = true;
+    setEstadoProgressoLivro("carregando");
     livrosLidosRepository.estaLido(ownerId, slug)
-      .then(setLido)
-      .catch(() => mostrarToast("Não foi possível carregar o progresso deste livro", { severidade: "erro" }));
-  }, [ownerId, slug]);
+      .then((valor) => {
+        if (!ativo) return;
+        setLido(valor);
+        setEstadoProgressoLivro("disponivel");
+      })
+      .catch(() => {
+        if (ativo) setEstadoProgressoLivro("erro");
+      });
+    return () => { ativo = false; };
+  }, [ownerId, slug, tentativaProgressoLivro]);
 
   useEffect(() => {
     let ativo = true;
@@ -111,9 +129,18 @@ export default function ResumoLivro() {
   const tamanhoFonte = TAMANHOS_FONTE[indiceFonte];
 
   async function alternarLido() {
-    if (!ownerId) return;
-    const novoEstado = await livrosLidosRepository.alternar(ownerId, resumo!.slug);
-    setLido(novoEstado);
+    if (!ownerId || estadoProgressoLivro !== "disponivel" || salvamentoLidoEmAndamento.current) return;
+    salvamentoLidoEmAndamento.current = true;
+    setSalvandoLido(true);
+    try {
+      const novoEstado = await livrosLidosRepository.alternar(ownerId, resumo!.slug);
+      setLido(novoEstado);
+    } catch {
+      mostrarToast("Não foi possível atualizar o progresso deste livro. Tente novamente.", { severidade: "erro" });
+    } finally {
+      salvamentoLidoEmAndamento.current = false;
+      setSalvandoLido(false);
+    }
   }
 
   return (
@@ -208,18 +235,29 @@ export default function ResumoLivro() {
           {resumo.tempoLeituraMin} min de leitura
         </Text>
 
+        {estadoProgressoLivro === "erro" ? (
+          <EstadoErro
+            titulo="Não foi possível carregar seu progresso neste livro"
+            descricao="Tente novamente para confirmar se este resumo já está marcado como lido."
+            aoTentarNovamente={() => setTentativaProgressoLivro((valor) => valor + 1)}
+          />
+        ) : estadoProgressoLivro === "carregando" ? (
+          <EstadoCarregando rotulo="Carregando seu progresso neste livro" className="mb-4" />
+        ) : null}
+
         <PressableComTecladoWeb
           onPress={alternarLido}
+          disabled={estadoProgressoLivro !== "disponivel" || salvandoLido}
           accessibilityRole="checkbox"
-          accessibilityLabel="Marcar livro como lido"
-          accessibilityState={{ checked: lido }}
+          accessibilityLabel={lido ? "Desmarcar livro como lido" : "Marcar livro como lido"}
+          accessibilityState={{ checked: lido, disabled: estadoProgressoLivro !== "disponivel" || salvandoLido, busy: estadoProgressoLivro === "carregando" || salvandoLido }}
           accessibilityChecked={lido}
-          className={`self-start px-4 py-2.5 rounded-full mb-6 active:opacity-70 ${
+          className={`self-start min-h-11 justify-center px-4 rounded-full mb-6 active:opacity-70 disabled:opacity-60 ${
             lido ? "bg-green-600" : "border border-cor-borda dark:border-cor-borda-dark bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark"
           }`}
         >
           <Text className={`text-sm font-semibold ${lido ? "text-white" : "text-cor-texto dark:text-cor-texto-dark"}`}>
-            {lido ? "✓ Livro lido" : "Marcar como lido"}
+            {salvandoLido ? "Salvando progresso…" : lido ? "✓ Livro lido" : "Marcar como lido"}
           </Text>
         </PressableComTecladoWeb>
         <Text className="text-xs text-cor-texto-suave dark:text-cor-texto-suave-dark -mt-4 mb-6">

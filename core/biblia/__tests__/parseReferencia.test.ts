@@ -12,7 +12,7 @@ describe("parseReferenciaBiblica", () => {
       versiculoInicial: 1,
       versiculoFinal: 32,
     });
-    expect(hrefReferenciaBiblica("Salmos 119:1-32")).toBe("/biblia/19-salmos/119?versiculo=1");
+    expect(hrefReferenciaBiblica("Salmos 119:1-32")).toBe("/leitura/19-salmos/119?versiculo=1");
   });
 
   it("aceita abreviações, acentos e livros numerados", () => {

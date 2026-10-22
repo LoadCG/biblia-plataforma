@@ -36,6 +36,25 @@ function emitirPonteiro(
   return evento;
 }
 
+function listaDeToques(toques: Array<{ identifier: number; clientX: number; clientY: number }>) {
+  return Object.assign([...toques], { item: (indice: number) => toques[indice] ?? null });
+}
+
+function emitirToque(
+  alvo: EventTarget,
+  tipo: string,
+  toque: { identifier: number; clientX: number; clientY: number },
+  ativo = true,
+) {
+  const evento = new Event(tipo, { bubbles: true, cancelable: true }) as TouchEvent;
+  Object.defineProperties(evento, {
+    touches: { value: listaDeToques(ativo ? [toque] : []) },
+    changedTouches: { value: listaDeToques([toque]) },
+  });
+  alvo.dispatchEvent(evento);
+  return evento;
+}
+
 describe("useSelecaoArrasto", () => {
   let grade: HTMLDivElement;
   let celulas: HTMLButtonElement[];
@@ -58,6 +77,7 @@ describe("useSelecaoArrasto", () => {
   });
 
   afterEach(() => {
+    jest.useRealTimers();
     Object.defineProperty(document, "elementFromPoint", { configurable: true, value: undefined });
     grade.remove();
   });
@@ -139,6 +159,51 @@ describe("useSelecaoArrasto", () => {
     emitirPonteiro(window, "pointermove", { x: 40 });
     expect(onMudarSelecao).not.toHaveBeenCalled();
     expect(grade.style.userSelect).toBe("");
+  });
+
+  it("alterna capítulo no toque simples sem iniciar arraste", () => {
+    montar();
+    const toque = { identifier: 3, clientX: 50, clientY: 10 };
+    emitirToque(celulas[4], "touchstart", toque);
+    emitirToque(celulas[4], "touchend", toque, false);
+
+    expect(Array.from(onMudarSelecao.mock.lastCall![0])).toEqual([5]);
+  });
+
+  it("inicia após toque longo, seleciona intervalo ao arrastar e bloqueia o click duplicado", () => {
+    jest.useFakeTimers();
+    montar();
+    const toqueInicial = { identifier: 4, clientX: 30, clientY: 10 };
+    emitirToque(celulas[2], "touchstart", toqueInicial);
+    jest.advanceTimersByTime(320);
+    expect(Array.from(onMudarSelecao.mock.lastCall![0])).toEqual([3]);
+
+    const toqueMovido = { identifier: 4, clientX: 80, clientY: 10 };
+    const eventoMovimento = emitirToque(celulas[2], "touchmove", toqueMovido);
+    expect(eventoMovimento.defaultPrevented).toBe(true);
+    expect(Array.from(onMudarSelecao.mock.lastCall![0])).toEqual([3, 4, 5, 6, 7, 8]);
+
+    emitirToque(celulas[2], "touchend", toqueMovido, false);
+    const cliqueSintetizado = new MouseEvent("click", { bubbles: true, cancelable: true });
+    celulas[2].dispatchEvent(cliqueSintetizado);
+    expect(cliqueSintetizado.defaultPrevented).toBe(true);
+    expect(Array.from(onMudarSelecao.mock.lastCall![0])).toEqual([3, 4, 5, 6, 7, 8]);
+    jest.useRealTimers();
+  });
+
+  it("permite a rolagem quando o dedo se move antes do toque longo", () => {
+    jest.useFakeTimers();
+    montar();
+    const toqueInicial = { identifier: 5, clientX: 10, clientY: 10 };
+    emitirToque(celulas[0], "touchstart", toqueInicial);
+    const toqueMovido = { identifier: 5, clientX: 10, clientY: 30 };
+    const eventoMovimento = emitirToque(celulas[0], "touchmove", toqueMovido);
+    jest.advanceTimersByTime(320);
+    emitirToque(celulas[0], "touchend", toqueMovido, false);
+
+    expect(eventoMovimento.defaultPrevented).toBe(false);
+    expect(onMudarSelecao).not.toHaveBeenCalled();
+    jest.useRealTimers();
   });
 });
 /** @jest-environment jsdom */

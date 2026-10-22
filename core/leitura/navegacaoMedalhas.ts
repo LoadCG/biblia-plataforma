@@ -1,6 +1,6 @@
 export type OrigemMedalhas = "inicio" | "voce";
 
-export type DestinoVoltaMedalhas = "/" | "/voce" | {
+export type DestinoVoltaMedalhas = "/biblia" | "/voce" | {
   pathname: "/medalhas";
   params: { origem: OrigemMedalhas };
 };
@@ -16,5 +16,5 @@ export function obterDestinoVoltaMedalhas(
   estaNoDetalhe: boolean,
 ): DestinoVoltaMedalhas {
   if (estaNoDetalhe) return { pathname: "/medalhas", params: { origem } };
-  return origem === "inicio" ? "/" : "/voce";
+  return origem === "inicio" ? "/biblia" : "/voce";
 }

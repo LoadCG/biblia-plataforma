@@ -1,7 +1,6 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
 /* Sem isso, html/body ficam com fundo transparente e o padrão branco do
    navegador aparece durante o "bounce" de rolagem no mobile (Safari/Chrome
    iOS e Android) sempre que a página é mais alta que a tela — fica visível
@@ -12,12 +11,10 @@ html,
 body {
   background-color: #faf8f4;
 }
-
 html.dark,
 html.dark body {
   background-color: #1b1712;
 }
-
 /* Feedback breve para controles semânticos em ponteiros que realmente têm
    hover. Como esta folha é carregada pelo NativeWind Web, não modifica o toque
    nem a aparência/interação das builds nativas. */
@@ -32,7 +29,6 @@ html.dark body {
   [role="switch"]:not(:disabled):not([aria-disabled="true"]) {
     transition: opacity 150ms ease-out;
   }
-
   a[href]:not([aria-disabled="true"]):hover,
   button:not(:disabled):not([aria-disabled="true"]):hover,
   [role="button"]:not(:disabled):not([aria-disabled="true"]):hover,
@@ -44,7 +40,6 @@ html.dark body {
     opacity: 0.92;
   }
 }
-
 @media (prefers-reduced-motion: reduce) {
   a[href],
   button,
@@ -57,20 +52,1424 @@ html.dark body {
     transition-duration: 0ms !important;
   }
 }
-
+/* Experiência editorial pública. Seletores escopados preservam os layouts do app. */
+.conhecer-page {
+  --conhecer-texto: #f0eee8;
+  --conhecer-suave: #b4b5ba;
+  --conhecer-acento: #dfc6a3;
+  --conhecer-linha: rgb(240 238 232 / 16%);
+  min-height: 100dvh;
+  overflow-x: hidden;
+  color: var(--conhecer-texto);
+  background: radial-gradient(ellipse at 85% 4%, #32343a 0%, transparent 48%), linear-gradient(150deg, #202227, #191b20 65%, #27292f);
+  background-size: 160% 160%;
+  animation: conhecer-degrade 30s ease-in-out infinite alternate;
+  font-family: "Montserrat", sans-serif;
+  scrollbar-width: thin;
+  scrollbar-color: #666870 #202227;
+}
+.conhecer-page [class] {
+  font-family: "Montserrat", sans-serif;
+}
+.conhecer-page .conhecer-shell,
+.conhecer-page .estudo-shell {
+  width: min(100%, 1320px);
+  margin-inline: auto;
+  padding: 28px clamp(24px, 5vw, 72px) 30px;
+}
+.conhecer-page .estudo-shell {
+  max-width: 1100px;
+}
+.conhecer-page .editorial-navegacao {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding-bottom: 22px;
+  border-bottom: 1px solid var(--conhecer-linha);
+}
+.conhecer-page .editorial-assinatura {
+  color: var(--conhecer-suave);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: .16em;
+}
+.conhecer-page .conhecer-voltar {
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 14px;
+  min-height: 44px;
+  color: var(--conhecer-texto);
+  text-decoration: none;
+}
+.conhecer-page .conhecer-voltar-seta {
+  color: inherit;
+  font-size: 22px;
+  transition: transform .35s ease;
+}
+.conhecer-page .conhecer-voltar-texto {
+  color: inherit;
+  font-size: 11px;
+  font-weight: 500;
+}
+.conhecer-page .conhecer-voltar:hover .conhecer-voltar-seta {
+  transform: translateX(-5px);
+}
+.conhecer-page .conhecer-abertura {
+  max-width: 1030px;
+  padding: clamp(74px, 10vw, 138px) 0 42px;
+}
+.conhecer-page .conhecer-sobretitulo,
+.conhecer-page .conhecer-card-tema,
+.conhecer-page .conhecer-biblia-sobretitulo,
+.conhecer-page .estudo-final-sobretitulo,
+.conhecer-page .estudo-referencias-legenda {
+  color: var(--conhecer-acento);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: .16em;
+  line-height: 1.5;
+}
+.conhecer-page .conhecer-sobretitulo::before {
+  content: "";
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  margin-right: 12px;
+  margin-bottom: 1px;
+  background: currentColor;
+}
+.conhecer-page .conhecer-titulo,
+.conhecer-page .estudo-titulo {
+  color: var(--conhecer-texto);
+  max-width: 1050px;
+  margin-top: 25px;
+  font-size: clamp(44px, 6.8vw, 92px);
+  font-weight: 900;
+  letter-spacing: -.065em;
+  line-height: 1.04;
+  text-wrap: balance;
+}
+.conhecer-page .conhecer-destaque {
+  display: inline;
+  color: var(--conhecer-acento);
+  font-family: "Caveat", cursive;
+  font-size: 1.13em;
+  font-weight: 600;
+  letter-spacing: -.04em;
+  white-space: nowrap;
+}
+.conhecer-page .conhecer-introducao,
+.conhecer-page .estudo-descricao {
+  color: var(--conhecer-suave);
+  max-width: 570px;
+  margin-top: 30px;
+  font-size: clamp(14px, 1.4vw, 16px);
+  font-weight: 400;
+  line-height: 1.85;
+}
+.conhecer-page .editorial-indice {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 66px;
+}
+.conhecer-page .editorial-indice-texto {
+  color: var(--conhecer-suave);
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: .13em;
+}
+.conhecer-page .editorial-indice-seta {
+  color: var(--conhecer-acento);
+  font-size: 22px;
+}
+.conhecer-page .conhecer-lista {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+.conhecer-page .conhecer-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 390px;
+  overflow: hidden;
+  padding: clamp(22px, 2.8vw, 36px);
+  border: 1px solid var(--conhecer-linha);
+  border-radius: 4px;
+  color: var(--conhecer-texto);
+  background: rgb(255 255 255 / 2%);
+  text-decoration: none;
+  isolation: isolate;
+  transition: transform .5s cubic-bezier(.16,1,.3,1), border-color .5s, background-color .5s;
+}
+.conhecer-page .conhecer-card::before,
+.conhecer-page .tema-card::before,
+.conhecer-page .conhecer-biblia::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  background: radial-gradient(300px circle at var(--pointer-x, 50%) var(--pointer-y, 0%), rgb(223 198 163 / 10%), transparent 75%);
+  opacity: 0;
+  transition: opacity .5s;
+  pointer-events: none;
+}
+.conhecer-page .conhecer-card:first-child {
+  background: #e4e0d7;
+  border-color: #e4e0d7;
+  --conhecer-texto: #25272a;
+  --conhecer-suave: #55575b;
+  --conhecer-acento: #6f5942;
+  --conhecer-linha: rgb(37 39 42 / 18%);
+}
+.conhecer-page .conhecer-card-topo {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+}
+.conhecer-page .conhecer-card-numero {
+  color: var(--conhecer-suave);
+  font-size: 11px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+.conhecer-page .conhecer-card-tema {
+  flex: 1;
+  font-size: 9px;
+}
+.conhecer-page .conhecer-card-seta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border: 1px solid var(--conhecer-linha);
+  border-radius: 50%;
+  color: var(--conhecer-texto);
+  font-family: sans-serif;
+  font-size: 21px;
+  line-height: 36px;
+  text-align: center;
+  transition: transform .45s, background-color .45s;
+}
+.conhecer-page .conhecer-card-titulo {
+  margin-top: 48px;
+  color: var(--conhecer-texto);
+  font-size: clamp(25px, 2.6vw, 35px);
+  font-weight: 800;
+  letter-spacing: -.055em;
+  line-height: 1.12;
+  text-wrap: balance;
+}
+.conhecer-page .conhecer-card-descricao {
+  max-width: 320px;
+  margin-top: 18px;
+  color: var(--conhecer-suave);
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.8;
+}
+.conhecer-page .conhecer-card-rodape {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: auto;
+  padding-top: 32px;
+}
+.conhecer-page .conhecer-card-link {
+  color: var(--conhecer-texto);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: .1em;
+}
+.conhecer-page .conhecer-card-rodape-seta {
+  color: var(--conhecer-texto);
+  font-size: 22px;
+  transition: transform .4s;
+}
+.conhecer-page .temas-abertura {
+  max-width: 780px;
+  padding: clamp(90px, 12vw, 160px) 0 44px;
+}
+.conhecer-page .temas-titulo {
+  margin-top: 22px;
+  color: var(--conhecer-texto);
+  font-size: clamp(32px, 4.5vw, 58px);
+  font-weight: 800;
+  letter-spacing: -.06em;
+  line-height: 1.12;
+  text-wrap: balance;
+}
+.conhecer-page .temas-descricao {
+  max-width: 570px;
+  margin-top: 22px;
+  color: var(--conhecer-suave);
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.85;
+}
+.conhecer-page .temas-lista {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 48px;
+}
+.conhecer-page .tema-card {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  grid-template-columns: 30px minmax(0, 1fr) 30px;
+  gap: 16px;
+  align-items: center;
+  min-height: 98px;
+  padding: 22px 8px;
+  border-top: 1px solid var(--conhecer-linha);
+  color: var(--conhecer-texto);
+  text-decoration: none;
+  transition: background-color .4s;
+}
+.conhecer-page .tema-card-numero {
+  color: var(--conhecer-suave);
+  font-size: 10px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+.conhecer-page .tema-card-rotulo {
+  color: var(--conhecer-texto);
+  font-size: clamp(14px, 1.5vw, 18px);
+  font-weight: 500;
+  letter-spacing: -.035em;
+  line-height: 1.45;
+  transition: transform .4s cubic-bezier(.16,1,.3,1);
+}
+.conhecer-page .tema-card-seta {
+  color: var(--conhecer-acento);
+  font-family: sans-serif;
+  font-size: 23px;
+  text-align: right;
+  transition: transform .4s, color .4s;
+}
+.conhecer-page .temas-aviso {
+  max-width: 660px;
+  margin: 8px 0 18px;
+  color: var(--conhecer-suave);
+  font-size: 11px;
+  font-weight: 400;
+  line-height: 1.8;
+}
+.conhecer-page .conhecer-biblia {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  gap: 48px;
+  margin-top: 90px;
+  padding: 50px 0;
+  border-block: 1px solid var(--conhecer-linha);
+}
+.conhecer-page .conhecer-biblia-textos {
+  max-width: 570px;
+  flex: 1;
+}
+.conhecer-page .conhecer-biblia-titulo {
+  margin-top: 16px;
+  color: var(--conhecer-texto);
+  font-size: clamp(26px, 3.3vw, 40px);
+  font-weight: 800;
+  letter-spacing: -.055em;
+  line-height: 1.15;
+  text-wrap: balance;
+}
+.conhecer-page .conhecer-biblia-descricao {
+  margin-top: 16px;
+  color: var(--conhecer-suave);
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.8;
+}
+.conhecer-page .conhecer-biblia-botao {
+  display: inline-flex;
+  flex-direction: row;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: space-between;
+  gap: 30px;
+  min-height: 62px;
+  padding: 0 24px;
+  border: 1px solid var(--conhecer-acento);
+  border-radius: 999px;
+  color: #26272b;
+  background: var(--conhecer-acento);
+  text-decoration: none;
+  transition: background-color .35s, transform .35s, box-shadow .35s;
+}
+.conhecer-page .conhecer-biblia-botao-texto {
+  color: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.conhecer-page .conhecer-biblia-botao-seta {
+  color: inherit;
+  font-family: sans-serif;
+  font-size: 23px;
+  transition: transform .35s;
+}
+.conhecer-page .conhecer-rodape {
+  margin-top: 32px;
+  color: var(--conhecer-suave);
+  font-size: 10px;
+  font-weight: 400;
+  line-height: 1.8;
+  letter-spacing: .04em;
+  text-align: left;
+}
+.conhecer-page .estudo-abertura {
+  padding: clamp(75px, 10vw, 120px) 0 54px;
+}
+.conhecer-page .estudo-titulo {
+  font-size: clamp(40px, 6.8vw, 80px);
+}
+.conhecer-page .estudo-descricao {
+  max-width: 680px;
+}
+.conhecer-page .estudo-nota {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  max-width: 680px;
+  gap: 16px;
+  margin-top: 32px;
+  padding-block: 20px;
+  border-top: 1px solid var(--conhecer-linha);
+}
+.conhecer-page .estudo-nota-marca {
+  color: var(--conhecer-acento);
+  font-size: 14px;
+  font-weight: 600;
+}
+.conhecer-page .estudo-nota-texto {
+  flex: 1;
+  color: var(--conhecer-suave);
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.8;
+}
+.conhecer-page .estudo-secoes {
+  border-top: 1px solid var(--conhecer-linha);
+}
+.conhecer-page .estudo-secao {
+  display: grid;
+  grid-template-columns: 80px minmax(0, 1fr);
+  gap: 24px;
+  padding: 50px 0 56px;
+  border-bottom: 1px solid var(--conhecer-linha);
+}
+.conhecer-page .estudo-secao-indice {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 20px;
+}
+.conhecer-page .estudo-secao-numero {
+  color: var(--conhecer-acento);
+  font-size: 12px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+.conhecer-page .estudo-secao-linha {
+  width: 1px;
+  flex: 1;
+  background: linear-gradient(var(--conhecer-linha), transparent);
+}
+.conhecer-page .estudo-secao-conteudo {
+  max-width: 690px;
+}
+.conhecer-page .estudo-secao-titulo {
+  color: var(--conhecer-texto);
+  font-size: clamp(23px, 3vw, 32px);
+  font-weight: 700;
+  letter-spacing: -.045em;
+  line-height: 1.25;
+}
+.conhecer-page .estudo-secao-texto {
+  margin-top: 22px;
+  color: #cdccd0;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.95;
+}
+.conhecer-page .estudo-referencias {
+  margin-top: 28px;
+}
+.conhecer-page .estudo-referencias-legenda {
+  font-size: 9px;
+}
+.conhecer-page .estudo-referencias-lista {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 12px;
+}
+.conhecer-page .estudo-referencia {
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 44px;
+  gap: 22px;
+  padding: 0 16px;
+  border: 1px solid var(--conhecer-linha);
+  border-radius: 2px;
+  color: var(--conhecer-texto);
+  text-decoration: none;
+  transition: background-color .3s, border-color .3s;
+}
+.conhecer-page .estudo-referencia-texto {
+  color: inherit;
+  font-size: 11px;
+  font-weight: 500;
+}
+.conhecer-page .estudo-referencia-seta {
+  color: var(--conhecer-acento);
+  font-family: sans-serif;
+  font-size: 18px;
+}
+.conhecer-page .estudo-final {
+  margin-top: 72px;
+  padding: clamp(28px, 5vw, 60px);
+  border: 1px solid var(--conhecer-linha);
+  border-radius: 4px;
+  background: linear-gradient(130deg, rgb(223 198 163 / 7%), transparent);
+  align-items: flex-start;
+}
+.conhecer-page .estudo-final-titulo {
+  margin-top: 20px;
+  max-width: 650px;
+  color: var(--conhecer-texto);
+  font-size: clamp(28px, 4vw, 48px);
+  font-weight: 800;
+  letter-spacing: -.055em;
+  line-height: 1.15;
+}
+.conhecer-page .estudo-final-descricao {
+  max-width: 530px;
+  margin-top: 20px;
+  color: var(--conhecer-suave);
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.85;
+}
+.conhecer-page .estudo-final-botao {
+  margin-top: 32px;
+}
+.conhecer-page .estudo-outra-leitura {
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 16px;
+  min-height: 44px;
+  margin-top: 16px;
+  color: var(--conhecer-suave);
+  text-decoration: none;
+}
+.conhecer-page .estudo-outra-leitura-texto {
+  color: inherit;
+  font-size: 11px;
+  font-weight: 500;
+}
+.conhecer-page .estudo-outra-leitura-seta {
+  color: inherit;
+  font-size: 20px;
+}
+.conhecer-page a:focus-visible,
+.landing-evangelismo a:focus-visible,
+.landing-evangelismo button:focus-visible,
+.landing-evangelismo:focus-visible {
+  outline: 2px solid var(--conhecer-acento, #dfc6a3);
+  outline-offset: 6px;
+}
+.landing-evangelismo:focus-visible {
+  outline-offset: -4px;
+}
+.editorial-efeitos {
+  height: 0;
+  flex: 0 0 0;
+}
+.editorial-progresso {
+  position: fixed;
+  z-index: 40;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: #dfc6a3;
+  transform: scaleX(var(--progresso-leitura, 0));
+  transform-origin: left;
+  pointer-events: none;
+}
+.editorial-carregamento {
+  position: fixed;
+  z-index: 100;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  background: radial-gradient(ellipse at 50% 65%, #303238, #1e2025 75%);
+  color: #f0eee8;
+  animation: editorial-entrada .35s ease both;
+}
+.editorial-carregamento-marca {
+  font: 600 clamp(48px, 8vw, 90px)/1 "Caveat", cursive;
+  letter-spacing: -.04em;
+}
+.editorial-carregamento-trilho {
+  width: 140px;
+  height: 1px;
+  overflow: hidden;
+  background: #ffffff20;
+}
+.editorial-carregamento-trilho span {
+  display: block;
+  width: 45%;
+  height: 1px;
+  background: #dfc6a3;
+  animation: editorial-carregar 1.1s ease-in-out infinite;
+}
+.editorial-carregamento-legenda {
+  font: 400 10px/1.6 "Montserrat", sans-serif;
+  color: #b4b5ba;
+  letter-spacing: .1em;
+}
+.editorial-carregamento button {
+  margin-top: 12px;
+  padding: 12px;
+  border: 0;
+  background: transparent;
+  color: #dfc6a3;
+  cursor: pointer;
+  font: 500 11px "Montserrat", sans-serif;
+}
+.editorial-carregamento button:focus-visible {
+  outline: 2px solid #dfc6a3;
+  outline-offset: 2px;
+}
+@keyframes editorial-entrada {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes editorial-carregar {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(325%);
+  }
+}
+@keyframes conhecer-degrade {
+  from {
+    background-position: 0% 0%;
+  }
+  to {
+    background-position: 100% 100%;
+  }
+}
+@media (hover: hover) and (pointer: fine) {
+  .conhecer-page .conhecer-card:hover {
+    transform: translateY(-8px);
+    border-color: #dfc6a370;
+    opacity: 1;
+  }
+  .conhecer-page .conhecer-card:hover::before,
+  .conhecer-page .tema-card:hover::before,
+  .conhecer-page .conhecer-biblia:hover::before {
+    opacity: 1;
+  }
+  .conhecer-page .conhecer-card:hover .conhecer-card-seta {
+    transform: rotate(45deg);
+    background: var(--conhecer-linha);
+  }
+  .conhecer-page .conhecer-card:hover .conhecer-card-rodape-seta {
+    transform: translateX(5px);
+  }
+  .conhecer-page .tema-card:hover {
+    background: rgb(255 255 255 / 2%);
+    opacity: 1;
+  }
+  .conhecer-page .tema-card:hover .tema-card-rotulo {
+    transform: translateX(5px);
+  }
+  .conhecer-page .tema-card:hover .tema-card-seta {
+    transform: translate(3px, -3px);
+    color: var(--conhecer-texto);
+  }
+  .conhecer-page .conhecer-biblia-botao:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px #0002;
+    background: #eee0cc;
+    opacity: 1;
+  }
+  .conhecer-page .conhecer-biblia-botao:hover .conhecer-biblia-botao-seta {
+    transform: translate(3px, -3px);
+  }
+  .conhecer-page .estudo-referencia:hover {
+    background: rgb(223 198 163 / 7%);
+    border-color: var(--conhecer-acento);
+    opacity: 1;
+  }
+}
+@media (max-width: 900px) {
+  .conhecer-page .conhecer-card {
+    padding: 24px;
+    min-height: 375px;
+  }
+  .conhecer-page .conhecer-card-topo {
+    gap: 8px;
+  }
+  .conhecer-page .conhecer-card-tema {
+    font-size: 8px;
+    letter-spacing: .08em;
+  }
+  .conhecer-page .conhecer-card-seta {
+    width: 30px;
+    height: 30px;
+    line-height: 28px;
+  }
+  .conhecer-page .conhecer-card-titulo {
+    font-size: 25px;
+  }
+  .conhecer-page .temas-lista {
+    column-gap: 24px;
+  }
+  .conhecer-page .conhecer-biblia {
+    gap: 24px;
+  }
+}
+@media (max-width: 680px) {
+  .conhecer-page .conhecer-shell,
+  .conhecer-page .estudo-shell {
+    padding: 18px 24px 28px;
+  }
+  .conhecer-page .editorial-navegacao {
+    padding-bottom: 14px;
+    gap: 8px;
+  }
+  .conhecer-page .editorial-assinatura {
+    max-width: 100px;
+    font-size: 7px;
+    letter-spacing: .1em;
+    text-align: right;
+    line-height: 1.7;
+  }
+  .conhecer-page .conhecer-voltar-texto {
+    font-size: 10px;
+  }
+  .conhecer-page .conhecer-abertura {
+    padding-top: 72px;
+    padding-bottom: 26px;
+  }
+  .conhecer-page .conhecer-titulo {
+    font-size: clamp(39px, 10.8vw, 64px);
+  }
+  .conhecer-page .conhecer-introducao {
+    margin-top: 24px;
+    font-size: 14px;
+  }
+  .conhecer-page .editorial-indice {
+    margin-top: 44px;
+  }
+  .conhecer-page .editorial-indice-texto {
+    font-size: 8px;
+  }
+  .conhecer-page .conhecer-lista {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+  .conhecer-page .conhecer-card {
+    min-height: 315px;
+    padding: 28px;
+  }
+  .conhecer-page .conhecer-card-titulo {
+    max-width: 290px;
+    margin-top: 35px;
+    font-size: 32px;
+  }
+  .conhecer-page .conhecer-card-tema {
+    font-size: 9px;
+    letter-spacing: .12em;
+  }
+  .conhecer-page .conhecer-card-descricao {
+    max-width: 350px;
+  }
+  .conhecer-page .temas-abertura {
+    padding: 88px 0 34px;
+  }
+  .conhecer-page .temas-titulo {
+    font-size: 38px;
+  }
+  .conhecer-page .temas-lista {
+    grid-template-columns: 1fr;
+  }
+  .conhecer-page .tema-card {
+    min-height: 84px;
+    gap: 12px;
+    padding-inline: 0;
+  }
+  .conhecer-page .tema-card-rotulo {
+    font-size: 16px;
+  }
+  .conhecer-page .conhecer-biblia {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 30px;
+    margin-top: 64px;
+    padding-block: 36px;
+  }
+  .conhecer-page .conhecer-biblia-textos {
+    flex: auto;
+  }
+  .conhecer-page .conhecer-biblia-botao {
+    align-self: flex-start;
+    min-height: 58px;
+  }
+  .conhecer-page .estudo-abertura {
+    padding-top: 64px;
+    padding-bottom: 30px;
+  }
+  .conhecer-page .estudo-titulo {
+    font-size: clamp(35px, 10vw, 58px);
+  }
+  .conhecer-page .estudo-secao {
+    grid-template-columns: 28px minmax(0, 1fr);
+    gap: 12px;
+    padding-block: 34px 40px;
+  }
+  .conhecer-page .estudo-secao-titulo {
+    font-size: 25px;
+  }
+  .conhecer-page .estudo-secao-texto {
+    font-size: 15px;
+    line-height: 1.9;
+  }
+  .conhecer-page .estudo-final {
+    padding: 28px 22px;
+    margin-top: 44px;
+  }
+  .conhecer-page .estudo-final-titulo {
+    font-size: 32px;
+  }
+  .conhecer-page .estudo-final-botao {
+    padding-inline: 18px;
+    gap: 18px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .conhecer-page, .conhecer-page *, .editorial-carregamento, .editorial-carregamento * {
+    animation: none !important;
+    transition: none !important;
+  }
+}
 /* A grade só permite arrastar quando está em seleção múltipla; o atributo é
    emitido pelo React Native Web e não muda a plataforma nativa. */
 @media (hover: hover) and (pointer: fine) {
   [data-selecao-arrasto="true"] [data-capitulo] {
     cursor: grab;
   }
-
   [data-selecao-arrasto="true"] [data-capitulo]:active {
     cursor: grabbing;
   }
-
   [data-selecao-arrasto="true"] {
     user-select: none;
     -webkit-user-select: none;
   }
+}
+/* Narrativa tipográfica: quadros fixos com transição simples guiada pela rolagem. */
+.landing-evangelismo {
+  --landing-texto: #f0eee8;
+  --landing-suave: #b4b5ba;
+  --landing-acento: #dfc6a3;
+  --landing-linha: rgb(240 238 232 / 17%);
+  position: relative;
+  height: 100vh;
+  height: 100dvh;
+  width: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  isolation: isolate;
+  background: radial-gradient(ellipse at 70% 25%, #35373e, transparent 60%), linear-gradient(135deg, #202227, #1b1d22 60%, #2b2d34);
+  background-size: 180% 180%;
+  animation: landing-degrade 28s ease-in-out infinite alternate;
+  color: var(--landing-texto);
+  font-family: system-ui, sans-serif;
+  scrollbar-width: thin;
+  scrollbar-color: #ffffff30 transparent;
+}
+.landing-evangelismo:focus-visible {
+  outline: 2px solid var(--landing-acento);
+  outline-offset: -4px;
+}
+.landing-transcricao,
+.landing-anuncio-leitor {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+.landing-evangelismo.landing-tema-claro {
+  --landing-texto: #292b30;
+  --landing-suave: #64656a;
+  --landing-acento: #946d4b;
+  --landing-linha: #292b302b;
+  background: radial-gradient(ellipse at 80% 10%, #f9f6ef, transparent 60%), linear-gradient(135deg, #e3e1da, #edebe5 60%, #d5d7d8);
+  background-size: 180% 180%;
+  scrollbar-color: #292b3040 transparent;
+}
+.landing-evangelismo .landing-cabecalho {
+  position: fixed;
+  z-index: 20;
+  inset: 0 0 auto;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 20px;
+  padding: calc(25px + env(safe-area-inset-top, 0px)) calc(clamp(24px, 4vw, 64px) + env(safe-area-inset-right, 0px)) 25px calc(clamp(24px, 4vw, 64px) + env(safe-area-inset-left, 0px));
+  pointer-events: none;
+}
+.landing-assinatura {
+  color: var(--landing-suave);
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: .17em;
+}
+.landing-evangelismo .landing-botao-tema {
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  height: 46px;
+  border: 1px solid var(--landing-linha);
+  border-radius: 50%;
+  background: transparent;
+  color: var(--landing-texto);
+  font: 23px sans-serif;
+  cursor: pointer;
+  transition: background-color .3s, transform .4s;
+}
+.landing-botao-tema:hover {
+  background: var(--landing-linha);
+  transform: rotate(25deg);
+}
+.landing-progresso {
+  position: fixed;
+  z-index: 20;
+  left: clamp(24px, 4vw, 64px);
+  bottom: 32px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 16px;
+  pointer-events: none;
+}
+.landing-progresso-trilho {
+  display: block;
+  width: 90px;
+  height: 1px;
+  background: var(--landing-linha);
+}
+.landing-progresso-preenchido {
+  display: block;
+  height: 100%;
+  background: var(--landing-acento);
+  transition: width .6s cubic-bezier(.16,1,.3,1);
+}
+.landing-progresso-texto {
+  color: var(--landing-suave);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: .12em;
+  font-variant-numeric: tabular-nums;
+}
+.landing-sequencia {
+  position: relative;
+}
+.landing-palco {
+  position: relative;
+}
+.landing-quadro {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 35px;
+  min-height: 100dvh;
+  padding: 110px clamp(24px, 7vw, 100px);
+  scroll-margin-block: 96px;
+}
+.landing-numero {
+  color: var(--landing-suave);
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: .16em;
+}
+.landing-quadro:first-child .landing-numero {
+  display: none;
+}
+.landing-numero span {
+  display: inline-block;
+  margin-inline: 10px;
+  color: var(--landing-acento);
+}
+.landing-frase {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: center;
+  gap: 8px clamp(10px, 1.3vw, 20px);
+  width: min(84vw, 700px);
+  max-width: min(84vw, 700px);
+  margin: 0;
+  text-align: center;
+}
+.landing-palavra {
+  display: inline-block;
+  color: var(--landing-texto);
+  font-family: system-ui, sans-serif;
+  font-size: clamp(34px, 5vw, 76px);
+  font-weight: 900;
+  letter-spacing: -.06em;
+  line-height: 1.15;
+}
+.landing-palavra-destaque {
+  color: var(--landing-acento);
+  font-family: "Segoe Print", "Bradley Hand", cursive;
+  font-size: clamp(43px, 6.7vw, 100px);
+  font-weight: 600;
+  letter-spacing: -.04em;
+  line-height: 1.1;
+}
+.landing-quadro:first-child .landing-palavra {
+  animation: landing-palavra-entrada .9s cubic-bezier(.16, 1, .3, 1) both;
+  font-size: clamp(48px, 7.2vw, 112px);
+}
+.landing-quadro:first-child .landing-palavra:nth-child(1) { animation-delay: .08s; }
+.landing-quadro:first-child .landing-palavra:nth-child(2) { animation-delay: .17s; }
+.landing-quadro:first-child .landing-palavra:nth-child(3) { animation-delay: .26s; }
+.landing-quadro:first-child .landing-palavra:nth-child(4) { animation-delay: .37s; }
+.landing-quadro:first-child .landing-palavra:nth-child(5) { animation-delay: .46s; }
+@keyframes landing-palavra-entrada {
+  from { opacity: 0; transform: translate3d(0, 18px, 0) scale(.96); }
+  to { opacity: 1; transform: translate3d(0, 0, 0) scale(1); }
+}
+.landing-quadro:first-child .landing-palavra-destaque {
+  font-size: clamp(70px, 10vw, 154px);
+}
+.landing-convite-rolagem {
+  position: absolute;
+  bottom: 82px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 18px;
+  color: var(--landing-suave);
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: .04em;
+}
+.landing-convite-rolagem span {
+  display: inline-block;
+  color: var(--landing-acento);
+  font-size: 22px;
+  animation: landing-convite 2.6s ease-in-out infinite;
+}
+.landing-pular {
+  position: fixed;
+  z-index: 2;
+  bottom: 126px;
+  left: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 44px;
+  margin-top: 0;
+  padding: 10px 16px;
+  border: 1px solid var(--landing-linha);
+  border-radius: 999px;
+  color: var(--landing-texto);
+  font-size: 12px;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+  transform: translateX(-50%);
+}
+.landing-pular span {
+  color: var(--landing-acento);
+  font-size: 18px;
+}
+.landing-pular:hover {
+  background: var(--landing-linha);
+}
+.landing-poeira {
+  display: none;
+  pointer-events: none;
+}
+.landing-com-animacao .landing-sequencia {
+  height: calc(var(--quadros) * 100dvh);
+}
+.landing-com-animacao .landing-palco {
+  position: sticky;
+  top: 0;
+  height: 100dvh;
+}
+.landing-com-animacao .landing-quadro {
+  position: absolute;
+  inset: 0;
+  min-height: 0;
+  height: 100%;
+}
+.landing-evangelismo .landing-final {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100dvh;
+  padding: 100px 24px 110px;
+  border-top: 1px solid var(--landing-linha);
+  text-align: center;
+}
+.landing-final-sobretitulo {
+  color: var(--landing-acento);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: .18em;
+}
+.landing-final-titulo {
+  max-width: 940px;
+  margin: 30px 0 0;
+  color: var(--landing-texto);
+  font: 900 clamp(38px, 5.5vw, 78px)/1.1 system-ui, sans-serif;
+  letter-spacing: -.065em;
+  text-wrap: balance;
+  scroll-margin-block-start: 110px;
+}
+.landing-final-titulo:focus {
+  outline: 2px solid var(--landing-acento);
+  outline-offset: 8px;
+}
+.landing-destaque {
+  color: var(--landing-acento);
+  font-family: "Segoe Print", "Bradley Hand", cursive;
+  font-size: 1.25em;
+  font-weight: 600;
+  letter-spacing: -.04em;
+  white-space: nowrap;
+}
+.landing-final-descricao {
+  max-width: 490px;
+  margin: 28px 0 32px;
+  color: var(--landing-suave);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.85;
+}
+.landing-evangelismo .landing-acao {
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 28px;
+  min-height: 62px;
+  padding: 16px 26px;
+  border-radius: 99px;
+  font-size: 12px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: transform .35s, background-color .35s;
+}
+.landing-acao span {
+  font: 23px sans-serif;
+  transition: transform .35s;
+}
+.landing-acao-principal {
+  background: var(--landing-acento);
+  color: #28272b;
+}
+.landing-tema-claro .landing-acao-principal {
+  color: #fffaf2;
+}
+.landing-acao-secundaria {
+  margin-top: 14px;
+  border: 1px solid var(--landing-linha);
+  color: var(--landing-texto);
+}
+.landing-acao:hover {
+  transform: translateY(-3px);
+}
+.landing-acao:hover span {
+  transform: translate(3px,-3px);
+}
+.landing-referencias {
+  max-width: 490px;
+  margin: 40px 0 0;
+  color: var(--landing-suave);
+  font-size: 10px;
+  line-height: 1.85;
+}
+.landing-referencias-titulo {
+  display: block;
+  margin-bottom: 12px;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: .13em;
+}
+.landing-referencias-lista {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+}
+.landing-referencia {
+  display: inline-flex;
+  min-height: 36px;
+  align-items: center;
+  gap: 8px;
+  padding: 0 12px;
+  border: 1px solid var(--landing-linha);
+  border-radius: 999px;
+  color: var(--landing-texto);
+  text-decoration: none;
+  transition: border-color .2s, background-color .2s, transform .2s;
+}
+.landing-referencia span {
+  color: var(--landing-acento);
+  font-size: 12px;
+}
+.landing-referencia:hover {
+  transform: translateY(-2px);
+  border-color: var(--landing-acento);
+  background: #ffffff0a;
+}
+.landing-referencia:focus-visible {
+  outline: 2px solid var(--landing-acento);
+  outline-offset: 3px;
+}
+.landing-assinatura-final {
+  margin: 24px 0 0;
+  color: var(--landing-suave);
+  font-size: 9px;
+  letter-spacing: .06em;
+}
+@keyframes landing-degrade {
+  from {
+    background-position: 0% 20%;
+  }
+  to {
+    background-position: 100% 80%;
+  }
+}
+@keyframes landing-convite {
+  0%, 100% {
+    transform: translateY(-3px);
+  }
+  50% {
+    transform: translateY(4px);
+  }
+}
+@media (max-width: 680px) {
+  .landing-evangelismo .landing-final {
+    justify-content: flex-start;
+    padding-top: calc(112px + env(safe-area-inset-top, 0px));
+  }
+  .landing-evangelismo .landing-cabecalho {
+    padding: calc(20px + env(safe-area-inset-top, 0px)) calc(24px + env(safe-area-inset-right, 0px)) 20px calc(24px + env(safe-area-inset-left, 0px));
+  }
+  .landing-assinatura {
+    font-size: 8px;
+    letter-spacing: .1em;
+  }
+  .landing-quadro {
+    gap: 30px;
+    padding: 110px 24px;
+  }
+  .landing-numero {
+    font-size: 8px;
+    letter-spacing: .11em;
+  }
+  .landing-palavra {
+    font-size: clamp(30px, 7.8vw, 48px);
+  }
+  .landing-palavra-destaque {
+    font-size: clamp(39px, 10.2vw, 62px);
+  }
+  .landing-quadro:first-child .landing-palavra {
+    font-size: clamp(42px, 11vw, 70px);
+  }
+  .landing-quadro:first-child .landing-palavra-destaque {
+    font-size: clamp(62px, 16vw, 104px);
+  }
+  .landing-progresso {
+    bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+    left: calc(24px + env(safe-area-inset-left, 0px));
+  }
+  .landing-progresso-trilho {
+    width: 55px;
+  }
+  .landing-convite-rolagem {
+    bottom: 85px;
+    font-size: 11px;
+  }
+  .landing-evangelismo .landing-acao {
+    max-width: 100%;
+    min-height: 58px;
+    padding-inline: 22px;
+    font-size: 11px;
+    gap: 20px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .landing-evangelismo, .landing-evangelismo * {
+    animation: none !important;
+    transition: none !important;
+  }
+  .landing-com-animacao .landing-sequencia {
+    height: auto;
+  }
+  .landing-com-animacao .landing-palco {
+    position: relative;
+    height: auto;
+  }
+  .landing-com-animacao .landing-quadro {
+    position: relative;
+    min-height: 100dvh;
+    height: auto;
+    opacity: 1 !important;
+  }
+  .landing-com-animacao .landing-frase, .landing-com-animacao .landing-numero {
+    opacity: 1 !important;
+  }
+  .landing-pular {
+    position: absolute;
+    top: calc(100dvh - 150px);
+    bottom: auto;
+  }
+}
+.landing-controles {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 24px;
+  pointer-events: auto;
+}
+.landing-botao-leitura {
+  min-height: 44px;
+  padding: 8px 0;
+  border: 0;
+  background: transparent;
+  color: var(--landing-suave);
+  cursor: pointer;
+  font: 400 11px system-ui, sans-serif;
+  transition: color .3s;
+}
+.landing-botao-leitura:hover {
+  color: var(--landing-texto);
+}
+.landing-leitura-continua .landing-sequencia {
+  max-width: 1000px;
+  margin-inline: auto;
+  padding-top: 100px;
+}
+.landing-leitura-continua .landing-quadro {
+  min-height: auto;
+  padding: 64px 28px;
+  border-bottom: 1px solid var(--landing-linha);
+}
+.landing-leitura-continua .landing-palavra,
+.landing-leitura-continua .landing-quadro:first-child .landing-palavra {
+  font-size: clamp(24px, 3.2vw, 42px);
+}
+.landing-leitura-continua .landing-palavra-destaque,
+.landing-leitura-continua .landing-quadro:first-child .landing-palavra-destaque {
+  font-size: clamp(34px, 4.2vw, 54px);
+}
+.landing-leitura-continua .landing-convite-rolagem,
+.landing-leitura-continua .landing-progresso,
+.landing-leitura-continua .landing-pular {
+  display: none;
+}
+@media (max-width: 680px) {
+  .landing-controles {
+    gap: 16px;
+  }
+  .landing-assinatura {
+    max-width: 110px;
+    line-height: 1.7;
+  }
+  .landing-botao-leitura {
+    font-size: 11px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .landing-botao-leitura {
+    display: none;
+  }
+  .landing-sequencia {
+    max-width: 1000px;
+    margin-inline: auto;
+    padding-top: 100px;
+  }
+  .landing-quadro {
+    min-height: auto;
+    padding: 64px 28px;
+    border-bottom: 1px solid var(--landing-linha);
+  }
+  .landing-palavra, .landing-quadro:first-child .landing-palavra {
+    font-size: clamp(24px, 3.2vw, 42px);
+  }
+  .landing-palavra-destaque, .landing-quadro:first-child .landing-palavra-destaque {
+    font-size: clamp(34px, 4.2vw, 54px);
+  }
+  .landing-convite-rolagem, .landing-progresso {
+    display: none;
+  }
+}
+.conhecer-page .editorial-carregamento-marca {
+  font-family: "Caveat", cursive;
+}
+.editorial-carregamento {
+  transition: opacity .4s ease, transform .4s ease;
+}
+.editorial-carregamento-saindo {
+  animation: none;
+  opacity: 0;
+  transform: translateY(-12px);
+  pointer-events: none;
 }

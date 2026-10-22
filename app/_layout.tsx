@@ -12,13 +12,6 @@ import { marcarTemaInicializado, restaurarTema } from "../core/theme";
 import { onboardingConcluido } from "../core/leitura/onboarding";
 import { mostrarToast } from "../core/util/toast";
 
-// Capturado antes de o Expo Router restaurar o estado de navegação. Em uma
-// exportação estática, ler o pathname só dentro do effect pode observar `/`
-// durante a hidratação mesmo quando a entrada pública foi um deep link.
-const CAMINHO_INICIAL_WEB = Platform.OS === "web" && typeof window !== "undefined"
-  ? window.location.pathname
-  : null;
-
 // A splash nativa cobre a leitura assíncrona do tema; a web continua renderizando
 // no primeiro frame para preservar a saída estática e sua hidratação.
 if (Platform.OS !== "web") void SplashScreen.preventAutoHideAsync().catch(() => {});
@@ -66,9 +59,10 @@ export default function RootLayout() {
 
   useEffect(() => {
     if (!temaInicializado) return;
-    const estaNaRaiz = Platform.OS === "web"
-      ? CAMINHO_INICIAL_WEB === "/"
-      : rotaEstrutural === "(tabs)";
+    // A raiz web é a landing pública e não deve abrir o onboarding do app.
+    // No nativo, tanto a entrada quanto a nova home /biblia preservam esse fluxo.
+    const estaNaRaiz = Platform.OS !== "web"
+      && (rotaEstrutural === "(tabs)" || rotaEstrutural === "(tabs)/biblia");
     if (!estaNaRaiz) return;
     onboardingConcluido()
       .then((concluido) => { if (!concluido) router.replace("/onboarding"); })

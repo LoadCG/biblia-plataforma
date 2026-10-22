@@ -54,6 +54,10 @@ export class ErroBusca extends Error {
   }
 }
 
+function ehErroReferenciaInvalida(erro: unknown): boolean {
+  return typeof erro === "object" && erro !== null && "tipo" in erro && erro.tipo === "invalido";
+}
+
 // A bible-api.com é uma API pública gratuita, sem SLA — falhas
 // transitórias (timeout, 5xx) acontecem. Poucas tentativas com um
 // pequeno intervalo (não é um backoff exponencial elaborado, só o
@@ -127,7 +131,11 @@ export async function buscarReferencia(ref: string): Promise<CapituloTexto> {
     try {
       const { buscarLocalWeb } = await import("./leituraLocalWeb");
       return await buscarLocalWeb(ref);
-    } catch {
+    } catch (erro) {
+      // Uma referência reconhecida, mas fora dos limites do capítulo, é
+      // inválida — tentar a API remota não pode torná-la válida e só gera
+      // espera/erro de rede. O fallback continua reservado a falhas locais.
+      if (ehErroReferenciaInvalida(erro)) throw erro;
       return buscarWeb(ref);
     }
   }
@@ -233,7 +241,16 @@ export async function buscarGlobal(query: string, opcoes: OpcoesBuscaGlobal = {}
     // Reconstroi com o nome canônico do catálogo: o parser aceita variantes
     // sem acento (por exemplo, "Joao"), mas o leitor nativo usa o catálogo
     // como chave para consultar SQLite.
-    const passagem = await buscarReferencia(`${livro.nome} ${referencia.capitulo}${sufixoVersiculos}`);
+    let passagem: CapituloTexto;
+    try {
+      passagem = await buscarReferencia(`${livro.nome} ${referencia.capitulo}${sufixoVersiculos}`);
+    } catch (erro) {
+      // Na busca, uma referência que não existe representa zero resultados,
+      // não uma falha de disponibilidade. O leitor continua podendo mostrar
+      // seu estado de erro quando recebe a referência diretamente.
+      if (ehErroReferenciaInvalida(erro)) return [];
+      throw erro;
+    }
     const versiculos = passagem.versiculos ?? (referencia.versiculoInicial
       ? [{ numero: referencia.versiculoInicial, texto: passagem.texto }]
       : []);

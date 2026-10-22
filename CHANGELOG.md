@@ -5,6 +5,58 @@ O formato é baseado no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.
 
 ## [Unreleased] - 2026-10-04
 
+### Sistema de sequência diária — 2026-10-16
+- O cálculo agora resume sequência atual, melhor sequência registrada, leitura
+  de hoje e dias com leitura nos últimos sete dias, sempre pelo calendário local.
+  Datas inválidas e futuras são ignoradas; capítulos do mesmo dia contam uma vez.
+- Home, Perfil e Estatísticas compartilham as mesmas regras. As telas atualizam
+  ao recuperar foco e a sequência acompanha a virada do dia sem recarregar.
+- Mensagens agora esclarecem se a leitura de hoje já foi registrada ou se ainda
+  pode somar ao ritmo, sem linguagem de perda ou pressão. Ajuda explica a regra.
+- A chama continua respeitando movimento reduzido e usa animação compatível com
+  web/nativo; o elemento decorativo fica fora da árvore assistiva.
+- Testes cobrem deduplicação, limites do dia, lacunas, recorde, datas inválidas,
+  calendário semanal e virada do mês. `npm run validate` passou com 32 suítes,
+  221 testes, 96 contratos a11y, 35 contratos UI e Expo Doctor 21/21; a checagem
+  de copy passou com 120 fontes.
+
+### Revisão visual do Toast — 2026-10-15
+- No desktop web, o Toast deixa de reservar o espaço da barra inferior móvel e
+  passa a ficar a 24 px da borda, evitando cobrir os cartões da Home. O
+  breakpoint de 768 px agora é compartilhado entre navegação e Toast.
+- Verificação visual local confirmou a posição em desktop e o contraste do
+  sucesso em tema escuro; o versículo de teste e o tema foram restaurados.
+- TypeScript, contratos de acessibilidade/UI, testes e verificação de copy
+  passaram. Leitor de tela real, falha induzida e movimento reduzido observado
+  continuam pendentes.
+
+### Retorno da pesquisa bíblica — 2026-10-15
+- Corrigido carregamento infinito ao voltar do leitor para uma pesquisa com os
+  filtros padrão na URL. A tela só reinicia a consulta quando os filtros
+  normalizados diferem do estado atual.
+- Ao tentar novamente após uma falha de busca, o erro agora some e o estado
+  “Buscando resultados” aparece imediatamente, antes do debounce da consulta.
+- Teste de regressão cobre filtros equivalentes; TypeScript, seis testes focados
+  de navegação e verificadores de acessibilidade/UI/copy passaram. A jornada
+  local confirmou a consulta e o resultado restaurados.
+- Expo Doctor apontou `expo` e `expo-router` um patch atrás do SDK 57; os dois
+  foram alinhados com `npx expo install`. `npm run validate` passou com 21/21
+  verificações e o export web gerou 1.189 rotas de capítulos.
+
+### Consistência de sessão do áudio — 2026-10-15
+- As ações de pausar e retomar no menu do Versículo do Dia agora passam a
+  identidade da sessão ativa ao player, conforme o contrato do áudio. TypeScript
+  e os testes de sessão do player passaram.
+
+### Organização da documentação — 2026-10-15
+- `DOCUMENTACAO.md` agora separa a fonte canônica, planos especializados,
+  evidências e documentos históricos; a ordem de trabalho aponta para um único
+  plano mestre.
+- Reconciliados status da busca e expansão editorial, atualizado o contexto do
+  plano operacional de UX e corrigida a pendência de validade do QA de backup.
+- O registro visual antigo não mantém mais fila própria. Nenhum documento ou
+  histórico foi removido.
+
 ### Seleção de capítulos — arraste em lote (2026-10-14)
 - Robustecido o gesto web: clique esquerdo e ponteiro principal apenas, limiar
   de 5 px para distinguir clique de arraste, captura do ponteiro, proteção

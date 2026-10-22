@@ -33,10 +33,25 @@ export function registrarServiceWorker(): void {
     // sem isso, o loop acima continuaria acontecendo pra quem já tinha
     // um SW velho instalado no navegador de dev.
     navigator.serviceWorker.getRegistrations().then((registros) => {
-      registros.forEach((registro) => registro.unregister());
-    });
+      registros.forEach((registro) => {
+        const scripts = [registro.active, registro.waiting, registro.installing]
+          .filter((worker) => worker !== null)
+          .map((worker) => worker!.scriptURL);
+        const pertenceAoApp = scripts.some((script) => {
+          const url = new URL(script);
+          return url.origin === window.location.origin && url.pathname === "/sw.js";
+        });
+        if (pertenceAoApp) registro.unregister();
+      });
+    }).catch(() => {});
     if (typeof caches !== "undefined") {
-      caches.keys().then((chaves) => chaves.forEach((chave) => caches.delete(chave)));
+      caches.keys()
+        .then((chaves) => Promise.all(
+          chaves
+            .filter((chave) => chave.startsWith("biblia-plataforma-"))
+            .map((chave) => caches.delete(chave))
+        ))
+        .catch(() => {});
     }
     return;
   }

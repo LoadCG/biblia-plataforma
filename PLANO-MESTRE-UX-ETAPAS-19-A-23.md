@@ -1,10 +1,15 @@
 # Plano mestre de execução — UX/UI etapas 19 a 23
 
-Documento operacional para execução posterior. Cada tarefa possui um ID único,
-pré-requisitos, procedimento, evidência e critério de aceite. Não marcar uma
-caixa por inferência: a conclusão exige a evidência indicada.
+Documento de apoio operacional para checklists de UX/UI e gates externos. A
+prioridade e a ordem vêm de [`docs/PLANO-MESTRE-Q4-2026.md`](./docs/PLANO-MESTRE-Q4-2026.md);
+este arquivo não é uma fila paralela. Cada tarefa possui ID, pré-requisitos,
+procedimento, evidência e critério de aceite. Não marcar conclusão por inferência.
 
-## Estado atual — 2026-10-02
+## Contexto registrado na abertura — 2026-10-02
+
+Este bloco é uma fotografia histórica da revisão iniciada em 2 de outubro, não
+um retrato do estado atual. Consulte `ESTADO-DO-PROJETO.md` e o plano mestre para
+prioridades, execuções e evidências mais recentes.
 
 - Branch: `master`; base desta revisão documental: `25ce9d0`.
 - Plano de ordem superior: [`docs/PLANO-MESTRE-Q4-2026.md`](./docs/PLANO-MESTRE-Q4-2026.md).

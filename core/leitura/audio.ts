@@ -230,9 +230,9 @@ export function iniciarAudio(
 }
 
 /** iOS e web pausam na posição atual; Android interrompe e retoma do início do versículo atual. */
-export function pausarAudio(): void {
+export function pausarAudio(origem: object): void {
   const sessao = sessaoAtiva;
-  if (!sessao || sessao.estado !== "reproduzindo" || sessao.comandoPendente) return;
+  if (!sessao || sessao.origem !== origem || sessao.estado !== "reproduzindo" || sessao.comandoPendente) return;
 
   if (!suportaPausaAudio()) {
     sessao.comandoPendente = true;
@@ -276,9 +276,9 @@ export function pausarAudio(): void {
   }
 }
 
-export function continuarAudio(): void {
+export function continuarAudio(origem: object): void {
   const sessao = sessaoAtiva;
-  if (!sessao || sessao.comandoPendente || !["pausado", "interrompido", "erro"].includes(sessao.estado)) return;
+  if (!sessao || sessao.origem !== origem || sessao.comandoPendente || !["pausado", "interrompido", "erro"].includes(sessao.estado)) return;
 
   if (sessao.estado === "pausado" && suportaPausaAudio()) {
     if (Platform.OS === "web") {

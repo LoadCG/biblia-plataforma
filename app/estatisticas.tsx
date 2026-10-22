@@ -1,11 +1,15 @@
-import { Link } from "expo-router";
-import { useEffect, useState } from "react";
+import { Link, useFocusEffect } from "expo-router";
+import { useCallback, useState } from "react";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { BotaoTema } from "../components/BotaoTema";
+import { CardStreak } from "../components/CardStreak";
 import { EstadoCarregando } from "../components/EstadoCarregando";
 import { EstadoErro } from "../components/EstadoErro";
 import { calcularEstatisticas, formatarMinutos, type Estatisticas } from "../core/estatisticas/estatisticas";
+import { useResumoSequencia } from "../core/estatisticas/useResumoSequencia";
 import { useOwnerId } from "../core/useOwnerId";
+
+const SEM_DATAS_LEITURA: string[] = [];
 
 function Cartao({ numero, rotulo }: { numero: string | number; rotulo: string }) {
   return (
@@ -21,8 +25,9 @@ export default function MinhasEstatisticas() {
   const [estatisticas, setEstatisticas] = useState<Estatisticas | null>(null);
   const [erro, setErro] = useState(false);
   const [tentativa, setTentativa] = useState(0);
+  const resumoSequencia = useResumoSequencia(estatisticas?.datasLeitura ?? SEM_DATAS_LEITURA);
 
-  useEffect(() => {
+  useFocusEffect(useCallback(() => {
     if (!ownerId) return;
     let ativo = true;
     setEstatisticas(null);
@@ -33,13 +38,13 @@ export default function MinhasEstatisticas() {
       if (ativo) setErro(true);
     });
     return () => { ativo = false; };
-  }, [ownerId, tentativa]);
+  }, [ownerId, tentativa]));
 
   return (
     <ScrollView className="flex-1 bg-cor-fundo dark:bg-cor-fundo-dark">
       <View className="px-5 pt-6 pb-10 max-w-2xl w-full mx-auto">
         <View className="flex-row items-center justify-between mb-2">
-          <Link href="/" asChild>
+          <Link href="/biblia" asChild>
             <Pressable accessibilityRole="link" accessibilityLabel="Voltar para início" className="min-h-11 justify-center pr-3 active:opacity-70">
               <Text className="text-cor-destaque dark:text-cor-destaque-dark text-sm">← Início</Text>
             </Pressable>
@@ -62,11 +67,10 @@ export default function MinhasEstatisticas() {
             <Cartao numero={estatisticas.versiculosGrifados} rotulo="versículos grifados" />
             <Cartao numero={estatisticas.notasEscritas} rotulo="notas escritas" />
             <Cartao numero={formatarMinutos(estatisticas.minutosEstimados)} rotulo="tempo estimado de leitura" />
-            {estatisticas.sequenciaAtual >= 2 ? (
-              <Cartao numero={estatisticas.sequenciaAtual} rotulo="dias seguidos lendo" />
-            ) : null}
           </View>
         )}
+
+        {estatisticas ? <View className="mt-5"><CardStreak resumo={resumoSequencia} /></View> : null}
 
         <Text className="text-xs text-cor-texto-suave dark:text-cor-texto-suave-dark mt-6">
           O tempo de leitura é uma estimativa (não cronometrada), calculada

@@ -407,8 +407,8 @@ export default function Salvo() {
             acao={vazioDeAnotacoes
               ? vazioPorBusca ? { rotulo: "Limpar busca", aoPressionar: limparBusca }
                 : vazioPorColecao ? { rotulo: "Ver todas as anotações", aoPressionar: () => setColecaoFiltro(null) }
-                  : quantidadeAnotacoes === 0 ? { rotulo: "Abrir a Bíblia", aoPressionar: () => router.push("/biblia") } : undefined
-              : quantidadeItens === 0 ? { rotulo: "Abrir a Bíblia", aoPressionar: () => router.push("/biblia") } : possuiFiltrosAtivos ? { rotulo: "Limpar filtros", aoPressionar: limparFiltros } : undefined}
+                  : quantidadeAnotacoes === 0 ? { rotulo: "Abrir a Bíblia", aoPressionar: () => router.push("/leitura") } : undefined
+              : quantidadeItens === 0 ? { rotulo: "Abrir a Bíblia", aoPressionar: () => router.push("/leitura") } : possuiFiltrosAtivos ? { rotulo: "Limpar filtros", aoPressionar: limparFiltros } : undefined}
           />
         ) : (
           <View className={desktop ? "flex-row flex-wrap justify-between" : ""}>

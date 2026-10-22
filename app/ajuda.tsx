@@ -11,7 +11,7 @@ const DUVIDAS = [
   },
   {
     pergunta: "Como funciona a sequência diária?",
-    resposta: "Ela considera os dias em que você marcou ao menos um capítulo bíblico como lido. Ler um resumo ou abrir um capítulo, sem marcá-lo, não altera essa sequência.",
+    resposta: "Ela conta pelo calendário local os dias em que você marcou ao menos um capítulo bíblico como lido; vários capítulos no mesmo dia contam como um dia. Se você ainda não leu hoje, a leitura de ontem mantém a sequência ativa até o fim do dia. A tela mostra os últimos sete dias e seu melhor ritmo registrado. Ler um resumo ou apenas abrir um capítulo não altera a sequência.",
   },
   {
     pergunta: "Como acompanho um plano?",
@@ -32,7 +32,7 @@ const DUVIDAS = [
 ];
 
 const DESTINOS = [
-  { href: "/biblia/escolher", rotulo: "Escolher um livro da Bíblia" },
+  { href: "/leitura/escolher", rotulo: "Escolher um livro da Bíblia" },
   { href: "/resumos", rotulo: "Explorar os resumos dos livros" },
   { href: "/planos", rotulo: "Ver planos de leitura" },
   { href: "/privacidade", rotulo: "Entender meus dados e privacidade" },

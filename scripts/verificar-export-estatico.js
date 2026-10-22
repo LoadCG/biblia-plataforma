@@ -4,10 +4,26 @@ const biblia = require("../assets/biblia.json");
 
 const raiz = path.resolve(process.argv[2] || "dist");
 const casos = [
-  ["index.html", "Bíblia Plataforma — leitura bíblica offline", null],
-  ["biblia/01-genesis/1.html", null, null],
-  ["biblia/46-1-corintios/13.html", null, null],
-  ["biblia/66-apocalipse/22.html", null, null],
+  ["index.html", "Tem alguém que te ama.", null],
+  ["conhecer/index.html", "Conhecer mais sobre esse amor", "LEITURAS POR ASSUNTO"],
+  ["conhecer/jesus.html", "Quem é Jesus? | Tem alguém que te ama", "Uma vida que acolhe e ensina"],
+  ["conhecer/biblia.html", "O que é a Bíblia? | Tem alguém que te ama", "Uma biblioteca de livros"],
+  ["conhecer/salvacao.html", "A história da salvação | Tem alguém que te ama", "Criados para a vida com Deus"],
+  ["conhecer/temas/habitos-e-impulsos.html", "Hábitos e impulsos | Tem alguém que te ama", "Sua história não cabe em um rótulo"],
+  ["conhecer/temas/sexualidade-e-afetos.html", "Sexualidade e afetos | Tem alguém que te ama", "Pessoas têm dignidade"],
+  ["conhecer/temas/relacionamentos-e-limites.html", "Relacionamentos e limites | Tem alguém que te ama", "O amor busca o bem do outro"],
+  ["conhecer/temas/raiva-e-conflitos.html", "Raiva e conflitos | Tem alguém que te ama", "Uma pausa pode abrir espaço para ouvir"],
+  ["conhecer/temas/valor-e-autoimagem.html", "Valor e autoimagem | Tem alguém que te ama", "Seu valor não depende de desempenho"],
+  ["conhecer/temas/alcool-e-outras-drogas.html", "Álcool e outras drogas | Tem alguém que te ama", "Ninguém deve ser humilhado pelo uso de substâncias"],
+  ["conhecer/temas/adiamento-e-recomeco.html", "Adiamento e recomeço | Tem alguém que te ama", "Nem todo adiamento tem a mesma causa"],
+  ["conhecer/temas/ansiedade-e-preocupacao.html", "Ansiedade e preocupação | Tem alguém que te ama", "A Bíblia não manda esconder o que pesa"],
+  ["conhecer/temas/rejeicao-e-pertencimento.html", "Rejeição e pertencimento | Tem alguém que te ama", "Ser recebido importa"],
+  ["conhecer/temas/fe-duvidas-e-experiencias.html", "Fé e dúvidas | Tem alguém que te ama", "Perguntas fazem parte de muitas histórias de fé"],
+  ["conhecer/temas/luto-e-perdas.html", "Luto e perdas | Tem alguém que te ama", "A dor pode ser nomeada"],
+  ["conhecer/temas/medo-panico-e-sofrimento.html", "Medo e sofrimento emocional | Tem alguém que te ama", "O sofrimento merece ser levado a sério"],
+  ["leitura/01-genesis/1.html", null, null],
+  ["leitura/46-1-corintios/13.html", null, null],
+  ["leitura/66-apocalipse/22.html", null, null],
   ["resumos/01-genesis.html", "Resumo de Gênesis — Bíblia Plataforma", "Pano de Fundo Histórico"],
   ["resumos/66-apocalipse.html", "Resumo de Apocalipse — Bíblia Plataforma", "Pano de Fundo Histórico"],
   ["planos/sabedoria-7.html", "Semana da Sabedoria — Bíblia Plataforma", "Semana da Sabedoria"],
@@ -54,8 +70,8 @@ for (let indiceLivro = 0; indiceLivro < biblia.length; indiceLivro++) {
     .replace(/^-|-$/g, "")}`;
 
   for (let capitulo = 1; capitulo <= livro.chapters.length; capitulo++) {
-    const arquivo = path.join(raiz, "biblia", slug, `${capitulo}.html`);
-    if (!fs.existsSync(arquivo)) throw new Error(`Rota estática de leitura ausente: biblia/${slug}/${capitulo}.html`);
+    const arquivo = path.join(raiz, "leitura", slug, `${capitulo}.html`);
+    if (!fs.existsSync(arquivo)) throw new Error(`Rota estática de leitura ausente: leitura/${slug}/${capitulo}.html`);
     capitulosGerados++;
   }
 }

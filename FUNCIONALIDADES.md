@@ -389,7 +389,7 @@ um livro específico.
 **Funcionalidade:** abre o capítulo inteiro, rola automaticamente até o
 versículo pedido via `?versiculo=N` na URL.
 **UX/UI:** borda lateral colorida no versículo em foco. Estudo de UX
-([ESTUDO-UX-LEITURA.md](../ESTUDO-UX-LEITURA.md)) trouxe além disso:
+([ESTUDO-UX-LEITURA.md](./ESTUDO-UX-LEITURA.md)) trouxe além disso:
 barra fina de progresso de leitura no topo, e tipografia revista
 (número de versículo pequeno/discreto, `lineHeight` maior) — inspirado
 no padrão do YouVersion/Bible Gateway.

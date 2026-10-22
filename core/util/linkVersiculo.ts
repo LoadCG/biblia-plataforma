@@ -6,7 +6,7 @@ import { Platform } from "react-native";
 // compartilhamento continua sendo só o texto/referência, sem link.
 export function linkVersiculo(livroSlug: string, capitulo: number, versiculo?: number): string | null {
   if (Platform.OS !== "web" || typeof window === "undefined") return null;
-  const caminho = `/biblia/${livroSlug}/${capitulo}${versiculo ? `?versiculo=${versiculo}` : ""}`;
+  const caminho = `/leitura/${livroSlug}/${capitulo}${versiculo ? `?versiculo=${versiculo}` : ""}`;
   return `${window.location.origin}${caminho}`;
 }
 
@@ -20,5 +20,5 @@ export function linkVersiculos(livroSlug: string, capitulo: number, versiculos: 
     versiculo: String(numeros[0]),
     versiculos: numeros.join(","),
   });
-  return `${window.location.origin}/biblia/${livroSlug}/${capitulo}?${consulta.toString()}`;
+  return `${window.location.origin}/leitura/${livroSlug}/${capitulo}?${consulta.toString()}`;
 }

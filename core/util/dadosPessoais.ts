@@ -84,25 +84,31 @@ export async function coletarDadosPessoais(ownerId: string): Promise<DadosPessoa
 // menos superfície de código pra uma ação que, na prática, roda raras
 // vezes (o usuário decide apagar tudo, não é um caminho quente).
 export async function apagarDadosPessoais(ownerId: string, dados: DadosPessoais): Promise<void> {
-  await Promise.all([
+  const operacoes: Promise<unknown>[] = [
     perfilRepository.salvar(ownerId, PERFIL_PADRAO),
     ...dados.grifos.map((g) => grifosRepository.alternar(ownerId, g)),
-    dados.capitulosLidos.length
-      ? progressoRepository.definirVarios(
+    ...(dados.capitulosLidos.length
+      ? [progressoRepository.definirVarios(
           ownerId,
           dados.capitulosLidos.map((c) => ({ livroSlug: c.livroSlug, capitulo: c.capitulo })),
           false
-        )
-      : null,
+        )]
+      : []),
     ...dados.notas.map((n) => notasRepository.remover(ownerId, n)),
     ...dados.livrosLidos.map((slug) => livrosLidosRepository.alternar(ownerId, slug)),
     ...dados.pesquisasFavoritas.map((p) => pesquisasFavoritasRepository.alternar(ownerId, p.termo)),
     ...dados.versiculosSalvos.map((v) => versiculosSalvosRepository.alternar(ownerId, v)),
-    ...dados.planos.map((p) =>
-      Promise.all(p.diasConcluidos.map((dia) => planosRepository.alternarDiaConcluido(ownerId, p.planoId, dia)))
+    ...dados.planos.flatMap((p) =>
+      p.diasConcluidos.map((dia) => planosRepository.alternarDiaConcluido(ownerId, p.planoId, dia))
     ),
     colecoesRepository.apagarTudo(ownerId),
     ...planosLeitura.flatMap((plano) => plano.dias.map((dia) => planosRepository.removerSessao(ownerId, plano.id, dia.dia))),
-  ]);
+  ];
+  // Aguarda também as operações que continuam após a primeira rejeição. Assim,
+  // uma tentativa de repetição não concorre com remoções ainda em andamento.
+  const resultados = await Promise.allSettled(operacoes);
+  const falha = resultados.find((resultado) => resultado.status === "rejected");
+  if (falha?.status === "rejected") throw falha.reason;
+
   await apagarEstadoUsuario();
 }

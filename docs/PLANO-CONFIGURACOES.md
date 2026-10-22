@@ -124,3 +124,25 @@ Android/iOS.
 - A revisão do app nativo dedicado continua fora da prioridade atual; QA nativo
   aqui limita-se a validar a função de notificação já existente quando o
   ambiente estiver disponível.
+
+## Revisão de qualidade de exclusão local — 2026-10-21
+
+**Achado:** a exclusão de dados aguardava operações concorrentes com
+`Promise.all`. Quando uma remoção rejeitava, a tela podia liberar a ação para
+repetição enquanto outras gravações ainda estavam em andamento. Como os métodos
+de alguns repositórios são alternâncias, uma tentativa concorrente poderia
+reverter um item que a tentativa anterior terminasse de remover.
+
+**Correção em `core/util/dadosPessoais.ts`:** as operações de exclusão agora são
+aguardadas com `Promise.allSettled`; a função só rejeita depois que todas
+terminam e só remove preferências globais se nenhuma falhar. As remoções de dias
+dos planos são acompanhadas individualmente, sem um `Promise.all` interno que
+voltasse a rejeitar antes das demais.
+
+**Checkpoint de qualidade:** `core/util/__tests__/dadosPessoais.test.ts` cobre
+uma remoção que falha junto com outra que demora, confirmando que a tentativa
+não termina cedo nem apaga preferências globais. O teste direcionado passou
+(1/1). A checagem TypeScript iniciada antes da correção dos caminhos dos mocks
+falhou apenas nesse teste recém-criado; será repetida após a integração. Falha
+real de armazenamento, reexportação do backup, leitor de tela e runtime
+Android/iOS continuam como validações separadas.

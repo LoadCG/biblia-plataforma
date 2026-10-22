@@ -117,7 +117,7 @@ export default function Planos() {
               dos casos. Cai pra Início só se não houver histórico
               (ex.: URL aberta direto). */}
           <Pressable
-            onPress={() => (router.canGoBack() ? router.back() : router.replace("/"))}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace("/biblia"))}
             accessibilityRole="button"
             accessibilityLabel="Voltar"
             className="min-h-11 flex-row items-center gap-1 pr-3 active:opacity-70"

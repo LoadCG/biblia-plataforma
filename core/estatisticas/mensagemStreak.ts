@@ -1,11 +1,16 @@
-// Lógica pura de faixa → mensagem, extraída pra função compartilhada
-// porque a sequência de leitura aparece em dois lugares (card de
-// destaque na Início, item "Perseverança" na aba Você — ver
-// PLANO-NAVEGACAO.md) e não pode divergir com o tempo entre os dois.
-export function mensagemStreak(sequencia: number): string {
-  if (sequencia <= 0) return "Comece hoje a sua sequência de leitura.";
-  if (sequencia === 1) return "Primeiro dia — volte amanhã pra continuar.";
-  if (sequencia < 5) return "Você está pegando o ritmo.";
-  if (sequencia < 15) return "Sequência forte!";
-  return "Impressionante — siga assim.";
+import type { ResumoSequencia } from "./streak";
+
+export function mensagemStreak(resumo: Pick<ResumoSequencia, "atual" | "leuHoje">): string {
+  if (resumo.atual === 0) return "Marque um capítulo como lido para acompanhar seu ritmo.";
+  if (resumo.leuHoje) return "Você leu hoje. Seu ritmo está em dia.";
+  if (resumo.atual === 1) return "Você leu ontem. Uma leitura hoje soma mais um dia.";
+  return "Sua última leitura foi ontem. Uma leitura hoje soma ao seu ritmo.";
+}
+
+export function acaoStreak(resumo: Pick<ResumoSequencia, "atual" | "leuHoje">) {
+  if (resumo.leuHoje) return null;
+  if (resumo.atual > 0) {
+    return { rotulo: "Ler hoje", nomeAcessivel: "Abrir a Bíblia para ler hoje" };
+  }
+  return { rotulo: "Começar leitura", nomeAcessivel: "Abrir a Bíblia e começar a sequência" };
 }

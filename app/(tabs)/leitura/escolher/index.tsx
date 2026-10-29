@@ -211,8 +211,8 @@ export default function EscolherLivro() {
             <GradeCapitulos
               totalCapitulos={item.capitulos}
               lidos={lidos}
-              onSelecionar={(cap) => router.push(`/biblia/${item.slug}/${cap}`)}
-              onSelecionarLongo={(cap) => router.push(`/biblia/escolher/${item.slug}/${cap}`)}
+              onSelecionar={(cap) => router.push(`/leitura/${item.slug}/${cap}`)}
+              onSelecionarLongo={(cap) => router.push(`/leitura/escolher/${item.slug}/${cap}`)}
               selecionados={emSelecao ? selecionados : undefined}
               onAlternarSelecionado={emSelecao ? alternarCapituloSelecionado : undefined}
               onMudarSelecaoEmMassa={emSelecao ? setSelecionados : undefined}

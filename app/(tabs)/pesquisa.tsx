@@ -53,7 +53,7 @@ const ATALHOS_DESCUBRA: { id: string; rotulo: string; icone: IconeUINome; destin
   { id: "ajuda", rotulo: "Ajuda", icone: "info", destino: "ajuda" },
 ];
 
-const TAMANHO_PAGINA_BUSCA = 50;
+const TAMANHO_PAGINA_BUSCA = 20;
 
 export default function Pesquisa() {
   const parametros = useLocalSearchParams<{ tema?: string; consulta?: string; testamento?: string; livroFiltro?: string }>();
@@ -444,6 +444,9 @@ export default function Pesquisa() {
               // @ts-expect-error accessibilityChecked é uma extensão do react-native-web
               accessibilityChecked={livroFiltro === livro.slug} className={`mr-2 min-h-11 justify-center px-3 rounded-full border ${livroFiltro === livro.slug ? "border-cor-destaque dark:border-cor-destaque-dark" : "border-cor-borda dark:border-cor-borda-dark"}`}><Text className="text-xs text-cor-texto dark:text-cor-texto-dark">{livro.nome}</Text></Pressable>)}
           </ScrollView>
+          <Text className="mt-1 px-1 text-[11px] text-cor-texto-suave dark:text-cor-texto-suave-dark">
+            Deslize para ver outros livros <Text aria-hidden={true}>→</Text>
+          </Text>
           {testamento !== "todos" || livroFiltro ? (
             <View className="mt-2 flex-row items-center justify-between gap-3">
               <Text className="flex-1 text-xs text-cor-texto-suave dark:text-cor-texto-suave-dark" numberOfLines={1}>

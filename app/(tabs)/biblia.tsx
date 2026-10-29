@@ -54,7 +54,7 @@ function CardContinueLendo({ item, escuro }: { item: CapituloLido; escuro: boole
 
   return (
     <Pressable
-      onPress={() => router.push(`/biblia/${livro.slug}/${item.capitulo}`)}
+      onPress={() => router.push(`/leitura/${livro.slug}/${item.capitulo}`)}
       accessibilityRole="link"
       accessibilityLabel={`${livro.nome}, capítulo ${item.capitulo}`}
       className="w-32 mr-3 rounded-2xl bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark px-3.5 py-4 shadow-sm active:opacity-80"
@@ -232,7 +232,7 @@ export default function Inicio() {
                   ))}
                 </ScrollView>
               </View>
-            ) : desktop && estadoProgresso === "disponivel" ? <CardComecarLeitura escuro={escuro} /> : null}
+            ) : estadoProgresso === "disponivel" ? <CardComecarLeitura escuro={escuro} /> : null}
 
             {desktop ? (
               <View className="mt-7">

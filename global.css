@@ -737,6 +737,9 @@ html.dark body {
   }
 }
 @media (max-width: 900px) {
+  .conhecer-page .conhecer-lista {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
   .conhecer-page .conhecer-card {
     padding: 24px;
     min-height: 375px;

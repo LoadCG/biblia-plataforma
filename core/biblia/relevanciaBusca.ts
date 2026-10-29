@@ -92,13 +92,15 @@ export function pontuarResultado(textoOriginal: string, consultaOriginal: string
   const texto = normalizarBusca(textoOriginal);
   const consulta = normalizarBusca(consultaOriginal).replace(/^"|"$/g, "");
   if (!consulta) return 0;
+  const palavras = tokenizarBusca(texto);
+  const tokens = tokenizarBusca(consulta);
   let pontos = 0;
   const ocorrencias = texto.split(consulta).length - 1;
   if (ocorrencias > 0) pontos += 100 + ocorrencias * 10;
-  const tokens = consulta.split(" ").filter(Boolean);
-  const encontrados = tokens.filter((token) => texto.includes(token)).length;
-  pontos += encontrados * 15;
-  if (encontrados === tokens.length) pontos += 30;
+  const exatos = tokens.filter((token) => palavras.includes(token)).length;
+  const prefixos = tokens.filter((token) => palavras.some((palavra) => palavra.startsWith(token))).length;
+  pontos += exatos * 35 + Math.max(0, prefixos - exatos) * 5;
+  if (tokens.length > 0 && exatos === tokens.length) pontos += 60;
   if (texto.startsWith(consulta)) pontos += 20;
   return pontos;
 }

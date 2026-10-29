@@ -87,7 +87,9 @@ export function GradeCapitulos({
               dataSet={{ capitulo: String(n) }}
               accessibilityRole={modoSelecao ? "checkbox" : "button"}
               accessibilityLabel={`${rotulo} ${n}${lido ? `, ${rotuloEstado}` : ""}${inicioIntervalo ? ", início do intervalo" : ""}`}
-              accessibilityHint={modoIntervalo ? "Toque no primeiro e no último capítulo para selecionar o intervalo." : undefined}
+              accessibilityHint={modoSelecao
+                ? modoIntervalo ? "Toque no primeiro e no último capítulo para selecionar o intervalo." : undefined
+                : `Abre ${rotulo.toLowerCase()} ${n} para leitura.`}
               accessibilityState={modoSelecao ? { checked: selecionado } : undefined}
               // accessibilityChecked é extensão do React Native Web; a
               // accessibilityState, sozinha, não expõe aria-checked aqui.

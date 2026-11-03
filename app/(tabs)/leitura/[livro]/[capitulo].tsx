@@ -91,8 +91,8 @@ function lerNumerosVersiculos(parametro?: string | string[]): number[] {
 }
 
 function hrefCapitulo(livroSlug: string | undefined, numero: number, origem?: string) {
-  if (!livroSlug) return "/biblia/escolher";
-  const href = `/biblia/${livroSlug}/${numero}`;
+  if (!livroSlug) return "/leitura/escolher";
+  const href = `/leitura/${livroSlug}/${numero}`;
   return origem === ORIGEM_ABA_BIBLIA ? `${href}?origem=${ORIGEM_ABA_BIBLIA}` : href;
 }
 
@@ -471,7 +471,7 @@ export default function Leitura() {
         <IconeUI name="warning" size={48} className="text-cor-texto-suave dark:text-cor-texto-suave-dark mb-4" />
         <Text className="text-xl font-bold text-cor-texto dark:text-cor-texto-dark mb-2 text-center">Capítulo não encontrado</Text>
         <Text className="text-cor-texto-suave dark:text-cor-texto-suave-dark mb-6 text-center">Parece que você tentou acessar um capítulo que não existe neste livro.</Text>
-        <Link href={livro ? { pathname: "/biblia/escolher", params: { livro: livro.slug } } : "/"} asChild>
+        <Link href={livro ? { pathname: "/leitura/escolher", params: { livro: livro.slug } } : "/leitura/escolher"} asChild>
           <Pressable accessibilityRole="link" className="bg-cor-borda dark:bg-cor-borda-dark px-6 py-3 rounded-full active:opacity-70">
             <Text className="text-cor-texto dark:text-cor-texto-dark font-bold">Voltar para {livro ? livro.nome : "Início"}</Text>
           </Pressable>
@@ -654,9 +654,9 @@ export default function Leitura() {
 
     if (abertaPelaAbaBiblia) {
       if (livro) {
-        router.replace({ pathname: "/biblia/escolher", params: { livro: livro.slug } });
+        router.replace({ pathname: "/leitura/escolher", params: { livro: livro.slug } });
       } else {
-        router.replace("/biblia/escolher");
+        router.replace("/leitura/escolher");
       }
       return;
     }
@@ -669,10 +669,10 @@ export default function Leitura() {
     // Links diretos e cold starts não têm histórico para voltar. Mantém a
     // pessoa na área da Bíblia e preserva o livro que estava lendo.
     if (!livro) {
-      router.replace("/biblia/escolher");
+      router.replace("/leitura/escolher");
       return;
     }
-    router.replace({ pathname: "/biblia/escolher", params: { livro: livro.slug } });
+    router.replace({ pathname: "/leitura/escolher", params: { livro: livro.slug } });
   }
 
   async function aplicarCorGrifo(cor: string) {
@@ -993,7 +993,7 @@ export default function Leitura() {
               estreita, mantemos o botão de alternância para o resumo, que
               evita disputar espaço com os controles de leitura. */}
           {desktop ? (
-            <Link href={{ pathname: "/biblia/escolher", params: { livro: livro.slug } }} asChild>
+            <Link href={{ pathname: "/leitura/escolher", params: { livro: livro.slug } }} asChild>
               <Pressable
                 accessibilityRole="link"
                 accessibilityLabel={`Escolher capítulo de ${livro.nome}`}
@@ -1490,7 +1490,7 @@ export default function Leitura() {
               <IconeUI name="previous" size={24} className="text-cor-texto dark:text-cor-texto-dark" />
             </Pressable>
 
-          <Link href={{ pathname: "/biblia/escolher", params: { livro: livro.slug } }} asChild>
+          <Link href={{ pathname: "/leitura/escolher", params: { livro: livro.slug } }} asChild>
             <Pressable accessibilityRole="link" className="flex-1 items-center px-4 py-1.5 active:opacity-60">
               <Text className="text-sm font-bold text-cor-texto dark:text-cor-texto-dark" numberOfLines={1}>
                 {livro.nome} {capitulo}

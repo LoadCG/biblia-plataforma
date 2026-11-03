@@ -50,6 +50,7 @@ import { PressableComTecladoWeb } from "../../../../core/util/propsPressableWeb"
 const ALTURA_AREA_NAVEGACAO_CAPITULO = 80;
 const ALTURA_RESERVA_SELECAO_DESKTOP = 148;
 const ORIGEM_ABA_BIBLIA = "aba-biblia";
+const ORIGEM_SELETOR = "seletor";
 const ROTULOS_CORES_GRIFO: Record<string, string> = {
   "bg-yellow-300/40 dark:bg-yellow-600/30": "amarelo",
   "bg-red-300/40 dark:bg-red-600/30": "vermelho",
@@ -93,13 +94,16 @@ function lerNumerosVersiculos(parametro?: string | string[]): number[] {
 function hrefCapitulo(livroSlug: string | undefined, numero: number, origem?: string) {
   if (!livroSlug) return "/leitura/escolher";
   const href = `/leitura/${livroSlug}/${numero}`;
-  return origem === ORIGEM_ABA_BIBLIA ? `${href}?origem=${ORIGEM_ABA_BIBLIA}` : href;
+  return origem === ORIGEM_ABA_BIBLIA || origem === ORIGEM_SELETOR
+    ? `${href}?origem=${origem}`
+    : href;
 }
 
 export default function Leitura() {
   const desktop = useWindowDimensions().width >= 1024;
   const params = useLocalSearchParams<{ livro: string; capitulo: string; versiculo?: string; versiculos?: string; planoId?: string; diaPlano?: string; indicePlano?: string; origem?: string }>();
   const abertaPelaAbaBiblia = params.origem === ORIGEM_ABA_BIBLIA;
+  const abertaPeloSeletor = params.origem === ORIGEM_SELETOR;
   const livro = obterLivro(params.livro ?? "");
   const capitulo = parseInt(params.capitulo ?? "", 10);
   const versiculosDoLink = lerNumerosVersiculos(params.versiculos);
@@ -652,7 +656,7 @@ export default function Leitura() {
       return;
     }
 
-    if (abertaPelaAbaBiblia) {
+    if (abertaPelaAbaBiblia || abertaPeloSeletor) {
       if (livro) {
         router.replace({ pathname: "/leitura/escolher", params: { livro: livro.slug } });
       } else {
@@ -981,7 +985,7 @@ export default function Leitura() {
               ? "Cancela a seleção atual sem sair do capítulo."
               : planoEmAndamento && numeroDiaPlano
                 ? `Volta para o plano ${planoEmAndamento.titulo}.`
-              : abertaPelaAbaBiblia
+              : abertaPelaAbaBiblia || abertaPeloSeletor
                 ? "Volta à escolha de livros da Bíblia."
                 : "Volta à tela de onde você abriu esta leitura."}
             className="w-10 h-10 items-center justify-center active:opacity-60"

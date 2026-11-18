@@ -75,6 +75,28 @@ são fila atual; antes de reutilizar um item, reconciliar com o plano mestre.
 | [`PLANO-NAVEGACAO.md`](./PLANO-NAVEGACAO.md), [`PLANO-PLATAFORMA.md`](./PLANO-PLATAFORMA.md), [`PLANO-UI-COMPONENTES.md`](./PLANO-UI-COMPONENTES.md) e [`ESTUDO-UX-LEITURA.md`](./ESTUDO-UX-LEITURA.md) | Decisões e estudos de concepção; decisões fechadas também constam em `TODO.md`. |
 | [`backend-log.md`](./backend-log.md) e [`frontend-log.md`](./frontend-log.md) | Relatos históricos de execução; não substituem código, estado atual ou CI. |
 
+## Mapa de rotas e nomenclatura
+
+Os nomes das rotas estão invertidos em relação aos rótulos das abas:
+
+| Rota | Aba / tela | Arquivo |
+|---|---|---|
+| `/biblia` | **Início** | `app/(tabs)/biblia.tsx` |
+| `/leitura` | **Bíblia** (leitor real) | `app/(tabs)/leitura/index.tsx` |
+| `/leitura/:livro/:capitulo` | Capítulo | `app/(tabs)/leitura/[livro]/[capitulo].tsx` |
+| `/leitura/escolher` (e `/:livro/:capitulo`) | Escolher livro/capítulo/versículo | `app/(tabs)/leitura/escolher/` |
+| `/biblia/:livro/:capitulo`, `/biblia/escolher` | Apenas redirecionam para `/leitura/...` | `app/(tabs)/biblia/` |
+
+Motivo histórico: a rota `/biblia` nasceu como o leitor e, depois, a aba Início
+passou a ocupar esse nome enquanto o leitor migrou para `/leitura`. Os arquivos
+legados em `app/(tabs)/biblia/` foram mantidos só como redirecionamentos, e
+`vercel.json` emite 308 (permanente) de `/biblia/escolher`, `/biblia/escolher/:livro/:capitulo`,
+`/biblia/:livro/:capitulo` e `/biblia/:livro/:capitulo.html` para `/leitura/...`,
+preservando links antigos e compartilhados. Registros antigos em
+`FUNCIONALIDADES.md`, `CHANGELOG.md` e planos históricos que citam `/biblia/*`
+como leitor devem ser lidos com essa ressalva; links novos usam `/leitura/...`
+(`core/util/linkVersiculo.ts`).
+
 ## Manutenção
 
 - Quando a prioridade mudar, atualizar o plano mestre e o resumo de estado no

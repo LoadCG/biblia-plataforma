@@ -53,9 +53,10 @@ npm run check:copy-ui # Verifica padrões de texto interno na interface
 ```text
 app/                      Rotas (Expo Router — cada arquivo é uma tela baseada em arquivos)
   _layout.tsx              Layout raiz (Contextos globais como NavbarContext, temas, css)
-  (tabs)/                  Navegação principal (Início, Bíblia, Descubra, Você)
-    index.tsx                Home imersiva: Versículo do dia, Resumos, Streak e Medalhas
-    biblia/                  Leitura bíblica
+  (tabs)/                  Navegação principal (Início, Bíblia, Descubra, Você) — atenção: a aba Início é a rota `/biblia` e a aba Bíblia é `/leitura` (ver [`DOCUMENTACAO.md`](./DOCUMENTACAO.md#mapa-de-rotas-e-nomenclatura))
+    biblia.tsx               Tela Início (rota /biblia): Versículo do dia, Resumos, Streak e Medalhas
+    biblia/                  Apenas redirecionamentos legados (/biblia/* -> /leitura/*)
+    leitura/                 Leitura bíblica (rota /leitura, aba "Bíblia")
       escolher/                Fluxo estilo YouVersion (Lista de Livros + Acordeão de capítulos + grade de versículos)
       [livro]/[capitulo]       Tela de leitura avançada (Auto-scroll, foco, grifos, notas, salvos)
     pesquisa.tsx              Busca por temas + busca full-text na Bíblia inteira

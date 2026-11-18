@@ -18,7 +18,7 @@ import { useOwnerId } from "../../../../../core/useOwnerId";
 // ter sido removida em 2026-08-11 por um bug: a versão antiga buscava
 // o texto do capítulo usando o slug da URL direto, mas `buscarReferencia`
 // espera o nome do livro (`${livro.nome} ${capitulo}`, ver
-// app/(tabs)/biblia/[livro]/[capitulo].tsx) — por isso sempre vinha vazio.
+// app/(tabs)/leitura/[livro]/[capitulo].tsx) — por isso sempre vinha vazio.
 // Aqui o livro é resolvido primeiro via `obterLivro(slug)` e só então
 // o nome dele é usado na busca, do mesmo jeito que a leitura já faz.
 export default function EscolherVersiculo() {

@@ -75,7 +75,7 @@ function CardContinueLendo({ item, escuro }: { item: CapituloLido; escuro: boole
 
 function CardComecarLeitura({ escuro }: { escuro: boolean }) {
   return (
-    <Link href="/biblia/escolher" asChild>
+    <Link href="/leitura/escolher" asChild>
       <Pressable
         accessibilityRole="link"
         accessibilityLabel="Começar a leitura bíblica escolhendo um livro"

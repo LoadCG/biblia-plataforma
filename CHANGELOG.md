@@ -5,6 +5,27 @@ O formato é baseado no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.
 
 ## [Unreleased] - 2026-10-04
 
+### Continuação em equipe de agentes — 2026-11-18
+- **CI agendado:** `ci.yml` ganhou execução semanal (segunda, 06:00 UTC) para
+  detectar deriva de patches do Expo Doctor sem depender de push.
+- **`theme-color` duplicado corrigido:** a meta global saiu de `app/+html.tsx` e
+  foi para o `<Head>` do layout raiz; a landing mantém a sua (tema escolhido
+  pelo usuário). Verificado no HTML exportado: uma única meta por página
+  (`#202227` na landing, `#faf8f4` nas demais).
+- **Redirects legados** `/biblia/:livro/:capitulo` e `/biblia/escolher` agora
+  preservam query params (`?versiculo=`, `?origem=`, `?livro=`); o card
+  "Começar leitura" do Início aponta direto para `/leitura/escolher`.
+- **Documentação:** mapa de rotas e nomenclatura (`/biblia` = Início, `/leitura`
+  = Bíblia) em `DOCUMENTACAO.md`, `README.md` e `FUNCIONALIDADES.md`; novo
+  `docs/ROTEIRO-PUBLICACAO-NATIVA.md` (EAS, contas, privacidade, critérios).
+- **Descartado:** `npm audit fix` (sem `--force`) alterou o lock e **quebrou o
+  `expo export`** ("Failed to statically export route"). Revertido; `npm ci` com
+  o lock original volta a exportar. Não repetir sem validar o export.
+- **Pendência conhecida (não é regressão):** no servidor de desenvolvimento
+  (e, por inferência, no app nativo), abrir `/biblia/<livro>/<cap>` cai em
+  `/voce`, também no código anterior. Em produção o Vercel responde 308 antes
+  do app, então não afeta usuários da web.
+
 ### Saúde do projeto e CI — 2026-11-18
 - **CI de volta ao verde.** Estava vermelho em `master` desde 2026-10-29 (3 runs
   seguidos). Causa raiz: o Expo Doctor reprovou por patches do SDK 57 defasados

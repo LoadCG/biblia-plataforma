@@ -99,6 +99,7 @@ export default function RootLayout() {
           name="description"
           content="Leia a Bíblia Almeida ACF, acompanhe planos, faça anotações e organize seus estudos mesmo sem conexão."
         />
+        <meta name="theme-color" content="#faf8f4" />
       </Head>
       <View ref={containerRef} style={{ flex: 1 }}>
         <Stack

@@ -7,6 +7,12 @@ Documento vivo. Cada item tem duas partes, sempre nesta ordem:
 - **UX/UI** — só depois de a funcionalidade estar sólida, o polimento
   visual e de interação no mesmo nível de qualidade.
 
+> **Nota de nomenclatura de rotas.** Os registros históricos abaixo (datados
+> antes da inversão) citam `/biblia/...` para o leitor. Hoje `/biblia` é a
+> tela Início (`app/(tabs)/biblia.tsx`) e o leitor é `/leitura/...`
+> (`app/(tabs)/leitura/`); `/biblia/:livro/:capitulo` e `/biblia/escolher`
+> apenas redirecionam. Detalhes em [`DOCUMENTACAO.md`](./DOCUMENTACAO.md#mapa-de-rotas-e-nomenclatura).
+
 `✅` concluído · `🔶` parcialmente feito · `⬜` não iniciado
 
 Pra saber em que etapa o projeto está e o que vem a seguir (comparado
@@ -88,13 +94,13 @@ conteúdo mais abaixo (Pano de Fundo, Temas Principais etc.) já
 escalavam corretamente com `tamanhoFonte`. Corrigido nos dois lugares
 onde a ficha rápida é renderizada: `app/resumos/[livro].tsx` (tela
 dedicada de resumo) e a aba "Resumo" dentro da leitura de capítulo
-(`app/(tabs)/biblia/[livro]/[capitulo].tsx`) — ambas agora aplicam
+(`app/(tabs)/leitura/[livro]/[capitulo].tsx`) — ambas agora aplicam
 `fontSize: tamanhoFonte` igual ao resto do texto corrido.
 
 ### 1.6b Atalho de tema direto no cabeçalho da leitura de capítulo `✅`
 **Funcionalidade:** `BotaoTema` (mesmo componente usado em Configurações
 e no modal "Ajustes de leitura") ganhou uma segunda instância direto no
-cabeçalho de `app/(tabs)/biblia/[livro]/[capitulo].tsx` (2026-08-20),
+cabeçalho de `app/(tabs)/leitura/[livro]/[capitulo].tsx` (2026-08-20),
 ao lado do botão "Aa" e do ícone de áudio — antes só dava pra trocar de
 tema durante a leitura abrindo o modal de ajustes primeiro. Pedido
 explícito do usuário.
@@ -138,7 +144,7 @@ volta (é um extra, não uma dependência crítica da tela); popover fecha
 tocando fora ou no ✕.
 
 ### 1.8 Modo foco `✅`
-**Funcionalidade:** implementado em `app/(tabs)/biblia/[livro]/[capitulo].tsx`
+**Funcionalidade:** implementado em `app/(tabs)/leitura/[livro]/[capitulo].tsx`
 via `focoAtivo` — ativa automaticamente ao rolar pra baixo (esconde a
 barra de topo com abas Texto/Resumo e ajustes), desativa ao rolar pra
 cima ou voltar perto do topo/fim.
@@ -312,7 +318,7 @@ segue com a sidebar visível e o texto intacto.
 ## 2. Leitura bíblica
 
 ### 2.1 Escolher livro → capítulo `✅`
-**Funcionalidade:** uma tela só, `app/(tabs)/biblia/escolher/index.tsx`
+**Funcionalidade:** uma tela só, `app/(tabs)/leitura/escolher/index.tsx`
 — lista de livros em acordeão, cada um expandindo a grade de capítulos
 inline (a tela separada `escolher/[livro]/index.tsx`, que mostrava um
 único livro já expandido, foi **removida em 2026-08-18** por ter ficado
@@ -355,9 +361,9 @@ não tinha nenhum destaque por capítulo).
 **Bug grave real, reportado por usuário em produção (2026-08-11):**
 "a rota certa é `/biblia/05-deuteronomio/2`, mas ao escolher leva para
 `/biblia/escolher/05-deuteronomio/2`" — o toque num capítulo, dentro
-do acordeão de livros (`app/(tabs)/biblia/escolher/index.tsx`), estava
+do acordeão de livros (`app/(tabs)/leitura/escolher/index.tsx`), estava
 navegando pra `/biblia/escolher/${slug}/${cap}` em vez de
-`/biblia/${slug}/${cap}` (a tela de leitura de verdade). Esse destino
+`/leitura/${slug}/${cap}` (a tela de leitura de verdade). Esse destino
 errado era a tela `escolher/[livro]/[capitulo].tsx` — uma "grade de
 escolher versículo" que **este próprio documento já dizia não
 existir** (contradição encontrada só agora), sobra de uma versão
@@ -377,7 +383,7 @@ antes (retry na `bible-api.com`, robustez da população do SQLite) são
 melhorias legítimas por si só, mas não eram a causa deste sintoma
 específico.
 **Corrigido:** o toque no capítulo agora navega direto pra
-`/biblia/${slug}/${cap}` (rota de leitura real). A tela
+`/leitura/${slug}/${cap}` (rota de leitura real). A tela
 `escolher/[livro]/[capitulo].tsx` foi **removida** — sem nenhuma outra
 rota apontando pra ela, ficaria como código morto e quebrado.
 Confirmado ao vivo no navegador: acordeão → Deuteronômio → capítulo 2
@@ -570,12 +576,12 @@ primeiro instante sem virar poluição visual permanente na tela.
 usuário rolar de volta até o versículo depois).
 
 ### 2.2b Tela dedicada de escolher versículo `✅`
-**Funcionalidade:** `app/(tabs)/biblia/escolher/[livro]/[capitulo].tsx`
+**Funcionalidade:** `app/(tabs)/leitura/escolher/[livro]/[capitulo].tsx`
 (2026-08-20) — grade tocável de todos os versículos de um capítulo,
 reutilizando `GradeCapitulos` (generalizado com uma prop `rotulo`
 opcional, "Capítulo" por padrão, pra não misturar o rótulo de
 acessibilidade quando a grade representa versículos). Toque num
-número leva direto pra `/biblia/{slug}/{capitulo}?versiculo=N`
+número leva direto pra `/leitura/{slug}/{capitulo}?versiculo=N`
 (mesmo parâmetro que a leitura já lê pra rolar até o versículo).
 Indicador verde mostra versículos já grifados (`grifosRepository.
 listarPorCapitulo`), no lugar do indicador "lido" que a grade usa pra
@@ -593,10 +599,10 @@ continua abrindo a leitura direto, sem mudar o comportamento padrão
 que já existia; dica de texto "toque pra ler, ou segure pra escolher
 um versículo" avisa da opção. Testado ao vivo: grade de Salmos 23
 mostra os 6 versículos certos; toque simples leva pra
-`/biblia/19-salmos/23?versiculo=4`; toque longo simulado (pointerdown
+`/leitura/19-salmos/23?versiculo=4`; toque longo simulado (pointerdown
 + mouseup com 700ms de intervalo, já que a ferramenta de automação não
 tem um gesto nativo de "segurar") navegou corretamente da grade de
-capítulos pra `/biblia/escolher/19-salmos/23`.
+capítulos pra `/leitura/escolher/19-salmos/23`.
 
 ### 2.3 Grifar versículo `✅`
 **Funcionalidade:** alterna e persiste por referência exata
@@ -613,14 +619,14 @@ um capítulo tem versículos grifados dentro dele — só mostra
 ### 2.4 Marcar capítulo como lido `✅`
 **Funcionalidade:** separado de propósito de "livro lido" (que é sobre o
 resumo). Marcação individual acontece na própria tela de leitura
-(`app/(tabs)/biblia/[livro]/[capitulo].tsx`), um capítulo por vez. Ver
+(`app/(tabs)/leitura/[livro]/[capitulo].tsx`), um capítulo por vez. Ver
 2.4c pra marcação de vários capítulos de uma vez.
 **UX/UI:** feedback imediato ao marcar (o botão já muda no mesmo toque,
 sem esperar round-trip perceptível).
 
 ### 2.4b Progresso por livro na lista de leitura bíblica `✅`
 **Funcionalidade:** cada card da lista de livros
-(`app/(tabs)/biblia/escolher/index.tsx`) agora mostra "X de Y" capítulos
+(`app/(tabs)/leitura/escolher/index.tsx`) agora mostra "X de Y" capítulos
 lidos, calculado com uma única chamada a `progressoRepository.listarTodos`
 (agrupada por `livroSlug` em memória, sem N chamadas por livro).
 **UX/UI:** contagem discreta ao lado do nome do livro, mesmo texto
@@ -630,7 +636,7 @@ suave usado em outros indicadores de progresso do app.
 **Funcionalidade:** pedido do usuário — "preciso marcar vários como
 lidos" (ex.: já leu esses capítulos em papel/outro app antes de
 começar a usar este, ou quer corrigir o histórico de leitura de uma
-vez). No acordeão de livros (`app/(tabs)/biblia/escolher/index.tsx`),
+vez). No acordeão de livros (`app/(tabs)/leitura/escolher/index.tsx`),
 cada livro expandido ganha um botão "Selecionar vários" que muda a
 `GradeCapitulos` pra modo de seleção múltipla — tocar um capítulo o
 seleciona (contorno destacado na cor de destaque do app, distinto do
@@ -816,7 +822,7 @@ usada em `core/content/busca.ts`). `buscarGlobal` agora chama isso no
 web em vez de retornar `[]`.
 **Testado ao vivo:** buscar "amor" retorna "Na Bíblia (50)" com
 resultados reais de Gênesis/Êxodo/Levítico/Números, cada um com link
-correto pro versículo (`/biblia/01-genesis/12?versiculo=13`
+correto pro versículo (`/leitura/01-genesis/12?versiculo=13`
 confirmado); buscar "coracao" (sem acento) encontra "coração" (Gênesis
 6:5) — normalização de acento funcionando; sem erros no console.
 **Limitação conhecida:** é busca por substring simples (contém o
@@ -1083,7 +1089,7 @@ número de atraso nem alarme visual.
 
 ### 5.1 Compartilhar link de um livro/capítulo/versículo `✅`
 **Funcionalidade:** `core/util/linkVersiculo.ts` monta o link
-(`origin + /biblia/[livro]/[capitulo]?versiculo=N`) usando
+(`origin + /leitura/[livro]/[capitulo]?versiculo=N`) usando
 `window.location.origin` — funciona em qualquer domínio, não depende
 da decisão final de domínio (`PLANO-PLATAFORMA.md`). Só funciona na
 versão *web*: o app nativo não tem esquema de URL customizado
@@ -1151,7 +1157,7 @@ memória).
 
 ### 5.2 Gerar imagem de versículo pra compartilhar `✅`
 **Funcionalidade:** duas implementações que convergem no mesmo modal
-de preview em `app/(tabs)/biblia/[livro]/[capitulo].tsx`:
+de preview em `app/(tabs)/leitura/[livro]/[capitulo].tsx`:
 - **Web** (`core/util/gerarImagemVersiculo.ts`): cartão 1080x1080
   desenhado direto via Canvas API (sem dependência nova, sem
   servidor), fundo em gradiente com as cores de marca do app (mesmos
@@ -1258,7 +1264,7 @@ divulgação.
 ### 7.2 Navegação só por teclado / leitor de tela `🔶`
 **Funcionalidade:** varredura de todos os `Pressable` com ícone e sem
 texto visível ao lado (screen reader não tem o que ler) — corrigido em
-`app/(tabs)/biblia/[livro]/[capitulo].tsx` (voltar, abrir ajustes de
+`app/(tabs)/leitura/[livro]/[capitulo].tsx` (voltar, abrir ajustes de
 leitura, cancelar seleção, cada bolinha de cor de grifo, expandir mais
 cores, A-/A+) e no sino de notificação da Início (também estava
 focável sem rótulo e sem ação — marcado `disabled` com label "em
@@ -1374,7 +1380,7 @@ tenta `core/biblia/leituraLocalWeb.ts` primeiro no web (lê
 `assets/biblia.json` direto, mesmo carregador cacheado que a busca
 usa, extraído pra `core/biblia/bibliaLocalWeb.ts`), caindo pra
 `bible-api.com` só como rede de segurança se a busca local falhar por
-algum motivo. **Testado ao vivo:** abrir `/biblia/19-salmos/23` e
+algum motivo. **Testado ao vivo:** abrir `/leitura/19-salmos/23` e
 buscar "amor"/"coracao" na aba Descubra não geram **nenhuma**
 requisição de rede pra `bible-api.com` (conferido na aba de rede do
 navegador); Metro faz code-splitting de verdade dos módulos novos —
@@ -1453,7 +1459,7 @@ deploy antes. Ou seja, os itens 7.1 e 7.4 convergem pra mesma mudança:
 não vale otimizar performance de carregamento sem resolver primeiro o
 roteamento estático.
 **Sobre re-renders desnecessários:** revisado o código das duas listas
-grandes do app — a lista de 66 livros (`/biblia/escolher`) já usa
+grandes do app — a lista de 66 livros (`/leitura/escolher`) já usa
 `FlatList` (virtualizada, só renderiza o que está visível). A grade de
 capítulos (`GradeCapitulos.tsx`) usa `.map()` direto (não virtualizada)
 — até 176 células pro maior livro (Salmos). Não achei evidência de
@@ -1476,7 +1482,7 @@ contínuo em qualquer ponto da rolagem, nos dois temas.
 
 ### 7.5 Atalhos de teclado (versão web) `✅`
 **Funcionalidade:** na tela de leitura de capítulo
-(`app/(tabs)/biblia/[livro]/[capitulo].tsx`), seta esquerda/direita
+(`app/(tabs)/leitura/[livro]/[capitulo].tsx`), seta esquerda/direita
 navega pro capítulo anterior/próximo (já existia) e `T` alterna o tema
 (`core/theme.ts`, `alternarTema`, novo). Ignora as teclas quando o foco
 está num `INPUT`/`TEXTAREA` (ex.: campo de nota ou busca), pra não
@@ -1716,7 +1722,7 @@ a renderização — corrigido, registrado como padrão a seguir em
 fixa no rodapé `← Livro Capítulo →` substitui os cards
 "Anterior/Próximo" do fim da página antiga — setas usam `router.replace`
 (decisão de não empilhar histórico por capítulo, ver PLANO-NAVEGACAO.md
-item 1.4); tocar no nome do livro abre `/biblia/escolher?livro=slug`
+item 1.4); tocar no nome do livro abre `/leitura/escolher?livro=slug`
 como modal — a lista completa de livros, já com o livro atual expandido
 na grade de capítulos (ver 2.1). Testado com dado real: navegar até
 Gênesis 6 e reabrir a aba Bíblia depois confirma que volta direto pra
@@ -1735,7 +1741,7 @@ deveria ter sido removida numa correção anterior (só o link *de dentro*
 dela — "← Trocar de livro" — tinha sido corrigido antes, não os dois
 links que apontavam *para* ela a partir da tela de leitura). Corrigido:
 os dois links (barra de navegação e tela de "capítulo não encontrado")
-agora vão para `/biblia/escolher?livro=slug`, e `escolher/index.tsx`
+agora vão para `/leitura/escolher?livro=slug`, e `escolher/index.tsx`
 passou a ler esse parâmetro pra decidir qual livro expandir (antes só
 expandia o último lido, via `carregarUltimaLeitura()` — o que é
 diferente do livro que o usuário está lendo no momento, se ele navegou
@@ -1743,7 +1749,7 @@ por capítulos antigos). A tela `escolher/[livro]/index.tsx` e seu
 registro no `Stack` (`app/(tabs)/biblia/_layout.tsx`) foram removidos
 por não ter mais nenhum link apontando pra ela. Testado ao vivo: em
 Deuteronômio 3, tocar no nome do livro leva a
-`/biblia/escolher?livro=05-deuteronomio`, mostrando a lista completa de
+`/leitura/escolher?livro=05-deuteronomio`, mostrando a lista completa de
 livros com Deuteronômio já expandido na grade 1-34.
 
 ### 9.4 Pesquisa: temas pré-definidos `✅`
@@ -2065,7 +2071,7 @@ de diagnóstico quando o job falha.
 ### 11.2 SEO estático híbrido `✅`
 As 66 páginas de resumo e os dois planos guiados geram HTML com metadados
 específicos. O leitor não multiplica 1.189 capítulos no build: deep links
-`/biblia/*` usam fallback SPA restrito. A exportação local produziu 94 rotas e
+`/leitura/*` usam fallback SPA restrito (`/biblia/*` só redireciona). A exportação local produziu 94 rotas e
 foi validada em navegador com clean URLs e sem erros de hidratação.
 
 ### 11.3 Jornadas Maestro `🔶`

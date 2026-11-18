@@ -22,6 +22,12 @@ describe("restauração do tema", () => {
     expect(colorScheme.set).not.toHaveBeenCalled();
   });
 
+  it("aplica explicitamente o escuro quando o sistema está escuro e não há escolha", async () => {
+    (colorScheme.get as jest.Mock).mockReturnValueOnce("dark");
+    await restaurarTema();
+    expect(colorScheme.set).toHaveBeenCalledWith("dark");
+  });
+
   it.each(["light", "dark"] as const)("restaura o tema salvo %s", async (tema) => {
     await AsyncStorage.setItem("tema-preferido", tema);
     await restaurarTema();

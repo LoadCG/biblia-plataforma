@@ -7,6 +7,7 @@ import { BREAKPOINT_DESKTOP } from "../core/util/responsivo";
 
 const DURACAO_PADRAO_MS = 2000;
 const DURACAO_COM_ACAO_MS = 4000;
+const DURACAO_ERRO_MS = 5000;
 
 const ESTILOS_SEVERIDADE: Record<SeveridadeToast, { container: string; texto: string; acao: string; icone?: "complete" | "warning" | "info" }> = {
   neutra: { container: "bg-cor-texto dark:bg-cor-texto-dark", texto: "text-cor-fundo dark:text-cor-fundo-dark", acao: "bg-cor-fundo/15 dark:bg-cor-fundo-dark/15" },
@@ -77,7 +78,7 @@ export function Toast() {
           if (animacaoRef.current === animacao) animacaoRef.current = null;
         });
       }
-      const duracao = novoPayload.duracaoMs ?? (novoPayload.acaoLabel ? DURACAO_COM_ACAO_MS : DURACAO_PADRAO_MS);
+      const duracao = novoPayload.duracaoMs ?? (novoPayload.acaoLabel ? DURACAO_COM_ACAO_MS : novoPayload.severidade === "erro" || novoPayload.severidade === "aviso" ? DURACAO_ERRO_MS : DURACAO_PADRAO_MS);
       timeoutRef.current = setTimeout(() => esconder(id), duracao);
     });
   }, [opacidade]);

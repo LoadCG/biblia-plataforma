@@ -30,7 +30,7 @@ export function BotaoTema({ compacto = false }: Props) {
         accessibilityLabel="Tema escuro"
         accessibilityState={{ checked: escuro, disabled: !temaPronto, busy: !temaPronto }}
         accessibilityChecked={escuro}
-        className="w-10 h-10 items-center justify-center active:opacity-60"
+        className="w-11 h-11 items-center justify-center active:opacity-60"
       >
         <IconeUI name={escuro ? "sun" : "moon-stars"} size={22} className="text-cor-texto dark:text-cor-texto-dark" />
       </PressableComTecladoWeb>

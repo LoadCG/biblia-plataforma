@@ -230,7 +230,7 @@ export function CardVersiculoDia({ periodoDoDia }: Props) {
           className="w-full p-5 items-start gap-3"
         >
           <Text className="text-cor-texto/90 dark:text-white/90 text-xs font-semibold uppercase tracking-widest">Versículo do Dia</Text>
-          <Text className="text-cor-texto-suave dark:text-white/80 text-sm">{erro}</Text>
+          <Text accessibilityRole="alert" className="text-cor-texto-suave dark:text-white/80 text-sm">{erro}</Text>
           <Pressable onPress={carregarVersiculo} accessibilityRole="button" accessibilityLabel="Tentar novamente" className="min-h-11 justify-center px-4 rounded-full bg-black/5 dark:bg-white/10 active:opacity-70">
             <Text className="text-cor-texto dark:text-white font-semibold text-sm">Tentar novamente</Text>
           </Pressable>
@@ -403,7 +403,7 @@ export function CardVersiculoDia({ periodoDoDia }: Props) {
                 onPress={() => router.push("/configuracoes")}
                 accessibilityRole="link"
                 accessibilityLabel="Ativar lembrete diário de leitura"
-                className="self-end bg-black/5 dark:bg-white/10 rounded-full px-3.5 py-1.5 items-center justify-center flex-row gap-1.5 active:opacity-70"
+                className="self-end min-h-11 bg-black/5 dark:bg-white/10 rounded-full px-4 items-center justify-center flex-row gap-1.5 active:opacity-70"
               >
                 <IconeUI name="notification" size={14} color={corIconePadrao} />
                 <Text className="text-cor-texto dark:text-white text-xs font-semibold">Lembrete diário</Text>

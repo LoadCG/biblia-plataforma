@@ -41,20 +41,22 @@ export function PopoverVersiculo({ referencia, refCapitulo, onFechar }: Props) {
 
   return (
     <Modal visible transparent animationType="fade" onRequestClose={onFechar}>
-      <Pressable className="flex-1 items-center justify-center bg-black/40 px-6" onPress={onFechar}>
+      <Pressable className="flex-1 items-center justify-center bg-black/40 px-6" onPress={onFechar} accessibilityRole="button" accessibilityLabel="Fechar referência">
         <Pressable
           className="w-full max-w-md max-h-[70%] rounded-xl bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark p-5"
+          accessibilityViewIsModal
           onPress={(e) => e.stopPropagation()}
         >
           <View className="flex-row items-start justify-between mb-3">
-            <Text className="text-base font-bold text-cor-texto dark:text-cor-texto-dark flex-1 mr-3">
+            <Text accessibilityRole="header" className="text-base font-bold text-cor-texto dark:text-cor-texto-dark flex-1 mr-3">
               {dados?.referencia ?? refAtual}
             </Text>
             <Pressable
               onPress={onFechar}
               accessibilityRole="button"
               accessibilityLabel="Fechar"
-              className="w-8 h-8 items-center justify-center rounded-full bg-cor-borda dark:bg-cor-borda-dark active:opacity-70"
+              hitSlop={4}
+              className="w-11 h-11 -mt-2 -mr-2 items-center justify-center rounded-full active:bg-cor-borda dark:active:bg-cor-borda-dark"
             >
               <Text className="text-cor-texto-suave dark:text-cor-texto-suave-dark text-sm">✕</Text>
             </Pressable>
@@ -85,7 +87,7 @@ export function PopoverVersiculo({ referencia, refCapitulo, onFechar }: Props) {
             <Pressable
               onPress={() => setRefAtual(refCapitulo)}
               accessibilityRole="button"
-              className="self-start mt-4 px-4 py-2 rounded-full border border-cor-borda dark:border-cor-borda-dark active:opacity-70"
+              className="self-start mt-4 min-h-11 justify-center px-4 rounded-full border border-cor-borda dark:border-cor-borda-dark active:opacity-70"
             >
               <Text className="text-sm font-semibold text-cor-texto dark:text-cor-texto-dark">
                 Ver capítulo inteiro

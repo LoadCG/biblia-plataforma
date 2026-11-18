@@ -205,8 +205,8 @@ export default function DetalhePlano() {
 
               {diaPlano.reflexao ? (
                 <View className="rounded-xl bg-cor-fundo dark:bg-cor-fundo-dark px-3 py-3 mb-3">
-                  <Text className="text-sm text-cor-texto dark:text-cor-texto-dark leading-5">{diaPlano.reflexao}</Text>
-                  {diaPlano.pergunta ? <Text className="text-xs font-semibold text-cor-texto-suave dark:text-cor-texto-suave-dark mt-2">Para refletir: {diaPlano.pergunta}</Text> : null}
+                  <Text className="text-base text-cor-texto dark:text-cor-texto-dark leading-6">{diaPlano.reflexao}</Text>
+                  {diaPlano.pergunta ? <Text className="text-sm font-semibold text-cor-texto-suave dark:text-cor-texto-suave-dark mt-3 leading-5">Para refletir: {diaPlano.pergunta}</Text> : null}
                 </View>
               ) : null}
 

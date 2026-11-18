@@ -7,8 +7,8 @@ export function CardConquistas({ conquistas }: { conquistas: Conquista[] }) {
   const destaques = selecionarDestaquesConquistas(conquistas);
 
   return (
-    <View className="rounded-3xl bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark p-6 mb-4 shadow-sm">
-      <Text className="text-xl font-bold text-cor-texto dark:text-cor-texto-dark mb-6">
+    <View className="rounded-3xl bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark p-5 mb-4 shadow-sm">
+      <Text className="text-base font-bold text-cor-texto dark:text-cor-texto-dark mb-4" accessibilityRole="header">
         Medalhas
       </Text>
       
@@ -29,7 +29,7 @@ export function CardConquistas({ conquistas }: { conquistas: Conquista[] }) {
               <Text className="text-xs font-semibold text-cor-texto dark:text-cor-texto-dark text-center leading-tight mb-1">
                 {c.titulo}
               </Text>
-              <Text className="text-[10px] text-cor-destaque dark:text-cor-destaque-dark text-center underline decoration-dotted">
+              <Text className="text-[11px] text-cor-destaque dark:text-cor-destaque-dark text-center underline decoration-dotted">
                 Saiba mais
               </Text>
             </Pressable>
@@ -37,7 +37,7 @@ export function CardConquistas({ conquistas }: { conquistas: Conquista[] }) {
         })}
       </View>
 
-      <Pressable onPress={() => router.push({ pathname: "/medalhas", params: { origem: "inicio" } })} accessibilityRole="button" className="bg-cor-borda dark:bg-cor-borda-dark self-start px-5 py-2 rounded-full active:opacity-70">
+      <Pressable onPress={() => router.push({ pathname: "/medalhas", params: { origem: "inicio" } })} accessibilityRole="button" accessibilityLabel="Ver todas as medalhas" className="bg-cor-borda dark:bg-cor-borda-dark self-start min-h-11 justify-center px-5 rounded-full active:opacity-70">
         <Text className="text-xs font-semibold text-cor-texto dark:text-cor-texto-dark">Ver todos</Text>
       </Pressable>
 

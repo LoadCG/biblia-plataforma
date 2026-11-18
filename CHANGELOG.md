@@ -5,6 +5,31 @@ O formato é baseado no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.
 
 ## [Unreleased] - 2026-10-04
 
+### Melhorias de UX/UI e correção do tema escuro do sistema — 2026-11-18
+- **Bug corrigido (anterior a esta rodada):** com o sistema em modo escuro e sem
+  tema salvo, `useColorScheme()` dizia "dark" mas a classe `dark` do Tailwind
+  (`darkMode: "class"`) não era aplicada. Componentes que leem o esquema (ex.:
+  card do versículo do dia, em visual noturno) ficavam escuros enquanto os
+  `dark:` ficavam claros: texto escuro sobre fundo escuro, quase ilegível.
+  `restaurarTema` agora aplica `dark` explicitamente nesse caso; teste novo.
+  Verificado no navegador (375px, `prefers-color-scheme: dark`): `<html class="dark">`,
+  fundo escuro e versículo legível.
+- **Resumos:** índice "Neste resumo" (chips que rolam até cada seção, ≥44px) logo
+  abaixo do título, antes da ficha rápida; botões A-/A+/Aa e limpar busca com 44px;
+  links Anterior/Próximo com rótulo; contagem de resultados na lista de resumos.
+- **Planos:** reflexão do dia e "Para refletir" com tipografia mais legível.
+- **Início:** sino de lembrete, pílula "Lembrete diário" e "Ver todos" com alvo de
+  44px; rótulos de acessibilidade nos cards de plano, sequência e medalhas;
+  erro do versículo anunciado como alerta; Tooltip com semântica de modal.
+- **Modais e ações:** apagar dados não fecha durante a exclusão; Popover, Menu de
+  ações, Modal de nota e "Apagar dados" com semântica de modal, alvos ≥44px e
+  vermelhos de maior contraste; toasts de erro/aviso duram 5 s (antes 2 s);
+  BotaoTema compacto 44px.
+- Mapeado e não feito: foco devolvido ao gatilho ao fechar modais no web (sem teste
+  manual), `window.confirm`/`Alert` nativos em `salvo.tsx`, placeholders de baixo
+  contraste na pesquisa, seletor para os ~66 filtros por livro, "voltar ao topo"
+  no fim de resumos longos.
+
 ### Continuação em equipe de agentes — 2026-11-18
 - **CI agendado:** `ci.yml` ganhou execução semanal (segunda, 06:00 UTC) para
   detectar deriva de patches do Expo Doctor sem depender de push.

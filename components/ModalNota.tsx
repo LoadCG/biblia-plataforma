@@ -113,7 +113,7 @@ export function ModalNota({ visivel, referencias, referenciasAlteradas = false, 
               <View className="flex-1 pr-3">
                 <View className="flex-row items-center gap-2 mb-1">
                   <IconeUI name="note" size={20} color={escuro ? "#e0a75e" : "#8a5a2b"} />
-                  <Text className="text-lg font-bold text-cor-texto dark:text-cor-texto-dark">Anotação</Text>
+                  <Text accessibilityRole="header" className="text-lg font-bold text-cor-texto dark:text-cor-texto-dark">Anotação</Text>
                 </View>
                 <Text className="text-sm text-cor-texto-suave dark:text-cor-texto-suave-dark">
                   {referencia ?? `Versículo ${referencias[0]?.versiculo ?? ""}`}
@@ -158,7 +158,7 @@ export function ModalNota({ visivel, referencias, referenciasAlteradas = false, 
                     ? "Alterações não salvas"
                     : textoOriginal ? "Anotação salva" : "Sua anotação é privada neste dispositivo"}
               </Text>
-              <Text className="text-xs text-cor-texto-suave dark:text-cor-texto-suave-dark" accessibilityLabel={`${texto.length} caracteres`}>
+              <Text className="text-xs text-cor-texto-suave dark:text-cor-texto-suave-dark">
                 {texto.length} caracteres
               </Text>
             </View>
@@ -170,7 +170,7 @@ export function ModalNota({ visivel, referencias, referenciasAlteradas = false, 
             ) : null}
 
             {confirmacao === "descartar" ? (
-              <View className="rounded-2xl border border-cor-borda dark:border-cor-borda-dark bg-cor-fundo dark:bg-cor-fundo-dark p-3 mb-3">
+              <View accessibilityRole="alert" className="rounded-2xl border border-cor-borda dark:border-cor-borda-dark bg-cor-fundo dark:bg-cor-fundo-dark p-3 mb-3">
                 <Text className="text-sm font-semibold text-cor-texto dark:text-cor-texto-dark">Descartar as alterações?</Text>
                 <Text className="text-xs text-cor-texto-suave dark:text-cor-texto-suave-dark mt-1 mb-3">
                   {referenciasAlteradas && !textoAlterado
@@ -178,10 +178,10 @@ export function ModalNota({ visivel, referencias, referenciasAlteradas = false, 
                     : "O texto que você escreveu ainda não foi salvo."}
                 </Text>
                 <View className="flex-row justify-end gap-2">
-                  <Pressable onPress={() => setConfirmacao(null)} accessibilityRole="button" className="rounded-full px-3 py-2 active:opacity-70">
+                  <Pressable onPress={() => setConfirmacao(null)} accessibilityRole="button" className="min-h-11 justify-center rounded-full px-3 active:opacity-70">
                     <Text className="text-sm font-semibold text-cor-texto dark:text-cor-texto-dark">Continuar editando</Text>
                   </Pressable>
-                  <Pressable onPress={onFechar} accessibilityRole="button" className="rounded-full bg-red-700 px-3 py-2 active:opacity-80">
+                  <Pressable onPress={onFechar} accessibilityRole="button" className="min-h-11 justify-center rounded-full bg-red-700 px-3 active:opacity-80">
                     <Text className="text-sm font-semibold text-white">Descartar</Text>
                   </Pressable>
                 </View>
@@ -189,7 +189,7 @@ export function ModalNota({ visivel, referencias, referenciasAlteradas = false, 
             ) : null}
 
             {confirmacao === "remover" ? (
-              <View className="rounded-2xl border border-red-200 dark:border-red-900 bg-red-50 dark:bg-red-950/40 p-3 mb-3">
+              <View accessibilityRole="alert" className="rounded-2xl border border-red-200 dark:border-red-900 bg-red-50 dark:bg-red-950/40 p-3 mb-3">
                 <Text className="text-sm font-semibold text-red-900 dark:text-red-100">Excluir esta anotação?</Text>
                 <Text className="text-xs text-red-800 dark:text-red-200 mt-1 mb-3">
                   {referencias.length > 1
@@ -197,10 +197,10 @@ export function ModalNota({ visivel, referencias, referenciasAlteradas = false, 
                     : alterado ? "A anotação salva e as alterações ainda não salvas serão perdidas." : "Essa ação não pode ser desfeita."}
                 </Text>
                 <View className="flex-row justify-end gap-2">
-                  <Pressable onPress={() => setConfirmacao(null)} accessibilityRole="button" className="rounded-full px-3 py-2 active:opacity-70">
+                  <Pressable onPress={() => setConfirmacao(null)} accessibilityRole="button" className="min-h-11 justify-center rounded-full px-3 active:opacity-70">
                     <Text className="text-sm font-semibold text-cor-texto dark:text-cor-texto-dark">Cancelar</Text>
                   </Pressable>
-                  <Pressable onPress={remover} disabled={ocupado} accessibilityRole="button" className="rounded-full bg-red-700 px-3 py-2 active:opacity-80">
+                  <Pressable onPress={remover} disabled={ocupado} accessibilityRole="button" className="min-h-11 justify-center rounded-full bg-red-700 px-3 active:opacity-80">
                     <Text className="text-sm font-semibold text-white">{removendo ? "Excluindo..." : "Excluir anotação"}</Text>
                   </Pressable>
                 </View>

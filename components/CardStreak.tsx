@@ -22,7 +22,7 @@ export function CardStreak({ resumo }: { resumo: ResumoSequencia }) {
             {mensagemStreak(resumo)}
           </Text>
         </View>
-        <View className="items-center justify-center bg-cor-borda dark:bg-cor-borda-dark rounded-full w-16 h-16 border-2 border-cor-destaque/30">
+        <View accessible accessibilityLabel={`${resumo.atual} ${resumo.atual === 1 ? "dia" : "dias"} de sequência`} className="items-center justify-center bg-cor-borda dark:bg-cor-borda-dark rounded-full w-16 h-16 border-2 border-cor-destaque/30">
           <Text className="text-xl font-black text-cor-texto dark:text-cor-texto-dark">{resumo.atual}</Text>
           <View className="-mt-1">
             <FogoStreak ativo={ativo} />

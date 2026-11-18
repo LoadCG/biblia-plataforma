@@ -388,7 +388,7 @@ export default function Pesquisa() {
               accessibilityRole="button"
               accessibilityLabel="Limpar busca"
               hitSlop={10}
-              className="absolute right-3 top-2.5 h-9 w-9 items-center justify-center rounded-full active:opacity-60"
+              className="absolute right-2 top-1 h-11 w-11 items-center justify-center rounded-full active:opacity-60"
             >
               <IconeUI name="close" size={20} color={escuro ? "#b3a894" : "#6b6257"} />
             </Pressable>

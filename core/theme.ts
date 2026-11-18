@@ -33,7 +33,14 @@ export async function restaurarTema(opcoes: { ignorarSeAlteradoDuranteLeitura?: 
   const revisaoNaLeitura = revisaoTema;
   const salvo = await AsyncStorage.getItem(CHAVE_TEMA);
   if (opcoes.ignorarSeAlteradoDuranteLeitura && revisaoNaLeitura !== revisaoTema) return;
-  if (salvo === null) return; // sem escolha salva, respeita o tema inicial do sistema
+  if (salvo === null) {
+    // Sem escolha salva, segue o sistema. Com `darkMode: "class"` o NativeWind só
+    // aplica a classe `dark` quando o esquema é definido explicitamente; sem isso,
+    // `useColorScheme()` já diz "dark" (sistema) mas os `dark:` ficam claros e o
+    // texto de componentes que leem o esquema fica escuro sobre escuro.
+    if (colorScheme.get() === "dark") colorScheme.set("dark");
+    return;
+  }
   colorScheme.set(salvo === "light" || salvo === "dark" ? salvo : "light");
 }
 

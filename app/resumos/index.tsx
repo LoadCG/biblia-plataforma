@@ -137,11 +137,16 @@ export default function ListaResumos() {
                 className="px-4 pr-12 py-3 rounded-full border border-cor-borda dark:border-cor-borda-dark bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark text-cor-texto dark:text-cor-texto-dark"
               />
               {termo ? (
-                <Pressable testID="limpar-busca-resumos" onPress={() => setTermo("")} accessibilityRole="button" accessibilityLabel="Limpar busca dos resumos" hitSlop={10} className="absolute right-3 top-1.5 h-9 w-9 items-center justify-center rounded-full active:opacity-60">
+                <Pressable testID="limpar-busca-resumos" onPress={() => setTermo("")} accessibilityRole="button" accessibilityLabel="Limpar busca dos resumos" hitSlop={10} className="absolute right-2 top-0.5 h-11 w-11 items-center justify-center rounded-full active:opacity-60">
                   <IconeUI name="close" size={20} color={escuro ? "#b3a894" : "#6b6257"} />
                 </Pressable>
               ) : null}
             </View>
+            {termo.trim() ? (
+              <Text accessibilityLiveRegion="polite" className="mt-2 px-1 text-xs text-cor-texto-suave dark:text-cor-texto-suave-dark">
+                {listaFiltrada.length === 1 ? "1 livro encontrado" : `${listaFiltrada.length} livros encontrados`}
+              </Text>
+            ) : null}
           </View>
         }
         ListEmptyComponent={

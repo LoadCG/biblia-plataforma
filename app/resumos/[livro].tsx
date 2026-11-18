@@ -36,6 +36,8 @@ export default function ResumoLivro() {
   const [tentativaProgressoLivro, setTentativaProgressoLivro] = useState(0);
   const [salvandoLido, setSalvandoLido] = useState(false);
   const salvamentoLidoEmAndamento = useRef(false);
+  const scrollRef = useRef<ScrollView>(null);
+  const posicoesSecoes = useRef<Record<string, number>>({});
   const [progresso, setProgresso] = useState(0);
   const [indiceFonte, setIndiceFonte] = useState(INDICE_PADRAO);
   const [fonteSerifada, setFonteSerifada] = useState(false);
@@ -158,7 +160,7 @@ export default function ResumoLivro() {
       <View className="h-0.5 bg-cor-borda dark:bg-cor-borda-dark">
         <View className="h-0.5 bg-cor-destaque dark:bg-cor-destaque-dark" style={{ width: `${progresso * 100}%` }} />
       </View>
-      <ScrollView onScroll={aoRolar} scrollEventThrottle={32} className="flex-1">
+      <ScrollView ref={scrollRef} onScroll={aoRolar} scrollEventThrottle={32} className="flex-1">
       <View className="px-5 pt-6 pb-10 max-w-2xl w-full mx-auto">
         <View className="flex-row items-center justify-between mb-5">
           <Link href="/resumos" asChild>
@@ -174,7 +176,7 @@ export default function ResumoLivro() {
                 accessibilityRole="button"
                 accessibilityLabel="Diminuir tamanho da fonte"
                 accessibilityState={{ disabled: carregandoPreferenciasFonte || salvandoPreferenciasFonte || indiceFonte === 0, busy: carregandoPreferenciasFonte || salvandoPreferenciasFonte }}
-                className="w-10 h-10 items-center justify-center rounded-full border border-cor-borda dark:border-cor-borda-dark active:opacity-60"
+                className="w-11 h-11 items-center justify-center rounded-full border border-cor-borda dark:border-cor-borda-dark active:opacity-60"
               >
                 <Text className={`text-xs font-bold ${indiceFonte === 0 ? "text-cor-texto-suave dark:text-cor-texto-suave-dark opacity-40" : "text-cor-texto dark:text-cor-texto-dark"}`}>
                   A-
@@ -186,7 +188,7 @@ export default function ResumoLivro() {
                 accessibilityRole="button"
                 accessibilityLabel="Aumentar tamanho da fonte"
                 accessibilityState={{ disabled: carregandoPreferenciasFonte || salvandoPreferenciasFonte || indiceFonte === TAMANHOS_FONTE.length - 1, busy: carregandoPreferenciasFonte || salvandoPreferenciasFonte }}
-                className="w-10 h-10 items-center justify-center rounded-full border border-cor-borda dark:border-cor-borda-dark active:opacity-60"
+                className="w-11 h-11 items-center justify-center rounded-full border border-cor-borda dark:border-cor-borda-dark active:opacity-60"
               >
                 <Text
                   className={`text-xs font-bold ${
@@ -206,7 +208,7 @@ export default function ResumoLivro() {
                 accessibilityLabel="Fonte serifada"
                 accessibilityState={{ checked: fonteSerifada, disabled: carregandoPreferenciasFonte || salvandoPreferenciasFonte, busy: carregandoPreferenciasFonte || salvandoPreferenciasFonte }}
                 accessibilityChecked={fonteSerifada}
-                className={`w-10 h-10 items-center justify-center rounded-full border active:opacity-60 ${
+                className={`w-11 h-11 items-center justify-center rounded-full border active:opacity-60 ${
                   fonteSerifada
                     ? "bg-cor-destaque-fundo dark:bg-cor-destaque-fundo-dark border-cor-destaque dark:border-cor-destaque-dark"
                     : "border-cor-borda dark:border-cor-borda-dark"
@@ -264,6 +266,25 @@ export default function ResumoLivro() {
           Isso atualiza seu progresso nos resumos. A leitura dos capítulos é acompanhada separadamente na Bíblia.
         </Text>
 
+        {resumo.secoes.length > 2 ? (
+          <View className="mb-8">
+            <Text className="text-xs font-semibold uppercase text-cor-texto-suave dark:text-cor-texto-suave-dark mb-2">Neste resumo</Text>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} keyboardShouldPersistTaps="handled">
+              {resumo.secoes.map((secao) => (
+                <Pressable
+                  key={secao.id}
+                  onPress={() => scrollRef.current?.scrollTo({ y: Math.max(0, (posicoesSecoes.current[secao.id] ?? 0) - 12), animated: true })}
+                  accessibilityRole="button"
+                  accessibilityLabel={`Ir para a seção ${secao.titulo}`}
+                  className="mr-2 min-h-11 justify-center px-4 rounded-full border border-cor-borda dark:border-cor-borda-dark bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark active:opacity-70"
+                >
+                  <Text className="text-xs font-semibold text-cor-texto dark:text-cor-texto-dark">{secao.titulo}</Text>
+                </Pressable>
+              ))}
+            </ScrollView>
+          </View>
+        ) : null}
+
         <View className="border border-cor-borda dark:border-cor-borda-dark rounded-xl bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark mb-8">
           {resumo.fichaRapida.map((item, i) => (
             <View
@@ -289,7 +310,7 @@ export default function ResumoLivro() {
         </View>
 
         {resumo.secoes.map((secao) => (
-          <View key={secao.id} className="mb-8">
+          <View key={secao.id} className="mb-8" onLayout={(e) => { posicoesSecoes.current[secao.id] = e.nativeEvent.layout.y; }}>
             <Text accessibilityRole="header" className="text-xl font-bold text-cor-texto dark:text-cor-texto-dark mb-3">{secao.titulo}</Text>
             {secao.lista
               ? secao.itens.map((item, i) => (
@@ -323,7 +344,7 @@ export default function ResumoLivro() {
           <View className="flex-1">
             {anterior ? (
               <Link href={`/resumos/${anterior.slug}`} asChild>
-                <Pressable accessibilityRole="link" className="border border-cor-borda dark:border-cor-borda-dark rounded-xl p-3 active:opacity-70">
+                <Pressable accessibilityRole="link" accessibilityLabel={`Resumo anterior: ${anterior.nome}`} className="min-h-11 justify-center border border-cor-borda dark:border-cor-borda-dark rounded-xl p-3 active:opacity-70">
                   <Text className="text-xs text-cor-texto-suave dark:text-cor-texto-suave-dark">← Anterior</Text>
                   <Text className="text-cor-texto dark:text-cor-texto-dark font-semibold">{anterior.nome}</Text>
                 </Pressable>
@@ -333,7 +354,7 @@ export default function ResumoLivro() {
           <View className="flex-1">
             {proximo ? (
               <Link href={`/resumos/${proximo.slug}`} asChild>
-                <Pressable accessibilityRole="link" className="border border-cor-borda dark:border-cor-borda-dark rounded-xl p-3 items-end active:opacity-70">
+                <Pressable accessibilityRole="link" accessibilityLabel={`Próximo resumo: ${proximo.nome}`} className="min-h-11 justify-center border border-cor-borda dark:border-cor-borda-dark rounded-xl p-3 items-end active:opacity-70">
                   <Text className="text-xs text-cor-texto-suave dark:text-cor-texto-suave-dark">Próximo →</Text>
                   <Text className="text-cor-texto dark:text-cor-texto-dark font-semibold">{proximo.nome}</Text>
                 </Pressable>

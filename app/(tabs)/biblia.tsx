@@ -85,7 +85,7 @@ function CardComecarLeitura({ escuro }: { escuro: boolean }) {
           <IconeUI name="open-book" size={22} color={escuro ? "#e0a75e" : "#8a5a2b"} />
         </View>
         <View className="flex-1 pr-3">
-          <Text className="text-[10px] font-semibold uppercase tracking-[1.2px] text-cor-texto-suave dark:text-cor-texto-suave-dark mb-1">
+          <Text className="text-[11px] font-semibold uppercase tracking-[1.2px] text-cor-texto-suave dark:text-cor-texto-suave-dark mb-1">
             Sua próxima leitura
           </Text>
           <Text className="text-base font-bold text-cor-texto dark:text-cor-texto-dark">
@@ -210,7 +210,8 @@ export default function Inicio() {
                 onPress={() => router.push("/configuracoes")}
                 accessibilityRole="link"
                 accessibilityLabel="Lembrete diário de leitura"
-                className="w-8 h-8 items-center justify-center active:opacity-60"
+                hitSlop={4}
+                className="w-11 h-11 items-center justify-center rounded-full active:opacity-60"
               >
                 <IconeUI name="notification" size={24} className="text-cor-texto dark:text-cor-texto-dark" />
               </Pressable>
@@ -225,7 +226,7 @@ export default function Inicio() {
 
             {recentes.length > 0 ? (
               <View className="mb-4 -mx-4 px-4">
-                <Text className="text-sm font-bold text-cor-texto dark:text-cor-texto-dark mb-2.5">Continue lendo</Text>
+                <Text accessibilityRole="header" className="text-base font-bold text-cor-texto dark:text-cor-texto-dark mb-2.5">Continue lendo</Text>
                 <ScrollView ref={refContinueLendo} horizontal showsHorizontalScrollIndicator={false}>
                   {recentes.map((item) => (
                     <CardContinueLendo key={`${item.livroSlug}-${item.capitulo}`} item={item} escuro={escuro} />
@@ -241,7 +242,7 @@ export default function Inicio() {
                     <Text className="text-2xl font-bold text-cor-texto dark:text-cor-texto-dark" style={{ fontFamily: FAMILIA_SERIFADA }}>Temas para o seu dia</Text>
                     <Text className="text-sm text-cor-texto-suave dark:text-cor-texto-suave-dark mt-1">Uma pausa breve, guiada por um tema.</Text>
                   </View>
-                  <Pressable onPress={() => router.push("/pesquisa")} accessibilityRole="link" className="flex-row items-center gap-1 py-2 active:opacity-70">
+                  <Pressable onPress={() => router.push("/pesquisa")} accessibilityRole="link" accessibilityLabel="Ver todos os temas" className="flex-row items-center gap-1 min-h-11 active:opacity-70">
                     <Text className="text-sm font-semibold text-cor-destaque dark:text-cor-destaque-dark">Ver todos</Text>
                     <IconeUI name="next-chevron" size={18} color={escuro ? "#e0a75e" : "#8a5a2b"} />
                   </Pressable>
@@ -275,7 +276,7 @@ export default function Inicio() {
           <>
         {lembretePlano ? (
           <Link href={`/planos/${lembretePlano.plano.id}`} asChild>
-            <Pressable accessibilityRole="link" className="flex-row items-center justify-between rounded-2xl bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark border border-cor-borda dark:border-cor-borda-dark px-4 py-3.5 mb-4 active:opacity-80">
+            <Pressable accessibilityRole="link" accessibilityLabel={`Continuar o plano ${lembretePlano.plano.titulo}, ${lembretePlano.diasConcluidos} de ${lembretePlano.plano.duracaoDias} dias concluídos`} className="flex-row items-center justify-between rounded-2xl bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark border border-cor-borda dark:border-cor-borda-dark px-4 py-3.5 mb-4 active:opacity-80">
               <View className="flex-1 pr-3">
                 <Text className="text-sm font-bold text-cor-texto dark:text-cor-texto-dark mb-0.5">
                   Que tal continuar o "{lembretePlano.plano.titulo}"?

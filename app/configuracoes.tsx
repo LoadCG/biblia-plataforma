@@ -524,10 +524,10 @@ export default function Configuracoes() {
         </Secao>
       </View>
 
-      <Modal visible={confirmarApagar} transparent animationType="fade" onRequestClose={() => setConfirmarApagar(false)}>
-        <Pressable className="flex-1 items-center justify-center bg-black/40 px-6" onPress={() => setConfirmarApagar(false)}>
-          <Pressable onPress={(e) => e.stopPropagation()} className="w-full max-w-sm rounded-2xl bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark p-6">
-            <Text className="text-lg font-bold text-cor-texto dark:text-cor-texto-dark mb-1.5">Apagar todos os meus dados?</Text>
+      <Modal visible={confirmarApagar} transparent animationType="fade" onRequestClose={() => { if (!apagando) setConfirmarApagar(false); }}>
+        <Pressable className="flex-1 items-center justify-center bg-black/40 px-6" onPress={() => { if (!apagando) setConfirmarApagar(false); }} accessibilityRole="button" accessibilityLabel="Fechar confirmação" accessibilityElementsHidden={false}>
+          <Pressable accessibilityViewIsModal onPress={(e) => e.stopPropagation()} className="w-full max-w-sm rounded-2xl bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark p-6">
+            <Text accessibilityRole="header" className="text-lg font-bold text-cor-texto dark:text-cor-texto-dark mb-1.5">Apagar todos os meus dados?</Text>
             <Text className="text-sm text-cor-texto-suave dark:text-cor-texto-suave-dark mb-5">
               Isso remove permanentemente seu perfil e preferências locais, grifos, notas, salvos, pesquisas favoritas,
               coleções e progresso de leitura e planos deste dispositivo. Essa ação não pode ser desfeita.
@@ -537,7 +537,7 @@ export default function Configuracoes() {
                 onPress={() => setConfirmarApagar(false)}
                 disabled={apagando}
                 accessibilityRole="button"
-                className="px-4 py-2 rounded-full border border-cor-borda dark:border-cor-borda-dark active:opacity-70"
+                className={`min-h-11 justify-center px-4 rounded-full border border-cor-borda dark:border-cor-borda-dark active:opacity-70 ${apagando ? "opacity-50" : ""}`}
               >
                 <Text className="text-cor-texto dark:text-cor-texto-dark">Cancelar</Text>
               </Pressable>
@@ -545,7 +545,7 @@ export default function Configuracoes() {
                 onPress={apagarMeusDados}
                 disabled={apagando}
                 accessibilityRole="button"
-                className={`px-4 py-2 rounded-full bg-red-600 active:opacity-70 ${apagando ? "opacity-60" : ""}`}
+                className={`min-h-11 justify-center px-4 rounded-full bg-red-700 active:opacity-70 ${apagando ? "opacity-60" : ""}`}
               >
                 <Text className="text-white font-semibold">{apagando ? "Apagando..." : "Apagar tudo"}</Text>
               </Pressable>

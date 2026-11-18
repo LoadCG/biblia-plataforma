@@ -28,8 +28,9 @@ export function MenuAcoes({ acoes, aberto, contexto, onFechar }: Props) {
 
   return (
     <Modal visible transparent animationType="fade" onRequestClose={onFechar}>
-      <Pressable className="flex-1 justify-end bg-black/30" onPress={onFechar}>
+      <Pressable className="flex-1 justify-end bg-black/30" onPress={onFechar} accessibilityRole="button" accessibilityLabel="Fechar menu de ações">
         <Pressable
+          accessibilityViewIsModal
           onPress={(e) => e.stopPropagation()}
           className="bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark rounded-t-2xl pb-6 pt-2 max-w-2xl w-full mx-auto"
         >
@@ -44,7 +45,7 @@ export function MenuAcoes({ acoes, aberto, contexto, onFechar }: Props) {
               }}
               accessibilityRole="button"
               accessibilityLabel={acao.label}
-              className="flex-row items-center gap-3 px-5 py-3.5 active:bg-cor-borda dark:active:bg-cor-borda-dark"
+              className="min-h-12 flex-row items-center gap-3 px-5 py-3 active:bg-cor-borda dark:active:bg-cor-borda-dark"
             >
               {acao.icone ? (
                 <IconeUI
@@ -54,7 +55,7 @@ export function MenuAcoes({ acoes, aberto, contexto, onFechar }: Props) {
                   className={acao.destrutiva ? "" : "text-cor-texto-suave dark:text-cor-texto-suave-dark"}
                 />
               ) : null}
-              <Text className={`text-base ${acao.destrutiva ? "text-red-600 dark:text-red-400" : "text-cor-texto dark:text-cor-texto-dark"}`}>
+              <Text className={`text-base ${acao.destrutiva ? "text-red-700 dark:text-red-300" : "text-cor-texto dark:text-cor-texto-dark"}`}>
                 {acao.label}
               </Text>
             </Pressable>

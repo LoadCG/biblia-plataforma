@@ -5,6 +5,25 @@ O formato é baseado no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.
 
 ## [Unreleased] - 2026-10-04
 
+### Saúde do projeto e CI — 2026-11-18
+- **CI de volta ao verde.** Estava vermelho em `master` desde 2026-10-29 (3 runs
+  seguidos). Causa raiz: o Expo Doctor reprovou por patches do SDK 57 defasados
+  (`expo-notifications` 57.0.23 vs ~57.0.24; 10 pacotes defasados na checagem
+  local). Typecheck e testes já passavam. Aplicado `npx expo install --fix`
+  (`1997fae`); run `44407026374` verde. Validação local completa: 34 suítes/236
+  testes, 111 contratos a11y, 4 jornadas Maestro, 38 contratos UI, Expo Doctor
+  21/21, export estático de 1.189 capítulos e `check:static`.
+- Auditoria de dependências: 78 → 14 achados (12 em produção, 8 altos, nenhum
+  crítico; todos transitivos de ferramentas de build do Expo).
+- **Registro retroativo** de três commits sem entrada neste arquivo
+  (2026-10-28 e 2026-11-03): `3bf05b2` destravar o fluxo da leitura bíblica,
+  `b2b0b39` restaurar a navegação do leitor e `134399c` preservar o livro ao
+  voltar do leitor. Descritos apenas pelo diff/título; sem QA manual registrado.
+- Lacunas novas mapeadas (sitemap/robots ausentes, metadados sociais da landing,
+  `theme-color` duplicado, direitos do texto ACF e aprovação pastoral da
+  landing pendentes) em `docs/PLANO-MESTRE-Q4-2026.md`, checkpoint de
+  2026-11-18.
+
 ### Sistema de sequência diária — 2026-10-16
 - O cálculo agora resume sequência atual, melhor sequência registrada, leitura
   de hoje e dias com leitura nos últimos sete dias, sempre pelo calendário local.

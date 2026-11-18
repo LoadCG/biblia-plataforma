@@ -1,4 +1,12 @@
-# Estado do projeto e próximos passos (revisado em 2026-10-13)
+# Estado do projeto e próximos passos (revisado em 2026-11-18)
+
+> **Resumo da revisão de 2026-11-18:** o CI estava vermelho em `master` desde
+> 2026-10-29 por deriva de patches do Expo SDK (não por defeito de código) e
+> voltou a ficar verde no commit `1997fae`. As duas pendências mais pesadas
+> **não são técnicas e dependem do responsável**: confirmar por escrito os
+> direitos de redistribuição do texto ACF e aprovar (ou retirar) a landing
+> evangelística, hoje pública. Detalhe, evidências e a tabela de lacunas novas
+> estão no [checkpoint de 2026-11-18 do plano mestre](./docs/PLANO-MESTRE-Q4-2026.md).
 
 Este é o documento de referência pra responder duas perguntas: **em
 que etapa estamos de verdade** (sem otimismo nem pessimismo) e **o que
@@ -103,10 +111,15 @@ traduções licenciadas, notificações push), a distância é grande e
   oferecem.
 
 ### Confiabilidade
-- O pipeline de CI e seus gates estão versionados; o run remoto
-  [`37254924178`](https://github.com/LoadCG/biblia-plataforma/actions/runs/37254924178)
-  passou para `b737c2c` em `master`. A implantação de produção correspondente
-  ficou `Ready`; monitorar o aviso de migração futura do runner Ubuntu 26.
+- O pipeline de CI e seus gates estão versionados. **Correção de 2026-11-18:** o
+  run antigo `37254924178` (`b737c2c`) deixou de refletir o estado de `master` —
+  os três pushes seguintes (2026-10-29 e 2026-11-03) ficaram vermelhos por
+  deriva de patches do Expo SDK, corrigida em `1997fae` (run
+  [`44407026374`](https://github.com/LoadCG/biblia-plataforma/actions/runs/44407026374)
+  verde). Lição registrada: o Expo Doctor é um gate que pode quebrar sem mudança
+  de código quando o SDK publica patches; considerar um run agendado semanal
+  para detectar isso antes de um push. Confirmar o primeiro run após a migração
+  do runner para Ubuntu 26 (janela termina em 2026-11-19).
 - Quatro jornadas Maestro estão definidas e validadas estruturalmente, mas
   ainda precisam rodar contra um binário instalado em dispositivo/emulador.
 - A inspeção web de acessibilidade foi concluída; NVDA/VoiceOver/TalkBack em

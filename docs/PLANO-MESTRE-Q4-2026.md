@@ -682,6 +682,57 @@ tela; (3) ensaio de troca de capítulo e download de backup em runtime real;
 vulnerabilidades de produção antes de mudanças incompatíveis. Revisão pastoral
 e Preview Vercel continuam gates independentes de código.
 
+### Checkpoint de saúde e lacunas — 2026-11-18
+
+Revisão feita após ~4 semanas sem atualização documental (último checkpoint:
+2026-10-21; último commit anterior a esta revisão: 2026-11-03).
+
+**Verificado hoje (comandos executados, não inferência):**
+
+- **CI estava vermelho em `master` desde 2026-10-29** (runs `40805644102`,
+  `41729515004`, `41735338607`). Causa raiz: Expo Doctor reprova quando patches
+  instalados ficam atrás do exigido pelo SDK 57 (`expo-notifications` 57.0.23
+  vs ~57.0.24 no último run; 10 pacotes defasados hoje). Typecheck, testes e
+  contratos já passavam. Corrigido com `npx expo install --fix` (commit
+  `1997fae`); run `44407026374` ficou verde. O aviso de migração do
+  `ubuntu-latest` para Ubuntu 26 ainda aparecia como futuro neste run; a janela
+  planejada termina em 2026-11-19, então o **primeiro run após essa data é a
+  confirmação real**.
+- Validação local completa após o ajuste: 34 suítes/236 testes, 111 contratos
+  a11y, 4 jornadas Maestro (estrutura), 38 contratos UI, Expo Doctor 21/21,
+  `check:copy-ui`, `export:web` (1.189 capítulos) e `check:static`. A divergência
+  histórica em `navegacaoMedalhas.test.ts` citada no handoff da landing não
+  reproduz: suíte 100% verde.
+- `npm audit`: 78 → 14 achados totais; 12 em dependências de produção (8 altas,
+  nenhuma crítica), todas transitivas de ferramentas de build/CLI do Expo
+  (`@expo/fingerprint`, `minimatch`, `source-map-js`, `postcss-selector-parser`).
+  Não aplicado `audit fix --force` (já se mostrou capaz de propor downgrade do
+  Expo).
+- Produção (`biblia-plataforma.vercel.app`): `/`, `/leitura`, `/biblia`,
+  `/resumos/01-genesis`, `/planos`, `/conhecer`, `/privacidade` e `/sobre`
+  respondem 200; `/biblia/:livro/:capitulo` redireciona 308 para `/leitura/…`.
+
+**Commits sem registro até esta revisão** (2026-10-28 e 2026-11-03,
+`3bf05b2`, `b2b0b39`, `134399c`): correções do fluxo do leitor bíblico —
+destravar a entrada, restaurar a navegação e preservar o livro ao voltar do
+leitor (tocam `leitura/*`, `pesquisa`, `GradeCapitulos`, `relevanciaBusca` e
+`global.css`). Descritos só pelo título do commit; **não há evidência de
+QA manual** associada, e os três falharam no CI por causa do doctor, não por
+teste. Tratar como implementados, sem aceite visual.
+
+**Lacunas novas, mapeadas por inspeção do código e da produção:**
+
+| Prioridade | Lacuna | Evidência | Decisão/ação necessária |
+|---|---|---|---|
+| P0 (humano) | Direitos do texto ACF sem resposta da SBTB, com repositório público, site no ar e QR/panfleto planejado. | `docs/LICENCA-TEXTO-ACF.md`: “confirmação pendente”; minuta pronta, sem registro de envio. | Responsável enviar a consulta antes de qualquer impressão/divulgação do QR. |
+| P0 (humano) | Landing evangelística pública na raiz com narrativa ainda rascunho. | Handoff de 2026-10-21: não publicar/divulgar até aprovação pastoral. | Revisão pastoral ou retirar a rota raiz até aprovar. |
+| P1 | Sem `sitemap.xml` nem `robots.txt` (404 em produção). | `curl` em produção; `public/` contém só `sw.js`. | **Decidir antes de implementar:** publicar sitemap acelera indexação de conteúdo ainda rascunho (landing e estudos temáticos). Implementar depois da revisão pastoral. |
+| P1 | Sem `canonical`, `og:image`, `og:title`/`og:url` na landing; só descrição. Compartilhar o link por WhatsApp/QR exibe prévia pobre. | HTML servido em `/`. Resumos têm `og:title`/`og:description`, mas sem imagem/canonical. | Definir imagem de prévia e domínio canônico (depende do domínio final). |
+| P2 | Duas metas `theme-color` conflitantes na landing (`#202227` e `#faf8f4`). | HTML servido em `/`. | Remover a global onde a landing define a sua. |
+| P2 | Nomenclatura invertida: rota `/biblia` é o **Início** e `/leitura` é a **Bíblia**; docs antigos ainda chamam `/biblia/*` de leitor. | `app/(tabs)/_layout.tsx` (abas), `app/(tabs)/biblia.tsx`, redirecionamentos 308 no `vercel.json`. | Funciona e preserva URLs antigas; apenas risco de manutenção. Renomear só com plano de redirecionamentos. |
+| P2 | Sem medição de uso/erro: impossível saber se a landing ou o QR funcionam. | Decisão documentada: sem analytics (`PLANEJAMENTO-LANDING-EVANGELISMO.md`). | Manter por privacidade ou aprovar medição agregada sem identificação (decisão do responsável). |
+| P2 | Distribuição nativa sem roteiro: `eas.json` existe, mas não há conta, build assinado nem checklist de loja. | `eas.json`; ESTADO anterior. | Escrever roteiro de publicação quando houver decisão de iniciar. |
+
 ### Checkpoint do panfleto e landing — 2026-10-21
 
 - Reescrevi as dez frases da landing para evitar supor sofrimento ou rejeição e

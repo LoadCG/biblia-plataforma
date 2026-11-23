@@ -43,10 +43,10 @@ evidência observável.
   `expo-image-picker` 57.0.21, esperado `~57.0.22`;
   `expo-notifications` 57.0.25, esperado `~57.0.26`;
   `expo-router` 57.0.31, esperado `~57.0.32`.
-- Uma instalação limpa (`npm ci`) e a reprodução local em 2026-11-23 apontaram
+- Validação inicial após uma instalação limpa (`npm ci`) em 2026-11-23 apontou
   oito pacotes incompatíveis, incluindo também `expo-sharing`, `expo-splash-screen`
   e `expo-sqlite`. `npx expo install --fix` alinhou os oito ao SDK 57. Depois da
-  correção, `npm run validate` passou com 237 testes e Expo Doctor 21/21;
+  correção, a primeira execução de `npm run validate` passou com 237 testes e Expo Doctor 21/21;
   `npm run export:web` gerou 1.189 capítulos e `npm run check:static` verificou
   23 rotas críticas, 1.312 HTML e a leitura estática. **Estado: correção local
   verificada; CI remoto da branch ainda pendente.**
@@ -133,6 +133,13 @@ consegue completar o fluxo.
 runtime SQLite e leitor de tela foram observados no dispositivo, não inferidos
 de mocks ou checagens estáticas.
 
+**Execução 2026-11-23, QA e correção:** no servidor local, a tela Descubra deixou
+de mostrar “Carregando buscas favoritas” após estabilizar. A consulta `Joao
+3:16` retornou um resultado. A inspeção inicial perdeu a referência da aba antes
+de testar clique e retorno. Uma repetição posterior confirmou que Voltar levava
+a `/voce`; a correção e o percurso de retorno estão registrados no estado final
+dos épicos abaixo. O spinner não foi reproduzido como persistente.
+
 **Revisão de código:** reproduzir primeiro estados assíncronos e corridas. Avaliar
 separação do componente `app/(tabs)/pesquisa.tsx` somente se a complexidade
 impedir correções verificáveis; não refatorar apenas por tamanho.
@@ -162,6 +169,16 @@ reabrir o redesign mobile dedicado.
 **Aceite:** capturas identificáveis, sem clipping/overflow, tarefas principais
 completáveis por teclado e feedback não dependente apenas de cor. Gates de leitor
 real permanecem marcados como pendentes até haver execução real.
+
+**Execução 2026-11-23, QA parcial:** Home `/biblia` foi vista em viewport
+aproximado de 720×740 nos temas claro e escuro. Planos `/planos` foi visto em
+emulação iPhone SE 375×667 no tema claro. Não houve corte evidente; a árvore
+acessível expôs navegação, progresso e ações. Toast ativo, Planos no escuro,
+viewport desktop controlado, teclado completo e leitor de tela real não foram
+verificados. Avisos web de `useNativeDriver` e de propriedades `shadow*`
+depreciadas foram observados, sem correção nesta rodada por não haver relação
+confirmada com falha funcional. Um aviso de atualização de estado após
+desmontagem foi visto durante navegação e continua sem causa confirmada.
 
 **Risco de sobreposição:** Descubra compartilha superfície com E1. E2 pode
 encontrar e documentar problemas durante E1, mas deixa alterações de busca para
@@ -226,6 +243,14 @@ teste, navegador ou dispositivo compatível.
    vulnerabilidades transitivas de produção e ferramentas, verificar correções
    compatíveis com SDK 57 e registrar risco residual. Não atualizar às cegas.
 
+**Triagem 2026-11-23:** `npm audit` encontrou 14 alertas, 6 moderados e 8 altos;
+`npm audit --omit=dev` encontrou 12, sendo 4 moderados e 8 altos. A simulação de
+correção automática propôs dependências de Expo 58; uma tentativa anterior de
+`npm audit fix` quebrou a exportação estática. Nenhuma correção de segurança foi
+aplicada nesta rodada. Próxima ação: avaliar advisory por advisory e atualizar
+somente dependências comprovadamente compatíveis com SDK 57, revalidando o
+export após cada grupo pequeno.
+
 **Aceite:** evidência inclui plataforma e condição de execução; backups não usam
 dados pessoais reais; áudio só recebe aceite depois de escuta real; nenhuma
 alegação de offline, rollback ou acessibilidade nativa baseada apenas em mocks.
@@ -243,6 +268,31 @@ alegação de offline, rollback ou acessibilidade nativa baseada apenas em mocks
 5. **Integração:** após cada épico, revisar diffs, executar verificações do
    escopo, CI, exportação web e smoke test das rotas tocadas. Corrigir conflitos
    e regressões antes de iniciar outro épico sobre os mesmos arquivos.
+
+## Estado após a execução e revisão local
+
+- E0: oito pacotes alinhados ao SDK 57; `npm run validate` passou com 241 testes
+  e Expo Doctor 21/21. Exportação de 1.189 capítulos e verificação estática
+  passaram localmente. CI remoto da branch executada ainda não foi confirmado.
+- E1: busca por `João 3:16` encontrou um resultado. Corrigido bug reproduzido
+  no leitor: o botão Voltar ignorava `origem=pesquisa` e usava o histórico
+  genérico, que levou a `/voce`. O leitor agora retorna à consulta e filtros
+  codificados na URL. O navegador confirmou a rota `/pesquisa`, campo preenchido,
+  filtro Novo Testamento selecionado e resultado presente. A consulta e os
+  filtros também permanecem nos controles e atalhos entre capítulos.
+- E2: QA parcial, sem bug P0/P1 confirmado e sem alterações. Restam viewport
+  desktop controlado, Toast ativo, Planos escuro, percurso de teclado e leitor
+  de tela real. Durante o percurso busca/leitor foi observado um toast de aviso
+  React sobre atualização de estado após desmontagem. Não foi atribuído à
+  correção de navegação e precisa de investigação independente antes de ser
+  classificado como defeito persistente.
+- E3: preparado no plano, mas gates de revisão pastoral, direitos ACF, domínio
+  e QR continuam humanos.
+- E4: triagem de segurança concluída, sem atualizações automáticas; QA de backup,
+  SQLite, offline e áudio depende de ambiente real.
+
+As frentes E1 e E2 podem avançar com bugs concretos quando reproduzidos. Não
+abrir correção apenas por warning transitório ou captura única de carregamento.
 
 ## Formato obrigatório do relatório de cada agente
 

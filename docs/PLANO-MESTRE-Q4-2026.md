@@ -761,6 +761,24 @@ teste. Tratar como implementados, sem aceite visual.
   `master` ainda é o run 45230128577 vermelho; não confundir sucesso local com
   recuperação do workflow remoto.
 
+### Revisão inicial dos épicos: 2026-11-23
+
+- Na primeira inspeção, a busca Descubra encontrou um resultado para `Joao
+  3:16`, mas a automação perdeu a aba antes de confirmar o retorno. No teste
+  ponta a ponta posterior, o botão Voltar levou a `/voce` em vez da busca.
+  Corrigido para retornar explicitamente à consulta e aos filtros, preservando-os
+  também ao navegar entre capítulos. Testes regressivos, validação completa e
+  navegação no browser passaram.
+- Home foi inspecionada em claro e escuro no viewport disponível, e Planos em
+  emulação de 375×667 no tema claro. Não houve defeito visual P0/P1 confirmado.
+  Toast ativo, desktop controlado, tema escuro de Planos, teclado completo e
+  leitor de tela real permanecem pendentes.
+- Auditoria atual: 14 alertas totais (6 moderados, 8 altos) e 12 com `--omit=dev`
+  (4 moderados, 8 altos). Não aplicado `npm audit fix`; a simulação propôs
+  versões Expo 58 e há precedente de quebra no export estático.
+- Evidências detalhadas e limites por checkpoint em
+  [`ROADMAP-EPICOS-MULTIAGENTES-2026-11.md`](./ROADMAP-EPICOS-MULTIAGENTES-2026-11.md).
+
 ### Checkpoint do panfleto e landing — 2026-10-21
 
 - Reescrevi as dez frases da landing para evitar supor sofrimento ou rejeição e

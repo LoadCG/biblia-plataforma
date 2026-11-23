@@ -1,4 +1,4 @@
-import { filtrosBuscaDiferem, hrefResultadoBusca, hrefRetornoBusca } from "../navegacaoBusca";
+import { filtrosBuscaDiferem, hrefCapituloLeitura, hrefResultadoBusca, hrefRetornoBusca, hrefRetornoLeitura } from "../navegacaoBusca";
 
 describe("retorno da leitura para a busca", () => {
   it("não reinicia a busca quando os filtros restaurados são os padrões atuais", () => {
@@ -41,5 +41,44 @@ describe("retorno da leitura para a busca", () => {
       testamento: ["Novo Testamento", "Antigo Testamento"],
       livroFiltro: ["43-joao", "01-genesis"],
     })).toContain("testamento=Novo%20Testamento&livroFiltro=43-joao");
+  });
+
+  it("retorna explicitamente à busca com consulta e filtros da origem", () => {
+    expect(hrefRetornoLeitura("pesquisa", "João 3:16", {
+      testamento: "Novo Testamento",
+      livroFiltro: "43-joao",
+    })).toBe("/pesquisa?consulta=Jo%C3%A3o%203%3A16&testamento=Novo%20Testamento&livroFiltro=43-joao");
+    expect(hrefRetornoLeitura(["pesquisa", "outra-origem"], ["João 3:16", "ignorada"], {
+      testamento: ["Novo Testamento", "Antigo Testamento"],
+      livroFiltro: ["43-joao", "01-genesis"],
+    })).toBe("/pesquisa?consulta=Jo%C3%A3o%203%3A16&testamento=Novo%20Testamento&livroFiltro=43-joao");
+  });
+
+  it("não força o retorno à busca para outras origens", () => {
+    expect(hrefRetornoLeitura(undefined, "João 3:16")).toBeNull();
+    expect(hrefRetornoLeitura("aba-biblia", "João 3:16")).toBeNull();
+  });
+
+  it("preserva consulta e filtros ao navegar entre capítulos a partir da busca", () => {
+    const contextoBusca = {
+      origem: "pesquisa",
+      consulta: "João 3:16",
+      testamento: "Novo Testamento",
+      livroFiltro: "43-joao",
+    };
+    expect(hrefCapituloLeitura("43-joao", 4, contextoBusca)).toBe(
+      "/leitura/43-joao/4?origem=pesquisa&consulta=Jo%C3%A3o%203%3A16&testamento=Novo%20Testamento&livroFiltro=43-joao"
+    );
+    expect(hrefCapituloLeitura("43-joao", 2, contextoBusca)).toBe(
+      "/leitura/43-joao/2?origem=pesquisa&consulta=Jo%C3%A3o%203%3A16&testamento=Novo%20Testamento&livroFiltro=43-joao"
+    );
+  });
+
+  it("mantém o comportamento de capítulo para origens e links diretos", () => {
+    expect(hrefCapituloLeitura("43-joao", 4, { origem: "aba-biblia" }))
+      .toBe("/leitura/43-joao/4?origem=aba-biblia");
+    expect(hrefCapituloLeitura("43-joao", 4)).toBe("/leitura/43-joao/4");
+    expect(hrefCapituloLeitura(undefined, 4, { origem: "pesquisa", consulta: "João 3:16" }))
+      .toBe("/leitura/escolher");
   });
 });

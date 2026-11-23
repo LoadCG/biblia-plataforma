@@ -728,10 +728,21 @@ teste. Tratar como implementados, sem aceite visual.
 | P0 (humano) | Landing evangelística pública na raiz com narrativa ainda rascunho. | Handoff de 2026-10-21: não publicar/divulgar até aprovação pastoral. | Revisão pastoral ou retirar a rota raiz até aprovar. |
 | P1 | Sem `sitemap.xml` nem `robots.txt` (404 em produção). | `curl` em produção; `public/` contém só `sw.js`. | **Decidir antes de implementar:** publicar sitemap acelera indexação de conteúdo ainda rascunho (landing e estudos temáticos). Implementar depois da revisão pastoral. |
 | P1 | Sem `canonical`, `og:image`, `og:title`/`og:url` na landing; só descrição. Compartilhar o link por WhatsApp/QR exibe prévia pobre. | HTML servido em `/`. Resumos têm `og:title`/`og:description`, mas sem imagem/canonical. | Definir imagem de prévia e domínio canônico (depende do domínio final). |
-| P2 | Duas metas `theme-color` conflitantes na landing (`#202227` e `#faf8f4`). | HTML servido em `/`. | Remover a global onde a landing define a sua. |
+| Resolvido em 2026-11-18 | Duas metas `theme-color` conflitantes na landing. | Commit `8e00c4b` moveu a meta global para o `<Head>` raiz; o HTML exportado foi conferido com uma meta por rota (`#202227` na landing e `#faf8f4` nas demais). | Fechado; reabrir se uma rota voltar a duplicar ou sobrescrever o valor. |
 | P2 | Nomenclatura invertida: rota `/biblia` é o **Início** e `/leitura` é a **Bíblia**; docs antigos ainda chamam `/biblia/*` de leitor. | `app/(tabs)/_layout.tsx` (abas), `app/(tabs)/biblia.tsx`, redirecionamentos 308 no `vercel.json`. | Funciona e preserva URLs antigas; apenas risco de manutenção. Renomear só com plano de redirecionamentos. |
 | P2 | Sem medição de uso/erro: impossível saber se a landing ou o QR funcionam. | Decisão documentada: sem analytics (`PLANEJAMENTO-LANDING-EVANGELISMO.md`). | Manter por privacidade ou aprovar medição agregada sem identificação (decisão do responsável). |
 | P2 | Distribuição nativa sem roteiro: `eas.json` existe, mas não há conta, build assinado nem checklist de loja. | `eas.json`; ESTADO anterior. | Escrever roteiro de publicação quando houver decisão de iniciar. |
+
+### Continuação de UX de busca: 2026-11-23
+
+- Corrigido o contraste baixo dos placeholders nas buscas de Descubra, seleção
+  de livros e lista de resumos. Agora as três superfícies acompanham o tema e
+  usam as cores suaves já definidas no sistema visual (mais de 5:1 nos fundos
+  dos campos).
+- `npm run typecheck` e `npm run export:web` passaram; exportação gerou as 123
+  rotas estáticas e 1.189 rotas de capítulos. Esta melhoria não fecha o P1 de
+  consistência da busca, que ainda exige revisão de estados, foco, filtros e
+  comportamento em jornadas completas.
 
 ### Checkpoint do panfleto e landing — 2026-10-21
 

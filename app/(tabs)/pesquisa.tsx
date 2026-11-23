@@ -378,7 +378,7 @@ export default function Pesquisa() {
               if (t.trim() && idTemaParametro) router.setParams({ tema: undefined, origem: undefined });
             }}
             placeholder="Buscar na Bíblia e nos resumos"
-            placeholderTextColor="#9ca3af"
+            placeholderTextColor={escuro ? "#b3a894" : "#6b6153"}
             className={`px-4 pr-12 py-3.5 rounded-full lg:rounded-2xl border border-cor-borda dark:border-cor-borda-dark bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark text-cor-texto dark:text-cor-texto-dark text-base ${desktop ? "pl-12" : ""}`}
           />
           {termo ? (

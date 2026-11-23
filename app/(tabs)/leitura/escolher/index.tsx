@@ -11,12 +11,15 @@ import { carregarUltimaLeitura } from "../../../../core/leitura/ultimaLeitura";
 import { progressoRepository } from "../../../../core/repositories";
 import { mostrarToast } from "../../../../core/util/toast";
 import { aplicarIntervaloCapitulos } from "../../../../core/util/aplicarIntervaloCapitulos";
+import { useColorScheme } from "../../../../core/theme";
 import { useOwnerId } from "../../../../core/useOwnerId";
 
 const SET_VAZIO = new Set<number>();
 
 export default function EscolherLivro() {
   const { livro: livroParaAbrir } = useLocalSearchParams<{ livro?: string }>();
+  const { colorScheme } = useColorScheme();
+  const escuro = colorScheme === "dark";
   const [termo, setTermo] = useState("");
   const [livroExpandido, setLivroExpandido] = useState<string | null>(livroParaAbrir ?? null);
   const ownerId = useOwnerId();
@@ -290,7 +293,7 @@ export default function EscolherLivro() {
             onChangeText={setTermo}
             accessibilityLabel="Buscar livro da Bíblia"
             placeholder="Buscar livro da Bíblia..."
-            placeholderTextColor="#9ca3af"
+            placeholderTextColor={escuro ? "#b3a894" : "#6b6153"}
             className="px-4 py-2.5 pr-10 rounded-full border border-cor-borda dark:border-cor-borda-dark bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark text-cor-texto dark:text-cor-texto-dark"
           />
           {termo ? (

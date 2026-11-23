@@ -1807,6 +1807,12 @@ destinos úteis já existentes: “Salvos” abre o filtro de versículos salvos
 “Ajuda” abre o guia permanente; “Planos” continua disponível. Não há atalho
 “Apoie”, coerente com o escopo atual sem monetização.
 
+**Acessibilidade visual (2026-11-23):** os placeholders dos campos de busca de
+Descubra, seletor de livros e lista de resumos acompanham o tema e usam as cores
+suaves da tipografia do app. O cinza anterior tinha contraste inferior a 3:1 no
+fundo claro; as novas cores têm contraste acima de 5:1 nos fundos claros e
+escuros. A revisão ampla da busca continua em andamento.
+
 ### 9.5 Pesquisa: busca por palavra na Bíblia inteira `✅`
 **Funcionalidade:** resolvido junto com a migração pro SQLite (ver
 2.6) — índice de texto completo virou uma tabela virtual FTS5 do

@@ -5,6 +5,12 @@ O formato é baseado no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.
 
 ## [Unreleased] - 2026-10-04
 
+### Contraste dos campos de busca: 2026-11-23
+- Campos de busca de Descubra, seletor de livros e lista de resumos agora usam
+  a cor de texto suave do tema atual no placeholder. O cinza anterior não
+  atingia contraste suficiente no tema claro; os tokens escolhidos passam de
+  5:1 sobre os fundos elevados dos campos nos dois temas.
+
 ### Melhorias de UX/UI e correção do tema escuro do sistema — 2026-11-18
 - **Bug corrigido (anterior a esta rodada):** com o sistema em modo escuro e sem
   tema salvo, `useColorScheme()` dizia "dark" mas a classe `dark` do Tailwind

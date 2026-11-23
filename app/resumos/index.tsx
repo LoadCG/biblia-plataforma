@@ -133,7 +133,7 @@ export default function ListaResumos() {
                 value={termo}
                 onChangeText={setTermo}
                 placeholder="Buscar livro ou palavra"
-                placeholderTextColor="#9ca3af"
+                placeholderTextColor={escuro ? "#b3a894" : "#6b6153"}
                 className="px-4 pr-12 py-3 rounded-full border border-cor-borda dark:border-cor-borda-dark bg-cor-fundo-elevado dark:bg-cor-fundo-elevado-dark text-cor-texto dark:text-cor-texto-dark"
               />
               {termo ? (

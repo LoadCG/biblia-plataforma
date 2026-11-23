@@ -49,8 +49,8 @@ evidência observável.
   correção, a primeira execução de `npm run validate` passou com 237 testes e Expo Doctor 21/21;
   `npm run export:web` gerou 1.189 capítulos e `npm run check:static` verificou
   23 rotas críticas, 1.312 HTML e a leitura estática. **Estado: validação local
-  e CI remoto confirmados no run 45258837998, associado ao PR #2.** O preview
-  Vercel também concluiu a publicação.
+  e CI remoto confirmados no run 45259312383 para o commit `9a5878f`, associado
+  ao PR #2.** O preview Vercel também concluiu a publicação.
 - Landing e panfleto seguem como rascunho. A aprovação pastoral e a resposta da
   SBTB sobre a distribuição da ACF permanecem gates humanos. A rota raiz contém
   links para o leitor local ACF.
@@ -274,8 +274,8 @@ alegação de offline, rollback ou acessibilidade nativa baseada apenas em mocks
 
 - E0: oito pacotes alinhados ao SDK 57; `npm run validate` passou com 241 testes
   e Expo Doctor 21/21. Exportação de 1.189 capítulos e verificação estática
-  passaram localmente; CI do PR #2 passou no run 45258837998 e o preview Vercel
-  concluiu a publicação.
+  passaram localmente; CI do PR #2 passou no run 45259312383 para `9a5878f`, e o
+  preview Vercel concluiu a publicação.
 - E1: busca por `João 3:16` encontrou um resultado. Corrigido bug reproduzido
   no leitor: o botão Voltar ignorava `origem=pesquisa` e usava o histórico
   genérico, que levou a `/voce`. O leitor agora retorna à consulta e filtros

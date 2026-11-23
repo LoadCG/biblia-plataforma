@@ -1,7 +1,9 @@
-# Plano mestre de evolução — outubro a dezembro de 2026
+# Plano mestre de evolução de outubro a dezembro de 2026
 
-Atualizado em 2026-10-21. Este documento define a ordem das próximas entregas
-e aponta para a decomposição técnica/editorial existente. O estado real deve ser
+Atualizado em 2026-11-23. A decomposição multiagente atual está em
+[`ROADMAP-EPICOS-MULTIAGENTES-2026-11.md`](./ROADMAP-EPICOS-MULTIAGENTES-2026-11.md).
+Este documento define as lacunas e aponta para a decomposição técnica/editorial
+existente. O estado real deve ser
 comprovado por diff, verificações e evidências; itens instalados não equivalem a
 aceite visual, assistivo, nativo ou de publicação.
 
@@ -743,6 +745,21 @@ teste. Tratar como implementados, sem aceite visual.
   rotas estáticas e 1.189 rotas de capítulos. Esta melhoria não fecha o P1 de
   consistência da busca, que ainda exige revisão de estados, foco, filtros e
   comportamento em jornadas completas.
+
+### Recuperação local do CI Expo: 2026-11-23
+
+- O CI remoto do commit `9dbf765` confirmou o runner Ubuntu 26, mas falhou no
+  Expo Doctor por deriva de patches. Na reprodução após `npm ci`, o Doctor e
+  `npx expo install --check` apontaram oito pacotes desalinhados. Após consultar
+  a documentação versionada do SDK 57, `npx expo install --fix` atualizou apenas
+  esses pacotes dentro da linha 57.
+- `npm run validate` passou localmente: 34 suítes, 237 testes, 111 contratos de
+  acessibilidade, 4 jornadas estruturais, 38 contratos de UI e Expo Doctor 21/21.
+  `npm run export:web` gerou 1.189 rotas de capítulo; `npm run check:static`
+  verificou 23 rotas críticas, 1.312 arquivos HTML e leitura estática.
+- **Pendente:** CI remoto da branch com a correção. O último run observado em
+  `master` ainda é o run 45230128577 vermelho; não confundir sucesso local com
+  recuperação do workflow remoto.
 
 ### Checkpoint do panfleto e landing — 2026-10-21
 

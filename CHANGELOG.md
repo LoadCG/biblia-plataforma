@@ -3,7 +3,13 @@
 Todas as mudanças notáveis feitas no projeto serão documentadas neste arquivo.
 O formato é baseado no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/).
 
-## [Unreleased] - 2026-10-04
+## [Unreleased] - 2026-11-23
+
+### Compatibilidade com Expo SDK 57: 2026-11-23
+- Alinhados oito pacotes Expo às versões aceitas pelo SDK 57 após o Expo Doctor
+  apontar deriva de patches. `npm run validate` passou localmente com 237 testes
+  e Expo Doctor 21/21; exportação de 1.189 capítulos e verificação estática de
+  SEO, favicon e HTML passaram. CI remoto ainda precisa confirmar a correção.
 
 ### Contraste dos campos de busca: 2026-11-23
 - Campos de busca de Descubra, seletor de livros e lista de resumos agora usam

@@ -1,12 +1,14 @@
-# Estado do projeto e próximos passos (revisado em 2026-11-18)
+# Estado do projeto e próximos passos (revisado em 2026-11-23)
 
-> **Resumo da revisão de 2026-11-18:** o CI estava vermelho em `master` desde
-> 2026-10-29 por deriva de patches do Expo SDK (não por defeito de código) e
-> voltou a ficar verde no commit `1997fae`. As duas pendências mais pesadas
+> **Resumo da revisão de 2026-11-23:** o runner Ubuntu 26 foi confirmado no CI.
+> O run 45230128577 voltou a falhar no Expo Doctor por deriva de patches do
+> SDK 57. O alinhamento de oito pacotes passou localmente, mas ainda aguarda
+> confirmação do workflow remoto. As duas pendências mais pesadas
 > **não são técnicas e dependem do responsável**: confirmar por escrito os
 > direitos de redistribuição do texto ACF e aprovar (ou retirar) a landing
 > evangelística, hoje pública. Detalhe, evidências e a tabela de lacunas novas
-> estão no [checkpoint de 2026-11-18 do plano mestre](./docs/PLANO-MESTRE-Q4-2026.md).
+> estão no [plano mestre atualizado](./docs/PLANO-MESTRE-Q4-2026.md) e no
+> [roadmap de épicos especializados](./docs/ROADMAP-EPICOS-MULTIAGENTES-2026-11.md).
 
 Este é o documento de referência pra responder duas perguntas: **em
 que etapa estamos de verdade** (sem otimismo nem pessimismo) e **o que

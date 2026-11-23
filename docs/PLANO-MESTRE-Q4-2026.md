@@ -757,9 +757,10 @@ teste. Tratar como implementados, sem aceite visual.
   acessibilidade, 4 jornadas estruturais, 38 contratos de UI e Expo Doctor 21/21.
   `npm run export:web` gerou 1.189 rotas de capítulo; `npm run check:static`
   verificou 23 rotas críticas, 1.312 arquivos HTML e leitura estática.
-- **Pendente:** CI remoto da branch com a correção. O último run observado em
-  `master` ainda é o run 45230128577 vermelho; não confundir sucesso local com
-  recuperação do workflow remoto.
+- A pendência de CI foi resolvida pelo PR #2: run 45258837998 passou, incluindo
+  validação, export estático e verificação de HTML. O preview Vercel concluiu.
+  O run 45230128577 em `master` continua sendo o registro histórico da falha que
+  motivou a correção.
 
 ### Revisão inicial dos épicos: 2026-11-23
 

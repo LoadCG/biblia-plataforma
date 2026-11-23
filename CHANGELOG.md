@@ -9,7 +9,8 @@ O formato é baseado no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.
 - Alinhados oito pacotes Expo às versões aceitas pelo SDK 57 após o Expo Doctor
   apontar deriva de patches. `npm run validate` passou localmente com 241 testes
   e Expo Doctor 21/21; exportação de 1.189 capítulos e verificação estática de
-  SEO, favicon e HTML passaram. CI remoto ainda precisa confirmar a correção.
+  SEO, favicon e HTML passaram. CI remoto do PR #2 passou (run 45258837998),
+  e o preview Vercel foi publicado.
 - A busca Descubra estabilizou e retornou resultado com consulta/filtros no link
   do leitor. Home foi inspecionada em claro/escuro e Planos em mobile claro; não
   houve defeito P0/P1 reproduzível nessas verificações, sem mudanças adicionais

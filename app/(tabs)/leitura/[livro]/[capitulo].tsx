@@ -13,6 +13,7 @@ import { ModalNota } from "../../../../components/ModalNota";
 import { Tooltip } from "../../../../components/Tooltip";
 import { Modal } from "react-native";
 import { buscarReferencia } from "../../../../core/biblia/BibliaAPI";
+import { hrefCapituloLeitura, hrefRetornoLeitura } from "../../../../core/biblia/navegacaoBusca";
 import type { CapituloTexto } from "../../../../core/biblia/tipos";
 import { indexarTitulosSecao, obterTitulosSecao } from "../../../../core/biblia/titulosSecao";
 import { formatarReferenciaVersiculos } from "../../../../core/biblia/formatarReferenciaVersiculos";
@@ -91,17 +92,9 @@ function lerNumerosVersiculos(parametro?: string | string[]): number[] {
     .sort((a, b) => a - b);
 }
 
-function hrefCapitulo(livroSlug: string | undefined, numero: number, origem?: string) {
-  if (!livroSlug) return "/leitura/escolher";
-  const href = `/leitura/${livroSlug}/${numero}`;
-  return origem === ORIGEM_ABA_BIBLIA || origem === ORIGEM_SELETOR
-    ? `${href}?origem=${origem}`
-    : href;
-}
-
 export default function Leitura() {
   const desktop = useWindowDimensions().width >= 1024;
-  const params = useLocalSearchParams<{ livro: string; capitulo: string; versiculo?: string; versiculos?: string; planoId?: string; diaPlano?: string; indicePlano?: string; origem?: string }>();
+  const params = useLocalSearchParams<{ livro: string; capitulo: string; versiculo?: string; versiculos?: string; planoId?: string; diaPlano?: string; indicePlano?: string; origem?: string; consulta?: string | string[]; testamento?: string | string[]; livroFiltro?: string | string[] }>();
   const abertaPelaAbaBiblia = params.origem === ORIGEM_ABA_BIBLIA;
   const abertaPeloSeletor = params.origem === ORIGEM_SELETOR;
   const livro = obterLivro(params.livro ?? "");
@@ -241,9 +234,9 @@ export default function Leitura() {
       const alvo = e.target as HTMLElement | null;
       if (alvo && ["INPUT", "TEXTAREA"].includes(alvo.tagName)) return;
       if (e.key === "ArrowLeft" && anterior) {
-        router.replace(hrefCapitulo(anterior.slug, anterior.capitulo, params.origem));
+        router.replace(hrefCapituloLeitura(anterior.slug, anterior.capitulo, params));
       } else if (e.key === "ArrowRight" && proximo) {
-        router.replace(hrefCapitulo(proximo.slug, proximo.capitulo, params.origem));
+        router.replace(hrefCapituloLeitura(proximo.slug, proximo.capitulo, params));
       } else if (e.key === "t" || e.key === "T") {
         alternarTema();
       }
@@ -656,6 +649,15 @@ export default function Leitura() {
       return;
     }
 
+    const hrefBusca = hrefRetornoLeitura(params.origem, params.consulta, {
+      testamento: params.testamento,
+      livroFiltro: params.livroFiltro,
+    });
+    if (hrefBusca) {
+      router.replace(hrefBusca);
+      return;
+    }
+
     if (abertaPelaAbaBiblia || abertaPeloSeletor) {
       if (livro) {
         router.replace({ pathname: "/leitura/escolher", params: { livro: livro.slug } });
@@ -985,6 +987,8 @@ export default function Leitura() {
               ? "Cancela a seleção atual sem sair do capítulo."
               : planoEmAndamento && numeroDiaPlano
                 ? `Volta para o plano ${planoEmAndamento.titulo}.`
+              : params.origem === "pesquisa"
+                ? "Volta para os resultados da busca com a consulta e os filtros anteriores."
               : abertaPelaAbaBiblia || abertaPeloSeletor
                 ? "Volta à escolha de livros da Bíblia."
                 : "Volta à tela de onde você abriu esta leitura."}
@@ -1485,7 +1489,7 @@ export default function Leitura() {
         >
 
           <Pressable
-              onPress={() => anterior && router.replace(hrefCapitulo(anterior.slug, anterior.capitulo, params.origem))}
+              onPress={() => anterior && router.replace(hrefCapituloLeitura(anterior.slug, anterior.capitulo, params))}
               disabled={!anterior}
               accessibilityRole="button"
               accessibilityLabel="Capítulo anterior"
@@ -1503,7 +1507,7 @@ export default function Leitura() {
           </Link>
 
           <Pressable
-            onPress={() => proximo && router.replace(hrefCapitulo(proximo.slug, proximo.capitulo, params.origem))}
+              onPress={() => proximo && router.replace(hrefCapituloLeitura(proximo.slug, proximo.capitulo, params))}
             disabled={!proximo}
             accessibilityRole="button"
             accessibilityLabel="Próximo capítulo"

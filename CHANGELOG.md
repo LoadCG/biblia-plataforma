@@ -3,7 +3,22 @@
 Todas as mudanças notáveis feitas no projeto serão documentadas neste arquivo.
 O formato é baseado no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/).
 
-## [Unreleased] - 2026-10-04
+## [Unreleased] - 2026-11-23
+
+### Compatibilidade com Expo SDK 57: 2026-11-23
+- Alinhados oito pacotes Expo às versões aceitas pelo SDK 57 após o Expo Doctor
+  apontar deriva de patches. `npm run validate` passou localmente com 241 testes
+  e Expo Doctor 21/21; exportação de 1.189 capítulos e verificação estática de
+  SEO, favicon e HTML passaram. CI remoto do PR #2 passou (run 45259312383 para
+  o commit `9a5878f`), e o preview Vercel foi publicado.
+- A busca Descubra estabilizou e retornou resultado com consulta/filtros no link
+  do leitor. Home foi inspecionada em claro/escuro e Planos em mobile claro; não
+  houve defeito P0/P1 reproduzível nessas verificações, sem mudanças adicionais
+  de código. Pendências e limites de QA estão no roadmap de épicos.
+- Corrigido o botão Voltar do leitor quando aberto por um resultado da busca:
+  agora retorna explicitamente à consulta e restaura os filtros, inclusive após
+  navegar capítulos anteriores ou seguintes. Testes regressivos, validação
+  completa e percurso no navegador passaram.
 
 ### Contraste dos campos de busca: 2026-11-23
 - Campos de busca de Descubra, seletor de livros e lista de resumos agora usam

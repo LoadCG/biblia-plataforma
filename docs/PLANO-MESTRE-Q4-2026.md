@@ -773,8 +773,11 @@ teste. Tratar como implementados, sem aceite visual.
   navegação no browser passaram.
 - Home foi inspecionada em claro e escuro no viewport disponível, e Planos em
   emulação de 375×667 no tema claro. Não houve defeito visual P0/P1 confirmado.
-  Toast ativo, desktop controlado, tema escuro de Planos, teclado completo e
-  leitor de tela real permanecem pendentes.
+  Rechecagem posterior: Planos no tema escuro foi vista em 1280×720; o link de
+  retorno do detalhe recebeu foco e foi ativado com Tab/Enter. Isso não cobre a
+  navegação integral por teclado. Toast ativo controlado, mobile nesta rodada e
+  leitor de tela real permanecem pendentes. O aviso React visto antes não foi
+  reproduzido em duas novas tentativas; a hipótese dos timers não foi confirmada.
 - Auditoria atual: 14 alertas totais (6 moderados, 8 altos) e 12 com `--omit=dev`
   (4 moderados, 8 altos). Não aplicado `npm audit fix`; a simulação propôs
   versões Expo 58 e há precedente de quebra no export estático.

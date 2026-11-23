@@ -181,6 +181,16 @@ depreciadas foram observados, sem correção nesta rodada por não haver relaç�
 confirmada com falha funcional. Um aviso de atualização de estado após
 desmontagem foi visto durante navegação e continua sem causa confirmada.
 
+**Rechecagem 2026-11-23:** duas tentativas reproduzíveis no navegador, saindo
+rapidamente de João 3:16 e usando o fluxo normal com capítulo seguinte, não
+mostraram o aviso React nem produziram novo log relacionado no servidor. Os
+timers de destaque do versículo continuam apenas hipótese, sem stack que os
+relacione ao aviso. No preview Vercel, Planos foi inspecionado em tema escuro
+em 1280×720; contraste e conteúdo estavam legíveis, sem corte evidente na área
+capturada. O link de retorno do detalhe do plano recebeu foco por Tab e foi
+ativado por Enter. Isso confirma somente esse caminho de teclado, não uma revisão
+completa de teclado ou leitor de tela.
+
 **Risco de sobreposição:** Descubra compartilha superfície com E1. E2 pode
 encontrar e documentar problemas durante E1, mas deixa alterações de busca para
 o responsável de E1 até integração desse épico.
@@ -282,12 +292,12 @@ alegação de offline, rollback ou acessibilidade nativa baseada apenas em mocks
   codificados na URL. O navegador confirmou a rota `/pesquisa`, campo preenchido,
   filtro Novo Testamento selecionado e resultado presente. A consulta e os
   filtros também permanecem nos controles e atalhos entre capítulos.
-- E2: QA parcial, sem bug P0/P1 confirmado e sem alterações. Restam viewport
-  desktop controlado, Toast ativo, Planos escuro, percurso de teclado e leitor
-  de tela real. Durante o percurso busca/leitor foi observado um toast de aviso
-  React sobre atualização de estado após desmontagem. Não foi atribuído à
-  correção de navegação e precisa de investigação independente antes de ser
-  classificado como defeito persistente.
+- E2: QA parcial, sem bug P0/P1 confirmado e sem alterações. Planos escuro em
+  desktop e o caminho de teclado Tab/Enter para retornar do detalhe foram
+  verificados; permanecem pendentes teclado completo, Toast ativo controlado,
+  viewport mobile nesta revisão e leitor de tela real. O aviso React visto antes
+  não foi reproduzido nas duas tentativas documentadas; aguardar stack se voltar
+  a ocorrer, em vez de tratar a hipótese dos timers como causa confirmada.
 - E3: preparado no plano, mas gates de revisão pastoral, direitos ACF, domínio
   e QR continuam humanos.
 - E4: triagem de segurança concluída, sem atualizações automáticas; QA de backup,
